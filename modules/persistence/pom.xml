@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>project</artifactId>
+    <groupId>com.dyuproject</groupId>
+    <version>1.0-SNAPSHOT</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.dyuproject</groupId>
+  <artifactId>dyuproject-persistence</artifactId>
+  <name>persistence</name>
+  <packaging>jar</packaging>
+
+  <build>    
+    <defaultGoal>install</defaultGoal>    
+  </build>
+
+  <properties>  	
+	<hibernate-version>3.2.1.ga</hibernate-version>
+	<spring-version>2.0.6</spring-version>
+  </properties>
+  
+  <dependencies>
+    <dependency>
+      <groupId>com.dyuproject</groupId>
+      <artifactId>dyuproject-util</artifactId>
+      <version>${project.version}</version>	       
+    </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate</artifactId>
+      <version>${hibernate-version}</version>
+	  <exclusions>
+        <exclusion>
+		  <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>          
+        </exclusion>		
+	  </exclusions>
+	  <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring-version}</version>
+	  <exclusions>
+        <exclusion>
+		  <groupId>javax.servlet</groupId>
+          <artifactId>servlet-api</artifactId>          
+        </exclusion>		
+	  </exclusions>
+	  <optional>true</optional>
+    </dependency>
+  </dependencies>
+</project>
