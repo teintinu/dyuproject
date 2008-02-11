@@ -27,5 +27,7 @@ public abstract class Delim
     public static final Pattern SLASH = Pattern.compile("/");
     public static final Pattern COLON = Pattern.compile(":");
     public static final Pattern SEMI_COLON = Pattern.compile(";");
+    public static final Pattern AMPER = Pattern.compile("&");
+    public static final Pattern EQUALS = Pattern.compile("=");
     
 }

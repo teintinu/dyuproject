@@ -30,4 +30,9 @@ public class ParametersIncomplete extends AbstractWebServiceError
         _message = "*".concat(params).concat("* must be provided."); 
     }
     
+    public String getMessage()
+    {
+        return _message;
+    }
+    
 }
