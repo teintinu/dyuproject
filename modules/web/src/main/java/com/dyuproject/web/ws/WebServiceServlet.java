@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.web.RequestUtil;
 import com.dyuproject.web.ws.rest.RESTService;
 import com.dyuproject.web.ws.rpc.RPCService;
+import com.dyuproject.util.Delim;
 import com.dyuproject.util.FormatConverter;
 
 /**
@@ -43,7 +44,26 @@ public class WebServiceServlet extends HttpServlet
     {
         _context = (WebServiceContext)getServletContext().getAttribute(WS_CONTEXT_ATTR);
         if(_context==null)
-            throw new ServletException("WebServiceContext is null");
+        {
+            String providerClasses = getInitParameter("providerClasses");
+            if(providerClasses==null)
+                throw new ServletException("WebServiceContext and providerClasses both null");            
+            String[] providers = Delim.COMMA.split(providerClasses);
+            _context = new WebServiceContext();
+            try
+            {                
+                for(int i=0; i<providers.length; i++)
+                {
+                    Class clazz = getClass().getClassLoader().loadClass(providers[i].trim());
+                    if(WebServiceProvider.class.isAssignableFrom(clazz))                                            
+                        _context.addProvider((WebServiceProvider)clazz.newInstance());
+                }
+            }
+            catch(Exception e)
+            {
+                throw new ServletException(e);
+            }
+        }
         _context.setServletContext(getServletContext());
         _context.init();
     }

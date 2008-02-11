@@ -14,13 +14,11 @@
 
 package com.dyuproject.web.ws;
 
-import com.dyuproject.util.FormatConverter.Builder;
-
 /**
  * @author David Yu
  */
 
-public class ExceptionWrapper implements WebServiceResponse
+public class ExceptionWrapper extends AbstractWebServiceError
 {
 
     private Exception _exception;
@@ -29,11 +27,11 @@ public class ExceptionWrapper implements WebServiceResponse
     {
         _exception = e;
     }
-
-    public void convert(Builder builder, String format) 
+    
+    public String getMessage()
     {
-        builder.put("error", true);
-        builder.put("cause", _exception.getClass().getSimpleName());
-        builder.put("message", _exception.getMessage().replace('"', '*'));
+        return _exception.getMessage()==null ? _exception.getClass().getSimpleName() :
+            _exception.getMessage();
     }
+    
 }
