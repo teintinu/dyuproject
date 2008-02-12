@@ -873,10 +873,10 @@ function Draggable(el, controlEl) {
     var _el = el;  
     var _currentX = 0;
     var _currentY = 0;
-    var _oldZIndex = null;
-    var _oldCursor = null;
+    var _oldZIndex = null;    
     var _controlEl = controlEl;
     var _position = null;
+	var _originalCoords = null;
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -884,13 +884,11 @@ function Draggable(el, controlEl) {
         _el.style.top = [_currentY + e.clientY, 'px'].join('');     
     }
     
-    function mouseUp(e) {
-        //if(!e) e = window.event;
+    function mouseUp(e) {        
         document.onmousemove = null;
         document.onselectstart = null;
         document.onmouseup = null;
-        _el.style.zIndex = _oldZIndex;
-        _el.style.cursor = _oldCursor;
+        _el.style.zIndex = _oldZIndex;        
     }
     
     function mouseDown(e) {     
@@ -910,10 +908,8 @@ function Draggable(el, controlEl) {
             _currentX = _el.offsetLeft - e.clientX;
             _currentY = _el.offsetTop - e.clientY;
         }
-        _oldZIndex = _el.style.zIndex;
-        _oldCursor = _el.style.cursor;
-        _el.style.zIndex = 10000;
-        _el.style.cursor = 'move';
+        _oldZIndex = _el.style.zIndex;        
+        _el.style.zIndex = 10000;        
         document.onmouseup = mouseUp;
         document.onmousemove = mouseMove;
         document.body.focus();
@@ -923,6 +919,10 @@ function Draggable(el, controlEl) {
     
     function construct(el, controlEl) {
         _el.onmousedown = mouseDown;
+		_el.style.cursor = 'default';
+		if(controlEl)
+			controlEl.style.cursor = 'default';
+		_originalCoords = Utils.getCoords(el);	
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';           
