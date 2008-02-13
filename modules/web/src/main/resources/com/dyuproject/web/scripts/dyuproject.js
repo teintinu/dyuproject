@@ -1819,8 +1819,12 @@ function SimpleTable(rows, cols, className) {
 	}
     
     this.getTD = function(row, col) {
-        return _rows>row && _cols>col ?  _this.getElement().rows[row].cells[col] : null;
+        return _rows>row && _cols>col ? _this.getElement().rows[row].cells[col] : null;
     }
+	
+	this.getTR = function(row) {
+		return _rows>row ? _this.getElement().rows[row] : null;
+	}
     
     this.getRowCount = function() {
         return _rows;
