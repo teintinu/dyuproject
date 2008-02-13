@@ -894,10 +894,8 @@ function Draggable(el, controlEl) {
     function mouseDown(e) {     
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
-        if(el!=_el) {
-            if(el!=_controlEl)
-                return;     
-        }           
+        if(el!=_controlEl)
+			return;     
         if(_position!='absolute' && _position!='fixed') {         
             var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
             var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
@@ -920,15 +918,113 @@ function Draggable(el, controlEl) {
     function construct(el, controlEl) {
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
-		if(controlEl)
-			controlEl.style.cursor = 'default';
-		_originalCoords = Utils.getCoords(el);	
+		if(_controlEl)
+			_controlEl.style.cursor = 'default';
+		else
+			_controlEl = _el;
+		_originalCoords = Utils.getCoords(_el);	
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';           
     }
     
     construct(el, controlEl);
+}
+
+function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+    var _this = this;
+    this.__extends = JSObject;
+    this.__extends();     
+    
+    var _el = el;  
+    var _currentX = 0;
+    var _currentY = 0;
+    var _oldZIndex = null;    
+    var _controlEl = controlEl;
+    var _position = null;
+	var _originalCoords = null;
+	var _moveEl = null;
+	var _parentCoords = null;
+	var _resizeProxy = true;
+	var _moveOriginal = true;
+    
+    function mouseMove(e) {
+        if(!e) e = window.event;
+		_moveEl.style.display = '';
+        _moveEl.style.left = [_currentX + e.clientX, 'px'].join('');
+        _moveEl.style.top = [_currentY + e.clientY, 'px'].join('');   
+    }
+    
+    function mouseUp(e) {        
+        document.onmousemove = null;
+        document.onselectstart = null;
+        document.onmouseup = null;
+		if(_moveOriginal) {
+			var x = parseInt(_moveEl.style.left);
+			var y = parseInt(_moveEl.style.top);
+			_el.style.left = [x-_parentCoords.x, 'px'].join('');
+			_el.style.top = [y-_parentCoords.y, 'px'].join('');		
+		}
+        _moveEl.style.zIndex = _oldZIndex;		
+		_moveEl.style.display = 'none';
+    }
+    
+    function mouseDown(e) {     
+        if(!e) e = window.event;
+        var el = e.target ? e.target : e.srcElement;
+        if(el!=_controlEl)
+			return;
+        if(_position!='absolute' && _position!='fixed') {
+			if(!_parentCoords)
+				_parentCoords = _el.parentNode==document.body ? Utils.getCoords(_el) : Utils.getCoords(_el.parentNode);			
+            var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+            var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
+            _currentX = offsetX - e.clientX + _parentCoords.x;
+            _currentY = offsetY - e.clientY + _parentCoords.y;
+        }
+        else {          
+            _currentX = _el.offsetLeft - e.clientX;
+            _currentY = _el.offsetTop - e.clientY;
+        }
+        _oldZIndex = _el.style.zIndex;
+		if(_resizeProxy) {
+			_moveEl.style.width = [_el.offsetWidth, 'px'].join('');
+			_moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
+		}
+        _moveEl.style.zIndex = 10000;        
+        document.onmouseup = mouseUp;
+        document.onmousemove = mouseMove;
+        document.body.focus();
+        document.onselectstart = function(){return false};
+        return false;           
+    }
+    
+    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+        _el.onmousedown = mouseDown;
+		_el.style.cursor = 'default';
+		if(_controlEl)
+			_controlEl.style.cursor = 'default';
+		else
+			_controlEl = _el;
+		_originalCoords = Utils.getCoords(_el);	
+        _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
+        if(_position!='absolute' && _position!='fixed')
+            _el.style.position = 'relative';
+		else
+			_parentCoords = {x:0,y:0};
+		_moveEl = document.createElement('div');
+		if(proxyClassName)
+			_moveEl.className = proxyClassName;
+		_moveEl.style.position = 'absolute';
+		_moveEl.style.display = 'none';
+		document.body.appendChild(_moveEl);
+		if(Utils.isBoolean(resizeProxy))
+			_resizeProxy = resizeProxy;
+		if(Utils.isBoolean(moveOriginal))
+			_moveOriginal = moveOriginal;
+    }
+    
+    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy);
 }
 
 /* ==================================== WIDGETS ==================================== */
