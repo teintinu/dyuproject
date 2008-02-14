@@ -870,11 +870,11 @@ function Draggable(el, controlEl) {
     this.__extends = JSObject;
     this.__extends();     
     
-    var _el = el;  
+    var _el = null;  
     var _currentX = 0;
     var _currentY = 0;
     var _oldZIndex = null;    
-    var _controlEl = controlEl;
+    var _controlEl = null;
     var _position = null;
 	var _originalCoords = null;
     
@@ -896,11 +896,33 @@ function Draggable(el, controlEl) {
         var el = e.target ? e.target : e.srcElement;
         if(el!=_controlEl)
 			return;     
-        if(_position!='absolute' && _position!='fixed') {         
-            var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
-            var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
-            _currentX = offsetX - e.clientX;
-            _currentY = offsetY - e.clientY;         
+        if(_position!='absolute' && _position!='fixed') {
+			if(!_originalCoords) {
+				_originalCoords = Utils.getCoords(_el);	
+				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
+				var pos = _el.parentNode.style.position ? _el.parentNode.style.position : Utils.getCssStyle(_el.parentNode, 'position');							
+				if(_el.parentNode==document.body) {
+					// TODO
+				}
+				else {
+					if(pos=='static') {
+						var coords = Utils.getCoords(_el);					
+						_currentX = coords.x - _el.parentNode.offsetLeft - offsetX - e.clientX;
+						_currentY = coords.y - _el.parentNode.offsetTop - offsetY - e.clientY;
+					}
+					else {
+						_currentX = offsetX - e.clientX + _el.offsetLeft;
+						_currentY = offsetY - e.clientY + _el.offsetTop;					
+					}						
+				}		
+			}
+			else {
+				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
+				_currentX = offsetX - e.clientX;
+				_currentY = offsetY - e.clientY;         
+			}
         }
         else {          
             _currentX = _el.offsetLeft - e.clientX;
@@ -916,13 +938,14 @@ function Draggable(el, controlEl) {
     }
     
     function construct(el, controlEl) {
+		_el = el;		
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
+		_controlEl = controlEl;
 		if(_controlEl)
 			_controlEl.style.cursor = 'default';
 		else
-			_controlEl = _el;
-		_originalCoords = Utils.getCoords(_el);	
+			_controlEl = _el;		
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';           
@@ -936,17 +959,33 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
     this.__extends = JSObject;
     this.__extends();     
     
-    var _el = el;  
+    var _el = null;  
     var _currentX = 0;
     var _currentY = 0;
     var _oldZIndex = null;    
-    var _controlEl = controlEl;
+    var _controlEl = null;
     var _position = null;
 	var _originalCoords = null;
 	var _moveEl = null;
 	var _parentCoords = null;
 	var _resizeProxy = true;
 	var _moveOriginal = true;
+	
+	this.setResizeProxy = function(resizeProxy) {
+		_resizeProxy = resizeProxy;
+	}
+	
+	this.isResizeProxy = function() {
+		return _resizeProxy;
+	}
+	
+	this.setMoveOriginal = function(moveOriginal) {
+		_moveOriginal = moveOriginal;
+	}
+	
+	this.isMoveOriginal = function() {
+		return _moveOriginal;
+	}
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -975,16 +1014,32 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
         if(el!=_controlEl)
 			return;
         if(_position!='absolute' && _position!='fixed') {
-			if(!_parentCoords)
-				_parentCoords = _el.parentNode==document.body ? Utils.getCoords(_el) : Utils.getCoords(_el.parentNode);			
-            var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
-            var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
-            _currentX = offsetX - e.clientX + _parentCoords.x;
-            _currentY = offsetY - e.clientY + _parentCoords.y;
+			if(!_parentCoords) {
+				_originalCoords = Utils.getCoords(_el);
+				if(_el.parentNode==document.body) {
+					// TODO
+					_parentCoords = Utils.getCoords(_el);
+				}
+				else {					
+					_parentCoords = Utils.getCoords(_el.parentNode);					
+				}
+				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;			
+				_currentX = offsetX - e.clientX + _parentCoords.x + _el.offsetLeft;
+				_currentY = offsetY - e.clientY + _parentCoords.y + _el.offsetTop;					
+			}
+			else {
+				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;			
+				_currentX = offsetX - e.clientX + _parentCoords.x;
+				_currentY = offsetY - e.clientY + _parentCoords.y;			
+			}
         }
-        else {          
-            _currentX = _el.offsetLeft - e.clientX;
-            _currentY = _el.offsetTop - e.clientY;
+        else {
+			if(!_parentCoords) 
+				_parentCoords = _el.parentNode==document.body ? {x:0, y:0} : Utils.getCoords(_el.parentNode);
+			_currentX = _el.offsetLeft - e.clientX + _el.parentNode.offsetLeft;
+			_currentY = _el.offsetTop - e.clientY + _el.parentNode.offsetTop;
         }
         _oldZIndex = _el.style.zIndex;
 		if(_resizeProxy) {
@@ -1000,8 +1055,190 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
     }
     
     function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+		_el = el;
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
+		_controlEl = controlEl;
+		if(_controlEl)
+			_controlEl.style.cursor = 'default';
+		else
+			_controlEl = _el;		
+        _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
+        if(_position!='absolute' && _position!='fixed')
+            _el.style.position = 'relative';
+		_moveEl = document.createElement('div');
+		if(proxyClassName)
+			_moveEl.className = proxyClassName;
+		_moveEl.style.position = 'absolute';
+		_moveEl.style.display = 'none';
+		document.body.appendChild(_moveEl);
+		if(Utils.isBoolean(resizeProxy))
+			_resizeProxy = resizeProxy;
+		if(Utils.isBoolean(moveOriginal))
+			_moveOriginal = moveOriginal;
+    }
+    
+    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy);
+}
+
+function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+    var _this = this;
+    this.__extends = JSObject;
+    this.__extends();     
+    
+    var _el = null;  
+    var _currentX = 0;
+    var _currentY = 0;
+    var _oldZIndex = null;    
+    var _controlEl = null;
+    var _position = null;
+	var _originalCoords = null;
+	var _moveEl = null;
+	var _parentCoords = null;
+	var _parentPoints = null;
+	var _resizeProxy = true;
+	var _moveOriginal = true;	
+	
+	this.setResizeProxy = function(resizeProxy) {
+		_resizeProxy = resizeProxy;
+	}
+	
+	this.isResizeProxy = function() {
+		return _resizeProxy;
+	}
+	
+	this.setMoveOriginal = function(moveOriginal) {
+		_moveOriginal = moveOriginal;
+	}
+	
+	this.isMoveOriginal = function() {
+		return _moveOriginal;
+	}
+    
+    function mouseMove(e) {
+        if(!e) e = window.event;
+		_moveEl.style.display = '';
+		var x = _currentX + e.clientX - _parentCoords.x;
+		var y = _currentY + e.clientY - _parentCoords.y;
+		if(_parentPoints.xa<x+1 && _parentPoints.ya<y+1 && _parentPoints.xb>x-1+_el.offsetWidth && _parentPoints.yb>y-1+_el.offsetHeight) {
+			_moveEl.style.left = [_currentX + e.clientX, 'px'].join('');
+			_moveEl.style.top = [_currentY + e.clientY, 'px'].join('');	
+		}
+    }
+    
+    function mouseUp(e) {        
+        document.onmousemove = null;
+        document.onselectstart = null;
+        document.onmouseup = null;
+		if(_moveOriginal) {
+			var x = parseInt(_moveEl.style.left);
+			var y = parseInt(_moveEl.style.top);
+			_el.style.left = [x-_parentCoords.x, 'px'].join('');
+			_el.style.top = [y-_parentCoords.y, 'px'].join('');		
+		}
+        _moveEl.style.zIndex = _oldZIndex;		
+		_moveEl.style.display = 'none';
+    }
+    
+    function mouseDown(e) {     
+        if(!e) e = window.event;
+        var el = e.target ? e.target : e.srcElement;
+        if(el!=_controlEl)
+			return;
+        if(_position!='absolute' && _position!='fixed') {
+			if(!_parentCoords) {
+				if(_el.parentNode==document.body) {
+					var coords = Utils.getCoords(_el);
+					_parentCoords = {x:0, y:0};
+					_parentPoints = {
+						xa: coords.x-_parentCoords.x, 
+						xb: coords.x-_parentCoords.x+document.body.clientWidth, 
+						ya: coords.y-_parentCoords.y, 
+						yb: coords.y-_parentCoords.y+document.body.clientHeight
+					};
+				}
+				else {
+					var coords = Utils.getCoords(_el);
+					_parentCoords = Utils.getCoords(_el.parentNode);					
+					_parentPoints = {
+						xa: coords.x-_parentCoords.x-_el.offsetLeft, 
+						xb: coords.x-_parentCoords.x+_el.parentNode.offsetWidth-_el.offsetLeft, 
+						ya: coords.y-_parentCoords.y-_el.offsetTop, 
+						yb: coords.y-_parentCoords.y+_el.parentNode.offsetHeight-_el.offsetTop
+					};
+				}
+				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;			
+				_currentX = offsetX - e.clientX + _parentCoords.x + _el.offsetLeft;
+				_currentY = offsetY - e.clientY + _parentCoords.y + _el.offsetTop;					
+			}
+			else {
+				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;			
+				_currentX = offsetX - e.clientX + _parentCoords.x;
+				_currentY = offsetY - e.clientY + _parentCoords.y;			
+			}
+        }
+        else {
+			if(!_parentCoords) {
+				if(_el.parentNode==document.body) {
+					_parentCoords = {x:0, y:0};
+					_parentPoints = {
+						xa: _parentCoords.x, 
+						xb: document.body.clientWidth-_parentCoords.x, 
+						ya: _parentCoords.y, 
+						yb: document.body.clientHeight-_parentCoords.y
+					};
+				}
+				else {
+					var p = _el.parentNode;
+					var parentPos = p.style.position ? p.style.position : Utils.getCssStyle(p, 'position');
+					if(parentPos!='absolute' && parentPos!='fixed') {
+						var coords = {x:_el.offsetLeft, y:_el.offsetTop};
+						_parentCoords = Utils.getCoords(p);		
+						//alert('childX: ' + coords.x + ' | ' + 'parentX : ' + _parentCoords.x);
+						//alert('childY: ' + coords.y + ' | ' + 'parentY: ' + _parentCoords.y);
+						_parentPoints = { 
+							xa: _parentCoords.x-p.offsetLeft, 
+							xb: _parentCoords.x+p.offsetWidth-p.offsetLeft, 
+							ya: _parentCoords.y-p.offsetTop, 
+							yb: _parentCoords.y+p.offsetHeight-p.offsetTop
+						};
+						//_parentCoords = {x:0, y:0};
+					}
+					else {
+						_parentCoords = {x:p.offsetLeft, y:p.offsetTop};
+						_parentPoints = {
+							xa: _parentCoords.x, 
+							xb: _parentCoords.x+p.offsetWidth, 
+							ya: _parentCoords.y, 
+							yb: _parentCoords.y+p.offsetHeight
+						};
+						_parentCoords = {x:0, y:0};
+					}					
+				}				
+			}		
+            _currentX = _el.offsetLeft - e.clientX + _parentCoords.x;
+            _currentY = _el.offsetTop - e.clientY + _parentCoords.y;
+        }
+        _oldZIndex = _el.style.zIndex;
+		if(_resizeProxy) {
+			_moveEl.style.width = [_el.offsetWidth, 'px'].join('');
+			_moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
+		}
+        _moveEl.style.zIndex = 10000;        
+        document.onmouseup = mouseUp;
+        document.onmousemove = mouseMove;
+        document.body.focus();
+        document.onselectstart = function(){return false};
+        return false;           
+    }
+    
+    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+		_el = el;
+        _el.onmousedown = mouseDown;
+		_el.style.cursor = 'default';
+		_controlEl = controlEl;
 		if(_controlEl)
 			_controlEl.style.cursor = 'default';
 		else
@@ -1010,8 +1247,10 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';
-		else
-			_parentCoords = {x:0,y:0};
+		//else {
+		//	_parentCoords = {x:0,y:0};
+		//	_parentPoints = {xa:0, xb:document.body.clientWidth, ya:0, yb:document.body.clientHeight};
+		//}
 		_moveEl = document.createElement('div');
 		if(proxyClassName)
 			_moveEl.className = proxyClassName;
