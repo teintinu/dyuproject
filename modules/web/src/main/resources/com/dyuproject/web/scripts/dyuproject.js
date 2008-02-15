@@ -890,7 +890,7 @@ var DragUtil = {
 	}
 };
 
-function Draggable(el, controlEl) {
+function Draggable(el, controlEl, resetOnDblClick) {
     var _this = this;
     this.__extends = JSObject;
     this.__extends();     
@@ -902,6 +902,33 @@ function Draggable(el, controlEl) {
     var _controlEl = null;
     var _position = null;
 	var _originalCoords = null;
+	var _resetOnDblClick = false;
+	
+	this.setResetOnDblClick = function(resetOnDblClick) {
+		_resetOnDblClick = resetOnDblClick;
+	}
+	
+	this.isResetOnDblClick = function() {
+		return _resetOnDblClick;
+	}	
+	
+	this.reset = function() {
+		if(_originalCoords) {
+			if(_position!='absolute' && _position!='fixed') {
+				_el.style.left = [_originalCoords.relX, 'px'].join('');
+				_el.style.top = [_originalCoords.relY, 'px'].join('');
+			}
+			else {
+				_el.style.left = [_originalCoords.initX, 'px'].join('');
+				_el.style.top = [_originalCoords.initY, 'px'].join('');
+			}
+		}
+	}
+	
+	function onDblClick(e) {
+		if(_resetOnDblClick)
+			_this.reset();
+	}
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -937,8 +964,11 @@ function Draggable(el, controlEl) {
 			}
         }
         else {
-			if(!_originalCoords)
+			if(!_originalCoords) {
 				_originalCoords = Utils.getCoords(_el);			
+				_originalCoords.initX = DragUtil.getInitialLeft(_el);
+				_originalCoords.initY = DragUtil.getInitialTop(_el);				
+			}
             _currentX = _el.offsetLeft - e.clientX;
             _currentY = _el.offsetTop - e.clientY;
         }
@@ -951,7 +981,7 @@ function Draggable(el, controlEl) {
         return false;           
     }
     
-    function construct(el, controlEl) {
+    function construct(el, controlEl, resetOnDblClick) {
 		_el = el;		
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
@@ -962,14 +992,18 @@ function Draggable(el, controlEl) {
 			_controlEl = _el;		
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
-            _el.style.position = 'relative';
+            _el.style.position = 'relative';		
+		if(Utils.isBoolean(resetOnDblClick))
+			_resetOnDblClick = resetOnDblClick;		
+		if(_resetOnDblClick)		
+			Utils.addHandlerToEvent(onDblClick, _controlEl, 'ondblclick');
 		DragUtil.addDrag(_el, _this);
     }
     
-    construct(el, controlEl);
+    construct(el, controlEl, resetOnDblClick);
 }
 
-function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy, resetOnDblClick) {
     var _this = this;
     this.__extends = JSObject;
     this.__extends();     
@@ -984,6 +1018,15 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 	var _moveEl = null;	
 	var _resizeProxy = true;
 	var _moveOriginal = true;
+	var _resetOnDblClick = false;
+	
+	this.setResetOnDblClick = function(resetOnDblClick) {
+		_resetOnDblClick = resetOnDblClick;
+	}
+	
+	this.isResetOnDblClick = function() {
+		return _resetOnDblClick;
+	}		
 	
 	this.setResizeProxy = function(resizeProxy) {
 		_resizeProxy = resizeProxy;
@@ -1000,6 +1043,24 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 	this.isMoveOriginal = function() {
 		return _moveOriginal;
 	}
+	
+	this.reset = function() {
+		if(_originalCoords) {
+			if(_position!='absolute' && _position!='fixed') {
+				_el.style.left = [_originalCoords.relX, 'px'].join('');
+				_el.style.top = [_originalCoords.relY, 'px'].join('');
+			}
+			else {
+				_el.style.left = [_originalCoords.initX, 'px'].join('');
+				_el.style.top = [_originalCoords.initY, 'px'].join('');
+			}
+		}
+	}
+
+	function onDblClick(e) {
+		if(_resetOnDblClick)
+			_this.reset();
+	}	
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -1044,9 +1105,9 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
         }
         else {
 			if(!_originalCoords) {
-				_originalCoords = {x:0, y:0};
-				_originalCoords.relX = 0;
-				_originalCoords.relY = 0;					
+				_originalCoords = {x:0, y:0, relX:0, relY:0};			
+				_originalCoords.initX = DragUtil.getInitialLeft(_el);
+				_originalCoords.initY = DragUtil.getInitialTop(_el);				
 			}
 			_currentX = _el.offsetLeft - e.clientX;
 			_currentY = _el.offsetTop - e.clientY;
@@ -1064,7 +1125,7 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
         return false;           
     }
     
-    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, resetOnDblClick) {
 		_el = el;
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
@@ -1086,13 +1147,17 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 			_resizeProxy = resizeProxy;
 		if(Utils.isBoolean(moveOriginal))
 			_moveOriginal = moveOriginal;
-		DragUtil.addDrag(_el, _this);
+		if(Utils.isBoolean(resetOnDblClick))
+			_resetOnDblClick = resetOnDblClick;		
+		if(_resetOnDblClick)		
+			Utils.addHandlerToEvent(onDblClick, _controlEl, 'ondblclick');			
+		DragUtil.addDrag(_el, _this);		
     }
     
-    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy);
+    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, resetOnDblClick);
 }
 
-function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container) {
+function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container, resetOnDblClick) {
     var _this = this;
     this.__extends = JSObject;
     this.__extends();     
@@ -1111,6 +1176,15 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 	var _resizeProxy = true;
 	var _moveOriginal = true;
 	var _container = null;
+	var _resetOnDblClick = false;
+	
+	this.setResetOnDblClick = function(resetOnDblClick) {
+		_resetOnDblClick = resetOnDblClick;
+	}
+	
+	this.isResetOnDblClick = function() {
+		return _resetOnDblClick;
+	}	
 	
 	this.setResizeProxy = function(resizeProxy) {
 		_resizeProxy = resizeProxy;
@@ -1136,6 +1210,24 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 	this.getContainer = function() {
 		return _container;
 	}
+	
+	this.reset = function() {
+		if(_originalCoords) {
+			if(_position!='absolute' && _position!='fixed') {
+				_el.style.left = [_originalCoords.relX, 'px'].join('');
+				_el.style.top = [_originalCoords.relY, 'px'].join('');
+			}
+			else {
+				_el.style.left = [_originalCoords.initX, 'px'].join('');
+				_el.style.top = [_originalCoords.initY, 'px'].join('');
+			}
+		}
+	}
+	
+	function onDblClick(e) {
+		if(_resetOnDblClick)
+			_this.reset();
+	}	
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -1206,6 +1298,8 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
         else {
 			if(!_originalCoords) {
 				_originalCoords = {x:0, y:0, relX:0, relY:0};
+				_originalCoords.initX = DragUtil.getInitialLeft(_el);
+				_originalCoords.initY = DragUtil.getInitialTop(_el);
 				if(_container==document.body) {					
 					_parentCoords = {x:0, y:0, relX:0, relY:0};
 					_parentOffset = {x:0, y:0};
@@ -1249,7 +1343,7 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
         return false;           
     }
     
-    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container) {
+    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container, resetOnDblClick) {
 		_el = el;
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
@@ -1272,10 +1366,14 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 		if(Utils.isBoolean(moveOriginal))
 			_moveOriginal = moveOriginal;
 		_container = Utils.isNode(container) ? container : _el.parentNode;				
-		DragUtil.addDrag(_el, _this);
+		if(Utils.isBoolean(resetOnDblClick))
+			_resetOnDblClick = resetOnDblClick;		
+		if(_resetOnDblClick)		
+			Utils.addHandlerToEvent(onDblClick, _controlEl, 'ondblclick');			
+		DragUtil.addDrag(_el, _this);	
     }
     
-    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container);
+    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container, resetOnDblClick);
 }
 
 /* ==================================== WIDGETS ==================================== */
