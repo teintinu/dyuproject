@@ -31,6 +31,9 @@ var Utils = {
     isWidget: function(obj) {
         return obj && obj.getElement;
     },
+	isDraggable: function(el) {
+		return el && el.__drag;
+	},
     applyStyle: function(el, style) {
         if(document.all && !window.opera)
             el.style.setAttribute('cssText', style);
@@ -44,6 +47,13 @@ var Utils = {
             return window.getComputedStyle(el, '').getPropertyValue(str);
         return null;    
     },
+	getStyleProperty: function(el, prop) {
+		var p = el.style[prop];
+		return p ? p : Utils.getCssStyle(el, prop);
+	},
+	getZIndex: function(el) {
+		return el.style.zIndex ? el.style.zIndex : (document.all ? Utils.getCssStyle(el, 'zIndex') : Utils.getCssStyle(el, 'z-index'));
+	},
     refreshElement: function(el) {
         while(el.hasChildNodes())
             el.removeChild(el.firstChild);
@@ -887,10 +897,21 @@ var DragUtil = {
 	},
 	addDragDrop: function(el, dragdrop) {
 		DragUtil._droppables.put(el, dragdrop);
+	},
+	_front: null,
+	bringToFront: function(draggable) {		
+		if(Utils.isNode(draggable))
+			draggable = draggable.__drag;
+		if(draggable && draggable.bringToFront) {
+			if(DragUtil._front)
+				DragUtil._front.bringToBack();
+			DragUtil._front = draggable;
+			draggable.bringToFront();
+		}
 	}
 };
 
-function Draggable(el, controlEl, resetOnDblClick) {
+function Draggable(el, controlEl) {
     var _this = this;
     this.__extends = JSObject;
     this.__extends();     
@@ -901,15 +922,131 @@ function Draggable(el, controlEl, resetOnDblClick) {
     var _oldZIndex = null;    
     var _controlEl = null;
     var _position = null;
-	var _originalCoords = null;
-	var _resetOnDblClick = false;
+	var _originalCoords = null;	
 	
-	this.setResetOnDblClick = function(resetOnDblClick) {
-		_resetOnDblClick = resetOnDblClick;
+	this.getElement = function() {
+		return _el;
 	}
 	
-	this.isResetOnDblClick = function() {
-		return _resetOnDblClick;
+	this.bringToFront = function() {
+		_el.style.zIndex = 10000;
+	}
+	
+	this.bringToBack = function() {
+		_el.style.zIndex = _oldZIndex;			
+	}
+	
+	this.reset = function() {
+		if(_originalCoords) {
+			if(_position!='absolute' && _position!='fixed') {
+				_el.style.left = [_originalCoords.relX, 'px'].join('');
+				_el.style.top = [_originalCoords.relY, 'px'].join('');
+			}
+			else {
+				_el.style.left = [_originalCoords.initX, 'px'].join('');
+				_el.style.top = [_originalCoords.initY, 'px'].join('');
+			}
+		}
+	}
+    
+    function mouseMove(e) {
+        if(!e) e = window.event;
+        _el.style.left = [_currentX + e.clientX, 'px'].join('');
+        _el.style.top = [_currentY + e.clientY, 'px'].join('');     
+    }
+    
+    function mouseUp(e) {        
+        document.onmousemove = null;
+        document.onselectstart = null;
+        document.onmouseup = null;          
+    }
+    
+    function mouseDown(e) {     
+        if(!e) e = window.event;
+        var el = e.target ? e.target : e.srcElement;
+        if(el!=_controlEl) {
+			if(el==_el)
+				DragUtil.bringToFront(_this);			
+			return;
+		}
+        if(_position!='absolute' && _position!='fixed') {
+			if(!_originalCoords) {				
+				_originalCoords = Utils.getCoords(_el);
+				_originalCoords.relX = DragUtil.getInitialLeft(_el);
+				_originalCoords.relY = DragUtil.getInitialTop(_el);
+				_currentX = _originalCoords.relX - e.clientX;
+				_currentY = _originalCoords.relY - e.clientY;
+			}
+			else {
+				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
+				_currentX = offsetX - e.clientX;
+				_currentY = offsetY - e.clientY;         
+			}
+        }
+        else {
+			if(!_originalCoords) {				
+				_originalCoords = Utils.getCoords(_el);			
+				_originalCoords.initX = DragUtil.getInitialLeft(_el);
+				_originalCoords.initY = DragUtil.getInitialTop(_el);				
+			}
+            _currentX = _el.offsetLeft - e.clientX;
+            _currentY = _el.offsetTop - e.clientY;
+        }        
+        DragUtil.bringToFront(_this);      
+        document.onmouseup = mouseUp;
+        document.onmousemove = mouseMove;
+        document.body.focus();
+        document.onselectstart = function(){return false};
+        return false;           
+    }
+    
+    function construct(el, controlEl) {
+		_el = el;		
+        _el.onmousedown = mouseDown;
+		_el.style.cursor = 'default';
+		_oldZIndex = Utils.getZIndex(_el);
+		_controlEl = controlEl;
+		if(_controlEl)
+			_controlEl.style.cursor = 'default';
+		else
+			_controlEl = _el;		
+        _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
+        if(_position!='absolute' && _position!='fixed')
+            _el.style.position = 'relative';
+		_el.__drag = _this;
+		DragUtil.addDrag(_el, _this);
+    }
+    
+    construct(el, controlEl);
+}
+
+function DraggableBounded(el, controlEl, container) {
+    var _this = this;
+    this.__extends = JSObject;
+    this.__extends();     
+    
+    var _el = null;  
+    var _currentX = 0;
+    var _currentY = 0;
+    var _oldZIndex = null;    
+    var _controlEl = null;
+    var _position = null;
+	var _originalCoords = null;	
+	var _container = null;
+	var _parentPoints = null;
+	var _parentOffset = null;
+	
+	this.getElement = function() {
+		return _el;
+	}
+	
+	this.bringToFront = function() {
+		_el.style.zIndex = 10000;
+	}
+	
+	this.bringToBack = function() {
+		_el.style.zIndex = _oldZIndex;			
 	}	
 	
 	this.reset = function() {
@@ -925,34 +1062,56 @@ function Draggable(el, controlEl, resetOnDblClick) {
 		}
 	}
 	
-	function onDblClick(e) {
-		if(_resetOnDblClick)
-			_this.reset();
-	}
-    
     function mouseMove(e) {
-        if(!e) e = window.event;
-        _el.style.left = [_currentX + e.clientX, 'px'].join('');
-        _el.style.top = [_currentY + e.clientY, 'px'].join('');     
-    }
+        if(!e) e = window.event;		
+		var x = _currentX + e.clientX + _originalCoords.x - _originalCoords.relX + _parentOffset.x;
+		var y = _currentY + e.clientY + _originalCoords.y - _originalCoords.relY + _parentOffset.y;
+		if(_parentPoints.xa<x+1 && _parentPoints.ya<y+1 && _parentPoints.xb>x-1+_el.offsetWidth && _parentPoints.yb>y-1+_el.offsetHeight) {
+			_el.style.left = [_currentX + e.clientX, 'px'].join('');
+			_el.style.top = [_currentY + e.clientY, 'px'].join('');
+		}
+    }	
     
     function mouseUp(e) {        
         document.onmousemove = null;
         document.onselectstart = null;
-        document.onmouseup = null;
-        _el.style.zIndex = _oldZIndex;        
+        document.onmouseup = null;        
     }
     
     function mouseDown(e) {     
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
-        if(el!=_controlEl)
-			return;     
+        if(el!=_controlEl) {
+			if(el==_el)
+				DragUtil.bringToFront(_this);			
+			return;
+		}   
         if(_position!='absolute' && _position!='fixed') {
 			if(!_originalCoords) {
+				_parentOffset = {x:0, y:0};
 				_originalCoords = Utils.getCoords(_el);
 				_originalCoords.relX = DragUtil.getInitialLeft(_el);
-				_originalCoords.relY = DragUtil.getInitialTop(_el);
+				_originalCoords.relY = DragUtil.getInitialTop(_el);				
+				if(_container==document.body) {
+					_parentCoords = {x:0, y:0, relX:0, relY:0};					
+					_parentPoints = {
+						xa: _parentCoords.x, 
+						xb: _parentCoords.x+document.body.clientWidth, 
+						ya: _parentCoords.y, 
+						yb: document.body.clientHeight
+					};				
+				}
+				else {
+					_parentCoords = Utils.getCoords(_container);
+					_parentCoords.relX = 0;
+					_parentCoords.relY = 0;
+					_parentPoints = {
+						xa: _parentCoords.x, 
+						xb: _parentCoords.x+_container.offsetWidth, 
+						ya: _parentCoords.y, 
+						yb: _parentCoords.y+_container.offsetHeight
+					};				
+				}				
 				_currentX = _originalCoords.relX - e.clientX;
 				_currentY = _originalCoords.relY - e.clientY;
 			}
@@ -964,16 +1123,41 @@ function Draggable(el, controlEl, resetOnDblClick) {
 			}
         }
         else {
-			if(!_originalCoords) {
-				_originalCoords = Utils.getCoords(_el);			
+			if(!_originalCoords) {				
+				_originalCoords = Utils.getCoords(_el);
 				_originalCoords.initX = DragUtil.getInitialLeft(_el);
-				_originalCoords.initY = DragUtil.getInitialTop(_el);				
+				_originalCoords.initY = DragUtil.getInitialTop(_el);
+				if(_container==document.body) {					
+					_parentCoords = {x:0, y:0, relX:0, relY:0};
+					_parentOffset = {x:0, y:0};
+					_parentPoints = {
+						xa: _parentCoords.x, 
+						xb: _parentCoords.x+document.body.clientWidth, 
+						ya: _parentCoords.y, 
+						yb: document.body.clientHeight
+					};				
+				}
+				else {
+					_parentCoords = Utils.getCoords(_container);
+					_parentCoords.relX = DragUtil.getInitialLeft(_container);
+					_parentCoords.relY = DragUtil.getInitialTop(_container);
+					var pos = _container.style.position ? _container.style.position : Utils.getCssStyle(_container, 'position');
+					if(pos=='static')
+						_parentOffset = {x:0, y:0};
+					else
+						_parentOffset = _parentCoords;
+					_parentPoints = {
+						xa: _parentCoords.x, 
+						xb: _parentCoords.x+_container.offsetWidth, 
+						ya: _parentCoords.y, 
+						yb: _parentCoords.y+_container.offsetHeight
+					};				
+				}				
 			}
             _currentX = _el.offsetLeft - e.clientX;
             _currentY = _el.offsetTop - e.clientY;
-        }
-        _oldZIndex = _el.style.zIndex;        
-        _el.style.zIndex = 10000;        
+        }        
+        DragUtil.bringToFront(_this);      
         document.onmouseup = mouseUp;
         document.onmousemove = mouseMove;
         document.body.focus();
@@ -981,10 +1165,11 @@ function Draggable(el, controlEl, resetOnDblClick) {
         return false;           
     }
     
-    function construct(el, controlEl, resetOnDblClick) {
+    function construct(el, controlEl, container) {
 		_el = el;		
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
+		_oldZIndex = Utils.getZIndex(_el);
 		_controlEl = controlEl;
 		if(_controlEl)
 			_controlEl.style.cursor = 'default';
@@ -992,18 +1177,16 @@ function Draggable(el, controlEl, resetOnDblClick) {
 			_controlEl = _el;		
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
-            _el.style.position = 'relative';		
-		if(Utils.isBoolean(resetOnDblClick))
-			_resetOnDblClick = resetOnDblClick;		
-		if(_resetOnDblClick)		
-			Utils.addHandlerToEvent(onDblClick, _controlEl, 'ondblclick');
+            _el.style.position = 'relative';
+		_container = Utils.isNode(container) ? container : _el.parentNode;
+		_el.__drag = _this;
 		DragUtil.addDrag(_el, _this);
     }
     
-    construct(el, controlEl, resetOnDblClick);
+    construct(el, controlEl, container);
 }
 
-function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy, resetOnDblClick) {
+function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
     var _this = this;
     this.__extends = JSObject;
     this.__extends();     
@@ -1017,16 +1200,19 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 	var _originalCoords = null;
 	var _moveEl = null;	
 	var _resizeProxy = true;
-	var _moveOriginal = true;
-	var _resetOnDblClick = false;
+	var _moveOriginal = true;	
 	
-	this.setResetOnDblClick = function(resetOnDblClick) {
-		_resetOnDblClick = resetOnDblClick;
+	this.getElement = function() {
+		return _el;
 	}
 	
-	this.isResetOnDblClick = function() {
-		return _resetOnDblClick;
-	}		
+	this.bringToFront = function() {
+		_el.style.zIndex = 10000;
+	}
+	
+	this.bringToBack = function() {
+		_el.style.zIndex = _oldZIndex;			
+	}	
 	
 	this.setResizeProxy = function(resizeProxy) {
 		_resizeProxy = resizeProxy;
@@ -1056,11 +1242,6 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 			}
 		}
 	}
-
-	function onDblClick(e) {
-		if(_resetOnDblClick)
-			_this.reset();
-	}	
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -1079,15 +1260,18 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 			_el.style.left = [x - _originalCoords.x + _originalCoords.relX, 'px'].join('');
 			_el.style.top = [y - _originalCoords.y + _originalCoords.relY, 'px'].join('');		
 		}
-        _moveEl.style.zIndex = _oldZIndex;		
+        _moveEl.style.zIndex = null;		
 		_moveEl.style.display = 'none';
     }
     
     function mouseDown(e) {     
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
-        if(el!=_controlEl)
+        if(el!=_controlEl) {
+			if(el==_el)
+				DragUtil.bringToFront(_this);			
 			return;
+		}
         if(_position!='absolute' && _position!='fixed') {
 			if(!_originalCoords) {				
 				_originalCoords = Utils.getCoords(_el);
@@ -1104,7 +1288,7 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 			}
         }
         else {
-			if(!_originalCoords) {
+			if(!_originalCoords) {				
 				_originalCoords = {x:0, y:0, relX:0, relY:0};			
 				_originalCoords.initX = DragUtil.getInitialLeft(_el);
 				_originalCoords.initY = DragUtil.getInitialTop(_el);				
@@ -1117,7 +1301,8 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 			_moveEl.style.width = [_el.offsetWidth, 'px'].join('');
 			_moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
 		}
-        _moveEl.style.zIndex = 10000;        
+		DragUtil.bringToFront(_this);
+        _moveEl.style.zIndex = 10000;       
         document.onmouseup = mouseUp;
         document.onmousemove = mouseMove;
         document.body.focus();
@@ -1125,10 +1310,11 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
         return false;           
     }
     
-    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, resetOnDblClick) {
+    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
 		_el = el;
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
+		_oldZIndex = Utils.getZIndex(_el);
 		_controlEl = controlEl;
 		if(_controlEl)
 			_controlEl.style.cursor = 'default';
@@ -1147,17 +1333,14 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
 			_resizeProxy = resizeProxy;
 		if(Utils.isBoolean(moveOriginal))
 			_moveOriginal = moveOriginal;
-		if(Utils.isBoolean(resetOnDblClick))
-			_resetOnDblClick = resetOnDblClick;		
-		if(_resetOnDblClick)		
-			Utils.addHandlerToEvent(onDblClick, _controlEl, 'ondblclick');			
+		_el.__drag = _this;
 		DragUtil.addDrag(_el, _this);		
     }
     
-    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, resetOnDblClick);
+    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy);
 }
 
-function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container, resetOnDblClick) {
+function DraggableProxyBounded(el, controlEl, container, proxyClassName, moveOriginal, resizeProxy) {
     var _this = this;
     this.__extends = JSObject;
     this.__extends();     
@@ -1175,15 +1358,18 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 	var _parentOffset = null;
 	var _resizeProxy = true;
 	var _moveOriginal = true;
-	var _container = null;
-	var _resetOnDblClick = false;
+	var _container = null;	
 	
-	this.setResetOnDblClick = function(resetOnDblClick) {
-		_resetOnDblClick = resetOnDblClick;
+	this.getElement = function() {
+		return _el;
 	}
 	
-	this.isResetOnDblClick = function() {
-		return _resetOnDblClick;
+	this.bringToFront = function() {
+		_el.style.zIndex = 10000;
+	}
+	
+	this.bringToBack = function() {
+		_el.style.zIndex = _oldZIndex;			
 	}	
 	
 	this.setResizeProxy = function(resizeProxy) {
@@ -1223,11 +1409,6 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 			}
 		}
 	}
-	
-	function onDblClick(e) {
-		if(_resetOnDblClick)
-			_this.reset();
-	}	
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -1250,17 +1431,20 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 			_el.style.left = [x - _originalCoords.x + _originalCoords.relX - _parentOffset.x, 'px'].join('');
 			_el.style.top = [y - _originalCoords.y + _originalCoords.relY - _parentOffset.y, 'px'].join('');				
 		}		
-        _moveEl.style.zIndex = _oldZIndex;		
+        _moveEl.style.zIndex = null;		
 		_moveEl.style.display = 'none';
     }
     
     function mouseDown(e) {     
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
-        if(el!=_controlEl)
+        if(el!=_controlEl) {
+			if(el==_el)
+				DragUtil.bringToFront(_this);			
 			return;
+		}
         if(_position!='absolute' && _position!='fixed') {
-			if(!_originalCoords) {
+			if(!_originalCoords) {						
 				_parentOffset = {x:0, y:0};
 				_originalCoords = Utils.getCoords(_el);
 				_originalCoords.relX = DragUtil.getInitialLeft(_el);
@@ -1296,7 +1480,7 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 			}
         }
         else {
-			if(!_originalCoords) {
+			if(!_originalCoords) {				
 				_originalCoords = {x:0, y:0, relX:0, relY:0};
 				_originalCoords.initX = DragUtil.getInitialLeft(_el);
 				_originalCoords.initY = DragUtil.getInitialTop(_el);
@@ -1329,13 +1513,13 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 			}
 			_currentX = _el.offsetLeft - e.clientX;
 			_currentY = _el.offsetTop - e.clientY;
-        }
-        _oldZIndex = _el.style.zIndex;
+        }        
 		if(_resizeProxy) {
 			_moveEl.style.width = [_el.offsetWidth, 'px'].join('');
 			_moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
 		}
-        _moveEl.style.zIndex = 10000;        
+		DragUtil.bringToFront(_this);
+        _moveEl.style.zIndex = 10000; 
         document.onmouseup = mouseUp;
         document.onmousemove = mouseMove;
         document.body.focus();
@@ -1343,10 +1527,11 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
         return false;           
     }
     
-    function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container, resetOnDblClick) {
+    function construct(el, controlEl, container, proxyClassName, moveOriginal, resizeProxy) {
 		_el = el;
         _el.onmousedown = mouseDown;
 		_el.style.cursor = 'default';
+		_oldZIndex = Utils.getZIndex(_el);
 		_controlEl = controlEl;
 		if(_controlEl)
 			_controlEl.style.cursor = 'default';
@@ -1365,15 +1550,12 @@ function DraggableProxyBounded(el, controlEl, proxyClassName, moveOriginal, resi
 			_resizeProxy = resizeProxy;
 		if(Utils.isBoolean(moveOriginal))
 			_moveOriginal = moveOriginal;
-		_container = Utils.isNode(container) ? container : _el.parentNode;				
-		if(Utils.isBoolean(resetOnDblClick))
-			_resetOnDblClick = resetOnDblClick;		
-		if(_resetOnDblClick)		
-			Utils.addHandlerToEvent(onDblClick, _controlEl, 'ondblclick');			
+		_container = Utils.isNode(container) ? container : _el.parentNode;		
+		_el.__drag = _this;
 		DragUtil.addDrag(_el, _this);	
     }
     
-    construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy, container, resetOnDblClick);
+    construct(el, controlEl, container, proxyClassName, moveOriginal, resizeProxy);
 }
 
 /* ==================================== WIDGETS ==================================== */
