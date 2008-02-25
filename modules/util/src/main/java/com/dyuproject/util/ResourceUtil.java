@@ -35,12 +35,12 @@ public abstract class ResourceUtil
     
     public static String getCurrentPath()
     {
-        return new File("").getPath();
+        return new File(".").getPath();
     }
     
     public static File getCurrentDirectory()
     {
-        return new File("");
+        return new File(".");
     }
 
     public static byte[] readBytes(File file) throws IOException 

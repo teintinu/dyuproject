@@ -14,7 +14,18 @@
   
   <build>    
 	<defaultGoal>install</defaultGoal>
-	<finalName>dyuproject-${artifactId}-${version}</finalName>	
+    <plugins>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifest>
+			  <mainClass>com.dyuproject.util.Application</mainClass>
+            </manifest>			
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
   
 </project>
