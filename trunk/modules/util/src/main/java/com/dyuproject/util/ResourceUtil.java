@@ -16,8 +16,11 @@ package com.dyuproject.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
 
@@ -29,6 +32,16 @@ public abstract class ResourceUtil
 {
     
     public static final int BUFFER_SIZE = 16384;
+    
+    public static String getCurrentPath()
+    {
+        return new File("").getPath();
+    }
+    
+    public static File getCurrentDirectory()
+    {
+        return new File("");
+    }
 
     public static byte[] readBytes(File file) throws IOException 
     {
@@ -64,5 +77,29 @@ public abstract class ResourceUtil
             out.write(buffer, 0, length);           
         try{in.close();}catch(Exception e){}
         return out;
+    }
+    
+    public static void copy(URL in, URL out) throws IOException
+    {
+        copy(in.openStream(), out.openConnection().getOutputStream());
+    }
+    
+    public static void copy(File in, File out) throws IOException
+    {
+        copy(new FileInputStream(in), new FileOutputStream(out));
+    }
+    
+    public static void copy(URL in, File out) throws IOException
+    {
+        copy(in.openStream(), new FileOutputStream(out));
+    }
+    
+    public static void copy(InputStream in, OutputStream out) throws IOException 
+    {
+        byte[] buffer = new byte[BUFFER_SIZE];
+        int length = 0;
+        while((length=in.read(buffer, 0, BUFFER_SIZE)) != -1) 
+            out.write(buffer, 0, length);        
+        try{out.close();}catch(Exception e){}     
     }
 }
