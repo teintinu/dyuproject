@@ -109,9 +109,8 @@ public abstract class PackageUtil
             {
                 if(jarEntry==null || entryName.startsWith(jarEntry))
                 {
-                    if(entryFile.exists() && !deleteOnExit && entryFile.lastModified()!=entry.getTime())
-                        continue;
-                    extractEntry(entryFile, jis, entry, deleteOnExit);
+                    if(!entryFile.exists() || entryFile.lastModified()!=entry.getTime())
+                        extractEntry(entryFile, jis, entry, deleteOnExit);                    
                 }
             }
         }
@@ -119,16 +118,15 @@ public abstract class PackageUtil
         return true;
     }
     
-    private static void extractEntry(File entryFile, JarInputStream jin, JarEntry entry, 
+    private static void extractEntry(File entryFile, JarInputStream jis, JarEntry entry, 
             boolean deleteOnExit) throws IOException
     {            
         File parent = new File(entryFile.getParent());
-        if (!parent.exists())
+        if(!parent.exists())
             parent.mkdirs();                
-        ResourceUtil.copy(jin, new FileOutputStream(entryFile));           
-        if (entry.getTime()>=0)
-            entryFile.setLastModified(entry.getTime());
-        if (deleteOnExit)
+        ResourceUtil.copy(jis, new FileOutputStream(entryFile));     
+        entryFile.setLastModified(entry.getTime());
+        if(deleteOnExit)
         {
             parent.deleteOnExit();
             entryFile.deleteOnExit();
