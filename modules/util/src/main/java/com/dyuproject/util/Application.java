@@ -37,7 +37,7 @@ public class Application
 
     
     public static Application run(String[] args) throws Exception
-    {
+    {        
         ClassLoader loader = Application.class.getClassLoader();
         URL appPropertiesURL = loader.getResource("app/app.properties");
         if(appPropertiesURL==null)
@@ -150,7 +150,7 @@ public class Application
                 File jar = new File(tmp, jarName);
                 if(!jar.exists())
                 {
-                    System.err.println("caching jar...");
+                    System.out.println("caching jar...");
                     ResourceUtil.copy(new File(next), jar);
                 }                   
                 PackageUtil.extract(jar, tmp, false);
