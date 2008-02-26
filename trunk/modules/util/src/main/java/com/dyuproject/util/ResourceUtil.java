@@ -41,7 +41,7 @@ public abstract class ResourceUtil
         return new File(".").getPath();
     }
     
-    public static File getCurrentDirectory()
+    public static File getBaseDir()
     {
         return new File(".");
     }
