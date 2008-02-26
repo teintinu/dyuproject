@@ -57,11 +57,11 @@ public class Application
         String version = props.getProperty("app.version", "1.0-SNAPSHOT");
         String uniqueName = name.concat("-").concat(version);
         
-        File appTempDir = new File(PackageUtil.getTempDir(), uniqueName);
+        File appTempDir = new File(ArchiveUtil.getTempDir(), uniqueName);
         if(!appTempDir.exists())
             appTempDir.mkdirs();
         __tempDir = appTempDir;
-        PackageUtil.extract(loader.getResource("app"), appTempDir, deleteOnExit);
+        ArchiveUtil.extract(loader.getResource("app"), appTempDir, deleteOnExit);
         File appDir = new File(appTempDir, "app");
         Application app = new Application(false);        
         String libPath = props.getProperty("app.lib.path");        
@@ -112,7 +112,7 @@ public class Application
     static void createJar() throws Exception
     {
         System.out.println("creating jar...");
-        File baseDir = ResourceUtil.getCurrentDirectory();
+        File baseDir = ResourceUtil.getBaseDir();
         String outputDirParam = System.getProperty("outputDir");
         String appDirParam = System.getProperty("appDir");        
         File outputDir = outputDirParam==null ? baseDir : new File(outputDirParam);
@@ -123,7 +123,7 @@ public class Application
             throw new IllegalStateException("appDir doesnt not exist");
         
         String uniqueName = "dyuproject-util-".concat(Application.class.getPackage().getImplementationVersion());
-        File tmp = new File(PackageUtil.getTempDir(), uniqueName);
+        File tmp = new File(ArchiveUtil.getTempDir(), uniqueName);
         if(!tmp.exists())
             tmp.mkdirs();        
         String jarName = uniqueName.concat(".jar");             
@@ -153,7 +153,7 @@ public class Application
                     System.out.println("caching jar...");
                     ResourceUtil.copy(new File(next), jar);
                 }                   
-                PackageUtil.extract(jar, tmp, false);
+                ArchiveUtil.extract(jar, tmp, false);
                 break;
             }
         }        

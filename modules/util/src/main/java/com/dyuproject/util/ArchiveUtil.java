@@ -26,7 +26,7 @@ import java.util.jar.JarInputStream;
  * @created Feb 25, 2008
  */
 
-public abstract class PackageUtil
+public abstract class ArchiveUtil
 {
     
     public static final String[] SUPPORTED_FILES = new String[]{
@@ -133,12 +133,4 @@ public abstract class PackageUtil
         }
     }
     
-    public static void main(String[] args) throws Exception
-    {
-        File f = ResourceUtil.getCurrentDirectory();
-        File d = new File(getTempDir(), "dyuproject-util-1.0-SNAPSHOT/dyuproject-util-1.0-SNAPSHOT.jar");
-        extract(d, new File(f, "mmmd"), false);
-        
-    }
-
 }
