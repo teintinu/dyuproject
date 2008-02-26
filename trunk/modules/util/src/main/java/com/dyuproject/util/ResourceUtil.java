@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author David Yu
@@ -102,4 +105,66 @@ public abstract class ResourceUtil
             out.write(buffer, 0, length);        
         try{out.close();}catch(Exception e){}     
     }
+    
+    static void copyDir(File dirFrom, File dirTo) throws IOException
+    {
+        File[] files = dirFrom.listFiles();
+        if(!dirTo.exists())
+            dirTo.mkdirs();
+        for(int i=0; i<files.length; i++)
+        {
+            File f = files[i];
+            if(f.isDirectory())                                            
+                copyDir(f, new File(dirTo, f.getName()));                
+            else                
+                copy(f, new File(dirTo, f.getName()));                                    
+        }
+    }
+    
+    public static void copyFileToDir(File file, File dirTo) throws IOException
+    {
+        if(file.exists())
+        {
+            if(file.isDirectory())            
+                copyDir(file, dirTo);            
+            else
+            {
+                if(!dirTo.exists())
+                    dirTo.mkdirs();
+                copy(file, new File(dirTo, file.getName()));
+            }
+        }            
+    }
+    
+    public static List<File> getFilesByExtension(File dir, String[] extensions)
+    {
+        if(!dir.isDirectory() || extensions==null)
+            return Collections.emptyList();
+        List<File> files = new ArrayList<File>();
+        addFilesByExtension(files, dir, extensions);
+        return files;
+    }
+    
+    static void addFilesByExtension(List<File> list, File dir, String[] extensions)
+    {
+        File[] files = dir.listFiles();
+        for(int i=0; i<files.length; i++)
+        {
+            File f = files[i];
+            if(f.isDirectory())
+                addFilesByExtension(list, dir, extensions);
+            else
+            {
+                for(String s : extensions)
+                {
+                    if(f.getName().endsWith(s))
+                    {
+                        list.add(f);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
 }
