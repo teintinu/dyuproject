@@ -2160,6 +2160,10 @@ function DeckPanel() {
 			_current = null;
 		}
     }
+	
+	this.getCurrentWidget = function() {
+		return _current;
+	}
      
     function construct() {       
         _this.setElement(document.createElement('div'));                          
