@@ -36,7 +36,7 @@ public class Application
 {
 
     
-    public static Application run(String[] args) throws Exception
+    public static void run(String[] args) throws Exception
     {        
         ClassLoader loader = Application.class.getClassLoader();
         URL appPropertiesURL = loader.getResource("app/app.properties");
@@ -100,8 +100,7 @@ public class Application
         }              
         Class clazz = app.getClassLoader().loadClass(mainClass);
         Method main = clazz.getMethod("main", new Class[]{args.getClass()});
-        main.invoke(null, new Object[]{args});
-        return app;
+        main.invoke(null, new Object[]{args});        
     }
     
     public static Application newApplication()
@@ -170,12 +169,79 @@ public class Application
         Runtime.getRuntime().exec(buffer.toString());
     }
     
+    public static void runExploded(String[] args) throws Exception
+    {
+        String explodedProps = System.getProperty("explodedProps");
+        if(explodedProps==null)
+            throw new IllegalStateException("explodedProps must be specified");
+        File propFile = new File(explodedProps);
+        if(!propFile.exists())
+            throw new IllegalStateException("explodedProps \"" + propFile.getPath() + "\" does not exist.");        
+        Properties props = new Properties();
+        props.load(new FileInputStream(propFile));
+        
+        String mainClass = props.getProperty("mainClass");
+        if(mainClass==null)
+            throw new IllegalStateException("mainClass must be specified");
+        String libPath = props.getProperty("libPath");
+        Application app = new Application(false);
+        if(libPath!=null)
+        {
+            StringTokenizer tokenizer = new StringTokenizer(libPath, ",;");
+            while(tokenizer.hasMoreTokens())
+            {
+                String next = tokenizer.nextToken().trim();
+                File file = new File(next);
+                if(file.exists())
+                {
+                    if(file.isDirectory())
+                    {
+                        if(file.getName().equals("classes"))
+                            app.addCanonicalFile(file);
+                        else
+                        {
+                            List<File> jars = ResourceUtil.getFilesByExtension(file, EXTENSIONS);
+                            for(File f: jars)
+                                app.addCanonicalFile(f);
+                        }
+                    }
+                    else
+                        app.addCanonicalFile(file);
+                }
+                else
+                    System.out.println("libPath: " + file.getPath() + " doest noe exist");
+            }
+        }
+        app.createLoader();
+        Thread.currentThread().setContextClassLoader(app.getClassLoader()); 
+        System.setProperty("java.class.path", app.getClassLoader().toString());
+        try
+        {
+            Policy policy=Policy.getPolicy();
+            if (policy!=null)
+                policy.refresh();
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }              
+        Class clazz = app.getClassLoader().loadClass(mainClass);
+        Method main = clazz.getMethod("main", new Class[]{args.getClass()});
+        main.invoke(null, new Object[]{args});        
+    }
+    
     public static void main(String[] args) throws Exception
     {
         String create = System.getProperty("createJar");
         if(create!=null)
         {
             createJar();
+            return;
+        }
+        String runExploded = System.getProperty("runExploded");
+        if(runExploded!=null)
+        {
+            runExploded(args);
             return;
         }
         run(args);

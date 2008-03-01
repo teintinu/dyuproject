@@ -394,6 +394,10 @@ function ArrayList() {
         }
         return -1;
     }
+	
+	this.contains = function(obj) {
+		return _this.indexOf(obj)!=-1;
+	}
     
     this.size = function() {
         return _list.length;
@@ -433,8 +437,13 @@ function IndexedList(reflect) {
 	
     var super_add = this.add;    
     this.add = function(obj) {
-        if(obj && obj.setIndex)
-            super_add(obj);
+        if(obj) {
+			if(!obj.setIndex) {
+				obj.setIndex = function(idx){obj.__index = idx;};
+				obj.getIndex = function(){return obj.__index;};
+			}
+			super_add(obj);
+		}
     }
     
     this._a_onAdd = function(obj, index, size) {
@@ -526,8 +535,13 @@ function IndexedMap(reflect) {
     
 	var super_put = this.put;
     this.put = function(key, value) {
-        if(value && value.setIndex)
-            super_put(key, value);
+        if(value) {
+			if(!value.setIndex) {
+				value.setIndex = function(idx){value.__index = idx;};
+				value.getIndex = function(){return value.__index;};
+			}
+			super_put(key, value);
+		}
     }    
     
     this._a_onPut = function(key, value, size) {
@@ -536,11 +550,11 @@ function IndexedMap(reflect) {
     
     function reflectRemoval(value, size) {
         var map = _this.__wrappedGet();
-        var index = value.getIndex();
+        var index = value.getIndex();		
         for(var i in map) {
-            var idx = map[i].getIndex();
-            if(idx>index)
-                map[i].setIndex(idx-1);        
+			var v = map[i];
+			if(v && v.getIndex()>index)			
+				v.setIndex(v.getIndex()-1);
         }
     }
     

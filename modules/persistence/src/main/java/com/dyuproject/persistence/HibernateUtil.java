@@ -681,8 +681,6 @@ public abstract class HibernateUtil
 		return jdbcSQLQueryWithAggregateAsArray(session, mapping, sql, params);
 	}
 	
-	/* ============================================================================= */
-	
-	
+	/* ============================================================================= */	
 	
 }

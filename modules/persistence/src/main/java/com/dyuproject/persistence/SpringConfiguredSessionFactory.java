@@ -15,6 +15,7 @@
 package com.dyuproject.persistence;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.HashMap;
@@ -32,13 +33,16 @@ import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 import org.hibernate.classic.Session;
 import org.hibernate.engine.FilterDefinition;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.stat.Statistics;
+import org.hibernate.tool.hbm2ddl.SchemaExport;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.core.io.Resource;
-import org.hibernate.cfg.Environment;
 
 /**
  * @author David Yu
@@ -54,6 +58,7 @@ public class SpringConfiguredSessionFactory implements SessionFactory
 	private Resource[] _mappingDirectoryLocations;
 	private Properties _hibernateProperties;
 	private Configuration _config;
+	private File _exportDir;
 	
 	public SpringConfiguredSessionFactory() 
 	{
@@ -234,6 +239,21 @@ public class SpringConfiguredSessionFactory implements SessionFactory
 		_config.addProperties(_hibernateProperties);
 	}
 	
+	public void setExportDir(String exportDir)
+	{
+	    _exportDir = new File(exportDir);
+	    if(!_exportDir.exists())
+	    {
+	        File parent =  _exportDir.getParentFile();
+	        if(parent==null || (parent.exists() && parent.isDirectory()))
+	            _exportDir.mkdirs();
+	        else
+	            _exportDir = null;
+	    }
+	    else if(!_exportDir.isDirectory())
+	        _exportDir = null;	        
+	}
+	
 	public void setInitialize(String dummy) 
 	{
 		if(_dataSource==null || _hibernateProperties==null)
@@ -244,7 +264,43 @@ public class SpringConfiguredSessionFactory implements SessionFactory
 		_config.setProperty(Environment.RELEASE_CONNECTIONS, ConnectionReleaseMode.ON_CLOSE.toString());
 		_config.setProperty(Environment.CONNECTION_PROVIDER, LocalConnectionProvider.class.getName());
 		_sessionFactory = _config.buildSessionFactory();
+		if(_exportDir!=null)
+		{		    
+		    File outputFile = new File(_exportDir, _config.getProperty("hibernate.dialect")
+		            .replace('.', '_').concat(".sql"));
+		    String delim = System.getProperty("export.delim");
+		    try 
+		    {
+		        SchemaExport sc = new SchemaExport(_config).setOutputFile(outputFile.getCanonicalPath());
+		        if(delim!=null)
+		            sc.setDelimiter(delim);
+		        sc.create(false, false);
+		    }
+		    catch(IOException ioe)
+		    {
+		        throw new RuntimeException(ioe);
+		    }
+		}
 		log.warn(dummy);
+	}
+	
+	public static void main(String[] args) throws Exception
+	{
+	    if(args.length==0)
+	    {
+	        System.err.println("usage java com.dyuproject.persistence.SpringConfuredSessionFactory path/to/my/resource/or/file");
+	        return;
+	    }
+	    String path = args[0];
+	    File file = new File(path);
+	    if(file.exists())
+	    {
+	        new FileSystemXmlApplicationContext(file.getCanonicalPath());
+	    }
+	    else
+	    {
+	        new ClassPathXmlApplicationContext(path);
+	    }	        
 	}
 
 }
