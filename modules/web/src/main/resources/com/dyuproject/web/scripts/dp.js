@@ -12,6 +12,19 @@
 //limitations under the License.
 //========================================================================
 
+(function(){
+var _dp_context = this;
+var dp = {
+	Loader: {
+		getContext: function() {
+			return _dp_context;
+		},
+		addBaseClass: function(simpleName, clazz) {
+			window[simpleName] = dp[simpleName] = clazz;
+		}
+	}
+};
+
 var Utils = {
     isBoolean: function(obj) {
         return typeof obj == 'boolean';
@@ -200,6 +213,7 @@ var Utils = {
 		document.cookie = [name,'=',value,'; expires=', expires].join('');
 	}
 };
+dp.Loader.addBaseClass('Utils', Utils);
 
 var History = {
     handlers: new Array,
@@ -249,6 +263,8 @@ var History = {
     }
 }
 Utils.addOnLoad(History.start);
+dp.Loader.addBaseClass('History', History);
+
 
 /* ==================================== IE/OPERA support ==================================== */
 
@@ -281,19 +297,16 @@ if (!Array.prototype.indexOf)
 
 /* ==================================== OBJECTS ==================================== */
 
-function JSObject() {
+dp.Loader.addBaseClass('JSObject', function () {
     var _this = this;
     
     this.equals = function(obj) {
         return _this==obj;
     }   
     
-    function construct() {
-        
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
 /* TEMPLATE
 function Template() {
@@ -309,9 +322,9 @@ function Template() {
 }
 */
 
-function Indexed() {
+dp.Loader.addBaseClass('Indexed', function () {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();
     
     var _index = -1;
@@ -324,18 +337,15 @@ function Indexed() {
         return _index;
     }
     
-    function construct() {
-    
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
 /* ==================================== COLLECTION ==================================== */
 
-function AbstractCollection() {
+dp.Loader.addBaseClass('AbstractCollection', function () {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();
     
 	this.isEmpty = function() {}
@@ -344,16 +354,13 @@ function AbstractCollection() {
 	this.get = function(obj) {}
 	this.remove = function(obj) {}
     
-    function construct() {
-    
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
-function ArrayList() {
+dp.Loader.addBaseClass('ArrayList', function () {
     var _this = this;
-    this.__extends = AbstractCollection;
+    this.__extends = dp.AbstractCollection;
     this.__extends();
     
     var _list = new Array();
@@ -421,16 +428,13 @@ function ArrayList() {
     this._a_onAdd = function(obj, index, size) {}    
     this._a_onRemove = function(obj, index, size) {}
     
-    function construct() {
-    
-    }
-    
+    function construct() {}
     construct();    
-}
+});
 
-function IndexedList(reflect) {
+dp.Loader.addBaseClass('IndexedList', function (reflect) {
     var _this = this;
-    this.__extends = ArrayList;
+    this.__extends = dp.ArrayList;
     this.__extends();
     
 	var _reflect = Utils.isBoolean(reflect) ? reflect : true;
@@ -461,16 +465,13 @@ function IndexedList(reflect) {
 			reflectRemoval(index, size);        
     }
     
-    function construct() {
-    
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
-function HashMap() {
+dp.Loader.addBaseClass('HashMap', function () {
     var _this = this;
-    this.__extends = AbstractCollection;
+    this.__extends = dp.AbstractCollection;
     this.__extends();
     
     var _map = {};
@@ -519,16 +520,13 @@ function HashMap() {
     this._a_onPut = function(key, value, size) {}
     this._a_onRemove = function(key, value, size) {}
     
-    function construct() {
-    
-    }
-    
+    function construct() {}
     construct();    
-}
+});
 
-function IndexedMap(reflect) {
+dp.Loader.addBaseClass('IndexedMap', function (reflect) {
     var _this = this;
-    this.__extends = HashMap;
+    this.__extends = dp.HashMap;
     this.__extends();
     
 	var _reflect = Utils.isBoolean(reflect) ? reflect : true;
@@ -563,18 +561,14 @@ function IndexedMap(reflect) {
 			reflectRemoval(value, size);
     }
     
-    function construct() {
-		
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
 /* ==================================== SERVER REQUESTS ==================================== */
-
-function PooledRequest(pl) {    
+dp.Loader.addBaseClass('PooledRequest', function (pl) {    
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();
     
     var _pool = pl;
@@ -637,16 +631,13 @@ function PooledRequest(pl) {
         return _request;
     }
     
-    function construct() {
-
-    }
-    
+    function construct() {}    
     construct();   
-}
+});
 
-function RequestPool(size) {
+dp.Loader.addBaseClass('RequestPool', function (size) {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();
     
     var _requests = new Array();
@@ -686,11 +677,11 @@ function RequestPool(size) {
     }    
     
     construct(size);
-}
+});
 
-function IFrameRequest() {
+dp.Loader.addBaseClass('IFrameRequest', function () {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();
         
     var _iframeDiv = null;
@@ -727,11 +718,11 @@ function IFrameRequest() {
     }
     
     construct();
-}
+});
 
-function ScriptRequest() {
+dp.Loader.addBaseClass('ScriptRequest', function () {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();
         
     var _scriptDiv = null;    
@@ -763,13 +754,13 @@ function ScriptRequest() {
     }
     
     construct();   
-}
+});
 
 /* ==================================== COMETD ==================================== */
 
-function CometdClient(u, obj, type) {
+dp.Loader.addBaseClass('CometdClient', function (u, obj, type) {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();    
     
     var _url = u.length-1 == u.lastIndexOf('/') ? u.substring(0, u.length-1) : u; 
@@ -885,7 +876,7 @@ function CometdClient(u, obj, type) {
     }
     
     construct(u, obj, type);
-}
+});
 
 /* ==================================== MOVING ELEMENTS ==================================== */
 
@@ -924,10 +915,11 @@ var DragUtil = {
 		}
 	}
 };
+dp.Loader.addBaseClass('DragUtil', DragUtil);
 
-function Draggable(el, controlEl) {
+dp.Loader.addBaseClass('Draggable', function (el, controlEl) {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();     
     
     var _el = null;  
@@ -1033,11 +1025,11 @@ function Draggable(el, controlEl) {
     }
     
     construct(el, controlEl);
-}
+});
 
-function DraggableBounded(el, controlEl, container) {
+dp.Loader.addBaseClass('DraggableBounded', function (el, controlEl, container) {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();     
     
     var _el = null;  
@@ -1198,11 +1190,11 @@ function DraggableBounded(el, controlEl, container) {
     }
     
     construct(el, controlEl, container);
-}
+});
 
-function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
+dp.Loader.addBaseClass('DraggableProxy', function (el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();     
     
     var _el = null;  
@@ -1352,11 +1344,11 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
     }
     
     construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy);
-}
+});
 
-function DraggableProxyBounded(el, controlEl, container, proxyClassName, moveOriginal, resizeProxy) {
+dp.Loader.addBaseClass('DraggableProxyBounded', function (el, controlEl, container, proxyClassName, moveOriginal, resizeProxy) {
     var _this = this;
-    this.__extends = JSObject;
+    this.__extends = dp.JSObject;
     this.__extends();     
     
     var _el = null;  
@@ -1570,7 +1562,7 @@ function DraggableProxyBounded(el, controlEl, container, proxyClassName, moveOri
     }
     
     construct(el, controlEl, container, proxyClassName, moveOriginal, resizeProxy);
-}
+});
 
 /* ==================================== WIDGETS ==================================== */
 
@@ -1592,13 +1584,14 @@ var WidgetFactory = {
     },
     createById: function(id) {
         var node = document.getElementById(id);
-        return Utils.isNode(node) ? (Utils.isWidget(node.__wrapper) ? node.__wrapper: new SimpleWidget(node)) : null;
+        return Utils.isNode(node) ? (Utils.isWidget(node.__wrapper) ? node.__wrapper : new SimpleWidget(node)) : null;
     }    
 };
+dp.Loader.addBaseClass('WidgetFactory', WidgetFactory);
 
-function SimpleWidget(el, className) {
+dp.Loader.addBaseClass('SimpleWidget', function (el, className) {
     var _this = this;
-    this.__extends = Indexed;
+    this.__extends = dp.Indexed;
     this.__extends();
     
     var _element = null;
@@ -1657,7 +1650,7 @@ function SimpleWidget(el, className) {
         if(Utils.isString(p)) 
             p = document.getElementById(p);                    
         if(Utils.isNode(p)) {                                
-            _parent = Utils.isWidget(p.__wrapper) ? p.__wrapper : new SimpleWidget(p);
+            _parent = p.__wrapper ? p.__wrapper : new SimpleWidget(p);
             _parent._a_appendChildElement(_element);
             _this._a_onAttach();
         }            
@@ -1787,11 +1780,11 @@ function SimpleWidget(el, className) {
     }
     
     construct(el, className);    
-}
+});
 
-function AbstractWrapperWidget() {
+dp.Loader.addBaseClass('AbstractWrapperWidget', function () {
     var _this = this;
-    this.__extends = SimpleWidget;
+    this.__extends = dp.SimpleWidget;
     this.__extends();
     
     var _child = null;
@@ -1815,16 +1808,13 @@ function AbstractWrapperWidget() {
         _this.setChild(child);
     }
     
-    function construct() {
-    
-    }
-    
+    function construct() {}    
     construct();       
-}
+});
 
-function AbstractContainerWidget() {
+dp.Loader.addBaseClass('AbstractContainerWidget', function () {
     var _this = this;
-    this.__extends = SimpleWidget;
+    this.__extends = dp.SimpleWidget;
     this.__extends(); 
     
     var _children = new ArrayList();
@@ -1877,16 +1867,13 @@ function AbstractContainerWidget() {
     this._a_onChildAdded = function(child, index) {}
     this._a_onChildRemoved = function(child, index) {}  
     
-    function construct() {
-                
-    }
-    
+    function construct() {}    
     construct();    
-}
+});
 
-function CustomWidget() {
+dp.Loader.addBaseClass('CustomWidget', function () {
     var _this = this;
-    this.__extends = SimpleWidget;
+    this.__extends = dp.SimpleWidget;
     this.__extends();
     
     var _widget = null;
@@ -1910,16 +1897,13 @@ function CustomWidget() {
         _widget.setParent(_this.getParent());
     }
     
-    function construct() {
-        
-    }
-    
-    construct();    
-}
+    function construct() {}    
+    construct();	
+});
 
-function SimplePanel(child, className) {
+dp.Loader.addBaseClass('SimplePanel', function (child, className) {
     var _this = this;
-    this.__extends = AbstractWrapperWidget;
+    this.__extends = dp.AbstractWrapperWidget;
     this.__extends();   
     
     function construct(child, className) {
@@ -1929,11 +1913,11 @@ function SimplePanel(child, className) {
     }
 
     construct(child, className);
-}
+});
 
-function SimpleCellPanel(child) {
+dp.Loader.addBaseClass('SimpleCellPanel', function (child) {
     var _this = this;
-    this.__extends = AbstractWrapperWidget;
+    this.__extends = dp.AbstractWrapperWidget;
     this.__extends();
     
     var _td = null;
@@ -1973,11 +1957,11 @@ function SimpleCellPanel(child) {
     }
     
     construct(child);
-}
+});
 
-function CenterPanel(child, className) {
+dp.Loader.addBaseClass('CenterPanel', function (child, className) {
     var _this = this;
-    this.__extends = AbstractWrapperWidget;
+    this.__extends = dp.AbstractWrapperWidget;
     this.__extends();   
     
     function construct(child, className) {
@@ -1987,11 +1971,11 @@ function CenterPanel(child, className) {
     }
 
     construct(child, className);
-}
+});
 
-function FlowPanel(className) {
+dp.Loader.addBaseClass('FlowPanel', function (className) {
     var _this = this;
-    this.__extends = AbstractContainerWidget;
+    this.__extends = dp.AbstractContainerWidget;
     this.__extends();
     
     function construct(className) {
@@ -2000,11 +1984,11 @@ function FlowPanel(className) {
     }
     
     construct(className);
-}
+});
 
-function AbstractCellPanel() {
+dp.Loader.addBaseClass('AbstractCellPanel', function () {
     var _this = this;
-    this.__extends = AbstractContainerWidget;
+    this.__extends = dp.AbstractContainerWidget;
     this.__extends();   
     
     var _tbody = null;
@@ -2085,11 +2069,11 @@ function AbstractCellPanel() {
     }
     
     construct();    
-}
+});
 
-function VerticalCellPanel() {
+dp.Loader.addBaseClass('VerticalCellPanel', function () {
     var _this = this;
-    this.__extends = AbstractCellPanel;
+    this.__extends = dp.AbstractCellPanel;
     this.__extends();
     
     this._a_appendChildElement = function(childElement) {
@@ -2110,11 +2094,11 @@ function VerticalCellPanel() {
     }
     
     construct();   
-}
+});
 
-function HorizontalCellPanel() {
+dp.Loader.addBaseClass('HorizontalCellPanel', function () {
     var _this = this;
-    this.__extends = AbstractCellPanel;
+    this.__extends = dp.AbstractCellPanel;
     this.__extends();
     
     var _tr = null;
@@ -2139,11 +2123,11 @@ function HorizontalCellPanel() {
     }
     
     construct();
-}
+});
 
-function DeckPanel() {
+dp.Loader.addBaseClass('DeckPanel', function () {
     var _this = this;
-    this.__extends = AbstractContainerWidget;
+    this.__extends = dp.AbstractContainerWidget;
     this.__extends();      
     
     var _current = null;
@@ -2184,11 +2168,11 @@ function DeckPanel() {
     }
     
     construct();    
-}
+});
 
-function AbstractListPanel() {
+dp.Loader.addBaseClass('AbstractListPanel', function () {
     var _this = this;
-    this.__extends = AbstractContainerWidget;
+    this.__extends = dp.AbstractContainerWidget;
     this.__extends();
     
     this._a_filterAddCandidate = function(child) {
@@ -2203,27 +2187,24 @@ function AbstractListPanel() {
     }
     
     construct();
-}
+});
 
-function VerticalListPanel() {
+dp.Loader.addBaseClass('VerticalListPanel', function () {
     var _this = this;
-    this.__extends = AbstractListPanel;
+    this.__extends = dp.AbstractListPanel;
     this.__extends();
     
     this._a_onChildAdded = function(child, index) {
         child.setIndex(index);
     } 
 
-    function construct() {
-
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
-function HorizontalListPanel() {
+dp.Loader.addBaseClass('HorizontalListPanel', function () {
     var _this = this;
-    this.__extends = AbstractListPanel;
+    this.__extends = dp.AbstractListPanel;
     this.__extends();    
     
     this._a_onChildAdded = function(child, index) {
@@ -2237,18 +2218,15 @@ function HorizontalListPanel() {
         child.getElement().firstChild.style.display = '';
     }    
     
-    function construct() {
-         
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
 /* ==================================== PRE-BUILT WIDGETS ==================================== */
 
-function PopupPanel(className) {
+dp.Loader.addBaseClass('PopupPanel', function (className) {
     var _this = this;
-    this.__extends = AbstractContainerWidget;
+    this.__extends = dp.AbstractContainerWidget;
     this.__extends();
     
     this.center = function() {
@@ -2283,11 +2261,11 @@ function PopupPanel(className) {
     }
     
     construct(className);
-}
+});
 
-function SimpleTable(rows, cols, className) {
+dp.Loader.addBaseClass('SimpleTable', function (rows, cols, className) {
     var _this = this;
-    this.__extends = SimpleWidget;
+    this.__extends = dp.SimpleWidget;
     this.__extends();
     
     var _vAlign = {
@@ -2433,11 +2411,11 @@ function SimpleTable(rows, cols, className) {
     }
     
     construct(rows, cols, className);
-}
+});
 
-function Hyperlink(display, token, className) {
+dp.Loader.addBaseClass('Hyperlink', function (display, token, className) {
     var _this = this;
-    this.__extends = SimpleWidget;
+    this.__extends = dp.SimpleWidget;
     this.__extends();
     
     function construct(display, token, className) {
@@ -2454,11 +2432,11 @@ function Hyperlink(display, token, className) {
     }
     
     construct(display, token, className);
-}
+});
 
-function SelectBox(hasFirst) {
+dp.Loader.addBaseClass('SelectBox', function (hasFirst) {
     var _this = this;
-    this.__extends = SimpleWidget;
+    this.__extends = dp.SimpleWidget;
     this.__extends();
 	
 	var _value = '';
@@ -2540,13 +2518,13 @@ function SelectBox(hasFirst) {
     }
     
     construct(hasFirst);
-}
+});
 
 /* ==================================== CUSTOM ==================================== */
 
-function AbstractPane() {
+dp.Loader.addBaseClass('AbstractPane', function () {
     var _this = this;
-    this.__extends = FlowPanel;
+    this.__extends = dp.FlowPanel;
     this.__extends();    
     
     var _name = null;    
@@ -2619,16 +2597,13 @@ function AbstractPane() {
 	
 	this.reset = function() {}
     
-    function construct() {
-        
-    }
-    
+    function construct() {}    
     construct();
-}
+});
 
-function AbstractTreePane() {
+dp.Loader.addBaseClass('AbstractTreePane', function () {
     var _this = this;
-    this.__extends = AbstractPane;
+    this.__extends = dp.AbstractPane;
     this.__extends();
 	
 	var _defaultLinkStyle = null;
@@ -2760,4 +2735,7 @@ function AbstractTreePane() {
 		_this.props.panes = new Array();
 	}
 	construct();
-}
+});
+
+window.dp = dp;
+}).call(function(){});
