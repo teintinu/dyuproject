@@ -179,7 +179,7 @@ var Utils = {
     newXHR: function() {
         return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'); 
     },
-    counter: 0,
+    _script_counter: 0,
     findParentByNodeName: function(el, nodeName) {
         return el.nodeName == nodeName ? el : el.parentNode ? Utils.findParentByNodeName(el.parentNode, nodeName) : null;
     },
@@ -202,7 +202,7 @@ var Utils = {
 };
 
 var History = {
-    handlers: new Array,
+    handlers: new Array(),
     currentToken: window.location.hash,
     loopKey: null,
     back: function() {
@@ -735,7 +735,7 @@ function ScriptRequest() {
     this.__extends();
         
     var _scriptDiv = null;    
-    var _name = ['scr',Utils.counter++].join('');
+    var _name = ['scr',Utils._script_counter++].join('');
     var _handlers = new Array();    
     
     this.handle = function(msgs) {        
