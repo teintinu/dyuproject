@@ -20,7 +20,10 @@ var dp = {
 			return _dp_context;
 		},
 		addBaseClass: function(simpleName, clazz) {
-			window[simpleName] = dp[simpleName] = clazz;
+			dp[simpleName] = clazz;
+		},
+		addSingleton: function(simpleName, clazz) {			
+			dp[simpleName] = typeof clazz=='function' ? new clazz() : clazz;
 		}
 	}
 };
@@ -192,7 +195,7 @@ var Utils = {
     newXHR: function() {
         return window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'); 
     },
-    counter: 0,
+    _script_counter: 0,
     findParentByNodeName: function(el, nodeName) {
         return el.nodeName == nodeName ? el : el.parentNode ? Utils.findParentByNodeName(el.parentNode, nodeName) : null;
     },
@@ -213,10 +216,10 @@ var Utils = {
 		document.cookie = [name,'=',value,'; expires=', expires].join('');
 	}
 };
-dp.Loader.addBaseClass('Utils', Utils);
+dp.Loader.addSingleton('Utils', Utils);
 
 var History = {
-    handlers: new Array,
+    handlers: new Array(),
     currentToken: window.location.hash,
     loopKey: null,
     back: function() {
@@ -263,7 +266,7 @@ var History = {
     }
 }
 Utils.addOnLoad(History.start);
-dp.Loader.addBaseClass('History', History);
+dp.Loader.addSingleton('History', History);
 
 
 /* ==================================== IE/OPERA support ==================================== */
@@ -647,7 +650,7 @@ dp.Loader.addBaseClass('RequestPool', function (size) {
     }
     
     this.addNew = function() {
-        _requests.push(new PooledRequest(_this));
+        _requests.push(new dp.PooledRequest(_this));
     }
     
     this.send = function(url, params, handler) {
@@ -673,7 +676,7 @@ dp.Loader.addBaseClass('RequestPool', function (size) {
     function construct(size) {
         var len = size ? size : 4;
         for(var i=0; i<len; i++)
-            _requests.push(new PooledRequest(_this));
+            _requests.push(new dp.PooledRequest(_this));
     }    
     
     construct(size);
@@ -726,7 +729,7 @@ dp.Loader.addBaseClass('ScriptRequest', function () {
     this.__extends();
         
     var _scriptDiv = null;    
-    var _name = ['scr',Utils.counter++].join('');
+    var _name = ['scr',Utils._script_counter++].join('');
     var _handlers = new Array();    
     
     this.handle = function(msgs) {        
@@ -865,14 +868,14 @@ dp.Loader.addBaseClass('CometdClient', function (u, obj, type) {
     function construct(u, obj, type) {
         if(type) {
             if(type == 'iframe')
-                _request = new IFrameRequest();
+                _request = new dp.IFrameRequest();
             else if(type == 'script')
-                _request = new ScriptRequest();//only works on Firefox
+                _request = new dp.ScriptRequest();//only works on Firefox
             else if(type == 'xhr')
-                _request = new RequestPool(5);            
+                _request = new dp.RequestPool(5);            
         }    
         if(!_request)
-            _request = new RequestPool(5);               
+            _request = new dp.RequestPool(5);               
     }
     
     construct(u, obj, type);
@@ -895,8 +898,8 @@ var DragUtil = {
 		var idx = top.indexOf('px');
 		return idx==-1 ? 0 : parseInt(top.substring(0, idx));
 	},
-	_draggables: new HashMap(),
-	_dropabbles: new HashMap(),
+	_draggables: new dp.HashMap(),
+	_dropabbles: new dp.HashMap(),
 	addDrag: function(el, drag) {
 		DragUtil._draggables.put(el, drag);
 	},
@@ -915,7 +918,7 @@ var DragUtil = {
 		}
 	}
 };
-dp.Loader.addBaseClass('DragUtil', DragUtil);
+dp.Loader.addSingleton('DragUtil', DragUtil);
 
 dp.Loader.addBaseClass('Draggable', function (el, controlEl) {
     var _this = this;
@@ -1573,7 +1576,7 @@ var WidgetFactory = {
         if(Utils.isNode(nodeName)) {
             if(innerHTML)
                 nodeName.innerHTML = innerHTML;
-            return new SimpleWidget(nodeName, className);
+            return new dp.SimpleWidget(nodeName, className);
         }                
         return null;
     },
@@ -1584,10 +1587,10 @@ var WidgetFactory = {
     },
     createById: function(id) {
         var node = document.getElementById(id);
-        return Utils.isNode(node) ? (Utils.isWidget(node.__wrapper) ? node.__wrapper : new SimpleWidget(node)) : null;
+        return Utils.isNode(node) ? (Utils.isWidget(node.__wrapper) ? node.__wrapper : new dp.SimpleWidget(node)) : null;
     }    
 };
-dp.Loader.addBaseClass('WidgetFactory', WidgetFactory);
+dp.Loader.addSingleton('WidgetFactory', WidgetFactory);
 
 dp.Loader.addBaseClass('SimpleWidget', function (el, className) {
     var _this = this;
@@ -1601,19 +1604,19 @@ dp.Loader.addBaseClass('SimpleWidget', function (el, className) {
 
     this.setAttribute = function(name, value) {
 		if(!_attributes)
-			_attributes = new HashMap();
+			_attributes = new dp.HashMap();
         _attributes.put(name, value);
     }
     
     this.getAttribute = function(name) {
 		if(!_attributes)
-			_attributes = new HashMap();
+			_attributes = new dp.HashMap();
         return _attributes.get(name);
     }
     
     this.removeAttribute = function(name) {
 		if(!_attributes)
-			_attributes = new HashMap();	
+			_attributes = new dp.HashMap();	
         return _attributes.remove(name);
     }
 
@@ -1650,7 +1653,7 @@ dp.Loader.addBaseClass('SimpleWidget', function (el, className) {
         if(Utils.isString(p)) 
             p = document.getElementById(p);                    
         if(Utils.isNode(p)) {                                
-            _parent = p.__wrapper ? p.__wrapper : new SimpleWidget(p);
+            _parent = p.__wrapper ? p.__wrapper : new dp.SimpleWidget(p);
             _parent._a_appendChildElement(_element);
             _this._a_onAttach();
         }            
@@ -1817,7 +1820,7 @@ dp.Loader.addBaseClass('AbstractContainerWidget', function () {
     this.__extends = dp.SimpleWidget;
     this.__extends(); 
     
-    var _children = new ArrayList();
+    var _children = new dp.ArrayList();
     
     this.getChildren = function() {
         return _children;
@@ -2004,7 +2007,7 @@ dp.Loader.addBaseClass('AbstractCellPanel', function () {
     }
     
     this._a_filterAddCandidate = function(child) {
-        var wrapper = new SimpleWidget(document.createElement('td'));
+        var wrapper = new dp.SimpleWidget(document.createElement('td'));
         wrapper.setElementProperty('align', _hAlign['left']);
         Utils.applyStyle(wrapper.getElement(), _vAlign['top']);
         child.setParent(wrapper);
@@ -2176,7 +2179,7 @@ dp.Loader.addBaseClass('AbstractListPanel', function () {
     this.__extends();
     
     this._a_filterAddCandidate = function(child) {
-        var li = new SimpleWidget(document.createElement('li'));
+        var li = new dp.SimpleWidget(document.createElement('li'));
         child.setParent(li);
         return li;
     }
@@ -2607,7 +2610,7 @@ dp.Loader.addBaseClass('AbstractTreePane', function () {
     this.__extends();
 	
 	var _defaultLinkStyle = null;
-	var _paneMap = new IndexedMap();
+	var _paneMap = new dp.IndexedMap();
 	var _expanded = true;
 	var _indented = true;
 	
@@ -2664,12 +2667,12 @@ dp.Loader.addBaseClass('AbstractTreePane', function () {
 	}
 	
 	this.newPane = function(className) {
-		return new FlowPanel(className);
+		return new dp.FlowPanel(className);
 	}
 	
 	this.newEntryPane = function(title, p, styles) {				
-		return styles ? _this.addEntry(WidgetFactory.create('a', title, styles.k), new FlowPanel(styles.v), p) : 
-			_this.addEntry(title, new FlowPanel(), p);
+		return styles ? _this.addEntry(WidgetFactory.create('a', title, styles.k), new dp.FlowPanel(styles.v), p) : 
+			_this.addEntry(title, new dp.FlowPanel(), p);
 	}
 	
 	this.addTreePane = function(pane) {
@@ -2687,7 +2690,7 @@ dp.Loader.addBaseClass('AbstractTreePane', function () {
 		link.addEventHandler('onclick', function(e){
 			pane.toggle();
 		});
-		parent.addChild(new SimplePanel(link));
+		parent.addChild(new dp.SimplePanel(link));
 		parent.addChild(pane);
 		if(pane.getDepth) {			
 			pane.setParentPane(parent);
@@ -2737,5 +2740,10 @@ dp.Loader.addBaseClass('AbstractTreePane', function () {
 	construct();
 });
 
+/* ============================================================================================================== */
+
+for(var i in dp)
+	window[i] = dp[i];
 window.dp = dp;
+
 }).call(function(){});
