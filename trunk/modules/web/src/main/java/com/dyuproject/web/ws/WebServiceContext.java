@@ -92,6 +92,12 @@ public class WebServiceContext
         return _servletContext;
     }
     
+    public void setHandlers(List<WebServiceHandler> handlers)
+    {
+        for(WebServiceHandler handler : handlers)
+            _handlers.put(handler.getName(), handler);
+    }
+    
     public WebServiceContext addHandler(WebServiceHandler handler)
     {
         _handlers.put(handler.getName(), handler);

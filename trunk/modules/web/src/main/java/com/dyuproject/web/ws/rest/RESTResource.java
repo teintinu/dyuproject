@@ -73,6 +73,26 @@ public class RESTResource implements WebServiceHandler
         setHandler(handler);
     }
     
+    public RESTResource(String name, Handler handler, AbstractRESTVerbHandler[] verbHandlers)
+    {
+        this(name, handler);
+        for(AbstractRESTVerbHandler vh : verbHandlers)
+            addVerbHandler(vh);
+    }
+    
+    public RESTResource(String name, Handler handler, RESTResource[] children)
+    {
+        this(name, handler);
+        for(RESTResource r : children)
+            addResource(r);
+    }
+    
+    public RESTResource(String name, Handler handler, RESTResource parent)
+    {
+        this(name, handler);
+        parent.addResource(this);
+    }
+    
     public String getName()
     {
         return _name;
