@@ -34,11 +34,16 @@ public class WebServiceContext
     private ServletContext _servletContext;
     private WebServiceFilter _filter;
     private Map<String,WebServiceHandler> _handlers = new HashMap<String,WebServiceHandler>();
+    private Map<String,Generator> _generators = new HashMap<String,Generator>();
     private List<WebServiceProvider> _providers = new ArrayList<WebServiceProvider>();
+    
+    private Generator _defaultGenerator;
     private boolean _allowMethodOverride = false;
     
     public final void init() throws ServletException
     {
+        if(_defaultGenerator==null)
+            throw new ServletException("defaultGenerator not set.");
         for(WebServiceProvider wsp : _providers)
             wsp.init(this);
         for(WebServiceHandler wsh : _handlers.values())
@@ -107,6 +112,51 @@ public class WebServiceContext
     public WebServiceHandler getHandler(String name)
     {
         return _handlers.get(name);
+    }
+    
+    public void setGenerators(List<Generator> generators)
+    {
+        for(Generator generator : generators)
+            _generators.put(generator.getFormat(), generator);
+    }
+    
+    public WebServiceContext addGenerator(Generator generator)
+    {
+        _generators.put(generator.getFormat(), generator);
+        return this;
+    }
+    
+    public Generator getGenerator(String format)
+    {
+        return _generators.get(format);
+    }
+    
+    public void setDefaultGeneratorClassName(String defaultGeneratorClassName)
+    {
+        try
+        {
+            Class clazz = getClass().getClassLoader().loadClass(defaultGeneratorClassName);
+            _defaultGenerator = (Generator)clazz.newInstance();
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }        
+    }
+    
+    public void setDefaultGenerator(Generator defaultGenerator)
+    {
+        _defaultGenerator = defaultGenerator;
+    }
+    
+    public Generator getDefaultGenerator()
+    {
+        return _defaultGenerator;
+    }
+    
+    public boolean isFormatSupported(String format)
+    {
+        return _generators.containsKey(format);
     }
     
 }

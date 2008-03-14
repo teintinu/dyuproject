@@ -14,8 +14,9 @@
 
 package com.dyuproject.web.cometd;
 
-import com.dyuproject.util.FormatConverter;
-import com.dyuproject.util.FormatConverter.Builder;
+import com.dyuproject.util.format.FormatConverter;
+import com.dyuproject.util.format.FormatConverter.Builder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
