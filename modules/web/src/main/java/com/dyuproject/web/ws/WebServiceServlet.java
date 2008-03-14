@@ -39,6 +39,7 @@ public class WebServiceServlet extends HttpServlet
     
     protected WebServiceContext _context;
     protected String _cookiePath;
+    protected FormatConverter _defaultFormatConverter;
 
     public void init() throws ServletException
     {
@@ -64,6 +65,9 @@ public class WebServiceServlet extends HttpServlet
                 throw new ServletException(e);
             }
         }
+        String defaultFormat = getInitParameter("defaultFormat");
+        _defaultFormatConverter = defaultFormat==null ? FormatConverter.getDefault() : 
+            FormatConverter.getConverter(defaultFormat);
         _context.setServletContext(getServletContext());
         _context.init();
     }

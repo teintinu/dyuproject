@@ -53,9 +53,13 @@ public abstract class FormatConverter
     }
     
     public static FormatConverter getConverter(String format)
-    {       
-        FormatConverter fc = __converters.get(format);
-        return fc!=null ? fc : JSONConverter.getInstance();
+    {        
+        return __converters.get(format);
+    }
+    
+    public static FormatConverter getDefault()
+    {
+        return JSONConverter.getInstance();
     }
     
     protected static Map<String, Method> getMethods(Class beanClass) 

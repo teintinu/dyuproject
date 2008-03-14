@@ -15,12 +15,6 @@
   <build>    
 	<defaultGoal>install</defaultGoal> 	
   </build>
-
-  <properties> 	
-	<jetty-version>6.1.7</jetty-version>
-	<servlet-api-version>2.5</servlet-api-version>
-	<cometd-api-version>0.9.20071105</cometd-api-version>
-  </properties>
   
   <dependencies>
     <dependency>
