@@ -93,6 +93,8 @@ public class RPCService implements WebService
             return NoSuchMethod.getInstance(); 
         String method = methodParam.substring(idx+1);
         String[] pathInfo = new String[]{name,method};
+        request.setAttribute("format", params.get("format"));
+        
         Object result = null;
         WebServiceFilter filter = context.getFilter();
         try

@@ -14,8 +14,8 @@
 
 package com.dyuproject.web.ws;
 
-import com.dyuproject.util.FormatConverter;
-import com.dyuproject.util.FormatConverter.Builder;
+import com.dyuproject.util.format.FormatConverter;
+import com.dyuproject.util.format.FormatConverter.Builder;
 
 /**
  * @author David Yu

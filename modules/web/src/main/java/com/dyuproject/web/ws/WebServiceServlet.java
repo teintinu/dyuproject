@@ -17,7 +17,6 @@ package com.dyuproject.web.ws;
 import java.io.IOException;
 import java.util.Map;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +25,6 @@ import com.dyuproject.web.RequestUtil;
 import com.dyuproject.web.ws.rest.RESTService;
 import com.dyuproject.web.ws.rpc.RPCService;
 import com.dyuproject.util.Delim;
-import com.dyuproject.util.FormatConverter;
 
 /**
  * @author David Yu
@@ -39,7 +37,6 @@ public class WebServiceServlet extends HttpServlet
     
     protected WebServiceContext _context;
     protected String _cookiePath;
-    protected FormatConverter _defaultFormatConverter;
 
     public void init() throws ServletException
     {
@@ -65,9 +62,6 @@ public class WebServiceServlet extends HttpServlet
                 throw new ServletException(e);
             }
         }
-        String defaultFormat = getInitParameter("defaultFormat");
-        _defaultFormatConverter = defaultFormat==null ? FormatConverter.getDefault() : 
-            FormatConverter.getConverter(defaultFormat);
         _context.setServletContext(getServletContext());
         _context.init();
     }
@@ -119,16 +113,18 @@ public class WebServiceServlet extends HttpServlet
             //e.printStackTrace();
             resource = new ExceptionWrapper(e);
         }
-        writeResponse(response, resource, params);
+        generateResponse(response, resource, (String)request.getAttribute("format"), 
+                (String[])request.getAttribute("pathInfo"), params);
     }
     
-    protected void writeResponse(HttpServletResponse response, Object resource, 
-            Map<String, String> params) throws ServletException, IOException
+    protected void generateResponse(HttpServletResponse response, Object resource, String format,
+            String[] pathInfo, Map<String, String> params) throws ServletException, IOException
     {
-        FormatConverter converter = FormatConverter.getConverter(params.get("format"));
-        response.setContentType(converter.getContentType());
-        ServletOutputStream out = response.getOutputStream();
-        out.write(converter.toString(resource, params.get("callback")).getBytes());
+        Generator generator = _context.getGenerator(format);
+        if(generator==null)
+            _context.getDefaultGenerator().generateResponse(response, resource, pathInfo, params);
+        else
+            _context.getGenerator(format).generateResponse(response, resource, pathInfo, params);
     }
     
 }
