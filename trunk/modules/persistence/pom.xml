@@ -15,11 +15,6 @@
   <build>    
     <defaultGoal>install</defaultGoal>    
   </build>
-
-  <properties>  	
-	<hibernate-version>3.2.1.ga</hibernate-version>
-	<spring-version>2.0.6</spring-version>
-  </properties>
   
   <dependencies>
     <dependency>

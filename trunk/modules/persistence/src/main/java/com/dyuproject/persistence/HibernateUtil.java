@@ -57,51 +57,13 @@ public abstract class HibernateUtil
 		session.getTransaction().rollback();		
 	}
 	
-	public static void save(Session session, Object obj)
-	{
-	    try 
-	    {	            
-	        session.beginTransaction();
-	        session.save(obj);
-	        flushAndCommit(session);
-	    }
-	    catch(HibernateException he) 
-	    {
-	        rollback(session);
-	        throw he;
-	    }
-	    finally 
-	    {
-	        session.close();
-	    }
-	}
-	
-	public static void save(Session session, Object[] beans)
-	{
+    public static Object load(Session session, Class clazz, long id)
+    {
+        Object result = null;
         try 
-        {            
+        {               
             session.beginTransaction();
-            for(int i=0; i<beans.length; i++) 
-                session.save(beans[i]);  
-            flushAndCommit(session);
-        }
-        catch(HibernateException he) 
-        {           
-            rollback(session);          
-            throw he;
-        }
-        finally 
-        {
-            session.close();
-        }	    
-	}
-	
-    public static void delete(Session session, Object obj) 
-    {        
-        try 
-        {            
-            session.beginTransaction();
-            session.delete(obj);
+            result = session.load(clazz, id);
             flushAndCommit(session);
         }
         catch(HibernateException he) 
@@ -113,7 +75,125 @@ public abstract class HibernateUtil
         {
             session.close();
         }
-    }	
+        return result;
+    }
+    
+    public static boolean update(Session session, Object obj)
+    {
+        boolean updated = true;
+        try 
+        {               
+            session.beginTransaction();
+            session.update(obj);
+            flushAndCommit(session);
+        }
+        catch(HibernateException he) 
+        {
+            updated = false;
+            rollback(session);
+            throw he;
+        }
+        finally 
+        {
+            session.close();
+        }
+        return updated;
+    }
+	
+	public static boolean save(Session session, Object obj)
+	{
+	    boolean saved = true;
+	    try 
+	    {	            
+	        session.beginTransaction();
+	        session.save(obj);
+	        flushAndCommit(session);
+	    }
+	    catch(HibernateException he) 
+	    {
+	        saved = false;
+	        rollback(session);
+	        throw he;
+	    }
+	    finally 
+	    {
+	        session.close();
+	    }
+	    return saved;
+	}
+	
+	public static boolean save(Session session, Object[] beans)
+	{
+	    boolean saved = true;
+        try 
+        {            
+            session.beginTransaction();
+            for(int i=0; i<beans.length; i++) 
+                session.save(beans[i]);  
+            flushAndCommit(session);
+        }
+        catch(HibernateException he) 
+        {
+            saved = false;
+            rollback(session);          
+            throw he;
+        }
+        finally 
+        {
+            session.close();
+        }
+        return saved;
+	}
+	
+    public static boolean delete(Session session, Object obj) 
+    {
+        boolean deleted = true;
+        try 
+        {            
+            session.beginTransaction();
+            session.delete(obj);
+            flushAndCommit(session);
+        }
+        catch(HibernateException he) 
+        {
+            deleted = false;
+            rollback(session);
+            throw he;
+        }
+        finally 
+        {
+            session.close();
+        }
+        return deleted;
+    }
+    
+    public static List executeQuery(Session session, String queryStr, Object[] values)
+    throws Exception
+    {
+        List results = null;
+        try 
+        {       
+            session.beginTransaction();
+            Query query = session.createQuery(queryStr);
+            if(values!=null) 
+            {
+                for(int i=0; i<values.length; i++)
+                    query.setParameter(i, values[i]);
+            }
+            results = query.list();
+            flushAndCommit(session);
+        }
+        catch(HibernateException he) 
+        {
+            rollback(session);
+            throw he;
+        }
+        finally 
+        {
+            session.close();
+        }
+        return results; 
+    }
 	
 	public static List executeNamedQuery(Session session, String namedQuery, Object[] values) 
 	throws Exception 
@@ -261,6 +341,34 @@ public abstract class HibernateUtil
 		}
 		return results;
 	}
+	
+    public static int executeUpdateQuery(Session session, String queryStr, 
+            Object[] values) throws Exception 
+    {
+        int results = 0;
+        try 
+        {       
+            session.beginTransaction();
+            Query query = session.createQuery(queryStr);
+            if(values!=null) 
+            {
+                for(int i=0; i<values.length; i++)
+                    query.setParameter(i, values[i]);
+            }
+            results = query.executeUpdate();
+            flushAndCommit(session);
+        }
+        catch(HibernateException he) 
+        {
+            rollback(session);
+            throw he;
+        }
+        finally 
+        {
+            session.close();
+        }
+        return results;     
+    }
 	
 	public static int executeNamedUpdateQuery(Session session, String namedQuery, 
 			Object value) throws Exception 

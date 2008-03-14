@@ -53,9 +53,19 @@ public class RESTService implements WebService
             pathInfo = pathInfo.substring(1, last);
         else
             pathInfo = pathInfo.substring(1);
+        params.put("pathInfo", pathInfo);
         String[] tokens = Delim.SLASH.split(pathInfo);
         if(tokens.length==0)
             return ResourceUnavailable.getInstance();
+        
+        // .json, .xml, .rss, or .atom
+        String lastToken = tokens[tokens.length-1];
+        int formatIdx = lastToken.lastIndexOf('.');
+        if(formatIdx!=-1)
+        {
+            params.put("format", lastToken.substring(formatIdx));
+            tokens[tokens.length-1] = lastToken.substring(0, formatIdx);
+        }
         String root = tokens[0];
         WebServiceHandler handler = context.getHandler(root);
         if(handler==null)
