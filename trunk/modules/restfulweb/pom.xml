@@ -14,7 +14,11 @@
   
   <build>    
 	<defaultGoal>install</defaultGoal> 	
-  </build> 
+  </build>
+  
+  <properties>
+    <velocity-version>1.5</velocity-version>    
+  </properties>  
   
   <dependencies> 
     <dependency>
@@ -44,7 +48,13 @@
       <artifactId>servlet-api-2.5</artifactId>
       <version>${jetty-version}</version>
       <scope>provided</scope>
-    </dependency>        
+    </dependency>
+    <dependency>
+      <groupId>velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>${velocity-version}</version>
+      <optional>true</optional>       
+    </dependency>            
   </dependencies>
   
 </project>

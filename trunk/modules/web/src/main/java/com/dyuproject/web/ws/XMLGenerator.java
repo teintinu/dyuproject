@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.util.format.FormatConverter;
@@ -31,23 +32,23 @@ import com.dyuproject.util.format.XMLConverter;
 public class XMLGenerator implements Generator
 {
     
-    public void init()
+    public void init(WebServiceContext context)
     {        
         
-    }
-
-    public void generateResponse(HttpServletResponse response, Object bean,
-            String[] pathInfo, Map<String, String> params) throws IOException
-    {
-        FormatConverter converter = XMLConverter.getInstance();
-        response.setContentType(converter.getContentType());
-        ServletOutputStream out = response.getOutputStream();
-        out.write(converter.toString(bean, params.get("callback")).getBytes());        
     }
 
     public String getFormat()
     {        
         return FormatConverter.XML;
+    }
+
+    public void generateResponse(HttpServletRequest request, HttpServletResponse response, 
+            Object resource, Map<String, String> params) throws IOException
+    {
+        FormatConverter converter = XMLConverter.getInstance();
+        response.setContentType(converter.getContentType());
+        ServletOutputStream out = response.getOutputStream();
+        out.write(converter.toString(resource, params.get("callback")).getBytes());        
     }
     
 }

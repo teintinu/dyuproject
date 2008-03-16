@@ -33,11 +33,17 @@ import com.dyuproject.web.ws.error.ResourceUnavailable;
 public class RESTService implements WebService
 {
     
+    public static final String NUMBER_REGEX  = "^\\d*$";
     private static final RESTService __instance = new RESTService();
     
     public static RESTService getInstance()
     {
         return __instance;
+    }
+    
+    static boolean isNumber(String str)
+    {
+        return str.matches(NUMBER_REGEX);
     }
     
     private RESTService()
@@ -60,17 +66,24 @@ public class RESTService implements WebService
             return ResourceUnavailable.getInstance();
         
         // .json, .xml, .rss, or .atom
-        String lastToken = tokens[tokens.length-1];        
+        String lastToken = tokens[tokens.length-1];
+        String format = context.getDefaultGenerator().getFormat();
         int formatIdx = lastToken.lastIndexOf('.');
         if(formatIdx!=-1)
         {            
-            tokens[tokens.length-1] = lastToken.substring(0, formatIdx);
-            pathInfo = pathInfo.substring(0, pathInfo.length()-lastToken.length()+formatIdx);                    
-            request.setAttribute("format", lastToken.substring(formatIdx+1));
+            tokens[tokens.length-1] = lastToken.substring(0, formatIdx);            
+            pathInfo = pathInfo.substring(0, pathInfo.length()-lastToken.length()+formatIdx);
+            format = lastToken.substring(formatIdx+1);
+            lastToken = tokens[tokens.length-1];            
         }
+        if(lastToken.length()==0)
+            return ResourceUnavailable.getInstance();
         
+        params.put("format", format);
+        request.setAttribute("restPath", isNumber(lastToken) ? pathInfo.substring(0, 
+                pathInfo.lastIndexOf('/')+1).concat("id.").concat(format) : pathInfo);
         request.setAttribute("pathInfo", tokens);
-        params.put("pathInfo", pathInfo);
+        //params.put("pathInfo", pathInfo);
 
         String root = tokens[0];
         WebServiceHandler handler = context.getHandler(root);

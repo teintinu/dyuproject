@@ -16,9 +16,12 @@ package com.dyuproject.web.ws.rpc;
 
 import java.util.ArrayList;
 import java.util.Map;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+
 import com.dyuproject.util.Delim;
+import com.dyuproject.util.format.FormatConverter;
 import com.dyuproject.web.ws.WebService;
 import com.dyuproject.web.ws.WebServiceContext;
 import com.dyuproject.web.ws.WebServiceFilter;
@@ -26,6 +29,7 @@ import com.dyuproject.web.ws.WebServiceHandler;
 import com.dyuproject.web.ws.error.AccessDenied;
 import com.dyuproject.web.ws.error.NoSuchMethod;
 import com.dyuproject.web.ws.error.ParameterRequired;
+import com.dyuproject.web.ws.error.ResourceUnavailable;
 
 /**
  * @author David Yu
@@ -93,7 +97,15 @@ public class RPCService implements WebService
             return NoSuchMethod.getInstance(); 
         String method = methodParam.substring(idx+1);
         String[] pathInfo = new String[]{name,method};
-        request.setAttribute("format", params.get("format"));
+        String format = params.get("format");
+        if(format!=null)
+        {
+            if(format.hashCode()!=FormatConverter.JSON.hashCode() && 
+                    format.hashCode()!=FormatConverter.XML.hashCode())
+            {
+                return ResourceUnavailable.getInstance();
+            }
+        }        
         
         Object result = null;
         WebServiceFilter filter = context.getFilter();

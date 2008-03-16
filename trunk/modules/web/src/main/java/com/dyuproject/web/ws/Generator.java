@@ -17,6 +17,7 @@ package com.dyuproject.web.ws;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -27,10 +28,10 @@ import javax.servlet.http.HttpServletResponse;
 public interface Generator
 {
     
-    public void init();
+    public void init(WebServiceContext context);
     
-    public void generateResponse(HttpServletResponse response, Object bean, String[] pathInfo, 
-            Map<String,String> params) throws IOException;
+    public void generateResponse(HttpServletRequest request, HttpServletResponse response, 
+            Object resource, Map<String,String> params) throws IOException;
     
     public String getFormat();
     
