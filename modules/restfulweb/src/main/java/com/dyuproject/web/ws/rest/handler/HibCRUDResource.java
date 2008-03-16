@@ -18,12 +18,13 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import com.dyuproject.persistence.AbstractHibDao;
 import com.dyuproject.persistence.HibernateUtil;
-import com.dyuproject.util.reflect.ParameterType;
 import com.dyuproject.util.reflect.ParameterMappedBean;
+import com.dyuproject.util.reflect.ParameterType;
 import com.dyuproject.util.reflect.ReflectUtil;
 import com.dyuproject.web.ws.WebServiceException;
 import com.dyuproject.web.ws.WebServiceHandler;
 import com.dyuproject.web.ws.error.ResourceUnavailable;
+import com.dyuproject.web.ws.rest.AbstractRESTVerbHandler;
 import com.dyuproject.web.ws.rest.RESTResource;
 
 /**
@@ -35,7 +36,7 @@ public class HibCRUDResource extends AbstractHibDao implements RESTResource.Hand
 {
     
     private Class _entityClass;
-    private RESTResource _resource;
+    private RESTResource _resource = new RESTResource(null, this);
     private String _name;
     private boolean _plural = true;
     private String _get, _getByIdAndParentId, _getByParentId, _deleteQuery;
@@ -95,7 +96,7 @@ public class HibCRUDResource extends AbstractHibDao implements RESTResource.Hand
         _get = "from ".concat(_entityClass.getSimpleName());
         _deleteQuery = "delete from ".concat(_entityClass.getSimpleName()).concat(" c where c.")
             .concat(_entityId).concat(" = ?");
-        _resource = new RESTResource(_name, this);        
+        _resource.setName(_name);
         _resource.init();
     }
     
@@ -270,10 +271,41 @@ public class HibCRUDResource extends AbstractHibDao implements RESTResource.Hand
         return _name;
     }
 
-    public final Object handle(String[] arg0, Map<String, String> arg1)
+    public final Object handle(String[] pathInfo, Map<String, String> params)
             throws WebServiceException, Exception
     {        
-        return _resource.handle(arg0, arg1);
+        return _resource.handle(pathInfo, params);
+    }
+    
+    public void setChildren(HibCRUDResource[] resources)
+    {
+        for(HibCRUDResource resource : resources)
+            _resource.addResource(resource._resource);
+    }
+    
+    public void addChild(HibCRUDResource resource)
+    {
+        _resource.addResource(resource._resource);
+    }
+    
+    public void setResources(RESTResource[] resources)
+    {
+        _resource.setResources(resources);
+    }
+    
+    public void addResource(RESTResource resource)
+    {
+        _resource.addResource(resource);
+    }
+    
+    public void setVerbHandlers(AbstractRESTVerbHandler[] handlers)
+    {
+        _resource.setVerbHandlers(handlers);
+    }
+    
+    public void addVerbHandler(AbstractRESTVerbHandler handler)
+    {
+        _resource.addVerbHandler(handler);
     }
 
 }

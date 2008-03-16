@@ -93,6 +93,12 @@ public class RESTResource implements WebServiceHandler
         parent.addResource(this);
     }
     
+    public void setName(String name)
+    {
+        if(_name==null)
+            _name = name;
+    }
+    
     public String getName()
     {
         return _name;
@@ -137,12 +143,35 @@ public class RESTResource implements WebServiceHandler
         return _handler;
     }
     
+    public void setResources(RESTResource[] resources)
+    {
+        if(_initialized)
+            return;
+        for(RESTResource resource : resources)
+        {
+            _resources.put(resource.getName(), resource);
+            resource.setDepth(_depth+1);
+        }
+    }
+    
     public void addResource(RESTResource resource)
     {
         if(_initialized)
             return;
         _resources.put(resource.getName(), resource);
         resource.setDepth(_depth+1);
+    }
+    
+    public void setVerbHandlers(AbstractRESTVerbHandler[] handlers)
+    {
+        if(_initialized)
+            return;
+        for(AbstractRESTVerbHandler handler : handlers)
+        {
+            _verbs.put(handler.getName(), handler);
+            if(handler instanceof RESTVerbResource)
+                handler.setDepth(_depth+1);
+        }
     }
     
     public void addVerbHandler(AbstractRESTVerbHandler handler)

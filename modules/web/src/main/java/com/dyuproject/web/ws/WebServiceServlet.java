@@ -110,21 +110,21 @@ public class WebServiceServlet extends HttpServlet
         }
         catch(Exception e)
         {
-            //e.printStackTrace();
+            e.printStackTrace();
             resource = new ExceptionWrapper(e);
         }
-        generateResponse(response, resource, (String)request.getAttribute("format"), 
-                (String[])request.getAttribute("pathInfo"), params);
+        generateResponse(request, response, resource, params);
     }
     
-    protected void generateResponse(HttpServletResponse response, Object resource, String format,
-            String[] pathInfo, Map<String, String> params) throws ServletException, IOException
+    protected void generateResponse(HttpServletRequest request, HttpServletResponse response, 
+            Object resource, Map<String, String> params) throws IOException
     {
+        String format = params.get("format");
         Generator generator = _context.getGenerator(format);
         if(generator==null)
-            _context.getDefaultGenerator().generateResponse(response, resource, pathInfo, params);
+            _context.getDefaultGenerator().generateResponse(request, response, resource, params);
         else
-            _context.getGenerator(format).generateResponse(response, resource, pathInfo, params);
+            generator.generateResponse(request, response, resource, params);
     }
     
 }

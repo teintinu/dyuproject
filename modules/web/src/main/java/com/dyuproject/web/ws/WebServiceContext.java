@@ -48,6 +48,8 @@ public class WebServiceContext
             wsp.init(this);
         for(WebServiceHandler wsh : _handlers.values())
             wsh.init();
+        for(Generator g : _generators.values())
+            g.init(this);
     }
     
     public void setAllowMethodOverride(boolean allow)

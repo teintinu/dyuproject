@@ -152,7 +152,7 @@ public abstract class ResourceUtil
         {
             File f = files[i];
             if(f.isDirectory())
-                addFilesByExtension(list, dir, extensions);
+                addFilesByExtension(list, f, extensions);
             else
             {
                 for(String s : extensions)
