@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.web.RequestUtil;
+import com.dyuproject.web.ws.error.HttpError;
 import com.dyuproject.web.ws.rest.RESTService;
 import com.dyuproject.web.ws.rpc.RPCService;
 import com.dyuproject.util.Delim;
@@ -89,6 +90,11 @@ public class WebServiceServlet extends HttpServlet
         try
         {
             resource = handle(request, params);
+            if(resource instanceof HttpError)
+            {
+                response.sendError(((HttpError)resource).getStatusCode());
+                return;
+            }
             if(resource instanceof AuthToken)
             {
                 if(_cookiePath==null)
