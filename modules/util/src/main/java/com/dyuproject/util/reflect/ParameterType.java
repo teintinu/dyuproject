@@ -27,7 +27,7 @@ public abstract class ParameterType
         {
             return value;
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return String.class;
         }
@@ -38,7 +38,7 @@ public abstract class ParameterType
         {
             return new Boolean(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Boolean.class;
         }
@@ -49,7 +49,7 @@ public abstract class ParameterType
         {
             return Boolean.parseBoolean(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Boolean.TYPE;
         }
@@ -60,7 +60,7 @@ public abstract class ParameterType
         {
             return new Integer(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Integer.class;
         }
@@ -71,7 +71,7 @@ public abstract class ParameterType
         {
             return Integer.parseInt(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Integer.TYPE;
         }
@@ -82,7 +82,7 @@ public abstract class ParameterType
         {
             return new Long(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Long.class;
         }
@@ -93,7 +93,7 @@ public abstract class ParameterType
         {
             return Long.parseLong(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Long.TYPE;
         }
@@ -104,7 +104,7 @@ public abstract class ParameterType
         {
             return new Float(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Float.class;
         }
@@ -115,7 +115,7 @@ public abstract class ParameterType
         {
             return Float.parseFloat(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Float.TYPE;
         }
@@ -126,7 +126,7 @@ public abstract class ParameterType
         {
             return new Double(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Double.class;
         }
@@ -137,7 +137,7 @@ public abstract class ParameterType
         {
             return Double.parseDouble(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Double.TYPE;
         }
@@ -148,7 +148,7 @@ public abstract class ParameterType
         {
             return new Short(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Short.TYPE;
         }
@@ -159,7 +159,7 @@ public abstract class ParameterType
         {
             return Short.parseShort(value);
         }
-        public Class getTypeClass()
+        public Class<? extends Object> getTypeClass()
         {
             return Short.class;
         }
@@ -171,7 +171,7 @@ public abstract class ParameterType
     }
     
     public abstract Object create(String value);
-    public abstract Class getTypeClass();
+    public abstract Class<? extends Object> getTypeClass();
     
     public int hashCode()
     {
