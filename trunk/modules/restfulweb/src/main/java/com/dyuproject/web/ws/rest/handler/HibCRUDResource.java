@@ -16,15 +16,11 @@ package com.dyuproject.web.ws.rest.handler;
 
 import java.lang.reflect.Method;
 import java.util.Map;
-import com.dyuproject.persistence.AbstractHibDao;
 import com.dyuproject.persistence.HibernateUtil;
 import com.dyuproject.util.reflect.ParameterMappedBean;
 import com.dyuproject.util.reflect.ParameterType;
 import com.dyuproject.util.reflect.ReflectUtil;
-import com.dyuproject.web.ws.WebServiceException;
-import com.dyuproject.web.ws.WebServiceHandler;
 import com.dyuproject.web.ws.error.ResourceUnavailable;
-import com.dyuproject.web.ws.rest.AbstractRESTVerbHandler;
 import com.dyuproject.web.ws.rest.RESTResource;
 
 /**
@@ -32,18 +28,15 @@ import com.dyuproject.web.ws.rest.RESTResource;
  * @created Mar 14, 2008
  */
 
-public class HibCRUDResource extends AbstractHibDao implements RESTResource.Handler, WebServiceHandler
+public class HibCRUDResource extends AbstractHibResource implements RESTResource.Handler
 {
     
-    private Class _entityClass;
-    private RESTResource _resource = new RESTResource(null, this);
-    private String _name;
-    private boolean _plural = true;
+    private Class<? extends Object> _entityClass;
     private String _get, _getByIdAndParentId, _getByParentId, _deleteQuery;
     private String _entityId;
     private String _parentId;
     private String _parentProperty;
-    private Class _parentEntityClass;//parent = one , this = many one-to-many
+    private Class<? extends Object> _parentEntityClass;//parent = one , this = many one-to-many
     private Map<String, Method> _methodMap;
     private Method _entityMethod, _parentEntityMethod;
     private ParameterType _entityType, _parentEntityType;
@@ -96,22 +89,20 @@ public class HibCRUDResource extends AbstractHibDao implements RESTResource.Hand
         _get = "from ".concat(_entityClass.getSimpleName());
         _deleteQuery = "delete from ".concat(_entityClass.getSimpleName()).concat(" c where c.")
             .concat(_entityId).concat(" = ?");
-        _resource.setName(_name);
-        _resource.init();
+        setHandler(this);
+        super.init();
     }
     
     public void setEntityClassName(String entityClassName)
     {
         try
         {
-            _entityClass = getClass().getClassLoader().loadClass(entityClassName);
+            setEntityClass(getClass().getClassLoader().loadClass(entityClassName));            
         }
         catch(Exception e)
         {
             throw new RuntimeException(e);
         }
-        _name = _plural ? _entityClass.getSimpleName().toLowerCase().concat("s") :
-            _entityClass.getSimpleName().toLowerCase();
     }
     
     public void setParentEntityClassName(String parentEntityClassName)
@@ -126,16 +117,11 @@ public class HibCRUDResource extends AbstractHibDao implements RESTResource.Hand
         }
     }
     
-    public void setEntityClass(Class entityClass)
+    public void setEntityClass(Class<? extends Object> entityClass)
     {
         _entityClass = entityClass;
-    }
-    
-    public void setPlural(boolean plural)
-    {
-        _plural = plural;
-        if(!plural && _entityClass!=null)
-            _name = _entityClass.getSimpleName().toLowerCase();
+        if(getName()==null)
+            setName(_entityClass.getSimpleName().toLowerCase().concat("s"));            
     }
     
     public void setEntityId(String entityId)
@@ -264,48 +250,6 @@ public class HibCRUDResource extends AbstractHibDao implements RESTResource.Hand
                     String.valueOf(parentId))});
         } 
         return HibernateUtil.update(openSession(), bean) ? bean : null;
-    }
-
-    public String getName()
-    {        
-        return _name;
-    }
-
-    public final Object handle(String[] pathInfo, Map<String, String> params)
-            throws WebServiceException, Exception
-    {        
-        return _resource.handle(pathInfo, params);
-    }
-    
-    public void setChildren(HibCRUDResource[] resources)
-    {
-        for(HibCRUDResource resource : resources)
-            _resource.addResource(resource._resource);
-    }
-    
-    public void addChild(HibCRUDResource resource)
-    {
-        _resource.addResource(resource._resource);
-    }
-    
-    public void setResources(RESTResource[] resources)
-    {
-        _resource.setResources(resources);
-    }
-    
-    public void addResource(RESTResource resource)
-    {
-        _resource.addResource(resource);
-    }
-    
-    public void setVerbHandlers(AbstractRESTVerbHandler[] handlers)
-    {
-        _resource.setVerbHandlers(handlers);
-    }
-    
-    public void addVerbHandler(AbstractRESTVerbHandler handler)
-    {
-        _resource.addVerbHandler(handler);
     }
 
 }

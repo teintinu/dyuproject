@@ -49,6 +49,11 @@ public class RESTResource implements WebServiceHandler
     private Map<String,RESTResource> _resources = new HashMap<String,RESTResource>();
     private Map<String,AbstractRESTVerbHandler> _verbs = new HashMap<String,AbstractRESTVerbHandler>();
     
+    public RESTResource()
+    {
+        
+    }
+    
     public RESTResource(String name)
     {
         this(name, null);
