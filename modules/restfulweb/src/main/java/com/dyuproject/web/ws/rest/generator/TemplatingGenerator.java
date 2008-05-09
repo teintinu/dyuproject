@@ -16,7 +16,6 @@ package com.dyuproject.web.ws.rest.generator;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.web.ws.Generator;
 import com.dyuproject.web.ws.WebServiceContext;
+import com.dyuproject.web.ws.rest.RESTService;
 
 /**
  * @author David Yu
@@ -85,7 +85,8 @@ public class TemplatingGenerator implements Generator
     public void generateResponse(HttpServletRequest request, HttpServletResponse response, 
             Object resource, Map<String, String> params) throws IOException
     {        
-        _templateSource.writeTo(response, resource, (String)request.getAttribute("restPath"), params);        
+        _templateSource.writeTo(response, resource, 
+                (String)request.getAttribute(RESTService.TEMPLATE_PATH), params);        
     }
 
     public String getFormat()
