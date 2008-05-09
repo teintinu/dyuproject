@@ -188,18 +188,18 @@ public class RESTResource implements WebServiceHandler
             handler.setDepth(_depth+1);
     }
     
-    private Object handleGet(long parentId, String[] tokens, Map<String, String> params) 
+    private Object handleGet(String parentId, String[] tokens, Map<String, String> params) 
     throws WebServiceException, Exception
     {
         int sub = _depth * 2 + 1;
         if(tokens.length==sub)
-            return _handler.handleGet(-1, parentId);
+            return _handler.handleGet(null, parentId);
         String verbOrId = tokens[sub];
         if(tokens.length==sub+1)
         {            
             AbstractRESTVerbHandler vh = _verbs.get(verbOrId);
             if(vh==null)
-                return _handler.handleGet(Long.parseLong(verbOrId));
+                return _handler.handleGet(verbOrId);
             return vh._depth==0 ? vh.handle(tokens, params, parentId) : 
                 ResourceUnavailable.getInstance();
         }
@@ -209,10 +209,10 @@ public class RESTResource implements WebServiceHandler
             return vh.handle(tokens, params, parentId);
         RESTResource resource = _resources.get(subToken);
         return resource==null ? ResourceUnavailable.getInstance() : 
-            resource.handleGet(Long.parseLong(verbOrId), tokens, params);
+            resource.handleGet(verbOrId, tokens, params);
     }
     
-    private Object handlePost(long parentId, String[] tokens, Map<String, String> params) 
+    private Object handlePost(String parentId, String[] tokens, Map<String, String> params) 
     throws WebServiceException, Exception
     {
         int sub = _depth * 2 + 1;
@@ -231,29 +231,29 @@ public class RESTResource implements WebServiceHandler
             return vh.handle(tokens, params, parentId);
         RESTResource resource = _resources.get(subToken);
         return resource==null ? ResourceUnavailable.getInstance() : 
-            resource.handlePost(Long.parseLong(verbOrId), tokens, params);
+            resource.handlePost(verbOrId, tokens, params);
     }
     
-    private Object handlePut(long parentId, String[] tokens, Map<String, String> params)
+    private Object handlePut(String parentId, String[] tokens, Map<String, String> params)
     throws WebServiceException, Exception
     {
         int sub = _depth * 2 + 1;
         if(tokens.length==sub+1)
-            return _handler.handlePut(Long.parseLong(tokens[sub+1]), params, parentId);        
+            return _handler.handlePut(tokens[sub+1], params, parentId);        
         RESTResource resource = _resources.get(tokens[sub+2]);        
         return resource==null ? ResourceUnavailable.getInstance() : 
-            resource.handlePut(Long.parseLong(tokens[sub+1]), tokens, params);
+            resource.handlePut(tokens[sub+1], tokens, params);
     }
     
-    private Object handleDelete(long parentId, String[] tokens)
+    private Object handleDelete(String parentId, String[] tokens)
     throws WebServiceException, Exception
     {
         int sub = _depth * 2 + 1;
         if(tokens.length==sub+1)
-            return _handler.handleDelete(Long.parseLong(tokens[sub+1]), parentId);        
+            return _handler.handleDelete(tokens[sub+1], parentId);        
         RESTResource resource = _resources.get(tokens[sub+2]);        
         return resource==null ? ResourceUnavailable.getInstance() : 
-            resource.handleDelete(Long.parseLong(tokens[sub+1]), tokens);
+            resource.handleDelete(tokens[sub+1], tokens);
     }
 
     public Object handle(String[] tokens, Map<String, String> params) 
@@ -269,17 +269,17 @@ public class RESTResource implements WebServiceHandler
             {              
                 AbstractRESTVerbHandler vh = _verbs.get(verbOrId);
                 if(vh==null)
-                    return _handler.handleGet(Long.parseLong(verbOrId));
+                    return _handler.handleGet(verbOrId);
                 return vh._depth==0 ? vh.handle(tokens, params) : 
                     ResourceUnavailable.getInstance();
             }            
             String subToken = tokens[2];
             AbstractRESTVerbHandler vh = _verbs.get(subToken);
             if(vh!=null)
-                return vh.handle(tokens, params, Long.parseLong(verbOrId));
+                return vh.handle(tokens, params, verbOrId);
             RESTResource resource = _resources.get(subToken);
             return resource==null ? ResourceUnavailable.getInstance() : 
-                resource.handleGet(Long.parseLong(verbOrId), tokens, params);
+                resource.handleGet(verbOrId, tokens, params);
         }
         if(method==HttpMethod.Hash.POST)
         {
@@ -295,30 +295,30 @@ public class RESTResource implements WebServiceHandler
             String subToken = tokens[2];
             AbstractRESTVerbHandler vh = _verbs.get(subToken);
             if(vh!=null)
-                return vh.handle(tokens, params, Long.parseLong(verbOrId));
+                return vh.handle(tokens, params, verbOrId);
             RESTResource resource = _resources.get(subToken);
             return resource==null ? ResourceUnavailable.getInstance() : 
-                resource.handlePost(Long.parseLong(verbOrId), tokens, params);
+                resource.handlePost(verbOrId, tokens, params);
         }
         if(method==HttpMethod.Hash.PUT)
         {
             if(tokens.length%2!=0)
                 return IdentifierMissing.getInstance();
             if(tokens.length==2)
-                return _handler.handlePut(Long.parseLong(tokens[1]), params);            
+                return _handler.handlePut(tokens[1], params);            
             RESTResource resource = _resources.get(tokens[2]);
             return resource==null ? ResourceUnavailable.getInstance() : 
-                resource.handlePut(Long.parseLong(tokens[3]), tokens, params);
+                resource.handlePut(tokens[3], tokens, params);
         }
         if(method==HttpMethod.Hash.DELETE)
         {
             if(tokens.length%2!=0)
                 return IdentifierMissing.getInstance();
             if(tokens.length==2)
-                return _handler.handleDelete(Long.parseLong(tokens[1]));
+                return _handler.handleDelete(tokens[1]);
             RESTResource resource = _resources.get(tokens[2]);
             return resource==null ? ResourceUnavailable.getInstance() : 
-                resource.handleDelete(Long.parseLong(tokens[3]), tokens);
+                resource.handleDelete(tokens[3], tokens);
         }
         return NotSupported.getInstance();
     }    
@@ -326,17 +326,17 @@ public class RESTResource implements WebServiceHandler
     public interface Handler
     {
         public Object handlePost(Map<String, String> params) throws Exception;
-        public Object handlePost(Map<String, String> params, long parentId) throws Exception;
+        public Object handlePost(Map<String, String> params, String parentId) throws Exception;
         
         public Object handleGet() throws Exception;
-        public Object handleGet(long id) throws Exception;
-        public Object handleGet(long id, long parentId) throws Exception;
+        public Object handleGet(String id) throws Exception;
+        public Object handleGet(String id, String parentId) throws Exception;
         
-        public Object handlePut(long id, Map<String, String> params) throws Exception;
-        public Object handlePut(long id, Map<String, String> params, long parentId) throws Exception;
+        public Object handlePut(String id, Map<String, String> params) throws Exception;
+        public Object handlePut(String id, Map<String, String> params, String parentId) throws Exception;
         
-        public Object handleDelete(long id) throws Exception;
-        public Object handleDelete(long id, long parentId) throws Exception;
+        public Object handleDelete(String id) throws Exception;
+        public Object handleDelete(String id, String parentId) throws Exception;
     }
 
 }

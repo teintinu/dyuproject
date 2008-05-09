@@ -69,8 +69,13 @@ var Utils = {
             el.addEventListener(ev.substring(2), handler, false);
         else if(el.attachEvent)       
             el.attachEvent(ev, handler);
-        else 
-            el[ev] = handler;    
+        else {
+			var old_handler = el[ev];
+			el[ev] = function(e) {
+				old_handler(e);
+				handler(e);
+			}		   
+		}
     },
     addOnLoad: function(handler) {
         var old_onload = window.onload;
@@ -213,8 +218,7 @@ var History = {
         if(token!=History.currentToken)
             window.location.hash = token;         
     },
-    onHistoryChanged: function(token) {
-        History.currentToken = token;
+    onHistoryChanged: function(token) {        
         var h = History.handlers;
         for(var i in h)
             h[i](token);

@@ -84,7 +84,7 @@ public class RESTVerbResource extends AbstractRESTVerbHandler
                 ResourceUnavailable.getInstance();
     }
 
-    public Object handle(String[] tokens, Map<String, String> params, long parentId) 
+    public Object handle(String[] tokens, Map<String, String> params, String parentId) 
     throws Exception
     {
         int sub = _depth * 2 + 1;
