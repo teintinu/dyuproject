@@ -139,12 +139,12 @@ public class HibCRUDResource extends AbstractHibResource implements RESTResource
         _parentProperty = parentProperty;
     }
 
-    public Object handleDelete(long id) throws Exception
+    public Object handleDelete(String id) throws Exception
     {        
         return HibernateUtil.executeUpdateQuery(openSession(), _deleteQuery, new Object[]{id});
     }
 
-    public Object handleDelete(long id, long arg1) throws Exception
+    public Object handleDelete(String id, String arg1) throws Exception
     {        
         return handleDelete(id);
     }
@@ -154,16 +154,16 @@ public class HibCRUDResource extends AbstractHibResource implements RESTResource
         return HibernateUtil.executeQuery(openSession(), _get, null);
     }
 
-    public Object handleGet(long id) throws Exception
+    public Object handleGet(String id) throws Exception
     {        
-        return HibernateUtil.load(openSession(), _entityClass, id);
+        return HibernateUtil.load(openSession(), _entityClass, Long.valueOf(id));
     }
 
-    public Object handleGet(long id, long parentId) throws Exception
+    public Object handleGet(String id, String parentId) throws Exception
     {
         if(_parentEntityClass==null)
             return ResourceUnavailable.getInstance();
-        if(id==-1)
+        if(id==null)
         {
             return HibernateUtil.executeQuery(openSession(), _getByParentId, 
                     new Object[]{parentId});
@@ -182,7 +182,7 @@ public class HibCRUDResource extends AbstractHibResource implements RESTResource
         return HibernateUtil.save(openSession(), bean) ? bean : null;
     }
 
-    public Object handlePost(Map<String, String> params, long parentId) throws Exception
+    public Object handlePost(Map<String, String> params, String parentId) throws Exception
     {
         if(_parentEntityClass==null)
             return ResourceUnavailable.getInstance();
@@ -204,7 +204,7 @@ public class HibCRUDResource extends AbstractHibResource implements RESTResource
         return HibernateUtil.save(openSession(), bean) ? bean : null;
     }
 
-    public Object handlePut(long id, Map<String, String> params) throws Exception
+    public Object handlePut(String id, Map<String, String> params) throws Exception
     {
         Object bean = _entityClass.newInstance();
         if(_methodMap==null)
@@ -222,7 +222,7 @@ public class HibCRUDResource extends AbstractHibResource implements RESTResource
         return HibernateUtil.update(openSession(), bean) ? bean : null;
     }
 
-    public Object handlePut(long id, Map<String, String> params, long parentId) throws Exception
+    public Object handlePut(String id, Map<String, String> params, String parentId) throws Exception
     {
         if(_parentEntityClass==null)
             return ResourceUnavailable.getInstance();
