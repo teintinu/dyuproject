@@ -51,7 +51,7 @@ public abstract class AbstractRESTVerbHandler implements WebServiceHandler
         return _name;
     }
     
-    public Object handle(String[] pathInfo, Map<String, String> params, long parentId) throws Exception
+    public Object handle(String[] pathInfo, Map<String, String> params, String parentId) throws Exception
     {
         return ResourceUnavailable.getInstance();
     }

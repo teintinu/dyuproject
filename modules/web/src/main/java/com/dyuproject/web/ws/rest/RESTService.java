@@ -34,6 +34,7 @@ public class RESTService implements WebService
 {
     
     public static final String NUMBER_REGEX  = "^\\d*$";
+    public static final String TEMPLATE_PATH = "rest.template.path";
     private static final RESTService __instance = new RESTService();
     
     public static RESTService getInstance()
@@ -80,7 +81,7 @@ public class RESTService implements WebService
             return ResourceUnavailable.getInstance();
         
         params.put("format", format);
-        request.setAttribute("restPath", isNumber(lastToken) ? pathInfo.substring(0, 
+        request.setAttribute(TEMPLATE_PATH, isNumber(lastToken) ? pathInfo.substring(0, 
                 pathInfo.lastIndexOf('/')+1).concat("id.").concat(format) : pathInfo);
         request.setAttribute("pathInfo", tokens);
         //params.put("pathInfo", pathInfo);

@@ -14,34 +14,14 @@
 
 package com.dyuproject.web.ws.rest;
 
-import java.util.Map;
-import com.dyuproject.web.ws.error.ResourceUnavailable;
-
 /**
  * @author David Yu
+ * @created Apr 1, 2008
  */
 
-public abstract class AbstractRESTResourceHandler implements RESTResource.Handler
+public interface RESTInterceptor
 {
-
-    public Object handleGet(String id, String parentId) throws Exception
-    {        
-        return ResourceUnavailable.getInstance();
-    }
-
-    public Object handlePost(Map<String, String> params, String parentId) throws Exception
-    {        
-        return ResourceUnavailable.getInstance();
-    }
     
-    public Object handlePut(String id, Map<String, String> params, String parentId) throws Exception
-    {
-        return ResourceUnavailable.getInstance();
-    }
-    
-    public Object handleDelete(String id, String parentId) throws Exception
-    {
-        return ResourceUnavailable.getInstance();
-    }
+    public boolean preHandle();
 
 }
