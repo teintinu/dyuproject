@@ -78,6 +78,10 @@ public class RestfulMVCServlet extends HttpServlet
         if(_defaultGenerator.getContentType()==null)
             throw new IllegalStateException("Generator's contentType must not be null");
         
+        
+        if(!_generators.containsKey(_defaultGenerator.getFormat()))
+            _generators.put(_defaultGenerator.getFormat(), _defaultGenerator);
+        
         for(ContentGenerator cg : _generators.values())
         {
             if(cg.getFormat()==null)
@@ -148,7 +152,7 @@ public class RestfulMVCServlet extends HttpServlet
     {
         
         String pathInfo = request.getPathInfo();        
-        
+        System.err.println("pathInfo: " + pathInfo);
         if(request.getAttribute(DISPATCH_ATTR)!=null)
         {
             System.err.println("DISPATCHED");
@@ -178,7 +182,7 @@ public class RestfulMVCServlet extends HttpServlet
         String format = null;        
         String lastWord = null;
         ContentGenerator generator = null;
-        
+        int dot = -1;
         int lastSlash = pathInfo.lastIndexOf('/');
         // ends with /
         if(lastSlash==last)
@@ -190,7 +194,7 @@ public class RestfulMVCServlet extends HttpServlet
         else
         {           
             lastWord = pathInfo.substring(lastSlash+1);            
-            int dot = lastWord.lastIndexOf('.');                
+            dot = lastWord.lastIndexOf('.');                
             if(dot!=-1)
             {
                 format = lastWord.substring(dot+1);
@@ -204,29 +208,35 @@ public class RestfulMVCServlet extends HttpServlet
             }
             else
             {
-                format = _defaultFormat;
-                generator = _defaultGenerator;
+                response.sendRedirect(request.getRequestURL().append('/').toString());
+                return;
+                //format = _defaultFormat;
+                //generator = _defaultGenerator;
             }
             pathInfo = pathInfo.substring(1);
         }
         String[] tokens = Delim.SLASH.split(pathInfo);
-        
+        if(dot!=-1 && tokens.length%2!=0)
+        {
+            response.sendError(404);
+            return;
+        }
         if(lastWord!=null)
             tokens[tokens.length-1] = lastWord;
-        
-        doHandle(0, method, tokens, request, response, format, generator); 
+        System.err.println("format: " + format);
+        doHandle(0, method, tokens, request, response, generator); 
     }
     
 
     
     private void doHandle(int sub, int method, String[] tokens, HttpServletRequest request, 
-            HttpServletResponse response, String format, ContentGenerator generator) 
+            HttpServletResponse response, ContentGenerator generator) 
             throws ServletException, IOException
     {
         Controller c = _controllers.get(tokens[sub]);
         if(c==null)
         {
-            log.warn("No controller matched on: " + tokens[sub]);
+            System.err.println("No controller matched on: " + tokens[sub]);
             response.sendError(404);
             return;
         }            
@@ -243,7 +253,7 @@ public class RestfulMVCServlet extends HttpServlet
             handle(c, method, request, response, generator);
             return;
         }
-        doHandle(sub+2, method, tokens, request, response, format, generator);
+        doHandle(sub+2, method, tokens, request, response, generator);
     }
     
     public static void handle(Controller controller, int method, HttpServletRequest request, 
