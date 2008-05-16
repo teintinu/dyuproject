@@ -61,7 +61,7 @@
   
   <modules>
     <module>modules/util</module>
-    <module>modules/webmvc</module>
+    <module>modules/web</module>
 	<module>modules/persistence</module>
   </modules>
   
