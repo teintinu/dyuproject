@@ -294,8 +294,15 @@ public class WebContext
         int dot = -1;
         int lastSlash = pathInfo.lastIndexOf('/');
         // ends with /
-        if(lastSlash==last)            
-            pathInfo = pathInfo.substring(1, last);        
+        if(lastSlash==last)
+        {
+            /*if(pathInfo.indexOf('.')!=-1)
+            {
+                response.sendError(404);
+                return;
+            }*/
+            pathInfo = pathInfo.substring(1, last);
+        }
         else
         {           
             lastWord = pathInfo.substring(lastSlash+1);            
@@ -327,7 +334,12 @@ public class WebContext
             return;
         }*/
         if(lastWord!=null)
-            tokens[tokens.length-1] = lastWord;        
+            tokens[tokens.length-1] = lastWord;
+        else if(tokens[tokens.length-1].indexOf('.')!=-1)
+        {
+            response.sendError(404);
+            return;
+        }            
         
         handle(0, tokens, mime, request, response); 
     }
