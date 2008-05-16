@@ -41,6 +41,7 @@ public class WebContext
     
     public static final String DISPATCH_ATTR = "com.dyuproject.web.dispatch";
     public static final String DISPATCH_SUFFIX_ATTR = "com.dyuproject.web.dispatch.suffix";
+    public static final String PATH_SUFFIX_ATTR = "pathSuffix";
     public static final String DEFAULT_MIMES_LOCATION = "/WEB-INF/mimes.properties";
     
     private boolean _initialized = false, _initializing = false;
@@ -306,7 +307,8 @@ public class WebContext
                 {
                     _defaultDispatcher._default.forward(request, response);
                     return;
-                }                
+                }
+                request.setAttribute(PATH_SUFFIX_ATTR, "."+mime);
                 lastWord = lastWord.substring(0, dot);
             }
             else
@@ -319,13 +321,13 @@ public class WebContext
             pathInfo = pathInfo.substring(1);
         }
         String[] tokens = Delim.SLASH.split(pathInfo);
-        if(dot!=-1 && tokens.length%2!=0)
+        /*if(dot!=-1 && tokens.length%2!=0)
         {
             response.sendError(404);
             return;
-        }
+        }*/
         if(lastWord!=null)
-            tokens[tokens.length-1] = lastWord;
+            tokens[tokens.length-1] = lastWord;        
         
         handle(0, tokens, mime, request, response); 
     }
