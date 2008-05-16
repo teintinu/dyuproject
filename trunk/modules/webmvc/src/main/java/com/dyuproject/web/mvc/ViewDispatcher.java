@@ -17,44 +17,21 @@ package com.dyuproject.web.mvc;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.util.format.XMLConverter;
-
 /**
  * @author David Yu
- * @created May 11, 2008
+ * @created May 16, 2008
  */
 
-public class XMLGenerator implements ContentGenerator
+public interface ViewDispatcher
 {
     
-    public void init(WebContext context)
-    {
-        // TODO Auto-generated method stub
-        
-    }
+    public void init(WebContext context);
+    
+    public void dispatch(String uri, HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException;
 
-    public void generateContent(Object data, HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException
-    {
-        response.setContentType(getContentType());
-        ServletOutputStream out = response.getOutputStream();
-        out.write(XMLConverter.getInstance().toString(data, 
-                (String)request.getAttribute(CALLBACK_ATTR)).getBytes());
-        out.close();
-    }
-    
-    public String getContentType()
-    {
-        return XMLConverter.getInstance().getContentType();
-    }
-    
-    public String getFormat()
-    {
-        return XMLConverter.getInstance().getFormat();
-    }
 
 }
