@@ -28,21 +28,12 @@ import javax.servlet.http.HttpServletResponse;
 public interface Controller
 {    
     
-    public void init(WebContext context);
+    public void init(WebContext webContext);
     
-    public void doGet(HttpServletRequest request, HttpServletResponse response, 
-            ContentGenerator generator) throws IOException, ServletException;
+    public void handle(String mime, HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException;
     
-    public void doPost(HttpServletRequest request, HttpServletResponse response, 
-            ContentGenerator generator) throws IOException, ServletException;
-    
-    public void doPut(HttpServletRequest request, HttpServletResponse response, 
-            ContentGenerator generator) throws IOException, ServletException;
-    
-    public void doDelete(HttpServletRequest request, HttpServletResponse response, 
-            ContentGenerator generator) throws IOException, ServletException;
-    
-    public String getResourceName();
-    public String getResourceIdAttribute();
+    public String getIdentifier();
+    public String getIdentifierAttribute();
 
 }

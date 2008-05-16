@@ -16,44 +16,36 @@ package com.dyuproject.web.mvc;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.util.format.JSONConverter;
-
 /**
  * @author David Yu
- * @created May 11, 2008
+ * @created May 16, 2008
  */
 
-public class JSONGenerator implements ContentGenerator
+public class JSPDispatcher implements ViewDispatcher
 {
+    
+    static final String INCLUDE_ATTR = "javax.servlet.include.servlet_path";   
+    
+    RequestDispatcher _jsp;
     
     public void init(WebContext context)
     {
-        // TODO Auto-generated method stub
-        
+        if(_jsp==null)
+            _jsp = context.getServletContext().getNamedDispatcher("jsp");
+    }
+    
+    public void dispatch(String uri, HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException
+    {
+        request.setAttribute(WebContext.DISPATCH_ATTR, "true");
+        request.setAttribute(WebContext.DISPATCH_SUFFIX_ATTR, "jsp");
+        request.setAttribute(INCLUDE_ATTR, uri);        
+        _jsp.include(request, response);  
     }
 
-    public void generateContent(Object data, HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException
-    {
-        response.setContentType(getContentType());
-        ServletOutputStream out = response.getOutputStream();
-        out.write(JSONConverter.getInstance().toString(data, 
-                (String)request.getAttribute(CALLBACK_ATTR)).getBytes());
-        out.close();
-    }
-    
-    public String getContentType()
-    {
-        return JSONConverter.getInstance().getContentType();
-    }
-    
-    public String getFormat()
-    {
-        return JSONConverter.getInstance().getFormat();
-    }
 }

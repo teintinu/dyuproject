@@ -16,28 +16,31 @@ package com.dyuproject.web.mvc;
 
 import java.io.IOException;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author David Yu
- * @created May 11, 2008
+ * @created May 16, 2008
  */
 
-public interface ContentGenerator
+public class DefaultDispatcher implements ViewDispatcher
 {
     
-    public static final String DEFAULT_FORMAT = "html";
-    public static final String DEFAULT_CONTENT_TYPE = "text/html";
-    public static final String CALLBACK_ATTR = "com.dyuproject.web.script.callback";
+    RequestDispatcher _default;
     
-    public void init(WebContext context);
-    
-    public void generateContent(Object data, HttpServletRequest request, 
-            HttpServletResponse response) throws ServletException, IOException;
-    
-    public String getContentType();
-    public String getFormat();
+    public void init(WebContext context)
+    {
+        if(_default==null)
+            _default = context.getServletContext().getNamedDispatcher("default");
+    }
+
+    public void dispatch(String uri, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException
+    {
+        _default.forward(request, response);        
+    }
 
 }
