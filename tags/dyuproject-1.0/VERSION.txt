@@ -1,7 +1,0 @@
-dyuproject-1.0 2008-05-16
-+ RESTful MVC
-+ POJO to JSON String tool
-+ POJO to XML String tool
-+ persistence tool for JDBC
-+ persistence tool for Hibernate
-+ application bundling for a single jar
