@@ -12,10 +12,8 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.mvc.controller;
+package com.dyuproject.web.mvc;
 
-import com.dyuproject.web.mvc.Controller;
-import com.dyuproject.web.mvc.WebContext;
 
 /**
  * @author David Yu
@@ -28,7 +26,8 @@ public abstract class AbstractController implements Controller
     private boolean _initialized = false;
     
     protected String _identifier, _identifierAttribute;
-    protected WebContext _webContext;    
+    protected WebContext _webContext;
+    protected Filter _filter;
 
     public void init(WebContext webContext)
     {
@@ -64,6 +63,16 @@ public abstract class AbstractController implements Controller
     public String getIdentifierAttribute()
     {
         return _identifierAttribute;
+    }
+    
+    public void setFilter(Filter filter)
+    {
+        _filter = filter;
+    }
+    
+    public Filter getFilter()
+    {
+        return _filter;
     }
 
 }
