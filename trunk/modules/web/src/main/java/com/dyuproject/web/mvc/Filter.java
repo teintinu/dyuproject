@@ -14,28 +14,21 @@
 
 package com.dyuproject.web.mvc;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author David Yu
- * @created May 9, 2008
+ * @created May 18, 2008
  */
 
-public interface Controller
-{    
+public interface Filter
+{
     
     public void init(WebContext webContext);
     
-    public void handle(String mime, HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException;
+    public boolean preHandle(String mime, HttpServletRequest request, HttpServletResponse response);    
     
-    public String getIdentifier();
-    public String getIdentifierAttribute();
-    
-    public Filter getFilter();
+    public void postHandle(boolean preHandled);
 
 }

@@ -14,28 +14,24 @@
 
 package com.dyuproject.web.mvc;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 /**
  * @author David Yu
- * @created May 9, 2008
+ * @created May 18, 2008
  */
 
-public interface Controller
-{    
+public abstract class AbstractFilter implements Filter
+{
     
-    public void init(WebContext webContext);
+    private boolean _initialized = false;
+    protected WebContext _webContext;    
     
-    public void handle(String mime, HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException;
-    
-    public String getIdentifier();
-    public String getIdentifierAttribute();
-    
-    public Filter getFilter();
+    public void init(WebContext webContext)
+    {
+        if(_initialized || webContext==null)
+            return;
+        
+        _webContext = webContext;
+        _initialized = true;
+    }
 
 }

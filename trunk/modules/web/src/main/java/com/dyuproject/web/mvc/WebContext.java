@@ -29,6 +29,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.dyuproject.util.Delim;
 
 /**
@@ -42,7 +45,9 @@ public class WebContext
     public static final String DISPATCH_ATTR = "com.dyuproject.web.dispatch";
     public static final String DISPATCH_SUFFIX_ATTR = "com.dyuproject.web.dispatch.suffix";
     public static final String PATH_SUFFIX_ATTR = "pathSuffix";
-    public static final String DEFAULT_MIMES_LOCATION = "/WEB-INF/mimes.properties";
+    public static final String DEFAULT_MIMES_LOCATION = "/WEB-INF/mime.properties";
+    
+    private static final Log log = LogFactory.getLog(WebContext.class);
     
     private boolean _initialized = false, _initializing = false;
     private ServletContext _servletContext;
@@ -96,14 +101,17 @@ public class WebContext
             {
                 URL resource = _servletContext.getResource(DEFAULT_MIMES_LOCATION);
                 if(resource!=null)
-                    setMimes(resource);
+                    setMimes(resource.openStream());
             }
             catch(Exception e)
-            {
+            {                
                 //ignore
             }
             if(_mimes==null)
+            {
+                log.warn("no mime.properties found");
                 _mimes = new Properties();
+            }
         }
         _initializing = false;
     }
@@ -350,13 +358,13 @@ public class WebContext
         Controller c = _controllers.get(pathInfo[sub]);
         if(c==null)
         {
-            System.err.println("No controller matched on: " + pathInfo[sub]);
+            log.warn("No controller matched on: " + pathInfo[sub]);
             response.sendError(404);
             return;
         }            
         if(sub+1==pathInfo.length)
         {            
-            c.handle(mime, request, response);
+            handle(c, mime, request, response);
             return;
         }
         String verbOrIdAttr = c.getIdentifierAttribute();
@@ -364,7 +372,7 @@ public class WebContext
             request.setAttribute(verbOrIdAttr, pathInfo[sub+1]);
         if(sub+2==pathInfo.length)
         {
-            c.handle(mime, request, response);
+            handle(c, mime, request, response);
             return;
         }
         handle(sub+2, pathInfo, mime, request, response);
@@ -375,6 +383,30 @@ public class WebContext
             HttpServletResponse response) throws ServletException, IOException
     {
         handle(0, pathInfo, mime, request, response);
+    }
+    
+    public static void handle(Controller controller, String mime, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException
+    {
+        Filter filter = controller.getFilter();
+        if(filter==null)
+        {
+            controller.handle(mime, request, response);
+            return;
+        }
+        if(!filter.preHandle(mime, request, response))
+        {
+            filter.postHandle(false);
+            return;
+        }
+        try
+        {
+            controller.handle(mime, request, response);
+        }
+        finally
+        {
+            filter.postHandle(true);
+        }        
     }
 
 }
