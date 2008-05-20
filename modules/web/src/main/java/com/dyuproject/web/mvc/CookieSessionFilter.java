@@ -49,11 +49,16 @@ public class CookieSessionFilter extends AbstractFilter
         return __cookieSession.get();
     }
     
+    static
+    {
+        CookieSession.init();
+    }
+    
     private String _secretKey, _cookieName;
     
     public CookieSessionFilter()
     {
-        CookieSession.init();
+        
     }
     
     protected void init()
