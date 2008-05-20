@@ -1,3 +1,6 @@
+dyuproject-1.0-SNAPSHOT
++
+
 dyuproject-1.0.0 2008-05-20
 + session authentication controller helper class
 + CookieSession protect from session hijacking
