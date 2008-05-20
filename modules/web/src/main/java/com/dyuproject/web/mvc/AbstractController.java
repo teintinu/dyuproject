@@ -14,6 +14,8 @@
 
 package com.dyuproject.web.mvc;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 /**
  * @author David Yu
@@ -29,14 +31,19 @@ public abstract class AbstractController implements Controller
     protected WebContext _webContext;
     protected Filter _filter;
 
-    public void init(WebContext webContext)
+    public final void init(WebContext webContext)
     {
-        if(_initialized || webContext==null)
+        if(_initialized)
             return;
         
         _webContext = webContext;
         _initialized = true;
+        if(getFilter()!=null)
+            getFilter().init(webContext);
+        init();
     }
+    
+    protected abstract void init();
     
     protected WebContext getWebContext()
     {
@@ -73,6 +80,12 @@ public abstract class AbstractController implements Controller
     public Filter getFilter()
     {
         return _filter;
+    }
+    
+    public String getVerbOrId(HttpServletRequest request)
+    {
+        return getIdentifierAttribute()==null ? null : 
+            (String)request.getAttribute(getIdentifierAttribute());
     }
 
 }

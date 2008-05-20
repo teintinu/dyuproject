@@ -25,13 +25,21 @@ public abstract class AbstractFilter implements Filter
     private boolean _initialized = false;
     protected WebContext _webContext;    
     
-    public void init(WebContext webContext)
+    public final void init(WebContext webContext)
     {
-        if(_initialized || webContext==null)
+        if(_initialized)
             return;
         
         _webContext = webContext;
         _initialized = true;
+        init();
     }
+    
+    protected abstract void init();
+    
+    public WebContext getWebContext()
+    {
+        return _webContext;
+    }    
 
 }

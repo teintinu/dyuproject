@@ -14,6 +14,9 @@
 
 package com.dyuproject.web.mvc;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -27,8 +30,10 @@ public interface Filter
     
     public void init(WebContext webContext);
     
-    public boolean preHandle(String mime, HttpServletRequest request, HttpServletResponse response);    
+    public boolean preHandle(String mime, HttpServletRequest request, HttpServletResponse response)
+    throws ServletException, IOException; 
     
-    public void postHandle(boolean preHandled);
+    public void postHandle(boolean handled, String mime, HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException;
 
 }

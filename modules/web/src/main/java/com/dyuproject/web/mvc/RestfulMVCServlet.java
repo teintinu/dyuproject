@@ -71,9 +71,9 @@ public class RestfulMVCServlet extends HttpServlet
                 _webContext.addController((Controller)newObjectInstance(tokenizer.nextToken().trim()));
         }
         
-        String mimes = getInitParameter("mimes");
-        if(mimes!=null)
-            _webContext.setMimes(mimes);        
+        String mime = getInitParameter("mime");
+        if(mime!=null)
+            _webContext.setMime(mime);
     }
     
     private Object newObjectInstance(String className) throws Exception

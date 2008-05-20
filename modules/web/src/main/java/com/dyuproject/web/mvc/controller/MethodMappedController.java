@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.web.mvc.AbstractController;
-import com.dyuproject.web.mvc.WebContext;
 
 /**
  * @author David Yu
@@ -37,10 +36,8 @@ public abstract class MethodMappedController extends AbstractController
     
     private Map<String,Method> _verbMap = new HashMap<String,Method>();
     
-    public void init(WebContext webContext)
-    {
-        super.init(webContext);
-        
+    protected void init()
+    {        
         try
         {
             Method[] methods = getClass().getDeclaredMethods();
