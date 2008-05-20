@@ -94,6 +94,7 @@ public class CookieSession
                 if(param.length==2)
                     session._attributes.put(param[0], param[1]);
             }
+            session._updated = false;
             return session;
         }
         return null;
@@ -133,7 +134,7 @@ public class CookieSession
     }    
     
     private boolean _parsed = false, _updated = false, _written = false;
-    private Map<String,String>_attributes = new HashMap<String,String>(8);
+    private Map<String,String>_attributes = new AttributesMap<String,String>();
     private Cookie _cookie;
     private String _secretKey, _cookieName, _domain, _path, _remoteAddr;
     private int _maxAge;
@@ -167,7 +168,6 @@ public class CookieSession
     
     public void setAttribute(String name, String value)
     {        
-        _updated = true;
         _attributes.put(name, value);
     }
     
@@ -274,19 +274,38 @@ public class CookieSession
         return true;
     }
     
-    /*public static void main(String[] args)
+    public Map<String,String> getAttributes()
     {
-        CookieSession.init();
-        CookieSession session = CookieSession.create("secret", "cn", 30, null, null);
-        session.setAttribute("a", "b");
-        session.setAttribute("c", "d");
-        session.writeIfNecessary(null);
+        return _attributes;
+    }
+    
+    public Map<String,String> getAttrs()
+    {
+        return _attributes;
+    }
+    
+    private class AttributesMap<K,V> extends HashMap<K,V>
+    {
+
+        private static final long serialVersionUID = 20080520L;
+
+        AttributesMap()
+        {
+            super(8);
+        }
         
-        CookieSession parsedSession = CookieSession.parse("secret", session._cookie, null);
-        if(parsedSession==null)
-            System.err.println("WAAAAAAAAAA");
-        System.err.println("a: " + parsedSession.getAttribute("a"));
-        System.err.println("c: " + parsedSession.getAttribute("c"));
-    }*/
+        public V put(K key, V value)
+        {
+            _updated = true;
+            return super.put(key, value);
+        }
+        
+        public V remove(Object key)
+        {
+            _updated = true;
+            return super.remove(key);
+        }        
+        
+    }
 
 }

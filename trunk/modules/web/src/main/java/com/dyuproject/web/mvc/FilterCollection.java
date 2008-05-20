@@ -82,11 +82,11 @@ public class FilterCollection extends AbstractFilter
         int i = 0;
         try
         {
-            while(i<_filters.length)
+            for(;i<_filters.length; i++)
             {
                 // protect in case of exceptions
                 success = false;
-                if(_filters[i++].preHandle(mime, request, response))                
+                if(_filters[i].preHandle(mime, request, response))                
                     success = true;                
                 else                    
                     break;                                   
@@ -103,7 +103,7 @@ public class FilterCollection extends AbstractFilter
     private void doPostHandleChain(int i, boolean handled, String mime,
             HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException
-    {
+    {        
         if(i==-1)
             return;
         try
