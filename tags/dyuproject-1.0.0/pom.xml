@@ -1,0 +1,106 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.dyuproject</groupId>
+  <artifactId>project</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <name>dyuproject</name>
+  <url>http://code.google.com/p/dyuproject</url>
+  <build>    
+	<defaultGoal>install</defaultGoal>	
+    <plugins>  
+      <plugin>
+	    <inherited>true</inherited>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.1</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+			  <mode>development</mode>
+			  <url>http://code.google.com/p/dyuproject/</url>
+			  <implementation-version>${pom.version}</implementation-version>		  
+			  <package>com.dyuproject</package>
+            </manifestEntries>			
+          </archive>
+        </configuration>		
+	  </plugin>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete file="../../dist/${project.artifactId}-${project.version}.${project.packaging}"/>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copyjar</id>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <copy failonerror="false" file="target/${project.artifactId}-${project.version}.${project.packaging}" tofile="../../dist/${project.artifactId}-${project.version}.${project.packaging}" />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>	  
+    </plugins>	
+  </build>
+  
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>commons-logging</groupId>
+        <artifactId>commons-logging</artifactId>
+        <version>${commons-logging-version}</version>
+	    <exclusions>
+          <exclusion>
+		    <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>          
+          </exclusion>		
+	    </exclusions>	      
+      </dependency>	
+      <dependency>
+        <groupId>junit</groupId>
+        <artifactId>junit</artifactId>
+        <version>${junit-version}</version>
+      </dependency>
+	</dependencies>
+  </dependencyManagement>
+  
+  <modules>
+    <module>modules/util</module>
+    <module>modules/web</module>
+	<module>modules/persistence</module>
+  </modules>
+  
+  <properties>
+    <commons-logging-version>1.1</commons-logging-version>    
+    <junit-version>3.8.2</junit-version>
+	<hibernate-version>3.2.5.ga</hibernate-version>
+	<spring-version>2.0.6</spring-version>
+	<jetty-version>6.1.9</jetty-version>
+	<servlet-api-version>2.5</servlet-api-version>	
+  </properties>
+  
+</project>
