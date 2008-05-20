@@ -45,7 +45,8 @@ public class WebContext
     public static final String DISPATCH_ATTR = "com.dyuproject.web.dispatch";
     public static final String DISPATCH_SUFFIX_ATTR = "com.dyuproject.web.dispatch.suffix";
     public static final String PATH_SUFFIX_ATTR = "pathSuffix";
-    public static final String DEFAULT_MIMES_LOCATION = "/WEB-INF/mime.properties";
+    public static final String DEFAULT_MIME_LOCATION = "/WEB-INF/mime.properties";
+    public static final String DEFAULT_ENV_LOCATION = "/WEB-INF/env.properties";
     
     private static final Log log = LogFactory.getLog(WebContext.class);
     
@@ -61,7 +62,7 @@ public class WebContext
     
     private Map<String,Object> _attributes = new HashMap<String,Object>();
     
-    private Properties _mimes;
+    private Properties _mime, _env = new Properties();
     
     public WebContext()
     {
@@ -71,14 +72,30 @@ public class WebContext
     void init(ServletContext servletContext)
     {
         if(_initialized || servletContext==null)
-            return;
-        
-        _initialized = true;
-        _initializing = true;
+            return;        
+
         _servletContext = servletContext;
         
         _defaultDispatcher.init(this);
         _jspDispatcher.init(this);
+        
+        try
+        {
+            URL resource = _servletContext.getResource(DEFAULT_ENV_LOCATION);
+            if(resource!=null)
+                setEnv(resource.openStream());
+        }
+        catch(Exception e)
+        {                
+            //ignore
+        }
+                
+        if(_defaultController==null)
+            throw new IllegalStateException("default controller must be specified");      
+        _defaultController.init(this);
+        //default controller can set objects during intialization
+        _initialized = true;
+        _initializing = true;        
         
         for(ViewDispatcher vd : _viewDispatchers.values())
             vd.init(this);
@@ -88,31 +105,28 @@ public class WebContext
         if(_viewDispatchers.get("jsp")==null)
             _viewDispatchers.put("jsp", _jspDispatcher);
         
-        if(_defaultController==null)
-            throw new IllegalStateException("default controller must be specified");        
-        _defaultController.init(this);
-        
         for(Controller c : _controllers.values())
             c.init(this);
         
-        if(_mimes==null)
+        if(_mime==null)
         {
             try
             {
-                URL resource = _servletContext.getResource(DEFAULT_MIMES_LOCATION);
+                URL resource = _servletContext.getResource(DEFAULT_MIME_LOCATION);
                 if(resource!=null)
-                    setMimes(resource.openStream());
+                    setMime(resource.openStream());
             }
             catch(Exception e)
             {                
                 //ignore
             }
-            if(_mimes==null)
+            if(_mime==null)
             {
                 log.warn("no mime.properties found");
-                _mimes = new Properties();
+                _mime = new Properties();
             }
         }
+
         _initializing = false;
     }
     
@@ -209,26 +223,26 @@ public class WebContext
     
     public void setMimes(Properties mimes)
     {
-        if(_mimes!=null)
+        if(_mime!=null)
             throw new IllegalStateException("mimes already set");
         
-        _mimes = mimes;
+        _mime = mimes;
     }
     
-    public void setMimes(String resource)
+    public void setMime(String resource)
     {
-        setMimes(_servletContext.getResourceAsStream(resource));
+        setMime(_servletContext.getResourceAsStream(resource));
     }
     
-    public void setMimes(InputStream stream)
+    public void setMime(InputStream stream)
     {
-        if(_mimes!=null)
+        if(_mime!=null)
             throw new IllegalStateException("mimes already set");
         
-        _mimes = new Properties();
+        _mime = new Properties();
         try
         {            
-            _mimes.load(stream);
+            _mime.load(stream);
         }
         catch(Exception e)
         {
@@ -236,19 +250,62 @@ public class WebContext
         }
     }
     
-    public void setMimes(File location) throws IOException
+    public void setMime(File location) throws IOException
     {
-        setMimes(new FileInputStream(location));
+        setMime(new FileInputStream(location));
     }
     
-    public void setMimes(URL location) throws IOException
+    public void setMime(URL location) throws IOException
     {
-        setMimes(location.openStream());
-    }
+        setMime(location.openStream());
+    }    
     
     public boolean isMimeSupported(String mime)
     {
-        return _mimes.containsKey(mime);
+        return _mime.containsKey(mime);
+    }
+    
+    public void setEnv(Properties env)
+    {
+        if(_initialized)
+            throw new IllegalStateException("already initialized");
+        
+        _env.putAll(env);        
+    }
+    
+    public void setEnv(String resource)
+    {
+        if(_initialized)
+            throw new IllegalStateException("already initialized");
+        
+        setEnv(_servletContext.getResourceAsStream(resource));
+    }
+    
+    public void setEnv(InputStream stream)
+    {
+        if(_initialized)
+            throw new IllegalStateException("already initialized");
+        
+        Properties env = new Properties();
+        try
+        {            
+            env.load(stream);
+            _env.putAll(env);
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    public void setEnv(File location) throws IOException
+    {
+        setEnv(new FileInputStream(location));
+    }
+    
+    public void setEnv(URL location) throws IOException
+    {
+        setEnv(location.openStream());
     }
     
     public void setAttributes(Map<String,Object> attributes)
@@ -270,7 +327,12 @@ public class WebContext
     public Object getAttribute(String name)
     {
         return _attributes.get(name);
-    }    
+    }
+    
+    public String getProperty(String name)
+    {
+        return _env.getProperty(name);
+    }
     
     /* ================================================================================= */
     
@@ -293,7 +355,7 @@ public class WebContext
         // root context /
         if(last<1)
         {
-            _defaultController.handle(null, request, response);            
+            handle(_defaultController, null, request, response);            
             return;
         }
         
@@ -318,7 +380,7 @@ public class WebContext
             if(dot!=-1)
             {
                 mime = lastWord.substring(dot+1);                
-                if(!_mimes.containsKey(mime))
+                if(!_mime.containsKey(mime))
                 {
                     _defaultDispatcher._default.forward(request, response);
                     return;
@@ -368,8 +430,13 @@ public class WebContext
             return;
         }
         String verbOrIdAttr = c.getIdentifierAttribute();
-        if(verbOrIdAttr!=null)
-            request.setAttribute(verbOrIdAttr, pathInfo[sub+1]);
+        if(verbOrIdAttr==null)
+        {
+            log.warn(pathInfo[sub+1] + " is not a verb nor an id of " + pathInfo[sub]);
+            response.sendError(404);
+            return;
+        }
+        request.setAttribute(verbOrIdAttr, pathInfo[sub+1]);
         if(sub+2==pathInfo.length)
         {
             handle(c, mime, request, response);
@@ -396,7 +463,7 @@ public class WebContext
         }
         if(!filter.preHandle(mime, request, response))
         {
-            filter.postHandle(false);
+            filter.postHandle(false, mime, request, response);
             return;
         }
         try
@@ -405,7 +472,7 @@ public class WebContext
         }
         finally
         {
-            filter.postHandle(true);
+            filter.postHandle(true, mime, request, response);
         }        
     }
 

@@ -14,9 +14,11 @@
 
 package com.dyuproject.web.mvc;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,9 +50,8 @@ public class FilterCollection extends AbstractFilter
         _temp.add(filter);
     }
     
-    public void init(WebContext webContext)
-    {
-        super.init(webContext);
+    protected void init()
+    {        
         if(_filters==null)
         {
             if(_temp==null)
@@ -63,19 +64,19 @@ public class FilterCollection extends AbstractFilter
                 _temp.add(f);
             _filters = _temp.toArray(new Filter[_temp.size()]);
         }
+        for(Filter f : _filters)
+            f.init(_webContext);
     }
 
-    public void postHandle(boolean preHandled)
+    public void postHandle(boolean handled, String mime, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException
     {
-        if(preHandled)
-        {
-            for(int i=0; i<_filters.length; i++)
-                _filters[i].postHandle(preHandled);
-        }
+        if(handled)        
+            doPostHandleChain(_filters.length-1, true, mime, request, response);       
     }
 
     public boolean preHandle(String mime, HttpServletRequest request,
-            HttpServletResponse response)
+            HttpServletResponse response) throws ServletException, IOException
     {        
         boolean success = false;
         int i = 0;
@@ -93,13 +94,26 @@ public class FilterCollection extends AbstractFilter
         }
         finally
         {
-            if(!success)
-            {
-                for(int j=0; j<i; j++)
-                    _filters[j].postHandle(false);                
-            }
+            if(!success)            
+                doPostHandleChain(i, false, mime, request, response);            
         }
         return success;
+    }
+    
+    private void doPostHandleChain(int i, boolean handled, String mime,
+            HttpServletRequest request, HttpServletResponse response) throws ServletException,
+            IOException
+    {
+        if(i==-1)
+            return;
+        try
+        {
+            _filters[i--].postHandle(false, mime, request, response);
+        }
+        finally
+        {
+            doPostHandleChain(i, handled, mime, request, response);
+        }
     }
 
 }
