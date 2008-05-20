@@ -35,6 +35,8 @@ public class CookieSessionFilter extends AbstractFilter
     public static final String ENV_COOKIE_DOMAIN = "session.cookie.domain";
     public static final String ENV_COOKIE_PATH = "session.cookie.path";
     
+    public static final String SESSION_REQUEST_ATTR = "cs";
+    
     private static ThreadLocal<CookieSession> __cookieSession = new ThreadLocal<CookieSession>();
     
     static void setCurrentSession(CookieSession session)
@@ -78,8 +80,9 @@ public class CookieSessionFilter extends AbstractFilter
     public final void postHandle(boolean handled, String mime, HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException
     {
-        CookieSession session = getCurrentSession();
+        CookieSession session = getCurrentSession();        
         setCurrentSession(null);
+        request.removeAttribute(SESSION_REQUEST_ATTR);
         if(session!=null)
         {
             session.writeIfNecessary(response);
@@ -90,13 +93,18 @@ public class CookieSessionFilter extends AbstractFilter
     public final boolean preHandle(String mime, HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException
     {
-        CookieSession session = getSession(request);
+        CookieSession session = getCurrentSession();
+        if(session!=null)
+            return true;
+        
+        session = getSession(request);
         if(session==null)
         {
             sendError(mime, request, response);
             return false;
         }
         setCurrentSession(session);
+        request.setAttribute(SESSION_REQUEST_ATTR, session);
         onSessionActivated(session);
         return true;
     }
