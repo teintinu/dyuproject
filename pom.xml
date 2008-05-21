@@ -98,9 +98,8 @@
     <commons-logging-version>1.1</commons-logging-version>    
     <junit-version>3.8.2</junit-version>
 	<hibernate-version>3.2.5.ga</hibernate-version>
-	<spring-version>2.0.6</spring-version>
-	<jetty-version>6.1.9</jetty-version>
-	<servlet-api-version>2.5</servlet-api-version>	
+	<spring-version>2.5</spring-version>
+	<jetty-version>7.0.0pre1</jetty-version>	
   </properties>
   
 </project>
