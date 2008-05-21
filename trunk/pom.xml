@@ -92,13 +92,14 @@
     <module>modules/util</module>
     <module>modules/web</module>
 	<module>modules/persistence</module>
+	<module>modules/demos</module>
   </modules>
   
   <properties>
     <commons-logging-version>1.1</commons-logging-version>    
     <junit-version>3.8.2</junit-version>
-	<hibernate-version>3.2.5.ga</hibernate-version>
-	<spring-version>2.5</spring-version>
+	<hibernate-version>3.2.6.ga</hibernate-version>
+	<spring-version>2.5.4</spring-version>
 	<jetty-version>7.0.0pre1</jetty-version>	
   </properties>
   
