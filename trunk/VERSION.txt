@@ -1,5 +1,6 @@
 dyuproject-1.0-SNAPSHOT
-+
++ demos
++ servlet-api-2.5 to 3.0
 
 dyuproject-1.0.0 2008-05-20
 + session authentication controller helper class
