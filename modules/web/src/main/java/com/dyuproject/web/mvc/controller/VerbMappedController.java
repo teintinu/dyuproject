@@ -34,7 +34,7 @@ import com.dyuproject.web.mvc.AbstractController;
 public abstract class VerbMappedController extends AbstractController
 {
     
-    public static final String VOID = "void";
+    private static final String VOID = "void";
     
     private Map<String,Method> _verbMap = new HashMap<String,Method>();
     
