@@ -203,7 +203,116 @@ var Utils = {
 	createCookie: function(name, value, secs) {
 		var expires = Utils.isNumber(secs) ? new Date((1000*secs) + new Date().getTime()).toGMTString() : '';	
 		document.cookie = [name,'=',value,'; expires=', expires].join('');
-	}
+	},
+	validateForm: function(currentForm, feedbackEl) {
+		for(var i=0; i<currentForm.elements.length; i++) {				
+			if(currentForm.elements[i].type.toLowerCase()=="text") {			
+				var formElement = currentForm.elements[i];
+				formElement.value = Utils.trim(formElement.value);			
+				if(formElement.value.length<1) {
+					var msg = "Missing field: " + formElement.name.substring(0,1).toUpperCase() + formElement.name.substring(1);				
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}	
+			}
+			else if(currentForm.elements[i].type.toLowerCase()=="textarea") {			
+				var ta = currentForm.elements[i];
+				ta.value = Utils.trimLineBreaks(ta.value);
+				ta.value = Utils.trim(ta.value);
+				if(ta.value.length<1) {
+					var msg = "Missing field: " + ta.name.substring(0,1).toUpperCase() + ta.name.substring(1);
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}		
+			}		
+			else if(currentForm.elements[i].tagName.toLowerCase()=="select") {			
+				var sel = currentForm.elements[i];						
+				if(sel.value.length<1) {
+					var msg = "Missing value: " + sel.name.substring(0,1).toUpperCase() + sel.name.substring(1);
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}				
+			}				
+			/*else if(currentForm.elements[i].type.toLowerCase()=="password") {
+				var formPw = currentForm.elements[i];
+				var firstLength = formPw.value.length;
+				var secondLength = Utils.trim(formPw.value).length;			
+				if(firstLength != secondLength) {
+					var msg = "Your password must not begin/end with a space \" \".";
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}
+			}*/
+		
+		}	
+		return true;	
+	},
+	validateFormInTable: function(currentForm, feedbackEl) {
+		for(var i=0; i<currentForm.elements.length; i++) {				
+			if(currentForm.elements[i].type.toLowerCase()=="text") {			
+				var formElement = currentForm.elements[i];
+				formElement.value = Utils.trim(formElement.value);			
+				if(formElement.value.length<1) {
+					var msg = "Missing field: " + FormUtil.getName(formElement.parentNode);				
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}	
+			}
+			else if(currentForm.elements[i].type.toLowerCase()=="textarea") {			
+				var ta = currentForm.elements[i];
+				ta.value = Utils.trimLineBreaks(ta.value);
+				ta.value = Utils.trim(ta.value);
+				if(ta.value.length<1) {
+					var msg = "Missing field: " + FormUtil.getName(ta.parentNode);
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}	
+			}		
+			else if(currentForm.elements[i].tagName.toLowerCase()=="select") {			
+				var sel = currentForm.elements[i];						
+				if(sel.value.length<1) {
+					var msg = "Missing value: " + FormUtil.getName(sel.parentNode);
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}				
+			}		
+			/*else if(currentForm.elements[i].type.toLowerCase()=="password") {
+				var formPw = currentForm.elements[i];
+				var firstLength = formPw.value.length;
+				var secondLength = Utils.trim(formPw.value).length;			
+				if(firstLength != secondLength) {
+					var mgs = "Your password must not begin/end with a space \" \"."
+					if(Utils.isNode(feedbackEl))
+						feedbackEl.innerHTML = msg;
+					else
+						alert(msg);
+					return false;
+				}
+			}*/
+		}	
+		return true;	
+	}	
 };
 
 var History = {
