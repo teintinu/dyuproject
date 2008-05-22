@@ -23,7 +23,7 @@ public abstract class AbstractFilter implements Filter
 {
     
     private boolean _initialized = false;
-    protected WebContext _webContext;    
+    private WebContext _webContext;    
     
     public final void init(WebContext webContext)
     {

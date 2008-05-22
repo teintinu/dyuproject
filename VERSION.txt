@@ -1,4 +1,7 @@
 dyuproject-1.0-SNAPSHOT
++ added CRUDController
++ renamed MethodMappedController to VerbMappedController
++ added StaticResourceController
 + demos
 + servlet-api-2.5 to 3.0
 

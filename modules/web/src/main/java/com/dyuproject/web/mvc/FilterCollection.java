@@ -65,7 +65,7 @@ public class FilterCollection extends AbstractFilter
             _filters = _temp.toArray(new Filter[_temp.size()]);
         }
         for(Filter f : _filters)
-            f.init(_webContext);
+            f.init(getWebContext());
     }
 
     public void postHandle(boolean handled, String mime, HttpServletRequest request,

@@ -33,10 +33,10 @@ public abstract class AbstractSessionAuthController extends AbstractController
     
     protected void init()
     {
-        _secretKey = _webContext.getProperty(CookieSessionFilter.ENV_SECRET_KEY);
-        _cookieName = _webContext.getProperty(CookieSessionFilter.ENV_COOKIE_NAME);
-        _path = _webContext.getProperty(CookieSessionFilter.ENV_COOKIE_PATH);
-        _domain = _webContext.getProperty(CookieSessionFilter.ENV_COOKIE_DOMAIN);
+        _secretKey = getWebContext().getProperty(CookieSessionFilter.ENV_SECRET_KEY);
+        _cookieName = getWebContext().getProperty(CookieSessionFilter.ENV_COOKIE_NAME);
+        _path = getWebContext().getProperty(CookieSessionFilter.ENV_COOKIE_PATH);
+        _domain = getWebContext().getProperty(CookieSessionFilter.ENV_COOKIE_DOMAIN);
         
         if(_secretKey==null)
             throw new IllegalStateException("secretKey is required");

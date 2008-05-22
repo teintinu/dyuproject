@@ -37,7 +37,7 @@ public class CookieSessionFilter extends AbstractFilter
     
     public static final String SESSION_REQUEST_ATTR = "cs";
     
-    private static ThreadLocal<CookieSession> __cookieSession = new ThreadLocal<CookieSession>();
+    private static final ThreadLocal<CookieSession> __cookieSession = new ThreadLocal<CookieSession>();
     
     static void setCurrentSession(CookieSession session)
     {
@@ -63,8 +63,8 @@ public class CookieSessionFilter extends AbstractFilter
     
     protected void init()
     {
-        _secretKey = _webContext.getProperty(ENV_SECRET_KEY);
-        _cookieName = _webContext.getProperty(ENV_COOKIE_NAME);     
+        _secretKey = getWebContext().getProperty(ENV_SECRET_KEY);
+        _cookieName = getWebContext().getProperty(ENV_COOKIE_NAME);     
         
         if(getCookieName()==null)
             throw new IllegalStateException("cookieName must be specified.");
