@@ -64,6 +64,9 @@ var Utils = {
     trimLineBreaks: function(str) {
         str.replace(/(\r\n|[\r\n])/g, ' ');
     },
+	getName: function(el) {
+		return el.name ? el.name : el.getAttribute('name');
+	},	
     addHandlerToEvent: function(handler, el, ev) {
         if(el.addEventListener) 
             el.addEventListener(ev.substring(2), handler, false);
@@ -265,7 +268,7 @@ var Utils = {
 				var formElement = currentForm.elements[i];
 				formElement.value = Utils.trim(formElement.value);			
 				if(formElement.value.length<1) {
-					var msg = "Missing field: " + FormUtil.getName(formElement.parentNode);				
+					var msg = "Missing field: " + Utils.getName(formElement.parentNode);				
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
@@ -278,7 +281,7 @@ var Utils = {
 				ta.value = Utils.trimLineBreaks(ta.value);
 				ta.value = Utils.trim(ta.value);
 				if(ta.value.length<1) {
-					var msg = "Missing field: " + FormUtil.getName(ta.parentNode);
+					var msg = "Missing field: " + Utils.getName(ta.parentNode);
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
@@ -289,7 +292,7 @@ var Utils = {
 			else if(currentForm.elements[i].tagName.toLowerCase()=="select") {			
 				var sel = currentForm.elements[i];						
 				if(sel.value.length<1) {
-					var msg = "Missing value: " + FormUtil.getName(sel.parentNode);
+					var msg = "Missing value: " + Utils.getName(sel.parentNode);
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
