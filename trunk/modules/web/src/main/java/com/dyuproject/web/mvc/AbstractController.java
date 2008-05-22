@@ -27,9 +27,9 @@ public abstract class AbstractController implements Controller
     
     private boolean _initialized = false;
     
-    protected String _identifier, _identifierAttribute;
-    protected WebContext _webContext;
-    protected Filter _filter;
+    private String _identifier, _identifierAttribute;
+    private WebContext _webContext;
+    private Filter _filter;
 
     public final void init(WebContext webContext)
     {
@@ -45,7 +45,7 @@ public abstract class AbstractController implements Controller
     
     protected abstract void init();
     
-    protected WebContext getWebContext()
+    public WebContext getWebContext()
     {
         return _webContext;
     }

@@ -127,9 +127,10 @@ public class CookieSession
     public static CookieSession create(String secretKey, String cookieName, 
             HttpServletRequest request, int maxAgeSeconds, String path, String domain)
     {
-        if(secretKey==null || cookieName==null || request==null)
-            throw new IllegalArgumentException("ff are required: secretKey, cookieName, request");
-        return new CookieSession(secretKey, cookieName, request.getRemoteAddr(), maxAgeSeconds, 
+        if(secretKey==null || cookieName==null)
+            throw new IllegalArgumentException("ff are required: secretKey, cookieName");
+        String remoteAddr = request.getRemoteAddr();
+        return new CookieSession(secretKey, cookieName, remoteAddr, maxAgeSeconds, 
                 path, domain);
     }    
     
@@ -164,6 +165,11 @@ public class CookieSession
     public boolean isUpdated()
     {
         return _updated;
+    }
+    
+    public boolean isWritten()
+    {
+        return _written;
     }
     
     public void setAttribute(String name, String value)

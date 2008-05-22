@@ -15,14 +15,17 @@
 package com.dyuproject.web;
 
 import java.io.IOException;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
-import com.dyuproject.util.Delim;
 
 import org.mortbay.util.MultiMap;
 import org.mortbay.util.UrlEncoded;
+
+import com.dyuproject.util.Delim;
 
 /**
  * @author David Yu
@@ -69,10 +72,9 @@ public abstract class RequestUtil
         if(contentType!=null && contentType.length()>0)
         {
             int idx = contentType.indexOf(';');
-            contentType = idx>0 ? contentType.substring(0, idx).trim() : contentType.trim();
-            int method = request.getMethod().hashCode();
+            contentType = idx>0 ? contentType.substring(0, idx).trim() : contentType.trim();            
             if(contentType.equalsIgnoreCase(URL_FORM_ENCODED) && 
-                    (POST.equals(method) || PUT.equals(method)))
+                    (POST.equals(request.getMethod()) || PUT.equals(request.getMethod())))
             {
                 int length = request.getContentLength();
                 if(length>0)
@@ -89,6 +91,34 @@ public abstract class RequestUtil
             }
         }        
         return params;
+    }
+    
+    public static Map<String, String> parsePUTParams(HttpServletRequest request) throws IOException
+    {
+        if(!PUT.equals(request.getMethod()))
+            return Collections.emptyMap();
+        
+        String contentType = request.getContentType();
+        if(contentType!=null && contentType.length()>0)
+        {
+            int idx = contentType.indexOf(';');
+            contentType = idx>0 ? contentType.substring(0, idx).trim() : contentType.trim();            
+            int length = request.getContentLength();
+            if(length>0)
+            {
+                Map<String,String> params = new HashMap<String,String>();
+                MultiMap map = new MultiMap();
+                UrlEncoded.decodeTo(request.getInputStream(), map, request.getCharacterEncoding(), -1);
+                for(Iterator<Map.Entry<String, String[]>> iter = map.toStringArrayMap().entrySet().iterator(); iter.hasNext();)
+                {
+                    Map.Entry<String, String[]> entry = (Map.Entry<String, String[]>)iter.next();
+                    String[] value = (String[])entry.getValue();
+                    params.put(entry.getKey().toString(), value!=null && value.length>0 ? value[0] : null);
+                }
+                return params;
+            } 
+        }        
+        return Collections.emptyMap();
     }
     
 }

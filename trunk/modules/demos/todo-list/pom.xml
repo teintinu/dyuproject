@@ -28,13 +28,18 @@
                 </connector>
           </connectors> 
           <webDefaultXml>src/main/etc/webdefault.xml</webDefaultXml>
-          <scanIntervalSeconds>10</scanIntervalSeconds>
+          <reload>manual</reload>
         </configuration>
       </plugin>
     </plugins>	
   </build>
   
   <dependencies>
+    <dependency>
+        <groupId>com.dyuproject</groupId>
+        <artifactId>dyuproject-web</artifactId>
+        <version>${project.version}</version>
+    </dependency>  
     <dependency>
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-annotations</artifactId>

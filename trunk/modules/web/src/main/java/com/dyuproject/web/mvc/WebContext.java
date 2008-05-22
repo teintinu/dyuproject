@@ -461,19 +461,27 @@ public class WebContext
             controller.handle(mime, request, response);
             return;
         }
-        if(!filter.preHandle(mime, request, response))
-        {
-            filter.postHandle(false, mime, request, response);
-            return;
-        }
+        boolean success = false;
         try
         {
-            controller.handle(mime, request, response);
+            success = filter.preHandle(mime, request, response);
         }
         finally
-        {
-            filter.postHandle(true, mime, request, response);
-        }        
+        {            
+            if(success)
+            {
+                try
+                {
+                    controller.handle(mime, request, response);
+                }
+                finally
+                {
+                    filter.postHandle(true, mime, request, response);
+                }
+            }
+            else
+                filter.postHandle(false, mime, request, response);
+        }       
     }
 
 }
