@@ -374,7 +374,7 @@ var History = {
             History.loopKey = window.setInterval(History.loop, 250);
     }
 }
-Utils.addOnLoad(History.start);
+//Utils.addOnLoad(History.start);
 dp.Loader.addSingleton('History', History);
 
 
