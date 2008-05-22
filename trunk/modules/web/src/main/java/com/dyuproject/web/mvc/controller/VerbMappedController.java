@@ -31,8 +31,10 @@ import com.dyuproject.web.mvc.AbstractController;
  * @created May 16, 2008
  */
 
-public abstract class MethodMappedController extends AbstractController
+public abstract class VerbMappedController extends AbstractController
 {
+    
+    public static final String VOID = "void";
     
     private Map<String,Method> _verbMap = new HashMap<String,Method>();
     
@@ -46,10 +48,12 @@ public abstract class MethodMappedController extends AbstractController
                 Class[] pt = m.getParameterTypes();
                 if(pt.length==3)
                 {
+                    // e.g public void list(string, request, response);
                     if(String.class.isAssignableFrom(pt[0]) &&
                             HttpServletRequest.class.isAssignableFrom(pt[1]) &&
-                            HttpServletResponse.class.isAssignableFrom(pt[2]))
-                    {
+                            HttpServletResponse.class.isAssignableFrom(pt[2]) &&
+                            m.getReturnType().getName().equals(VOID))
+                    {                        
                         m.setAccessible(true);
                         _verbMap.put(m.getName(), m);
                     }
