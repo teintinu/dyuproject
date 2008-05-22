@@ -113,7 +113,7 @@ public abstract class FormatConverter
     public abstract StringBuilder getBuffer(Bean bean, String callback);
     public abstract StringBuilder getBuffer(Map<String, Object>[] m, String callback);
     
-    public interface Bean extends Serializable
+    public interface Bean
     {
         public void convert(Builder builder, String format);         
     }

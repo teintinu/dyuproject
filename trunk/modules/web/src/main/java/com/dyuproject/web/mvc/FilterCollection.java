@@ -63,6 +63,8 @@ public class FilterCollection extends AbstractFilter
             for(Filter f : _filters)
                 _temp.add(f);
             _filters = _temp.toArray(new Filter[_temp.size()]);
+            _temp.clear();
+            _temp = null;
         }
         for(Filter f : _filters)
             f.init(getWebContext());
