@@ -48,6 +48,9 @@ public class WebContext
     public static final String DEFAULT_MIME_LOCATION = "/WEB-INF/mime.properties";
     public static final String DEFAULT_ENV_LOCATION = "/WEB-INF/env.properties";
     
+    public static final String PATHINFO_ARRAY_ATTR = "rest.pathInfo.array";
+    public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";
+    
     private static final Log log = LogFactory.getLog(WebContext.class);
     
     private boolean _initialized = false, _initializing = false;
@@ -436,6 +439,15 @@ public class WebContext
             response.sendError(404);
             return;
         }
+        // support wildcard
+        if(verbOrIdAttr.charAt(0)=='*')
+        {
+            request.setAttribute(PATHINFO_ARRAY_ATTR, pathInfo);
+            request.setAttribute(PATHINFO_INDEX_ATTR, new Integer(sub));
+            handle(c, mime, request, response);
+            return;
+        }
+        
         request.setAttribute(verbOrIdAttr, pathInfo[sub+1]);
         if(sub+2==pathInfo.length)
         {
