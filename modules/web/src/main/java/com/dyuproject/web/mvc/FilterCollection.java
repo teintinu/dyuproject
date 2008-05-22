@@ -103,16 +103,19 @@ public class FilterCollection extends AbstractFilter
     private void doPostHandleChain(int i, boolean handled, String mime,
             HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException
-    {        
-        if(i==-1)
+    {
+        if(i==0)
+        {
+            _filters[0].postHandle(handled, mime, request, response);
             return;
+        }
         try
         {
-            _filters[i--].postHandle(false, mime, request, response);
+            _filters[i].postHandle(handled, mime, request, response);
         }
         finally
         {
-            doPostHandleChain(i, handled, mime, request, response);
+            doPostHandleChain(i-1, handled, mime, request, response);
         }
     }
 
