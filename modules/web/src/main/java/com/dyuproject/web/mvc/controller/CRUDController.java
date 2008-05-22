@@ -85,7 +85,7 @@ public abstract class CRUDController extends VerbMappedController
                 update(request, response, mime, id);
             return;
         }
-        if(request.getMethod().equals(DELETE))
+        if(method.equals(DELETE))
         {
             delete(request, response, mime, id);
             return;
