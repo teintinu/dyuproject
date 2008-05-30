@@ -74,7 +74,10 @@ public abstract class CRUDController extends VerbMappedController
 
         if(method.equals(GET))
         {
-            read(request, response, mime, id);
+            if(id==null)
+                read(request, response, mime);
+            else
+                read(request, response, mime, id);
             return;
         }
         if(method.equals(POST) || method.equals(PUT))
@@ -94,6 +97,9 @@ public abstract class CRUDController extends VerbMappedController
     }
     
     protected abstract void create(HttpServletRequest request, HttpServletResponse response, 
+            String mime) throws IOException, ServletException;
+    
+    protected abstract void read(HttpServletRequest request, HttpServletResponse response, 
             String mime) throws IOException, ServletException;
     
     protected abstract void read(HttpServletRequest request, HttpServletResponse response, 
