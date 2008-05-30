@@ -78,7 +78,7 @@ var Utils = {
         return str.replace(/^\s+/g, '').replace(/\s+$/g, '');
     },
     trimLineBreaks: function(str) {
-        str.replace(/(\r\n|[\r\n])/g, ' ');
+        return str.replace(/(\r\n|[\r\n])/g, ' ');
     },
 	getParentName: function(el) {		
 		var p = el.parentNode;
