@@ -95,13 +95,14 @@ public class WebContext
         if(cs==null)
         {
             cs = CookieSession.get(_secretKey, _cookieName, request);
-            if(create && cs==null)
-                cs = CookieSession.create(_secretKey, _cookieName, request, _maxAge, _path, _domain);
-            if(cs!=null)
+            if(cs==null)
             {
-                request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, cs);
-                __currentSession.set(cs);
-            }
+                if(!create)
+                    return null;
+                cs = CookieSession.create(_secretKey, _cookieName, request, _maxAge, _path, _domain);
+            }            
+            request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, cs);
+            __currentSession.set(cs);
         }        
         return cs;
     }
