@@ -39,7 +39,7 @@ public class CookieSession
     private static boolean __initialized = false;
     private static MessageDigest __MD5 = null;    
     
-    public static CookieSession get(String secretKey, String cookieName, HttpServletRequest request)
+    static CookieSession get(String secretKey, String cookieName, HttpServletRequest request)
     {
         Cookie[] cookies = request.getCookies();
         if(cookies!=null)
@@ -93,14 +93,13 @@ public class CookieSession
                 String[] param = Delim.EQUALS.split(pairs[i]);
                 if(param.length==2)
                     session._attributes.put(param[0], param[1]);
-            }
-            session._updated = false;
+            }            
             return session;
         }
         return null;
     }
     
-    public static synchronized void init()
+    static synchronized void init()
     {
         if(__initialized)
             return;
@@ -124,7 +123,7 @@ public class CookieSession
         return __initialized && __MD5!=null;
     }
     
-    public static CookieSession create(String secretKey, String cookieName, 
+    static CookieSession create(String secretKey, String cookieName, 
             HttpServletRequest request, int maxAgeSeconds, String path, String domain)
     {
         if(secretKey==null || cookieName==null)
@@ -134,7 +133,7 @@ public class CookieSession
                 path, domain);
     }    
     
-    private boolean _parsed = false, _updated = false, _written = false;
+    private boolean _parsed = false, _modified = false, _written = false;
     private Map<String,String>_attributes = new AttributesMap<String,String>();
     private Cookie _cookie;
     private String _secretKey, _cookieName, _domain, _path, _remoteAddr;
@@ -164,7 +163,7 @@ public class CookieSession
     
     public boolean isUpdated()
     {
-        return _updated;
+        return _modified;
     }
     
     public boolean isWritten()
@@ -182,7 +181,32 @@ public class CookieSession
         return _attributes.get(name);
     }    
     
-    public boolean writeIfNecessary(HttpServletResponse response)
+    public boolean isNew()
+    {
+        return !_parsed;
+    }
+    
+    public boolean saveIfNew(HttpServletResponse response)
+    {
+        if(!_parsed)
+        {
+            synchronized(_writeLock)
+            {
+                _written = true;
+            }
+            Cookie cookie = new Cookie(_cookieName, generateCookieValue());            
+            cookie.setMaxAge(_maxAge);
+            cookie.setPath(_path);
+            if(_domain!=null)
+                cookie.setDomain(_domain);
+            _cookie = cookie;
+            response.addCookie(cookie);            
+            return true;
+        }
+        return false;
+    }
+    
+    boolean updateIfNecessary(HttpServletResponse response)
     {
         synchronized(_writeLock)
         {
@@ -193,7 +217,7 @@ public class CookieSession
         
         if(_parsed)
         {
-            if(!_updated)
+            if(!_modified)
             {
                 _written = false;
                 return false;
@@ -208,16 +232,13 @@ public class CookieSession
             return true;
         }        
         
-        
-        if(_cookie==null)
-        {
-            _cookie = new Cookie(_cookieName, generateCookieValue());            
-            _cookie.setMaxAge(_maxAge);
-            _cookie.setPath(_path);
-            if(_domain!=null)
-                _cookie.setDomain(_domain);            
-        }
-        response.addCookie(_cookie);  
+        Cookie cookie = new Cookie(_cookieName, generateCookieValue());            
+        cookie.setMaxAge(_maxAge);
+        cookie.setPath(_path);
+        if(_domain!=null)
+            cookie.setDomain(_domain);
+        _cookie = cookie;
+        response.addCookie(cookie);        
         return true;
     }
     
@@ -265,8 +286,7 @@ public class CookieSession
         synchronized(_writeLock)
         {
             _written = true;                
-        }
-        _updated = true;
+        }        
         //String oldSecretKey = _secretKey;
         //_secretKey = String.valueOf(System.currentTimeMillis());
         Cookie cookie = new Cookie(_cookie.getName(), generateCookieValue());
@@ -276,13 +296,14 @@ public class CookieSession
         if(_cookie.getDomain()!=null)
             cookie.setDomain(_cookie.getDomain());
         _cookie = cookie;
+        _modified = false;
         response.addCookie(cookie);
         return true;
     }
     
     public Map<String,String> getAttributes()
     {
-        return _attributes;
+        return getAttrs();
     }
     
     public Map<String,String> getAttrs()
@@ -302,13 +323,13 @@ public class CookieSession
         
         public V put(K key, V value)
         {
-            _updated = true;
+            _modified = true;
             return super.put(key, value);
         }
         
         public V remove(Object key)
         {
-            _updated = true;
+            _modified = true;
             return super.remove(key);
         }        
         

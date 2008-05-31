@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ CookieSession now managed only by WebContext
 + support wildcard '*' on Controllers
 + added CRUDController
 + renamed MethodMappedController to VerbMappedController
