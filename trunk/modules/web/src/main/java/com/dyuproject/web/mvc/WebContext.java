@@ -40,7 +40,7 @@ import com.dyuproject.util.Delim;
  */
 
 public class WebContext
-{
+{   
     
     public static final String DISPATCH_ATTR = "com.dyuproject.web.dispatch";
     public static final String DISPATCH_SUFFIX_ATTR = "com.dyuproject.web.dispatch.suffix";
@@ -51,7 +51,22 @@ public class WebContext
     public static final String PATHINFO_ARRAY_ATTR = "rest.pathInfo.array";
     public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";
     
+    public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
+    public static final String ENV_SECRET_KEY = "session.cookie.secretKey";
+    public static final String ENV_COOKIE_NAME = "session.cookie.name";
+    public static final String ENV_COOKIE_MAX_AGE = "session.cookie.maxAge";
+    public static final String ENV_COOKIE_DOMAIN = "session.cookie.domain";
+    public static final String ENV_COOKIE_PATH = "session.cookie.path";
+    
     private static final Log log = LogFactory.getLog(WebContext.class);
+    
+    private static final ThreadLocal<CookieSession> __currentSession = new ThreadLocal<CookieSession>();
+    
+    public static CookieSession getCurrentSession()
+    {
+        return __currentSession.get();
+    }
+    
     
     private boolean _initialized = false, _initializing = false;
     private ServletContext _servletContext;
@@ -66,10 +81,34 @@ public class WebContext
     private Map<String,Object> _attributes = new HashMap<String,Object>();
     
     private Properties _mime, _env = new Properties();
+    private String _secretKey, _cookieName, _path, _domain;
+    private int _maxAge = 3600;
     
     public WebContext()
     {
         
+    }
+    
+    public CookieSession getSession(HttpServletRequest request, boolean create)
+    {
+        CookieSession cs = getCurrentSession();
+        if(cs==null)
+        {
+            cs = CookieSession.get(_secretKey, _cookieName, request);
+            if(create && cs==null)
+                cs = CookieSession.create(_secretKey, _cookieName, request, _maxAge, _path, _domain);
+            if(cs!=null)
+            {
+                request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, cs);
+                __currentSession.set(cs);
+            }
+        }        
+        return cs;
+    }
+    
+    public CookieSession getSession(HttpServletRequest request)
+    {
+        return getSession(request, false);
     }
     
     void init(ServletContext servletContext)
@@ -129,7 +168,19 @@ public class WebContext
                 _mime = new Properties();
             }
         }
-
+        
+        _secretKey = getProperty(ENV_SECRET_KEY);
+        _cookieName = getProperty(ENV_COOKIE_NAME);
+        _path = getProperty(ENV_COOKIE_PATH);
+        _domain = getProperty(ENV_COOKIE_DOMAIN);
+        
+        String maxAge = getProperty(ENV_COOKIE_MAX_AGE);
+        if(maxAge!=null)
+            _maxAge = Integer.parseInt(maxAge);
+        
+        if(_secretKey!=null && _cookieName!=null)
+            CookieSession.init();
+        
         _initializing = false;
     }
     
@@ -345,8 +396,7 @@ public class WebContext
         String pathInfo = request.getPathInfo();        
         
         if(request.getAttribute(DISPATCH_ATTR)!=null)
-        {
-            System.err.println("DISPATCHED");
+        {            
             if("jsp".equals(request.getAttribute(DISPATCH_SUFFIX_ATTR)))
                 _jspDispatcher._jsp.include(request, response);
             else
@@ -358,7 +408,17 @@ public class WebContext
         // root context /
         if(last<1)
         {
-            handle(_defaultController, null, request, response);            
+            try
+            {
+                handle(_defaultController, null, request, response);
+            }
+            finally
+            {
+                CookieSession session = getCurrentSession();            
+                __currentSession.set(null);
+                if(session!=null)
+                    session.updateIfNecessary(response);
+            }                 
             return;
         }
         
@@ -414,7 +474,17 @@ public class WebContext
             return;
         }            
         
-        handle(0, tokens, mime, request, response); 
+        try
+        {
+            handle(0, tokens, mime, request, response); 
+        }
+        finally
+        {
+            CookieSession session = getCurrentSession();            
+            __currentSession.set(null);
+            if(session!=null)
+                session.updateIfNecessary(response);
+        }        
     }
     
     private void handle(int sub, String[] pathInfo, String mime, HttpServletRequest request, 
