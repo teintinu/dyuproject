@@ -39,7 +39,8 @@ public class CookieSession
     private static boolean __initialized = false;
     private static MessageDigest __MD5 = null;    
     
-    static CookieSession get(String secretKey, String cookieName, HttpServletRequest request)
+    static CookieSession get(String secretKey, String cookieName, HttpServletRequest request, 
+            boolean includeRemoteAddr)
     {
         Cookie[] cookies = request.getCookies();
         if(cookies!=null)
@@ -47,13 +48,14 @@ public class CookieSession
             for(Cookie c : cookies)
             {
                 if(c.getName().equals(cookieName))
-                    return parse(secretKey, c, request);
+                    return parse(secretKey, c, request, includeRemoteAddr);
             }
         }
         return null;
     }
     
-    private static CookieSession parse(String secretKey, Cookie cookie, HttpServletRequest request)
+    private static CookieSession parse(String secretKey, Cookie cookie, HttpServletRequest request,
+            boolean includeRemoteAddr)
     {
         String value = cookie.getValue();
         String[] pairs = Delim.AMPER.split(value);
@@ -73,7 +75,7 @@ public class CookieSession
         toDigest.append(secretKey);
         
         //remote address, prevents session hijacking
-        String remoteAddr = request.getRemoteAddr();
+        String remoteAddr = includeRemoteAddr ? request.getRemoteAddr() : null;
         if(remoteAddr!=null)
             toDigest.append(remoteAddr);
         
@@ -123,11 +125,11 @@ public class CookieSession
         return __initialized && __MD5!=null;
     }
     
-    static CookieSession create(String secretKey, String cookieName, 
-            HttpServletRequest request, int maxAgeSeconds, String path, String domain)
+    static CookieSession create(String secretKey, String cookieName, HttpServletRequest request, 
+            int maxAgeSeconds, String path, String domain, boolean includeRemoteAddr)
     {        
-        return new CookieSession(secretKey, cookieName, request.getRemoteAddr(), maxAgeSeconds, 
-                path, domain);
+        return new CookieSession(secretKey, cookieName, includeRemoteAddr ? 
+                request.getRemoteAddr() : null, maxAgeSeconds, path, domain);
     }    
     
     private boolean _parsed = false, _modified = false, _written = false;
@@ -251,9 +253,12 @@ public class CookieSession
         for(Map.Entry<String, String> entry : _attributes.entrySet())
         {
             String key = entry.getKey();
-            String value = entry.getValue();
-            output.append('&').append(key).append('=').append(value);
-            toDigest.append(key).append('=').append(value);
+            if(!TIMESTAMP_ATTR.equals(key))
+            {
+                String value = entry.getValue();
+                output.append('&').append(key).append('=').append(value);
+                toDigest.append(key).append('=').append(value);
+            }
         }        
         
         toDigest.append(_secretKey);

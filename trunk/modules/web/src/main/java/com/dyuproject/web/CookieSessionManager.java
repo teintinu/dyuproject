@@ -32,6 +32,7 @@ public class CookieSessionManager
     public static final String SESSION_COOKIE_MAX_AGE = "session.cookie.maxAge";
     public static final String SESSION_COOKIE_DOMAIN = "session.cookie.domain";
     public static final String SESSION_COOKIE_PATH = "session.cookie.path";
+    public static final String SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS = "session.cookie.include.remote.address";
     
     public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
     
@@ -39,7 +40,7 @@ public class CookieSessionManager
 
     private String _secretKey, _cookieName, _path, _domain;
     private int _maxAge = 3600;
-    private boolean _started = false;
+    private boolean _started = false, _includeRemoteAddr = false;
     
     public static CookieSession getCurrentSession()
     {
@@ -69,7 +70,11 @@ public class CookieSessionManager
         
         String maxAge = props.getProperty(SESSION_COOKIE_MAX_AGE);
         if(maxAge!=null)
-            _maxAge = Integer.parseInt(maxAge);           
+            _maxAge = Integer.parseInt(maxAge);
+        
+        String includeRemoteAddr = props.getProperty(SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS);
+        if(includeRemoteAddr!=null)
+            _includeRemoteAddr = Boolean.parseBoolean(includeRemoteAddr);
         
         init();
         CookieSession.init();
@@ -88,12 +93,13 @@ public class CookieSessionManager
         if(holder._initialized)
             return holder._session;
         holder._initialized = true;
-        CookieSession cs = CookieSession.get(_secretKey, _cookieName, request);
+        CookieSession cs = CookieSession.get(_secretKey, _cookieName, request, _includeRemoteAddr);
         if(cs==null)
         {
             if(!create)
                 return null;
-            cs = CookieSession.create(_secretKey, _cookieName, request, _maxAge, _path, _domain);
+            cs = CookieSession.create(_secretKey, _cookieName, request, _maxAge, _path, _domain, 
+                    _includeRemoteAddr);
         }
         request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, cs);
         holder._session = cs;
