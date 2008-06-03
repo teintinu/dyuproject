@@ -83,7 +83,7 @@ public class RestfulMVCServlet extends HttpServlet
     
     public void destroy()
     {
-        
+        _webContext.destroy();
     }
 
 }
