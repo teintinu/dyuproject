@@ -12,7 +12,9 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.mvc;
+package com.dyuproject.web;
+
+import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -25,11 +27,13 @@ import javax.servlet.http.HttpServletResponse;
 public class CookieSessionManager
 {
     
-    public static final String ENV_SECRET_KEY = "session.cookie.secretKey";
-    public static final String ENV_COOKIE_NAME = "session.cookie.name";
-    public static final String ENV_COOKIE_MAX_AGE = "session.cookie.maxAge";
-    public static final String ENV_COOKIE_DOMAIN = "session.cookie.domain";
-    public static final String ENV_COOKIE_PATH = "session.cookie.path";
+    public static final String SESSION_COOKIE_SECRET_KEY = "session.cookie.secretKey";
+    public static final String SESSION_COOKIE_NAME = "session.cookie.name";
+    public static final String SESSION_COOKIE_MAX_AGE = "session.cookie.maxAge";
+    public static final String SESSION_COOKIE_DOMAIN = "session.cookie.domain";
+    public static final String SESSION_COOKIE_PATH = "session.cookie.path";
+    
+    public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
     
     private static LocalizedCookieSessionHolder __holder;    
 
@@ -37,7 +41,7 @@ public class CookieSessionManager
     private int _maxAge = 3600;
     private boolean _started = false;
     
-    static CookieSession getCurrentSession()
+    public static CookieSession getCurrentSession()
     {
         return __holder!=null ? __holder.get()._session : null;
     }
@@ -47,23 +51,23 @@ public class CookieSessionManager
         
     }
 
-    public void init(WebContext webContext)
+    public void init(Properties props)
     {
         if(_started)
             return;
         
-        _cookieName = webContext.getProperty(ENV_COOKIE_NAME);
-        _secretKey = webContext.getProperty(ENV_SECRET_KEY);
+        _cookieName = props.getProperty(SESSION_COOKIE_NAME);
+        _secretKey = props.getProperty(SESSION_COOKIE_SECRET_KEY);
         if(_cookieName==null || _secretKey==null)
         {
-            throw new IllegalStateException(ENV_COOKIE_NAME + " and " + 
-                    ENV_SECRET_KEY + " env property must be set.");
+            throw new IllegalStateException(SESSION_COOKIE_NAME + " and " + 
+                    SESSION_COOKIE_SECRET_KEY + " env property must be set.");
         }
         
-        _path = webContext.getProperty(ENV_COOKIE_PATH);
-        _domain = webContext.getProperty(ENV_COOKIE_DOMAIN);
+        _path = props.getProperty(SESSION_COOKIE_PATH);
+        _domain = props.getProperty(SESSION_COOKIE_DOMAIN);
         
-        String maxAge = webContext.getProperty(ENV_COOKIE_MAX_AGE);
+        String maxAge = props.getProperty(SESSION_COOKIE_MAX_AGE);
         if(maxAge!=null)
             _maxAge = Integer.parseInt(maxAge);           
         
@@ -91,7 +95,7 @@ public class CookieSessionManager
                 return null;
             cs = CookieSession.create(_secretKey, _cookieName, request, _maxAge, _path, _domain);
         }
-        request.setAttribute(WebContext.COOKIE_SESSION_REQUEST_ATTR, cs);
+        request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, cs);
         holder._session = cs;
         return cs;
     }

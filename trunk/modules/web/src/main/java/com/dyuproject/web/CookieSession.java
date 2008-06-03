@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.mvc;
+package com.dyuproject.web;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

@@ -33,6 +33,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.dyuproject.util.Delim;
+import com.dyuproject.web.CookieSession;
+import com.dyuproject.web.CookieSessionManager;
 
 /**
  * @author David Yu
@@ -49,9 +51,8 @@ public class WebContext
     public static final String DEFAULT_ENV_LOCATION = "/WEB-INF/env.properties";
     
     public static final String PATHINFO_ARRAY_ATTR = "rest.pathInfo.array";
-    public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";
+    public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";    
     
-    public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
     public static final String SESSION_ENABLED = "session.enabled";
     
     private static final Log log = LogFactory.getLog(WebContext.class);
@@ -157,7 +158,7 @@ public class WebContext
         if(_sessionEnabled)
         {
             _cookieSessionManager = new CookieSessionManager();
-            _cookieSessionManager.init(this);
+            _cookieSessionManager.init(_env);
         }
         
         _initializing = false;
