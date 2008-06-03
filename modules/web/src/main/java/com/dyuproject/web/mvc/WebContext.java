@@ -52,23 +52,16 @@ public class WebContext
     public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";
     
     public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
-    public static final String ENV_SECRET_KEY = "session.cookie.secretKey";
-    public static final String ENV_COOKIE_NAME = "session.cookie.name";
-    public static final String ENV_COOKIE_MAX_AGE = "session.cookie.maxAge";
-    public static final String ENV_COOKIE_DOMAIN = "session.cookie.domain";
-    public static final String ENV_COOKIE_PATH = "session.cookie.path";
+    public static final String SESSION_ENABLED = "session.enabled";
     
     private static final Log log = LogFactory.getLog(WebContext.class);
     
-    private static final ThreadLocal<CookieSession> __currentSession = new ThreadLocal<CookieSession>();
-    
     public static CookieSession getCurrentSession()
     {
-        return __currentSession.get();
-    }
+        return CookieSessionManager.getCurrentSession();
+    }    
     
-    
-    private boolean _initialized = false, _initializing = false;
+    private boolean _initialized = false, _initializing = false, _sessionEnabled = false;
     private ServletContext _servletContext;
     
     private DefaultDispatcher _defaultDispatcher = new DefaultDispatcher();
@@ -81,8 +74,7 @@ public class WebContext
     private Map<String,Object> _attributes = new HashMap<String,Object>();
     
     private Properties _mime, _env = new Properties();
-    private String _secretKey, _cookieName, _path, _domain;
-    private int _maxAge = 3600;
+    private CookieSessionManager _cookieSessionManager;
     
     public WebContext()
     {
@@ -91,25 +83,17 @@ public class WebContext
     
     public CookieSession getSession(HttpServletRequest request, boolean create)
     {
-        CookieSession cs = getCurrentSession();
-        if(cs==null)
-        {
-            cs = CookieSession.get(_secretKey, _cookieName, request);
-            if(cs==null)
-            {
-                if(!create)
-                    return null;
-                cs = CookieSession.create(_secretKey, _cookieName, request, _maxAge, _path, _domain);
-            }            
-            request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, cs);
-            __currentSession.set(cs);
-        }        
-        return cs;
+        return _sessionEnabled ? _cookieSessionManager.getSession(request, create) : null;
     }
     
     public CookieSession getSession(HttpServletRequest request)
     {
-        return getSession(request, false);
+        return _sessionEnabled ? _cookieSessionManager.getSession(request, false) : null;
+    }
+    
+    public boolean isSessionEnabled()
+    {
+        return _sessionEnabled;
     }
     
     void init(ServletContext servletContext)
@@ -169,18 +153,12 @@ public class WebContext
                 _mime = new Properties();
             }
         }
-        
-        _secretKey = getProperty(ENV_SECRET_KEY);
-        _cookieName = getProperty(ENV_COOKIE_NAME);
-        _path = getProperty(ENV_COOKIE_PATH);
-        _domain = getProperty(ENV_COOKIE_DOMAIN);
-        
-        String maxAge = getProperty(ENV_COOKIE_MAX_AGE);
-        if(maxAge!=null)
-            _maxAge = Integer.parseInt(maxAge);
-        
-        if(_secretKey!=null && _cookieName!=null)
-            CookieSession.init();
+        _sessionEnabled = Boolean.parseBoolean(_env.getProperty(SESSION_ENABLED, "false"));
+        if(_sessionEnabled)
+        {
+            _cookieSessionManager = new CookieSessionManager();
+            _cookieSessionManager.init(this);
+        }
         
         _initializing = false;
     }
@@ -214,8 +192,7 @@ public class WebContext
             throw new IllegalStateException("already initialized");
         
         _viewDispatchers.put(mime, dispatcher);
-    }
-    
+    }    
     
     public ViewDispatcher getViewDispatcher(String name)
     {
@@ -415,10 +392,8 @@ public class WebContext
             }
             finally
             {
-                CookieSession session = getCurrentSession();            
-                __currentSession.set(null);
-                if(session!=null)
-                    session.updateIfNecessary(response);
+                if(_sessionEnabled)
+                    _cookieSessionManager.updateIfNecessary(response);
             }                 
             return;
         }
@@ -481,10 +456,8 @@ public class WebContext
         }
         finally
         {
-            CookieSession session = getCurrentSession();            
-            __currentSession.set(null);
-            if(session!=null)
-                session.updateIfNecessary(response);
+            if(_sessionEnabled)
+                _cookieSessionManager.updateIfNecessary(response);
         }        
     }
     
@@ -565,6 +538,12 @@ public class WebContext
             else
                 filter.postHandle(false, mime, request, response);
         }       
+    }
+    
+    void destroy()
+    {
+        for(Controller c : _controllers.values())
+            c.destroy();
     }
 
 }

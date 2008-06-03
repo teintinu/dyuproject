@@ -80,5 +80,10 @@ public class RestfulMVCServlet extends HttpServlet
     {
         return getClass().getClassLoader().loadClass(className).newInstance();        
     }
+    
+    public void destroy()
+    {
+        
+    }
 
 }
