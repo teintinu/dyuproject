@@ -160,7 +160,7 @@ public class CookieSession
         _domain = domain;        
     }
     
-    public boolean isUpdated()
+    public boolean isModified()
     {
         return _modified;
     }
