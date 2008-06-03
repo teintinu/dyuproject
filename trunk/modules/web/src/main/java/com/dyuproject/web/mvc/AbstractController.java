@@ -45,6 +45,11 @@ public abstract class AbstractController implements Controller
     
     protected abstract void init();
     
+    protected boolean isInitialized()
+    {
+        return _initialized;
+    }
+    
     public WebContext getWebContext()
     {
         return _webContext;
