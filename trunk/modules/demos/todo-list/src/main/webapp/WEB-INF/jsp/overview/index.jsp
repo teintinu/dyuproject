@@ -14,6 +14,7 @@
   </div>
   <table cellspacing="5">
     <c:set var="open" value="0" scope="page"/>
+	<c:set var="total" value="0" scope="page"/>
     <c:forEach var="t" items="${user.todos}" varStatus="status">
 	  <c:set var="total" value="${status.count}" scope="page"/>
 	  <c:if test="${!t.completed}">
