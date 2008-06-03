@@ -170,7 +170,7 @@ public class UsersController extends CRUDController
         if(Constants.XML.equals(mime))        
             writeXML(_userDao.get(), request, response);        
         else if(Constants.JSON.equals(mime))        
-            writeXML(_userDao.get(), request, response);        
+            writeJSON(_userDao.get(), request, response);        
         else        
             dispatchToView(_userDao.get(), request, response);        
     }
@@ -189,7 +189,7 @@ public class UsersController extends CRUDController
         if(Constants.XML.equals(mime))        
             writeXML(user, request, response);        
         else if(Constants.JSON.equals(mime))        
-            writeXML(user, request, response);        
+            writeJSON(user, request, response);        
         else
             dispatchToView(user, request, response);
         
