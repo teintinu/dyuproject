@@ -87,5 +87,10 @@ public abstract class AbstractController implements Controller
         return getIdentifierAttribute()==null ? null : 
             (String)request.getAttribute(getIdentifierAttribute());
     }
+    
+    public void destroy()
+    {
+        
+    }
 
 }

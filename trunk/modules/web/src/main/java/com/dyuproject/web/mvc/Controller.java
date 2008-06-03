@@ -42,5 +42,6 @@ public interface Controller
     public String getIdentifierAttribute();
     
     public Filter getFilter();
+    public void destroy();
 
 }
