@@ -59,7 +59,8 @@ public class LoginController extends AbstractController
         {
             response.sendRedirect(request.getContextPath() + "/overview");
             return;
-        }        
+        }
+        response.setContentType("text/html");
         getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/login/index.jsp", request, 
                 response);
     }

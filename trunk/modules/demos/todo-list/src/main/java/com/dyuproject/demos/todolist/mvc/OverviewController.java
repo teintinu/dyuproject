@@ -60,6 +60,7 @@ public class OverviewController extends AbstractController
         CookieSession session = getWebContext().getSession(request);
         User user = _userDao.get(Long.valueOf(session.getAttribute(Constants.ID)));
         request.setAttribute(Constants.USER, user);
+        response.setContentType(Constants.TEXT_HTML);
         getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/overview/index.jsp", request, 
                 response);
     }
