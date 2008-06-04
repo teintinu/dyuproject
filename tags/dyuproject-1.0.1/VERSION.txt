@@ -1,0 +1,30 @@
+dyuproject-1.0-SNAPSHOT
++
+
+dyuproject-1.0.1
++ CookieSession remoteAddress hash now optional - defaults to false
++ moved com.dyuproject.web.mvc.CookieSessionManager to com.dyuproject.web.CookieSessionManager 
++ moved com.dyuproject.web.mvc.CookieSession to com.dyuproject.web.CookieSession
++ added JSPViewController
++ RestfulMVCServlet renamed to RESTfulMVCServlet
++ added method destroy on controllers
++ added CookieSessionManager
++ support wildcard '*' on Controllers
++ added CRUDController
++ renamed MethodMappedController to VerbMappedController
++ added StaticResourceController
++ demos
++ servlet-api-2.5 to 3.0
+
+dyuproject-1.0.0 2008-05-20
++ session authentication controller helper class
++ CookieSession protect from session hijacking
++ CookieSession - MD5 Hash + secretKey
++ Filters
++ ViewDispatcher
++ RESTful MVC
++ POJO to JSON String tool
++ POJO to XML String tool
++ persistence tool for JDBC
++ persistence tool for Hibernate
++ application bundling for a single jar
