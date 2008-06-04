@@ -135,7 +135,7 @@
 	  </div>
 	</div>
 	<div id="bottom">
-	  <center><p style="padding:2px">© Copyright 2008 dyuproject.  All rights reserved</p></center>
+	  <center><p style="padding:2px">&copy; Copyright 2008 dyuproject.  All rights reserved</p></center>
 	</div>
   </div>
 </div>  

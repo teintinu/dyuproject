@@ -20,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.demos.todolist.Constants;
 import com.dyuproject.web.mvc.AbstractController;
 
 /**
@@ -39,6 +40,7 @@ public class DefaultController extends AbstractController
     public void handle(String mime, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException
     {
+        response.setContentType(Constants.TEXT_HTML);
         getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/index.jsp", request, response);        
     }
 
