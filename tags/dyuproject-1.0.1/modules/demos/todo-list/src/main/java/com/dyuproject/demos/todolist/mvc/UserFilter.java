@@ -52,6 +52,7 @@ public class UserFilter extends AbstractFilter
         CookieSession session = getWebContext().getSession(request);        
         if(session!=null && session.getAttribute(Constants.ID)!=null)
             return true;
+        response.setContentType(Constants.TEXT_HTML);
         getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/login/index.jsp", request, 
                 response);
         return false;

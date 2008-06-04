@@ -77,6 +77,7 @@ public class AuthController extends AbstractController
         CookieSession session = getWebContext().getSession(request, true);
         session.setAttribute(Constants.ID, user.getId().toString());
         session.saveIfNew(response);
+        response.setContentType(Constants.TEXT_HTML);
         response.sendRedirect(request.getContextPath() + "/overview");
     }
 

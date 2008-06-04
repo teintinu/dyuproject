@@ -102,6 +102,7 @@ public class TodosController extends CRUDController
             {
                 request.setAttribute(Constants.MSG, Constants.TODO_CREATED);
                 request.setAttribute(Constants.USER, user);
+                response.setContentType(Constants.TEXT_HTML);
                 getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/users/id.jsp", 
                         request, response);
             }
