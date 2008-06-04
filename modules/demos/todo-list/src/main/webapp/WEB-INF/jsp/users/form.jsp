@@ -13,24 +13,24 @@
     <table height="100%" class="bean_table" cellspacing="4" cellpadding="0">	  
 	  <tr>
 	    <td class="left_col">First Name</td>
-		<td name="First Name"><input name="firstName" type="text" value="${user.firstName}"/></td>
+		<td name="First Name"><input name="firstName" type="text" value="${user.firstName}" required="true"/></td>
 	  </tr>
 	  <tr>
 	    <td class="left_col">Last Name</td>
-		<td name="Last Name"><input name="lastName" type="text" value="${user.lastName}"/></td>
+		<td name="Last Name"><input name="lastName" type="text" value="${user.lastName}" required="true"/></td>
 	  </tr>
 	  <tr>
 	    <td class="left_col">Email</td>
-		<td name="Email"><input name="email" type="text" value="${user.email}"/></td>
+		<td name="Email"><input name="email" type="text" value="${user.email}" required="true"/></td>
 	  </tr>
 	  <c:if test="${action=='Create'}">
 	  <tr class="${action}">
 	    <td class="left_col">Username</td>
-		<td name="Username"><input name="username" type="text"/ value="${user.username}"></td>	  
+		<td name="Username"><input name="username" type="text" value="${user.username}" required="true"/></td>	  
 	  </tr>	  
 	  <tr class="${action}">
 	    <td class="left_col">Password</td>
-		<td name="Password"><input name="password" type="password" value="${user.password}"/></td>	  
+		<td name="Password"><input name="password" type="password" value="${user.password}" required="true"/></td>	  
 	  </tr>
 	  </c:if>
 	  <tr>

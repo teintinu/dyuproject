@@ -13,7 +13,7 @@
     <table height="100%" class="bean_table" cellspacing="4" cellpadding="0">	  
 	  <tr>
 	    <td class="left_col">Title</td>
-		<td name="Title"><input name="title" type="text" value="${todo.title}"/></td>
+		<td name="Title"><input name="title" type="text" value="${todo.title}" required="true"/></td>
 	  </tr>
 	  <tr>
 	    <td class="left_col">Content</td>
