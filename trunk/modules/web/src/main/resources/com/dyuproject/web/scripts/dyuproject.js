@@ -64,6 +64,9 @@ var Utils = {
     trimLineBreaks: function(str) {
         return str.replace(/(\r\n|[\r\n])/g, ' ');
     },
+	getName: function(el) {
+		return el.name ? el.name : el.getAttribute('name');
+	},
 	getParentName: function(el) {		
 		var p = el.parentNode;
 		if(!p)
@@ -214,26 +217,30 @@ var Utils = {
 	validateForm: function(currentForm, feedbackEl, resolveName) {
 		if(resolveName)
 			return Utils.validateFormResolveName(currentForm, feedbackEl);
-		for(var i=0; i<currentForm.elements.length; i++) {				
-			if(currentForm.elements[i].type.toLowerCase()=='text') {			
-				var formElement = currentForm.elements[i];
-				formElement.value = Utils.trim(formElement.value);			
-				if(formElement.value.length<1) {
-					var msg = ['Missing field: ', formElement.name.substring(0,1).toUpperCase(), formElement.name.substring(1)].join('');				
+		for(var i=0; i<currentForm.elements.length; i++) {
+			var formEl = currentForm.elements[i];
+			if('true'!=formEl.getAttribute('required'))
+				continue;				
+			if(formEl.type.toLowerCase()=='text') {				
+				formEl.value = Utils.trim(formEl.value);			
+				if(formEl.value.length<1) {
+					var name = Utils.getName(formEl);
+					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');				
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
 						alert(msg);
-					formElement.focus();					
+					formEl.focus();					
 					return false;
 				}	
 			}
-			else if(currentForm.elements[i].type.toLowerCase()=='textarea') {			
-				var ta = currentForm.elements[i];
+			else if(formEl.type.toLowerCase()=='textarea') {			
+				var ta = formEl;
 				ta.value = Utils.trimLineBreaks(ta.value);
 				ta.value = Utils.trim(ta.value);
 				if(ta.value.length<1) {
-					var msg = ['Missing field: ', ta.name.substring(0,1).toUpperCase(), ta.name.substring(1)].join('');
+					var name = Utils.getName(ta);
+					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
@@ -241,10 +248,11 @@ var Utils = {
 					return false;
 				}		
 			}		
-			else if(currentForm.elements[i].nodeName.toLowerCase()=='select') {			
-				var sel = currentForm.elements[i];						
+			else if(formEl.nodeName.toLowerCase()=='select') {			
+				var sel = formEl;						
 				if(sel.value.length<1) {
-					var msg = ['Missing value: ', sel.name.substring(0,1).toUpperCase(), sel.name.substring(1)].join('');
+					var name = Utils.getName(sel);
+					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
@@ -252,12 +260,13 @@ var Utils = {
 					return false;
 				}				
 			}				
-			else if(currentForm.elements[i].type.toLowerCase()=='password') {
-				var formPw = currentForm.elements[i];
+			else if(formEl.type.toLowerCase()=='password') {
+				var formPw = formEl;
 				var firstLength = formPw.value.length;
 				var secondLength = Utils.trim(formPw.value).length;
 				if(firstLength==0) {
-					var msg = ['Missing value: ', Utils.getParentName(formPw)].join('');
+					var name = Utils.getName(formPw);
+					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
@@ -282,26 +291,28 @@ var Utils = {
 		return true;	
 	},
 	validateFormResolveName: function(currentForm, feedbackEl) {
-		for(var i=0; i<currentForm.elements.length; i++) {				
-			if(currentForm.elements[i].type.toLowerCase()=='text') {			
-				var formElement = currentForm.elements[i];
-				formElement.value = Utils.trim(formElement.value);			
-				if(formElement.value.length<1) {
-					var msg = ['Missing field: ', Utils.getParentName(formElement)].join('');				
+		for(var i=0; i<currentForm.elements.length; i++) {
+			var formEl = currentForm.elements[i];
+			if('true'!=formEl.getAttribute('required'))
+				continue;			
+			if(formEl.type.toLowerCase()=='text') {				
+				formEl.value = Utils.trim(formEl.value);			
+				if(formEl.value.length<1) {
+					var msg = ['Required field: ', Utils.getParentName(formEl)].join('');				
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
 						alert(msg);
-					formElement.focus();					
+					formEl.focus();					
 					return false;
 				}	
 			}
-			else if(currentForm.elements[i].type.toLowerCase()=='textarea') {			
-				var ta = currentForm.elements[i];
+			else if(formEl.type.toLowerCase()=='textarea') {			
+				var ta = formEl;
 				ta.value = Utils.trimLineBreaks(ta.value);
 				ta.value = Utils.trim(ta.value);
 				if(ta.value.length<1) {
-					var msg = ['Missing field: ', Utils.getParentName(ta)].join('');
+					var msg = ['Required field: ', Utils.getParentName(ta)].join('');
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
@@ -309,10 +320,10 @@ var Utils = {
 					return false;
 				}	
 			}		
-			else if(currentForm.elements[i].nodeName.toLowerCase()=='select') {			
-				var sel = currentForm.elements[i];						
+			else if(formEl.nodeName.toLowerCase()=='select') {			
+				var sel = formEl;						
 				if(sel.value.length<1) {
-					var msg = ['Missing value: ', Utils.getParentName(sel)].join('');
+					var msg = ['Required field: ', Utils.getParentName(sel)].join('');
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
@@ -320,12 +331,12 @@ var Utils = {
 					return false;
 				}				
 			}		
-			else if(currentForm.elements[i].type.toLowerCase()=='password') {
-				var formPw = currentForm.elements[i];
+			else if(formEl.type.toLowerCase()=='password') {
+				var formPw = formEl;
 				var firstLength = formPw.value.length;				
 				var secondLength = Utils.trim(formPw.value).length;
 				if(firstLength==0) {
-					var msg = ['Missing value: ', Utils.getParentName(formPw)].join('');
+					var msg = ['Required field: ', Utils.getParentName(formPw)].join('');
 					if(Utils.isNode(feedbackEl))
 						feedbackEl.innerHTML = msg;
 					else
