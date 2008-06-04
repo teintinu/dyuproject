@@ -1,4 +1,7 @@
 dyuproject-1.0-SNAPSHOT
++
+
+dyuproject-1.0.1
 + CookieSession remoteAddress hash now optional - defaults to false
 + moved com.dyuproject.web.mvc.CookieSessionManager to com.dyuproject.web.CookieSessionManager 
 + moved com.dyuproject.web.mvc.CookieSession to com.dyuproject.web.CookieSession
