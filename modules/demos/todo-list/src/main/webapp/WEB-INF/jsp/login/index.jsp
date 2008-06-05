@@ -13,11 +13,11 @@
     <table cellspacing="5" cellpadding="0">
       <tr>
 	    <td>Username</td>
-	    <td name="Username"><input name="username" value="${param.username}"/></td>
+	    <td name="Username"><input name="username" value="${param.username}" required="true"/></td>
 	  </tr>
       <tr>
 	    <td>Password</td>
-	    <td name="Password"><input name="password" type="password" value="${param.password}"/></td>
+	    <td name="Password"><input name="password" type="password" value="${param.password}" required="true"/></td>
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
