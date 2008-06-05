@@ -1,5 +1,6 @@
 dyuproject-1.0-SNAPSHOT
-+
++ Added ContextPathController - handles a contextPath and dispatches to its controllers or its default controller.
++ CookieSession maxAge can now be set(overriden) at runtime.  Enables the "remember me" option.
 
 dyuproject-1.0.1 2008-06-04
 + CookieSession remoteAddress hash now optional - defaults to false

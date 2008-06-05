@@ -178,7 +178,15 @@ public class CookieSession
     public String getAttribute(String name)
     {
         return _attributes.get(name);
-    }    
+    }
+    
+    public void setMaxAge(int maxAge)
+    {
+        if(_maxAge==maxAge)
+            return;
+        _maxAge = maxAge;
+        _modified = true;
+    }
     
     public boolean isNew()
     {
