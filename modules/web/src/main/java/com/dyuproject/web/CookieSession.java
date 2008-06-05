@@ -95,7 +95,8 @@ public class CookieSession
                 String[] param = Delim.EQUALS.split(pairs[i]);
                 if(param.length==2)
                     session._attributes.put(param[0], param[1]);
-            }            
+            }
+            session._modified = false;
             return session;
         }
         return null;
