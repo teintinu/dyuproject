@@ -29,7 +29,7 @@
 	}
 	div#top p {
 	  padding: 5px;
-	  font-size: 1.4em;
+	  font-size: 1.5em;
 	}
 	div#content {
 	  background-color: #fff;
@@ -39,17 +39,17 @@
 	}
 	div#left {
 	  float: left;
-	  width: 20%;
+	  width: 15%;
 	  padding: 5px;
 	}
 	div#mid {
 	  float: left;
-	  width: 55%;      
+	  width: 70%;      
 	  background-color: #ccc;
 	}
 	div#right {
 	  float: left;
-	  width: 25%
+	  width: 15%
       padding: 5px;	  
 	}	
 	ul.simple {
@@ -96,13 +96,29 @@
 	a.btn:hover {
 	  color: green;
 	}
+	a.simple {
+	  text-decoration: none;
+	  color: white;
+	}
+	a.simple:hover {
+	  color: green;
+	}
   </style>
 </head>
 <body>
 <div id="wrapper">
   <div id="inner">
     <div id="top">	
-	  <p>To-do List <span style="color:#fff">Demo</span></p>
+	  <div style="float:left;width:50%"><p>To-do List <a class="simple" href="<c:url value="/"/>">Demo</a></p></div>
+	  <div style="float:right;width:50%;font-size:0.8em;text-align:right;">
+	    <div>Powered by: <a class="simple" href="http://code.google.com/p/dyuproject/">dyuproject</a></div>
+		<div>
+		  <span>Project <a class="simple" href="http://dyuproject.googlecode.com/svn/trunk/">source</a></span>
+		  <span>&nbsp;|&nbsp;</span>
+		  <span>Demo <a class="simple" href="http://dyuproject.googlecode.com/svn/trunk/modules/demos/todo-list">source</a></span>
+		</div>
+	  </div>
+	  <div style="clear:both"></div>
 	</div>
 	<div id="content">
 	  <div align="justify">
