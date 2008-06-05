@@ -29,12 +29,18 @@ import com.dyuproject.web.mvc.AbstractController;
 
 public class StaticResourceController extends AbstractController
 {
+    
+    public StaticResourceController()
+    {
+        setIdentifierAttribute("*");
+    }
 
     @Override
     protected void init()
     {
-        if(getIdentifierAttribute()==null)
-            setIdentifierAttribute(getIdentifier() + ".dir");
+        // check in case user had unintentionally changed the value
+        if(!"*".equals(getIdentifierAttribute()))
+            setIdentifierAttribute("*");
     }
 
     public void handle(String mime, HttpServletRequest request,

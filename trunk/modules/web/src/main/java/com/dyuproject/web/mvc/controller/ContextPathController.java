@@ -58,7 +58,7 @@ public class ContextPathController extends AbstractController
     protected void init()
     {
         // check in case user had unintentionally changed the value
-        if(!getIdentifierAttribute().equals("*"))
+        if(!"*".equals(getIdentifierAttribute()))
             setIdentifierAttribute("*");
         
         if(_defaultController!=null)
