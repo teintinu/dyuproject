@@ -261,7 +261,7 @@ public class CookieSession
         for(Map.Entry<String, String> entry : _attributes.entrySet())
         {
             String key = entry.getKey();
-            if(!TIMESTAMP_ATTR.equals(key))
+            if(!TIMESTAMP_ATTR.equals(key) && !SIG_ATTR.equals(key))
             {
                 String value = entry.getValue();
                 output.append('&').append(key).append('=').append(value);
