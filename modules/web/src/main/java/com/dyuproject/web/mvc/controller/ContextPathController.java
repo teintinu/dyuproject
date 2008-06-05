@@ -61,9 +61,8 @@ public class ContextPathController extends AbstractController
         if(!getIdentifierAttribute().equals("*"))
             setIdentifierAttribute("*");
         
-        if(_defaultController==null)
-            throw new IllegalStateException("default controller must be specified");        
-        _defaultController.init(getWebContext());
+        if(_defaultController!=null)
+            _defaultController.init(getWebContext());
         
         for(Controller c : _controllers.values())
             c.init(getWebContext());        
@@ -142,9 +141,18 @@ public class ContextPathController extends AbstractController
         }
         String[] pathInfo = (String[])request.getAttribute(WebContext.PATHINFO_ARRAY_ATTR);
         if(pathInfo.length==1)
-            WebContext.handle(_defaultController, mime, request, response);
+            handleRoot(mime, request, response);
         else        
             handle(pathIndex+1, pathInfo, mime, request, response);
+    }
+    
+    protected void handleRoot(String mime, HttpServletRequest request,
+            HttpServletResponse response) throws IOException, ServletException
+    {
+        if(_defaultController==null)
+            response.sendError(404);
+        else
+            WebContext.handle(_defaultController, mime, request, response);
     }
     
     private void handle(int sub, String[] pathInfo, String mime, HttpServletRequest request, 
