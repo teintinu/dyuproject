@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ StaticResourceController now mapped as wildcard.
 + Fixed CookieSession bug that always updates the cookie even if not modified.
 + Added ContextPathController - handles a contextPath and dispatches to its controllers or its default controller.
 + CookieSession maxAge can now be set(overriden) at runtime.  Enables the "remember me" option.
