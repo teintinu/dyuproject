@@ -1,6 +1,3 @@
-dyuproject-1.0-SNAPSHOT
-+
-
 dyuproject-1.0.2 2008-06-06
 + Fixed CookieSession bug that always updates the cookie even if not modified.
 + StaticResourceController now mapped as wildcard.
