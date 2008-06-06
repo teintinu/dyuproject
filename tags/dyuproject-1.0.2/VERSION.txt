@@ -1,0 +1,36 @@
+dyuproject-1.0-SNAPSHOT
++
+
+dyuproject-1.0.2 2008-06-06
++ Fixed CookieSession bug that always updates the cookie even if not modified.
++ StaticResourceController now mapped as wildcard.
++ Added ContextPathController - handles a contextPath and dispatches to its controllers or its default controller.
++ CookieSession maxAge can now be set(overridden) at runtime.  Enables the "remember me" option.
+
+dyuproject-1.0.1 2008-06-04
++ CookieSession remoteAddress hash now optional - defaults to false
++ moved com.dyuproject.web.mvc.CookieSessionManager to com.dyuproject.web.CookieSessionManager 
++ moved com.dyuproject.web.mvc.CookieSession to com.dyuproject.web.CookieSession
++ added JSPViewController
++ RestfulMVCServlet renamed to RESTfulMVCServlet
++ added method destroy on controllers
++ added CookieSessionManager
++ support wildcard '*' on Controllers
++ added CRUDController
++ renamed MethodMappedController to VerbMappedController
++ added StaticResourceController
++ demos
++ servlet-api-2.5 to 3.0
+
+dyuproject-1.0.0 2008-05-20
++ session authentication controller helper class
++ CookieSession protect from session hijacking
++ CookieSession - MD5 Hash + secretKey
++ Filters
++ ViewDispatcher
++ RESTful MVC
++ POJO to JSON String tool
++ POJO to XML String tool
++ persistence tool for JDBC
++ persistence tool for Hibernate
++ application bundling for a single jar
