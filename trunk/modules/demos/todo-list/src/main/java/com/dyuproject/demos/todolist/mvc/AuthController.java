@@ -62,6 +62,7 @@ public class AuthController extends AbstractController
         if(username==null || password==null)
         {
             request.setAttribute(Constants.MSG, "Required: Username, Password");
+            response.setContentType(Constants.TEXT_HTML);
             getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/login/index.jsp", request, 
                     response); 
             return;
@@ -70,6 +71,7 @@ public class AuthController extends AbstractController
         if(user==null)
         {
             request.setAttribute(Constants.MSG, Constants.USER_NOT_FOUND);
+            response.setContentType(Constants.TEXT_HTML);
             getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/login/index.jsp", request, 
                     response); 
             return;
