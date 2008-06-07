@@ -145,9 +145,9 @@ public class UsersController extends CRUDController
         {
             if(created)
             {       
-                request.setAttribute(Constants.MSG, Constants.USER_CREATED);
+                //request.setAttribute(Constants.MSG, Constants.USER_CREATED);                
+                //dispatchToView(user, request, response);
                 response.sendRedirect(request.getContextPath() + "/users/" +user.getId());
-                //dispatchToView(user, request, response);                
             }
             else
             {                
