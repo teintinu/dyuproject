@@ -418,7 +418,10 @@ public class JSONConverter extends FormatConverter
         {
             _buffer.append(',');
             addKey(_buffer, key);
-            _buffer.append('"').append(value).append('"');          
+            if(value==null)
+                _buffer.append(NULL);
+            else
+                _buffer.append('"').append(value).append('"');          
         }
 
         public void put(String key, Number value) 

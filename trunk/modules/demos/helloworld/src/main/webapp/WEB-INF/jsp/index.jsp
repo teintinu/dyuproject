@@ -8,14 +8,43 @@
 <body>
 <div>
   <p><span style="color:green;font-size:1.4em">Welcome</span></p><br/>
-  <p>    
-    html | <a href="<c:url value="/helloworld"/>">helloworld</a>.
-  </p>
-  <p>    
-    xml | <a href="<c:url value="/helloworld.xml"/>">helloworld</a>.
-  </p>
-  <p>    
-    json | <a href="<c:url value="/helloworld.json"/>">helloworld</a>.
-  </p>  
+  <div>
+    <p>    
+      html | <a href="<c:url value="/helloworld"/>">helloworld</a>.
+    </p>
+    <p>    
+      xml | <a href="<c:url value="/helloworld.xml"/>">helloworld.xml</a>.
+    </p>
+    <p>    
+      json | <a href="<c:url value="/helloworld.json"/>">helloworld.json</a>.
+    </p>
+  </div>
+  <hr/>
+  <div>
+    <p style="font-weight:bold">/helloworld/{id}</p>
+    <p>    
+      html | <a href="<c:url value="/helloworld/1"/>">helloworld/1</a>.
+    </p>
+    <p>    
+      xml | <a href="<c:url value="/helloworld/1.xml"/>">helloworld/1.xml</a>.
+    </p>
+    <p>    
+      json | <a href="<c:url value="/helloworld/1.json"/>">helloworld/1.json</a>.
+    </p>  
+  </div>
+  <hr/>
+  <div>
+    <p style="font-weight:bold">/helloworld/{verb}</p>
+    <p>    
+      html | <a href="<c:url value="/helloworld/create"/>">helloworld/create</a>.
+    </p>
+    <p>    
+      html | <a href="<c:url value="/helloworld/edit"/>">helloworld/edit</a>.
+    </p>
+    <p>    
+      html | <a href="<c:url value="/helloworld/delete"/>">helloworld/delete</a>.
+    </p>	
+
+  </div>  
 </div>
 </body>
