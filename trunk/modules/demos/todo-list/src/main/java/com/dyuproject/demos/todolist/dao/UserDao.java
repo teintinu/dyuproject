@@ -30,6 +30,7 @@ public class UserDao extends DefaultDao
 {
     
     private static final String GET = "select u from " + User.class.getSimpleName() + " u";
+    private static final String GET_BY_USERNAME = GET + " where u.username=?";
     private static final String GET_BY_USER_AND_PASS = GET + " where u.username=? and u.password=?";
     
     private static final String USERNAME_ALREADY_EXISTS_STR = "Username already exists.";
@@ -38,6 +39,12 @@ public class UserDao extends DefaultDao
     public User get(String username, String password)
     {
         List<?> result = createQuery(GET_BY_USER_AND_PASS, new Object[]{username, password});
+        return result.isEmpty() ? null : (User)result.get(0);
+    }
+    
+    public User get(String username)
+    {
+        List<?> result = createQuery(GET_BY_USERNAME, new Object[]{username});
         return result.isEmpty() ? null : (User)result.get(0);
     }
     

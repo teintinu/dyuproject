@@ -24,14 +24,18 @@
 		<td name="Email"><input name="email" type="text" value="${user.email}" required="true"/></td>
 	  </tr>
 	  <c:if test="${action=='Create'}">
-	  <tr class="${action}">
+	  <tr>
 	    <td class="left_col">Username</td>
 		<td name="Username"><input name="username" type="text" value="${user.username}" required="true"/></td>	  
 	  </tr>	  
-	  <tr class="${action}">
+	  <tr>
 	    <td class="left_col">Password</td>
 		<td name="Password"><input name="password" type="password" value="${user.password}" required="true"/></td>	  
 	  </tr>
+	  <tr>
+	    <td class="left_col">Confirm Password</td>
+		<td name="Confirm Password"><input name="confirmPassword" type="password" required="true"/></td>	  
+	  </tr>	  
 	  </c:if>
 	  <tr>
 	    <td>&nbsp;</td>

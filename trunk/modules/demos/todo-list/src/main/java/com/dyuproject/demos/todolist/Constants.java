@@ -81,13 +81,13 @@ public class Constants
     public static final String EMAIL = "email";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
-    
+    public static final String CONFIRM_PASSWORD = "confirmPassword";
     public static final String OLD_PASSWORD = "oldPassword";
     public static final String NEW_PASSWORD = "newPassword";
     
     public static final String PASSWORD_CHANGED = "Password changed.";
     
-    public static final String REQUIRED_PARAMS_USER_CREATE = "The ff are required: First Name, Last Name, Email, Username, Password";
+    public static final String REQUIRED_PARAMS_USER_CREATE = "The ff are required: First Name, Last Name, Email, Username, Password, Confirm Password";
     public static final String REQUIRED_PARAMS_CHANGE_PASSWORD = "Old and new password are required.";
     public static final String PASSWORD_DID_NOT_MATCH = "Password did not match.";
     

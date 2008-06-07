@@ -28,6 +28,7 @@ import com.dyuproject.demos.todolist.dao.UserDao;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.util.format.JSONConverter;
 import com.dyuproject.util.format.XMLConverter;
+import com.dyuproject.web.RequiredParametersValidator;
 import com.dyuproject.web.mvc.controller.CRUDController;
 
 /**
@@ -42,6 +43,14 @@ public class UsersController extends CRUDController
     public static final String IDENTIFIER_ATTR = "users.verbOrId";
     
     private UserDao _userDao;
+    private RequiredParametersValidator _validator = new RequiredParametersValidator(new String[]{
+            Constants.FIRST_NAME,
+            Constants.LAST_NAME,
+            Constants.EMAIL,
+            Constants.USERNAME,
+            Constants.PASSWORD,
+            Constants.CONFIRM_PASSWORD
+    });
     
     public UsersController()
     {
@@ -62,19 +71,9 @@ public class UsersController extends CRUDController
             HttpServletResponse response, String mime) throws IOException,
             ServletException
     {
-        String firstName = request.getParameter(Constants.FIRST_NAME);
-        String lastName = request.getParameter(Constants.LAST_NAME);
-        String email = request.getParameter(Constants.EMAIL);
-        String username = request.getParameter(Constants.USERNAME);
-        String password = request.getParameter(Constants.PASSWORD);        
-
-        User user = null;
-        
-        if(firstName==null || firstName.length()==0 || 
-                lastName==null || lastName.length()==0 || 
-                email==null || email.length()==0 ||
-                username==null || username.length()==0 ||
-                password==null || password.length()==0)
+        // check if all required parameters are complete
+        boolean paramsComplete = _validator.validate(request);
+        if(!paramsComplete)
         {
             if(Constants.XML.equals(mime))
             {
@@ -88,12 +87,40 @@ public class UsersController extends CRUDController
             {
                 request.setAttribute(Constants.MSG, Constants.REQUIRED_PARAMS_USER_CREATE);
                 request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);  
-                dispatchToFormView(user, request, response);
+                dispatchToFormView(null, request, response);
             }
             return;
         }
         
-        user = new User();
+        String[] validatedParams = _validator.getValidatedParams(request);
+        
+        String firstName = validatedParams[0];
+        String lastName = validatedParams[1];
+        String email = validatedParams[2];
+        String username = validatedParams[3];
+        String password = validatedParams[4];
+        String confirmPassword = validatedParams[5];        
+        // password confirm/validation
+        if(!password.equals(confirmPassword))
+        {
+            if(Constants.XML.equals(mime))
+            {
+                writeXML(Feedback.PASSWORD_DID_NOT_MATCH, request, response);
+            }
+            else if(Constants.JSON.equals(mime))
+            {
+                writeJSON(Feedback.PASSWORD_DID_NOT_MATCH, request, response);
+            }
+            else
+            {
+                request.setAttribute(Constants.MSG, Constants.PASSWORD_DID_NOT_MATCH);
+                request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);  
+                dispatchToFormView(null, request, response);
+            }
+            return;
+        }
+        
+        User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
         user.setEmail(email);
