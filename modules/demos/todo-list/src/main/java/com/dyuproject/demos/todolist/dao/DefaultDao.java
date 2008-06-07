@@ -30,6 +30,8 @@ import com.dyuproject.demos.todolist.ServiceManager;
 public class DefaultDao
 {
     
+    public static final String CONSTRAINT_VIOLATION = "ConstraintViolationException";
+    
     protected ServiceManager _serviceManager;
     
     public void setServiceManager(ServiceManager serviceManager)

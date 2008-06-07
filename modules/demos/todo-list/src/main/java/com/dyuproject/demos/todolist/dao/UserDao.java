@@ -70,8 +70,15 @@ public class UserDao extends DefaultDao
             created = false;
         }
         catch (Exception e)
-        {            
-            e.printStackTrace();
+        {
+            if(e.getCause()!=null && 
+                    e.getCause().getClass().getSimpleName().equals(CONSTRAINT_VIOLATION))
+            {
+                setCurrentErrorMessage(USERNAME_ALREADY_EXISTS_STR);
+                setCurrentFeedback(USERNAME_ALREADY_EXISTS);
+            }
+            else
+                e.printStackTrace();
             created = false;
         }
         return created;
