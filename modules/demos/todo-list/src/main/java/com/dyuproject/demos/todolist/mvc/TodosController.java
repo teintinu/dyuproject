@@ -394,6 +394,10 @@ public class TodosController extends CRUDController
         delete(request, response, mime, id);  
     }
     
+    /* ============================================================================= */
+    // FILTERED
+    /* ============================================================================= */
+    
     protected void completed(String mime, HttpServletRequest request, 
             HttpServletResponse response) throws ServletException, IOException
     {
