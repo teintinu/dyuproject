@@ -28,15 +28,27 @@ public class TodoDao extends DefaultDao
     
     static final String GET = "select t from " + Todo.class.getSimpleName() + " t";
     static final String GET_BY_USER = GET + " where t.user.id=?";
+    static final String GET_BY_STATUS = GET + " where t.completed=?";
+    static final String GET_BY_USER_AND_STATUS = GET_BY_USER + " and t.completed=?";
     
     public List<?> get()
     {
         return createQuery(GET);
     }
     
-    public List<?> getByUserId(String userId)
+    public List<?> getByStatus(boolean completed)
     {
-        return createQuery(GET_BY_USER, new Object[]{Long.valueOf(userId)});
+        return createQuery(GET_BY_STATUS, new Object[]{completed});
+    }
+    
+    public List<?> getByUser(Long userId)
+    {
+        return createQuery(GET_BY_USER, new Object[]{userId});
+    }
+    
+    public List<?> getByUserAndStatus(Long userId, boolean completed)
+    {
+        return createQuery(GET_BY_USER_AND_STATUS, new Object[]{userId, completed});
     }
     
     public Todo get(Long id)

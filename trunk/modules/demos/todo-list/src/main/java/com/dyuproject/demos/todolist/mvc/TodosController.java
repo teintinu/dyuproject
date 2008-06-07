@@ -154,18 +154,18 @@ public class TodosController extends CRUDController
         String userId = (String)request.getAttribute(UsersController.IDENTIFIER_ATTR);        
         if(Constants.XML.equals(mime))
         {
-            writeXML(userId==null ? _todoDao.get() : _todoDao.getByUserId(userId), request, 
-                    response);
+            writeXML(userId==null ? _todoDao.get() : _todoDao.getByUser(Long.valueOf(userId)), 
+                    request, response);
         }
         else if(Constants.JSON.equals(mime))
         {
-            writeJSON(userId==null ? _todoDao.get() : _todoDao.getByUserId(userId), request, 
-                    response);
+            writeJSON(userId==null ? _todoDao.get() : _todoDao.getByUser(Long.valueOf(userId)), 
+                    request, response);
         }
         else
         {
-            dispatchToView(userId==null ? _todoDao.get() : _todoDao.getByUserId(userId), request, 
-                    response);
+            dispatchToView(userId==null ? _todoDao.get() : _todoDao.getByUser(Long.valueOf(userId)), 
+                    request, response);
         }
     }
     
@@ -392,6 +392,33 @@ public class TodosController extends CRUDController
         }
         request.setAttribute(Constants.ACTION, Constants.ACTION_DELETE);
         delete(request, response, mime, id);  
+    }
+    
+    protected void completed(String mime, HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException
+    {
+        if(!GET.equals(request.getMethod()))
+        {
+            response.sendError(404);
+            return;
+        }
+        System.err.println("SDFSDF");
+        String userId = (String)request.getAttribute(UsersController.IDENTIFIER_ATTR);        
+        if(Constants.XML.equals(mime))
+        {
+            writeXML(userId==null ? _todoDao.getByStatus(true) : 
+                _todoDao.getByUserAndStatus(Long.valueOf(userId), true), request, response);
+        }
+        else if(Constants.JSON.equals(mime))
+        {
+            writeJSON(userId==null ? _todoDao.getByStatus(true) : 
+                _todoDao.getByUserAndStatus(Long.valueOf(userId), true), request, response);
+        }
+        else
+        {
+            dispatchToView(userId==null ? _todoDao.getByStatus(true) : 
+                _todoDao.getByUserAndStatus(Long.valueOf(userId), true), request, response);
+        }
     }
 
 }
