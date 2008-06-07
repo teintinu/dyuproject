@@ -9,7 +9,10 @@
 <div>
   <p><span style="color:green;font-size:1.4em">Hello World!</span></p><br/>
   <p>    
-    <span>${helloWorldBean.message}</span>	
+    Message: <span>${helloWorldBean.message}</span>	
+  </p>
+  <p>
+    VerbOrId: <span>${helloWorldBean.verbOrId}</span>
   </p>
   <p>
     <span>timestamp: ${helloWorldBean.timestamp}</span>

@@ -80,26 +80,29 @@ public class HelloWorldController extends AbstractController
         // $ xml=text/xml
         //   json = text/json
         
+        // /helloworld/${verbOrId}
+        String verbOrId = getVerbOrId(request);        
+        
         if("xml".equals(mime))
         {
             response.setContentType("text/xml");
             // generate xml response
             ServletOutputStream out = response.getOutputStream();
-            out.print(XMLConverter.getInstance().toString(new HelloWorldBean(), null));
+            out.print(XMLConverter.getInstance().toString(new HelloWorldBean(verbOrId), null));
         }
         else if("json".equals(mime))
         {
             response.setContentType("text/plain");
             // generate json response
             ServletOutputStream out = response.getOutputStream();
-            out.print(JSONConverter.getInstance().toString(new HelloWorldBean(), 
+            out.print(JSONConverter.getInstance().toString(new HelloWorldBean(verbOrId), 
                     request.getParameter("callback")));
         }
         else
         {
             response.setContentType("text/html");
             // dispatch to view
-            request.setAttribute("helloWorldBean", new HelloWorldBean());
+            request.setAttribute("helloWorldBean", new HelloWorldBean(verbOrId));
             getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/helloworld/index.jsp", 
                     request, response);
         }        
@@ -112,10 +115,17 @@ public class HelloWorldController extends AbstractController
         
         private long _timestamp = System.currentTimeMillis();
         private String _message;
+        private String _verbOrId;
         
-        public HelloWorldBean()
+        public HelloWorldBean(String verbOrId)
         {
             _message = "Hello World from controller! @ " + new Date(_timestamp);
+            _verbOrId = verbOrId;
+        }
+        
+        public long getTimestamp()
+        {
+            return _timestamp;
         }
         
         public String getMessage()
@@ -123,14 +133,15 @@ public class HelloWorldController extends AbstractController
             return _message;
         }
         
-        public long getTimestamp()
+        public String getVerbOrId()
         {
-            return _timestamp;
+            return _verbOrId;
         }
-
+        
         public void convert(Builder builder, String format)
         {
             builder.put("message", getMessage());
+            builder.put("verbOrId", getVerbOrId());
             builder.put("timestamp", getTimestamp());
         }
         
