@@ -83,8 +83,7 @@ public class TodosController extends CRUDController
             todo = new Todo();
             todo.setTitle(title);
             todo.setContent(content);
-            todo.setUser(user);
-            //created = _userDao.update(user);
+            todo.setUser(user);            
             created = _todoDao.create(todo);
         }
         
@@ -100,11 +99,12 @@ public class TodosController extends CRUDController
         {
             if(created)
             {
-                request.setAttribute(Constants.MSG, Constants.TODO_CREATED);
+                /*request.setAttribute(Constants.MSG, Constants.TODO_CREATED);
                 request.setAttribute(Constants.USER, user);
                 response.setContentType(Constants.TEXT_HTML);
                 getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/users/id.jsp", 
-                        request, response);
+                        request, response);*/
+                response.sendRedirect(request.getContextPath() + "/users/" + user.getId() + "/todos");
             }
             else
             {
