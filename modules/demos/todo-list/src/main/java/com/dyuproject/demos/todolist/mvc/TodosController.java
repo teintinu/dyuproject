@@ -406,7 +406,7 @@ public class TodosController extends CRUDController
             response.sendError(404);
             return;
         }
-        System.err.println("SDFSDF");
+        
         String userId = (String)request.getAttribute(UsersController.IDENTIFIER_ATTR);        
         if(Constants.XML.equals(mime))
         {
