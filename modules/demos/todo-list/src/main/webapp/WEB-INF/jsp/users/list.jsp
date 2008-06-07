@@ -25,7 +25,7 @@
 	    <td>${u.lastName}</td>
 	    <td>${u.email}</td>
 		<td><a href="<c:url value="/users/edit?id=${u.id}"/>">edit</a></td>
-		<td><a href="<c:url value="/users/delete?id=${u.id}"/>">delete</a></td>
+		<!--<td><a href="<c:url value="/users/delete?id=${u.id}"/>">delete</a></td>-->
 	  </tr>
 	  </c:forEach>
 	</table>

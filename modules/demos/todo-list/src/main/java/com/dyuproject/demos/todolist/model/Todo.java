@@ -18,6 +18,7 @@ import java.io.Serializable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -98,7 +99,7 @@ public class Todo implements Serializable, FormatConverter.Bean
         _user = user;
     }
     
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name="todo_id")
     public User getUser()
     {
