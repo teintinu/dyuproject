@@ -65,7 +65,7 @@ td.left_col {
   color: green;
 }
 span.big_label {
-  font-size: 1.1em;  
+  font-size: 1.3em;  
   color: green;
 }
 input.disabled {
@@ -96,4 +96,23 @@ a.simple {
 }
 a.simple:hover {
   color: green;
+}
+a.link1_2 {
+  font-size: 1.2em;
+}
+button.simple_link {
+  font-family: verdana, arial;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  background-color: #fff;
+  color: blue;
+  font-size: 1em;
+}
+button.simple_link:hover {
+  color: green;
+}
+button.simple_link span {
+  text-decoration: underline;
 }
