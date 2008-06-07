@@ -26,6 +26,12 @@
 	  </c:if>
 	</c:forEach>
   </table>
-  <div>You have <span style="color:green;font-size:1.2em">${open}</span> current todos. <span style="font-size:1.2em"><a href="<c:url value="/users/${user.id}/todos/completed"/>">${total-open}</a></span> completed. <a href="<c:url value="/users/${user.id}/todos"/>"><span style="font-size:1.2em">${total}</span></a> total.</div>
+  <div>
+    <p>
+	  You have <a class="link1_2" href="<c:url value="/users/${user.id}/todos/current"/>">${open}</a> current todos. 
+      <a class="link1_2" href="<c:url value="/users/${user.id}/todos/completed"/>">${total-open}</a> completed. 
+      <a class="link1_2" href="<c:url value="/users/${user.id}/todos"/>">${total}</a> total.
+    </p>
+  </div>
 </div>
 </tl:page>

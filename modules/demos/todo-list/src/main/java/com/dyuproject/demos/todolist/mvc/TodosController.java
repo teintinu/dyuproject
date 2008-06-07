@@ -401,6 +401,18 @@ public class TodosController extends CRUDController
     protected void completed(String mime, HttpServletRequest request, 
             HttpServletResponse response) throws ServletException, IOException
     {
+        byStatus(true, mime, request, response);
+    }
+    
+    protected void current(String mime, HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException
+    {
+        byStatus(false, mime, request, response);
+    }
+    
+    private void byStatus(boolean completed, String mime, HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException
+    {
         if(!GET.equals(request.getMethod()))
         {
             response.sendError(404);
@@ -410,18 +422,18 @@ public class TodosController extends CRUDController
         String userId = (String)request.getAttribute(UsersController.IDENTIFIER_ATTR);        
         if(Constants.XML.equals(mime))
         {
-            writeXML(userId==null ? _todoDao.getByStatus(true) : 
-                _todoDao.getByUserAndStatus(Long.valueOf(userId), true), request, response);
+            writeXML(userId==null ? _todoDao.getByStatus(completed) : 
+                _todoDao.getByUserAndStatus(Long.valueOf(userId), completed), request, response);
         }
         else if(Constants.JSON.equals(mime))
         {
-            writeJSON(userId==null ? _todoDao.getByStatus(true) : 
-                _todoDao.getByUserAndStatus(Long.valueOf(userId), true), request, response);
+            writeJSON(userId==null ? _todoDao.getByStatus(completed) : 
+                _todoDao.getByUserAndStatus(Long.valueOf(userId), completed), request, response);
         }
         else
         {
-            dispatchToView(userId==null ? _todoDao.getByStatus(true) : 
-                _todoDao.getByUserAndStatus(Long.valueOf(userId), true), request, response);
+            dispatchToView(userId==null ? _todoDao.getByStatus(completed) : 
+                _todoDao.getByUserAndStatus(Long.valueOf(userId), completed), request, response);
         }
     }
 
