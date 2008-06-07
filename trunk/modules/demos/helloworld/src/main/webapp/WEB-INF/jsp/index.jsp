@@ -26,10 +26,10 @@
       html | <a href="<c:url value="/helloworld/1"/>">helloworld/1</a>.
     </p>
     <p>    
-      xml | <a href="<c:url value="/helloworld/1.xml"/>">helloworld/1.xml</a>.
+      xml | <a href="<c:url value="/helloworld/2.xml"/>">helloworld/2.xml</a>.
     </p>
     <p>    
-      json | <a href="<c:url value="/helloworld/1.json"/>">helloworld/1.json</a>.
+      json | <a href="<c:url value="/helloworld/3.json"/>">helloworld/3.json</a>.
     </p>  
   </div>
   <hr/>
