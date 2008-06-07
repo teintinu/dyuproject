@@ -26,6 +26,6 @@
 	  </c:if>
 	</c:forEach>
   </table>
-  <div>You have <span style="color:green;font-size:1.2em">${open}</span> current todos. <a href="<c:url value="/users/${user.id}/todos"/>"><span style="font-size:1.2em">${total}</span></a> total.</div>
+  <div>You have <span style="color:green;font-size:1.2em">${open}</span> current todos. <span style="font-size:1.2em"><a href="<c:url value="/users/${user.id}/todos/completed"/>">${total-open}</a></span> completed. <a href="<c:url value="/users/${user.id}/todos"/>"><span style="font-size:1.2em">${total}</span></a> total.</div>
 </div>
 </tl:page>
