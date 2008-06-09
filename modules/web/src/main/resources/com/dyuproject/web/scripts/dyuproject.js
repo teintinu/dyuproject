@@ -64,15 +64,17 @@ var Utils = {
     trimLineBreaks: function(str) {
         return str.replace(/(\r\n|[\r\n])/g, ' ');
     },
-	stopEvent: function(e) {
-		if(e.stopPropagation) 
-			e.stopPropagation();
+	stopEvent: function(ev) {
+		if(!ev)
+			ev = window.event;
+		if(ev.stopPropagation) 
+			ev.stopPropagation();
 		else
-			e.cancelBubble = true;
-		if(e.preventDefault)
-			e.preventDefault();
+			ev.cancelBubble = true;
+		if(ev.preventDefault)
+			ev.preventDefault();
 		else
-			e.returnValue = false;		
+			ev.returnValue = false;		
 	},
 	getName: function(el) {
 		return el.name ? el.name : el.getAttribute('name');
