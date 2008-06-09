@@ -80,6 +80,16 @@ var Utils = {
     trimLineBreaks: function(str) {
         return str.replace(/(\r\n|[\r\n])/g, ' ');
     },
+	stopEvent: function(e) {
+		if(e.stopPropagation) 
+			e.stopPropagation();
+		else
+			e.cancelBubble = true;
+		if(e.preventDefault)
+			e.preventDefault();
+		else
+			e.returnValue = false;		
+	},	
 	getName: function(el) {
 		return el.name ? el.name : el.getAttribute('name');
 	},	
