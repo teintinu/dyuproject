@@ -175,7 +175,7 @@ function Users(module) {
 		var firstName = WidgetFactory.create('div', 'First Name: ' + user.firstName);
 		var lastName = WidgetFactory.create('div', 'Last Name: ' + user.lastName);
 		var email = WidgetFactory.create('div', 'Email: ' + user.email);
-		var todos = WidgetFactory.create('div', '<a href="#users/' + user.id + '/todos>todos</a>');
+		var todos = WidgetFactory.create('div', '<a href="#users/' + user.id + '/todos">todos</a>');
 		div.addChild(firstName);
 		div.addChild(lastName);
 		div.addChild(email);
