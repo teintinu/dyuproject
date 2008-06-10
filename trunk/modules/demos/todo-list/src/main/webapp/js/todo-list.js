@@ -97,7 +97,7 @@ function Todos(module) {
 		var title = WidgetFactory.create('div', 'Title: ' + todo.title);
 		var content = WidgetFactory.create('div', 'Content: ' + todo.content);
 		var link = 'users/' + todo.user.id;
-		var assignedTo = WidgetFactory.create('div', 'Assigned To: ' + '<a href="#' + link + '">' + todo.user.firstName + ' ' + todo.user.lastName + '</a>');
+		var assignedTo = WidgetFactory.create('div', 'Assigned to: ' + '<a href="#' + link + '">' + todo.user.firstName + ' ' + todo.user.lastName + '</a>');
 		div.addChild(title);
 		div.addChild(content);
 		div.addChild(assignedTo);
