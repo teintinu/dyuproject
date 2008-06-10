@@ -31,15 +31,15 @@
 			  <li><a href="<c:url value="/overview"/>">overview</a></li>
 		      <li><a href="<c:url value="/users"/>">users</a></li>			  
 			  <li><a href="<c:url value="/todos"/>">todos</a></li>
+			  <li><a href="<c:url value="/webui.html"/>">widgetized webui</a></li>
 		    </ul>
 		  </div>
 		</div>
 		<div id="mid">
-		  <div style="margin:0 5px;padding:0 5px;background-color:#fff">		    
+		  <div style="margin:0 5px;padding:0 5px;padding-bottom:60px;background-color:#fff">		    
 		    <table cellspacing="0" cellpadding="0">
 			  <tr><td><jsp:doBody/></td></tr>
-			</table>
-			<br/><br/><br/><br/>
+			</table>			
 		  </div>
 		</div>
 		<div id="right">
