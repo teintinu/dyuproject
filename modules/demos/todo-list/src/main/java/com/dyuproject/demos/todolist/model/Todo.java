@@ -111,6 +111,7 @@ public class Todo implements Serializable, FormatConverter.Bean
         builder.put("id", getId());
         builder.put("title", getTitle());
         builder.put("content", getContent());
-        builder.put("completed", isCompleted());        
+        builder.put("completed", isCompleted());
+        builder.put("user", getUser());
     }
 }

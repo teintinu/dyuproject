@@ -145,8 +145,7 @@ public class User implements Serializable, FormatConverter.Bean
         builder.put("id", getId());
         builder.put("firstName", getFirstName());
         builder.put("lastName", getLastName());
-        builder.put("email", getEmail());
-        builder.put("todos", getTodos());
+        builder.put("email", getEmail());        
     }
 
 }
