@@ -775,7 +775,7 @@ function PooledRequest(pl) {
 		_currentHandler = handler;
 		_request.open(method, url, true);
 		_request.onreadystatechange = handleDefault;
-		_request.send(null);
+		_request.send(params);
 	}
 	
     this.send = function(url, params, handler, method) {
