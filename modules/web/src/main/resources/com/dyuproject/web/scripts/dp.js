@@ -2759,9 +2759,9 @@ dp.Loader.addBaseClass('AbstractPane', function () {
         return _parent ? _parent.getCompositeToken(_token) : _token; 
     }
     
-    this.activate = function(tokens) {}
+    this.activate = function(tokens) { return true; }
     
-    this.passivate = function(tokens) {}
+    this.passivate = function(tokens) { return true; }
     
     this.init = function() {}
 	
@@ -2887,7 +2887,8 @@ dp.Loader.addBaseClass('AbstractTreePane', function () {
 			return;
 		var pane = _paneMap.get(tokens[sub]);
 		if(pane)
-			pane.activate(tokens);	
+			pane.activate(tokens);
+		return true;
 	}
 	
 	this.passivate = function(tokens) {
@@ -2899,6 +2900,7 @@ dp.Loader.addBaseClass('AbstractTreePane', function () {
 		if(pane)
 			pane.passivate(tokens);
 		*/
+		return true;
 	}
 	
 	function construct() {

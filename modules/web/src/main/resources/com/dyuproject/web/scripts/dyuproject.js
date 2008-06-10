@@ -2782,9 +2782,9 @@ function AbstractPane() {
         return _parent ? _parent.getCompositeToken(_token) : _token; 
     }
     
-    this.activate = function(tokens) {}
+    this.activate = function(tokens) { return true; }
     
-    this.passivate = function(tokens) {}
+    this.passivate = function(tokens) { return true; }
     
     this.init = function() {}
 	
@@ -2913,7 +2913,8 @@ function AbstractTreePane() {
 			return;
 		var pane = _paneMap.get(tokens[sub]);
 		if(pane)
-			pane.activate(tokens);	
+			pane.activate(tokens);
+		return true;
 	}
 	
 	this.passivate = function(tokens) {
@@ -2925,6 +2926,7 @@ function AbstractTreePane() {
 		if(pane)
 			pane.passivate(tokens);
 		*/
+		return true;
 	}
 	
 	function construct() {
