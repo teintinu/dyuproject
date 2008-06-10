@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ Added clientside widgets demo on todo-list
 + Added Validators - util for request input validation.
 + Fixed JSONConverter bug where a null string would be written as key:"null" instead of key:null.
 + helloworld demo
