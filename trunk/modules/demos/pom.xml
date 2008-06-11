@@ -49,6 +49,7 @@
   </build>
   
   <modules>
+    <module>helloworld</module>
     <module>todo-list</module>
   </modules>
   
