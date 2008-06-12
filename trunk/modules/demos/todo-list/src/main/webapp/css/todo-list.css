@@ -116,3 +116,56 @@ button.simple_link:hover {
 button.simple_link span {
   text-decoration: underline;
 }
+div.box {
+  padding: 5px;
+  border: 1px solid #c0c0c0;
+  background-color: #fafbfc; 
+}
+div.box button {
+  text-align: center;
+  color: #7f93bc;
+  margin: 0 1px;
+  padding: 0 1em; 
+  cursor: pointer;
+  background-color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-decoration: none;
+  border: 1px solid #ccc; 
+}
+div.popup {
+  border: 2px groove #7f93bc;
+  background-color: #ffffff;
+}
+
+div.popup-bar {
+  background-color: #3B5998;
+  padding: 2px;
+  font-size: 14px;
+  color: white;
+}
+button.popup-bar-btn {
+  text-align: center;
+  color: #7f93bc; 
+  cursor: default;
+  background-color: white;
+  font-weight: bold;
+  font-size: 12px;
+  text-decoration: none;
+  border: 1px solid #ccc;
+  margin: 0 1px;
+}
+button.active-label {
+  text-align: center;
+  color: #7f93bc;   
+  cursor: pointer;
+  background: none;  
+  font-size: 14px;
+  text-decoration: none;
+  border: 0; 
+  padding: 0;
+  margin: 0;
+}
+.padded {
+  padding: 5px;
+}
