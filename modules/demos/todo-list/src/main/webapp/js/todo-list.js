@@ -99,7 +99,7 @@ function Todos(module) {
     }
     
     function fill(todo) {
-        var div = new FlowPanel();
+        var div = new FlowPanel('box');
         Utils.applyStyle(div.getElement(), 'padding:5px 0');
         var title = WidgetFactory.create('div', 'Title: ' + todo.title);
         var content = WidgetFactory.create('div', 'Content: ' + todo.content);
@@ -109,21 +109,21 @@ function Todos(module) {
         div.addChild(content);
         div.addChild(assignedTo);
         if(todo.completed) {
-            div.addChild(WidgetFactory.create('div', 'completed'));
+            div.addChild(WidgetFactory.create('div', 'completed', 'green'));
         }
         else{
             var btn = WidgetFactory.create('button', 'complete');
             btn.addEventHandler('onclick', function(e) {
                 Utils.stopEvent(e);
                 _services.getRequest().doGet('todos/complete.json?id=' + todo.id, null, function(t) {
-                    if(t) {                    
+                    if(t && t.completed) {                    
                         div.removeChild(div.size()-1);
-                        div.addChild(WidgetFactory.create('div', 'completed'));                    
+                        div.addChild(WidgetFactory.create('div', 'completed', 'green'));                    
                     }
 
                 });
             });
-            div.addChild(btn);
+            div.addChild(new SimplePanel(btn));
         }
         _content.addChild(div);     
     }
@@ -153,8 +153,7 @@ function Todos(module) {
         _this.setName('todos');
         _this.setToken('todos');
         _this.addChild(_top);       
-        _this.addChild(_content);
-        _content.addStyle('box');        
+        _this.addChild(_content);        
     }
 
     construct();
@@ -199,14 +198,12 @@ function Users(module) {
     }
     
     function fill(user) {
-        var div = new FlowPanel();
+        var div = new FlowPanel('box');
         Utils.applyStyle(div.getElement(), 'padding:5px 0');
-        var firstName = WidgetFactory.create('div', 'First Name: ' + user.firstName);
-        var lastName = WidgetFactory.create('div', 'Last Name: ' + user.lastName);
+        var name = WidgetFactory.create('div', ['Name:', user.firstName, user.lastName].join(' '));        
         var email = WidgetFactory.create('div', 'Email: ' + user.email);
         var todos = WidgetFactory.create('div', '<a href="#users/' + user.id + '/todos">todos</a>');
-        div.addChild(firstName);
-        div.addChild(lastName);
+        div.addChild(name);        
         div.addChild(email);
         div.addChild(todos); 
         _content.addChild(div); 
@@ -230,15 +227,16 @@ function Users(module) {
     }
     
     function createWidget() {
-        var status = WidgetFactory.create('div', null, 'padded');        
+        var status = WidgetFactory.create('div', null, 'padded red');        
         var firstName = WidgetFactory.createInput('text');
         var lastName = WidgetFactory.createInput('text');
         var email = WidgetFactory.createInput('text');        
         var username = WidgetFactory.createInput('text');
         var password = WidgetFactory.createInput('password');
-        var confirm = WidgetFactory.create('password');
+        var confirm = WidgetFactory.createInput('password');
         var create = WidgetFactory.create('button', 'Create');        
         create.addEventHandler('onclick', function(e) {
+            Utils.refreshElement(status.getElement());
             var fn = Utils.trim(firstName.getElementProperty('value'));
             var ln = Utils.trim(lastName.getElementProperty('value'));
             var e = Utils.trim(email.getElementProperty('value'));
@@ -249,13 +247,20 @@ function Users(module) {
                 if(pw!=c) {
                     status.getElement().innerHTML = 'Password did not match.';
                     return;
-                }
-                _content.removeChildren();
-                _services.getUsersService().create(fill, {
+                }                          
+                _services.getUsersService().create(function(t) {
+                    if(t.error) {
+                        status.getElement().innerHTML = t.msg;
+                        return;
+                    }
+                    _content.removeChildren();
+                    _module.getPopup().hide();
+                    fill(t);
+                }, {
                     firstName: un,
                     lastName: fn,
                     email: e,
-                    username: u,
+                    username: un,
                     password: pw,
                     confirmPassword: c
                 });
@@ -278,7 +283,7 @@ function Users(module) {
         table.setWidget(5, 0, WidgetFactory.create('span', 'Confirm Password'));
         table.setWidget(5, 1, confirm);
         table.setWidget(6, 1, create);
-        
+        table.setSpacing(2);
         var panel = new FlowPanel('padded');
         panel.addChild(status);
         panel.addChild(table);
@@ -295,8 +300,7 @@ function Users(module) {
             _module.getPopup().show('users/create', 'Create User');
         });
         _this.addChild(create);
-        _this.addChild(_content);
-        _content.addStyle('box');
+        _this.addChild(_content);        
     }
 
     construct();
@@ -374,14 +378,14 @@ function Module() {
     
     function onHistoryChanged(token) {
         if(_token!=token) {
+            _popup.hide();
             var oldToken = token;
             var tokens = token.split(_delim);          
             if(tokens.length>1)
                 token = tokens[0];              
             var pane = _paneMap.get(token);
             if(pane) {              
-                if(pane.activate(tokens)) {
-                    _popup.hide();
+                if(pane.activate(tokens)) {                    
                     _mainDeck.show(pane.getIndex());
                     tokens = _token ? _token.split(_delim) : [];
                     token = tokens.length>1 ? tokens[0] : _token;
@@ -544,7 +548,7 @@ function Popup(token) {
         //var wrapper = new SimpleCellPanel(_deck);
         //wrapper.setSpacing(5);
         //_popup.addChild(wrapper);
-        _popup.addChild(new SimplePanel(_deck, 'container'));
+        _popup.addChild(new SimplePanel(_deck));
         _this.setWidget(_popup);
         _this.setParent(document.body);
         new Draggable(_this.getElement(), _titleBar.getElement());      

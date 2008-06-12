@@ -116,10 +116,13 @@ button.simple_link:hover {
 button.simple_link span {
   text-decoration: underline;
 }
-div.box {
-  padding: 5px;
+div.box {  
+  margin: 5px;
   border: 1px solid #c0c0c0;
   background-color: #fafbfc; 
+}
+div.box div {
+  padding: 5px;
 }
 div.box button {
   text-align: center;
@@ -129,19 +132,21 @@ div.box button {
   cursor: pointer;
   background-color: white;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 0.8em;
   text-decoration: none;
   border: 1px solid #ccc; 
 }
 div.popup {
   border: 2px groove #7f93bc;
   background-color: #ffffff;
+  font-family: Arial, Verdana, Tahoma;
+  font-size: 0.9em;
 }
 
 div.popup-bar {
   background-color: #3B5998;
   padding: 2px;
-  font-size: 14px;
+  font-size: 1em;
   color: white;
 }
 button.popup-bar-btn {
@@ -150,22 +155,32 @@ button.popup-bar-btn {
   cursor: default;
   background-color: white;
   font-weight: bold;
-  font-size: 12px;
+  font-size: 0.8em;
   text-decoration: none;
   border: 1px solid #ccc;
   margin: 0 1px;
 }
 button.active-label {
   text-align: center;
-  color: #7f93bc;   
+  color: #3B5998;   
   cursor: pointer;
   background: none;  
-  font-size: 14px;
+  font-size: 1em;
   text-decoration: none;
   border: 0; 
   padding: 0;
   margin: 0;
 }
+button:hover.active-label {
+  background-color: green;
+  color: white;
+}
 .padded {
   padding: 5px;
+}
+.red {
+  color: red;
+}
+.green {
+  color: green;
 }
