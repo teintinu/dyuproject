@@ -335,6 +335,7 @@ function Users(module) {
         table.setWidget(1, 0, WidgetFactory.create('span', 'Content'));
         table.setWidget(1, 1, content);
         table.setWidget(2, 1, create);
+        table.setSpacing(2);
         var panel = new FlowPanel('padded');
         panel.addChild(status);
         panel.addChild(table);
