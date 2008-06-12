@@ -32,7 +32,7 @@ public class CookieSessionManager
     public static final String SESSION_COOKIE_MAX_AGE = "session.cookie.maxAge";
     public static final String SESSION_COOKIE_DOMAIN = "session.cookie.domain";
     public static final String SESSION_COOKIE_PATH = "session.cookie.path";
-    public static final String SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS = "session.cookie.include.remote.address";
+    public static final String SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS = "session.cookie.include.remoteAddress";
     
     public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
     
