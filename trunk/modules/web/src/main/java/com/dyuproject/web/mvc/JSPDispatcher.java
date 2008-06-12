@@ -29,23 +29,36 @@ import javax.servlet.http.HttpServletResponse;
 public class JSPDispatcher implements ViewDispatcher
 {
     
+    public static final String JSP = "jsp";
     static final String INCLUDE_ATTR = "javax.servlet.include.servlet_path";   
     
+    private boolean _jetty = false;
     RequestDispatcher _jsp;
+    
     
     public void init(WebContext context)
     {
         if(_jsp==null)
-            _jsp = context.getServletContext().getNamedDispatcher("jsp");
+            _jsp = context.getServletContext().getNamedDispatcher(JSP);
+        _jetty = context.getServletContext().getClass().getName().startsWith("org.mortbay.jetty");
     }
     
     public void dispatch(String uri, HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException
     {
-        request.setAttribute(WebContext.DISPATCH_ATTR, "true");
-        request.setAttribute(WebContext.DISPATCH_SUFFIX_ATTR, "jsp");
-        request.setAttribute(INCLUDE_ATTR, uri);        
-        _jsp.include(request, response);  
+        request.setAttribute(WebContext.DISPATCH_ATTR, JSP);
+        request.setAttribute(INCLUDE_ATTR, uri);
+        // more efficient if in jetty
+        if(_jetty)
+        {               
+            _jsp.include(request, response);
+            return;
+        }
+        
+        if(response.isCommitted())
+            request.getRequestDispatcher(uri).include(request, response);
+        else
+            request.getRequestDispatcher(uri).forward(request, response);
     }
 
 }

@@ -45,7 +45,7 @@ public class WebContext
 {   
     
     public static final String DISPATCH_ATTR = "com.dyuproject.web.dispatch";
-    public static final String DISPATCH_SUFFIX_ATTR = "com.dyuproject.web.dispatch.suffix";
+
     public static final String PATH_SUFFIX_ATTR = "pathSuffix";
     public static final String DEFAULT_MIME_LOCATION = "/WEB-INF/mime.properties";
     public static final String DEFAULT_ENV_LOCATION = "/WEB-INF/env.properties";
@@ -374,9 +374,10 @@ public class WebContext
     {        
         String pathInfo = request.getPathInfo();        
         
-        if(request.getAttribute(DISPATCH_ATTR)!=null)
+        Object dispatched = request.getAttribute(DISPATCH_ATTR);
+        if(dispatched!=null)
         {            
-            if("jsp".equals(request.getAttribute(DISPATCH_SUFFIX_ATTR)))
+            if(JSPDispatcher.JSP.equals(dispatched))
                 _jspDispatcher._jsp.include(request, response);
             else
                 _defaultDispatcher._default.forward(request, response);
