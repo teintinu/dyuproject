@@ -372,8 +372,6 @@ public class WebContext
     public void service(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException
     {        
-        String pathInfo = request.getPathInfo();        
-        
         Object dispatched = request.getAttribute(DISPATCH_ATTR);
         if(dispatched!=null)
         {            
@@ -382,8 +380,9 @@ public class WebContext
             else
                 _defaultDispatcher._default.forward(request, response);
             return;
-        }       
-
+        }
+        
+        String pathInfo = request.getPathInfo();
         int last = pathInfo.length()-1;
         // root context /
         if(last<1)
