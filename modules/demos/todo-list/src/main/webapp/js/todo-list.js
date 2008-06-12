@@ -268,13 +268,13 @@ function Users(module) {
         table.setWidget(0, 0, WidgetFactory.create('span', 'First Name'));
         table.setWidget(0, 1, firstName);
         table.setWidget(1, 0, WidgetFactory.create('span', 'Last Name'));
-        table.setWidget(0, 1, lastName);
+        table.setWidget(1, 1, lastName);
         table.setWidget(2, 0, WidgetFactory.create('span', 'Email'));
-        table.setWidget(0, 1, email);
+        table.setWidget(2, 1, email);
         table.setWidget(3, 0, WidgetFactory.create('span', 'Username'));
-        table.setWidget(0, 1, username);
+        table.setWidget(3, 1, username);
         table.setWidget(4, 0, WidgetFactory.create('span', 'Password'));
-        table.setWidget(0, 1, password);
+        table.setWidget(4, 1, password);
         table.setWidget(5, 0, WidgetFactory.create('span', 'Confirm Password'));
         table.setWidget(5, 1, confirm);
         table.setWidget(6, 1, create);
