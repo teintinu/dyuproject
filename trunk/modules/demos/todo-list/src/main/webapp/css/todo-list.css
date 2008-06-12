@@ -124,7 +124,7 @@ div.box {
 div.box div {
   padding: 5px;
 }
-div.box button {
+button.btn {
   text-align: center;
   color: #7f93bc;
   margin: 0 1px;
@@ -162,10 +162,10 @@ button.popup-bar-btn {
 }
 button.active-label {
   text-align: center;
-  color: #3B5998;   
+  color: green;   
   cursor: pointer;
   background: none;  
-  font-size: 1em;
+  font-size: 0.9em;
   text-decoration: none;
   border: 0; 
   padding: 0;
@@ -183,4 +183,7 @@ button:hover.active-label {
 }
 .green {
   color: green;
+}
+div.clear {
+  clear: both;
 }

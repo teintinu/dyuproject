@@ -12,40 +12,56 @@ function Services() {
     }
     
     function fill(buffer, param, value) {
-        buffer.push([param,value].join('='));
+        if(Utils.isString(value))
+            buffer.push([param,value].join('='));
     }    
     
     var UsersService = {
-        get: function(handler, id) {
-            _request.doGet(id ? ['users/', id, '.json'].join('') : 'users.json', null, handler);
+        get: function(handler, params) {
+            _request.doGet(params && params.id ? ['users/', params.id, '.json'].join('') : 'users.json', null, handler);
         },
-        create: function(handler, user) {
+        create: function(handler, params) {
+            var user = params.user;
             var buffer = new Array();
             for(var i in user)
                 fill(buffer, i, user[i]);
             _request.doPost('users.json', buffer.join('&'), handler);
         },
-        update: function(handler) {
+        update: function(handler, params) {
         
         },
-        del: function(handler) {
+        del: function(handler, params) {
         
-        }   
+        }
     };
 
     var TodosService = {
-        get: function(handler, id) {
-            _request.doGet(id ? ['todos/', id, '.json'].join('') : 'todos.json', null, handler);
+        get: function(handler, params) {
+            if(params) {
+                if(params.id)                
+                    _request.doGet(['todos/', params.id, '.json'].join(''), null, handler);
+                else if(params.userId)                
+                    _request.doGet(['users', params.userId, 'todos.json'].join('/'), null, handler);
+                return;
+            }
+            _request.doGet('todos.json', null, handler);
         },
-        create: function(handler) {
+        create: function(handler, params) {
+            var todo = params.todo;
+            var buffer = new Array();
+            for(var i in todo)
+                fill(buffer, i, todo[i]);
+            _request.doPost(['users', params.user.id, 'todos.json'].join('/'), buffer.join('&'), handler);
+        },
+        update: function(handler, params) {
         
         },
-        update: function(handler) {
+        del: function(handler, params) {
         
         },
-        del: function(handler) {
-        
-        }   
+        complete: function(handler, params) {
+            _request.doGet(['todos/complete.json?id=', params.id].join(''), null, handler);
+        }        
     };
     
     this.getUsersService = function() {
@@ -67,26 +83,36 @@ function Todos(module) {
     var _top = new SimplePanel(WidgetFactory.create('span', 'Todos', 'big_label'));
     var _content = new FlowPanel();
     var _last = 0;
+    var _currentTodo;
     
     this.activate = function(tokens, params) {
-        if(params && params.userId) {
-            _content.removeChildren();
-            _services.getRequest().doGet('users/' + params.userId + '/todos.json', null, onGet);
-            _last = 0;
-            return true;
+        if(params) {
+            if(params.userId) {
+                _content.removeChildren();
+                _services.getTodosService().get(onGet, params);
+                _last = 1;
+                return true;
+            }
+            if(params.todo) {
+                _content.removeChildren();
+                fill(params.todo);
+                _last = 2;
+                return true;
+            }
+            return false;
         }       
         switch(tokens.length) {
             case 1:
                 if(_last==1)
                     break;
-                _content.removeChildren();
-                _services.getTodosService().get(onGet);
                 _last = 1;
+                _content.removeChildren();
+                _services.getTodosService().get(onGet);                
                 break;
             case 2:
+                 _last = 2;
                 _content.removeChildren();
-                _services.getTodosService().get(fill, tokens[1]);
-                _last = 2;
+                _services.getTodosService().get(fill, {id: tokens[1]});               
                 break;
             default:
                 return false;
@@ -101,8 +127,8 @@ function Todos(module) {
     function fill(todo) {
         var div = new FlowPanel('box');
         Utils.applyStyle(div.getElement(), 'padding:5px 0');
-        var title = WidgetFactory.create('div', 'Title: ' + todo.title);
-        var content = WidgetFactory.create('div', 'Content: ' + todo.content);
+        var title = new SimplePanel(new Hyperlink(todo.title, ['todos', todo.id].join('/')));
+        var content = WidgetFactory.create('div', todo.content);
         var link = 'users/' + todo.user.id;
         var assignedTo = WidgetFactory.create('div', 'Assigned to: ' + '<a href="#' + link + '">' + todo.user.firstName + ' ' + todo.user.lastName + '</a>');
         div.addChild(title);
@@ -112,41 +138,27 @@ function Todos(module) {
             div.addChild(WidgetFactory.create('div', 'completed', 'green'));
         }
         else{
-            var btn = WidgetFactory.create('button', 'complete');
+            var btn = WidgetFactory.create('button', 'complete', 'btn');
             btn.addEventHandler('onclick', function(e) {
                 Utils.stopEvent(e);
-                _services.getRequest().doGet('todos/complete.json?id=' + todo.id, null, function(t) {
+                _services.getTodosService().complete(function(t) {
                     if(t && t.completed) {                    
                         div.removeChild(div.size()-1);
                         div.addChild(WidgetFactory.create('div', 'completed', 'green'));                    
                     }
 
-                });
+                }, {id: todo.id});
             });
             div.addChild(new SimplePanel(btn));
         }
-        _content.addChild(div);     
+        _content.addChild(div);
+        _currentTodo = todo;
     }
     
     function onGet(todos) {
         for(var i=0,len=todos.length; i<len; i++)
             fill(todos[i]);
-    }
-    
-    function onComplete(todo) {
-        
-    }
-    
-    function onCreate(todo) {
-    
-    }
-    
-    function onUpdate(todo) {
-    
-    }
-    
-    function onDelete(todo) {
-    
+        _currentTodo = null;
     }
     
     function construct() {
@@ -168,25 +180,28 @@ function Users(module) {
     var _services = _module.getServices();
     var _top = new SimplePanel(WidgetFactory.create('span', 'Users', 'big_label'));
     var _content = new FlowPanel();
-    var last = 0;
+    var _last = 0;
+    var _currentUser;
     
-    this.activate = function(tokens) {      
+    this.activate = function(tokens) {
         switch(tokens.length) {         
             case 1:
                 // cached
-                if(last==1)
+                if(_last==1)
                     break;
+                _last = 1;
                 _content.removeChildren();
-                _services.getUsersService().get(onGet);
-                last = 1;
+                _services.getUsersService().get(onGet);                
                 break
             case 2:
+                _last = 2;
                 _content.removeChildren();
-                _services.getUsersService().get(fill, tokens[1]);
-                last = 2;
+                _services.getUsersService().get(fill, {id: tokens[1]});                
                 break;
             case 3:
-                _module.activate(tokens[2], {userId: tokens[1]});                       
+                _last = 0;
+                _module.activate(tokens[2], {userId: tokens[1]});
+                return false;
             default:
                 return false;
         }
@@ -202,31 +217,28 @@ function Users(module) {
         Utils.applyStyle(div.getElement(), 'padding:5px 0');
         var name = WidgetFactory.create('div', ['Name:', user.firstName, user.lastName].join(' '));        
         var email = WidgetFactory.create('div', 'Email: ' + user.email);
-        var todos = WidgetFactory.create('div', '<a href="#users/' + user.id + '/todos">todos</a>');
+        var todos = new FlowPanel();
+        todos.addChild(new Hyperlink('todos', ['users', user.id, 'todos'].join('/')));
+        var newTodo = WidgetFactory.create('button', 'New Todo', 'active-label');
+        todos.addChild(newTodo);
         div.addChild(name);        
         div.addChild(email);
         div.addChild(todos); 
-        _content.addChild(div); 
+        _content.addChild(div);
+        newTodo.addEventHandler('onclick', function(e) {
+            _currentUser = user;
+            _module.getPopup().show('todos/create', 'New Todo', Utils.getCoords(newTodo.getElement()));
+        });
+        _currentUser = user;
     }
     
     function onGet(users) {     
         for(var i=0,len=users.length; i<len; i++)
-            fill(users[i]);     
+            fill(users[i]);
+        _currentUser = null;
     }
-    
-    function onCreate(user) {
-    
-    }
-    
-    function onUpdate(user) {
-    
-    }
-    
-    function onDelete(user) {
-    
-    }
-    
-    function createWidget() {
+        
+    function newCreateUserWidget() {
         var status = WidgetFactory.create('div', null, 'padded red');        
         var firstName = WidgetFactory.createInput('text');
         var lastName = WidgetFactory.createInput('text');
@@ -288,18 +300,58 @@ function Users(module) {
         panel.addChild(status);
         panel.addChild(table);
         return panel;
-    }    
+    }
+    
+    function newCreateTodoWidget() {
+        var status = WidgetFactory.create('div', null, 'padded red');
+        var title = WidgetFactory.createInput('text');
+        var content = WidgetFactory.create('textarea');
+        var create = WidgetFactory.create('button', 'Create');
+        create.addEventHandler('onclick', function(e) {
+            Utils.refreshElement(status.getElement());
+            var t = Utils.trim(title.getElementProperty('value'));
+            var c = Utils.trim(content.getElementProperty('value'));
+            if(t) {
+                _services.getTodosService().create(function(data) {
+                    if(data.error) {
+                        status.getElement().innerHTML = data.msg;
+                        return;
+                    }
+                    _module.getPopup().hide();
+                    _module.activate('todos', {todo: data}, 'todos/' + data.id);
+                }, {                    
+                    user: _currentUser, 
+                    todo: {
+                        title: t, content: c
+                    }
+                });
+            }
+            else
+                status.getElement().innerHTML = 'Required Parameters: Title';
+        });
+        var table = new SimpleTable(3, 2);
+        table.setWidget(0, 0, WidgetFactory.create('span', 'Title'));
+        table.setWidget(0, 1, title);
+        table.setWidget(1, 0, WidgetFactory.create('span', 'Content'));
+        table.setWidget(1, 1, content);
+        table.setWidget(2, 1, create);
+        var panel = new FlowPanel('padded');
+        panel.addChild(status);
+        panel.addChild(table);
+        return panel;        
+    }
     
     function construct() {
         _this.setName('users');
         _this.setToken('users');
         _this.addChild(_top);
-        _module.getPopup().addEntry('users/create', createWidget());
-        var create = WidgetFactory.create('button', 'Create', 'active-label');
-        create.addEventHandler('onclick', function(e) {
-            _module.getPopup().show('users/create', 'Create User');
-        });
-        _this.addChild(create);
+        _module.getPopup().addEntry('users/create', newCreateUserWidget());
+        _module.getPopup().addEntry('todos/create', newCreateTodoWidget());
+        var newUser = WidgetFactory.create('button', 'New User', 'active-label')
+        newUser.addEventHandler('onclick', function(e) {
+            _module.getPopup().show('users/create', 'New User');
+        });     
+        _this.addChild(newUser);        
         _this.addChild(_content);        
     }
 
@@ -373,7 +425,11 @@ function Module() {
             pane.init();
             _paneMap.put(pane.getToken(), pane);
         }
-        History.newItem('home');
+        var token = History.getToken();
+        if(token)
+            onHistoryChanged(token);
+        else
+            History.newItem('home');
     }
     
     function onHistoryChanged(token) {
@@ -398,11 +454,15 @@ function Module() {
         }
     }
     
-    this.activate = function(token, params) {
+    this.activate = function(token, params, historyToken) {
         var pane = _paneMap.get(token);
         if(pane) {
             pane.activate(token, params);
             _mainDeck.show(pane.getIndex());
+            if(historyToken) {
+                _token = historyToken;
+                History.newItem(historyToken);
+            }
         }
     }
     
