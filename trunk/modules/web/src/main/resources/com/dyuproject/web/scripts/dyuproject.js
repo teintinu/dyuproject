@@ -31,9 +31,9 @@ var Utils = {
     isWidget: function(obj) {
         return obj && obj.getElement;
     },
-	isDraggable: function(el) {
-		return el && el.__drag;
-	},
+    isDraggable: function(el) {
+        return el && el.__drag;
+    },
     applyStyle: function(el, style) {
         if(document.all && !window.opera)
             el.style.setAttribute('cssText', style);
@@ -47,13 +47,13 @@ var Utils = {
             return window.getComputedStyle(el, '').getPropertyValue(str);
         return null;    
     },
-	getStyleProperty: function(el, prop) {
-		var p = el.style[prop];
-		return p ? p : Utils.getCssStyle(el, prop);
-	},
-	getZIndex: function(el) {
-		return el.style.zIndex ? el.style.zIndex : (document.all ? Utils.getCssStyle(el, 'zIndex') : Utils.getCssStyle(el, 'z-index'));
-	},
+    getStyleProperty: function(el, prop) {
+        var p = el.style[prop];
+        return p ? p : Utils.getCssStyle(el, prop);
+    },
+    getZIndex: function(el) {
+        return el.style.zIndex ? el.style.zIndex : (document.all ? Utils.getCssStyle(el, 'zIndex') : Utils.getCssStyle(el, 'z-index'));
+    },
     refreshElement: function(el) {
         while(el.hasChildNodes())
             el.removeChild(el.firstChild);
@@ -64,40 +64,40 @@ var Utils = {
     trimLineBreaks: function(str) {
         return str.replace(/(\r\n|[\r\n])/g, ' ');
     },
-	stopEvent: function(ev) {
-		if(!ev)
-			ev = window.event;
-		if(ev.stopPropagation) 
-			ev.stopPropagation();
-		else
-			ev.cancelBubble = true;
-		if(ev.preventDefault)
-			ev.preventDefault();
-		else
-			ev.returnValue = false;		
-	},
-	getName: function(el) {
-		return el.name ? el.name : el.getAttribute('name');
-	},
-	getParentName: function(el) {		
-		var p = el.parentNode;
-		if(!p)
-			return null;
-		var name = p.name ? p.name : p.getAttribute('name');
-		return name ? name : Utils.getParentName(p);
-	},	
+    stopEvent: function(ev) {
+        if(!ev)
+            ev = window.event;
+        if(ev.stopPropagation) 
+            ev.stopPropagation();
+        else
+            ev.cancelBubble = true;
+        if(ev.preventDefault)
+            ev.preventDefault();
+        else
+            ev.returnValue = false;     
+    },
+    getName: function(el) {
+        return el.name ? el.name : el.getAttribute('name');
+    },
+    getParentName: function(el) {       
+        var p = el.parentNode;
+        if(!p)
+            return null;
+        var name = p.name ? p.name : p.getAttribute('name');
+        return name ? name : Utils.getParentName(p);
+    },  
     addHandlerToEvent: function(handler, el, ev) {
         if(el.addEventListener) 
             el.addEventListener(ev.substring(2), handler, false);
         else if(el.attachEvent)       
             el.attachEvent(ev, handler);
         else {
-			var old_handler = el[ev];
-			el[ev] = function(e) {
-				old_handler(e);
-				handler(e);
-			}		   
-		}
+            var old_handler = el[ev];
+            el[ev] = function(e) {
+                old_handler(e);
+                handler(e);
+            }          
+        }
     },
     addOnLoad: function(handler) {
         var old_onload = window.onload;
@@ -138,8 +138,8 @@ var Utils = {
         var x = 0;
         var y = 0;
         if(document.all) {
-			x = document.documentElement.scrollLeft || document.body.scrollLeft;
-			y = document.documentElement.scrollTop || document.body.scrollTop;
+            x = document.documentElement.scrollLeft || document.body.scrollLeft;
+            y = document.documentElement.scrollTop || document.body.scrollTop;
             x += window.event.clientX;
             y += window.event.clientY;   
         }
@@ -173,21 +173,21 @@ var Utils = {
         }
         return top;    
     },
-	getCoords: function(el) {
-		var left = 0;
-		var top = 0;
+    getCoords: function(el) {
+        var left = 0;
+        var top = 0;
         for(;;) {               
             if(!el.offsetParent) {
-				left+=el.offsetLeft;
-                top+=el.offsetTop;				
+                left+=el.offsetLeft;
+                top+=el.offsetTop;              
                 break;
             }
             left +=  (el.offsetLeft - el.scrollLeft);
-			top +=  (el.offsetTop - el.scrollTop);  
+            top +=  (el.offsetTop - el.scrollTop);  
             el = el.offsetParent;
         }
         return {x:left,y:top};
-	},
+    },
     getCenterCoords: function() {
         var scrollLeft = document.documentElement.scrollLeft || document.body.scrollLeft;
         var scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
@@ -213,164 +213,164 @@ var Utils = {
     deleteCookie: function(name) {
         document.cookie = [name,'=','; expires=Thu, 01-Jan-70 00:00:01 GMT'].join('');   
     },
-	getCookie: function(name) {		
-		var c = document.cookie.split(';');
-		for(var i=0; i<c.length; i++) {
-			var t = Utils.trim(c[i]);			
-			if(t.substring(0, name.length)==name)
-				return t.substring(name.length+1, t.length);
-		}
-		return null;
-	},
-	createCookie: function(name, value, secs) {
-		var expires = Utils.isNumber(secs) ? new Date((1000*secs) + new Date().getTime()).toGMTString() : '';	
-		document.cookie = [name,'=',value,'; expires=', expires].join('');
-	},
-	validateForm: function(currentForm, feedbackEl, resolveName) {
-		if(resolveName)
-			return Utils.validateFormResolveName(currentForm, feedbackEl);
-		for(var i=0; i<currentForm.elements.length; i++) {
-			var formEl = currentForm.elements[i];
-			if('true'!=formEl.getAttribute('required'))
-				continue;				
-			if(formEl.type.toLowerCase()=='text') {				
-				formEl.value = Utils.trim(formEl.value);			
-				if(formEl.value.length<1) {
-					var name = Utils.getName(formEl);
-					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');				
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					formEl.focus();					
-					return false;
-				}	
-			}
-			else if(formEl.type.toLowerCase()=='textarea') {			
-				var ta = formEl;
-				ta.value = Utils.trimLineBreaks(ta.value);
-				ta.value = Utils.trim(ta.value);
-				if(ta.value.length<1) {
-					var name = Utils.getName(ta);
-					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					return false;
-				}		
-			}		
-			else if(formEl.nodeName.toLowerCase()=='select') {			
-				var sel = formEl;						
-				if(sel.value.length<1) {
-					var name = Utils.getName(sel);
-					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					return false;
-				}				
-			}				
-			else if(formEl.type.toLowerCase()=='password') {
-				var formPw = formEl;
-				var firstLength = formPw.value.length;
-				var secondLength = Utils.trim(formPw.value).length;
-				if(firstLength==0) {
-					var name = Utils.getName(formPw);
-					var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					formPw.focus();
-					formPw.select();
-					return false;				
-				}				
-				if(firstLength != secondLength) {
-					var msg = 'Your password must not contain any whitespace.';
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					formPw.focus();
-					formPw.select();
-					return false;
-				}
-			}
-		
-		}	
-		return true;	
-	},
-	validateFormResolveName: function(currentForm, feedbackEl) {
-		for(var i=0; i<currentForm.elements.length; i++) {
-			var formEl = currentForm.elements[i];
-			if('true'!=formEl.getAttribute('required'))
-				continue;			
-			if(formEl.type.toLowerCase()=='text') {				
-				formEl.value = Utils.trim(formEl.value);			
-				if(formEl.value.length<1) {
-					var msg = ['Required field: ', Utils.getParentName(formEl)].join('');				
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					formEl.focus();					
-					return false;
-				}	
-			}
-			else if(formEl.type.toLowerCase()=='textarea') {			
-				var ta = formEl;
-				ta.value = Utils.trimLineBreaks(ta.value);
-				ta.value = Utils.trim(ta.value);
-				if(ta.value.length<1) {
-					var msg = ['Required field: ', Utils.getParentName(ta)].join('');
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					return false;
-				}	
-			}		
-			else if(formEl.nodeName.toLowerCase()=='select') {			
-				var sel = formEl;						
-				if(sel.value.length<1) {
-					var msg = ['Required field: ', Utils.getParentName(sel)].join('');
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					return false;
-				}				
-			}		
-			else if(formEl.type.toLowerCase()=='password') {
-				var formPw = formEl;
-				var firstLength = formPw.value.length;				
-				var secondLength = Utils.trim(formPw.value).length;
-				if(firstLength==0) {
-					var msg = ['Required field: ', Utils.getParentName(formPw)].join('');
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					formPw.focus();
-					formPw.select();
-					return false;				
-				}
-				if(firstLength != secondLength) {
-					var msg = 'Your password must not contain any whitespace.';
-					if(Utils.isNode(feedbackEl))
-						feedbackEl.innerHTML = msg;
-					else
-						alert(msg);
-					formPw.focus();
-					formPw.select();
-					return false;
-				}
-			}
-		}	
-		return true;	
-	}
+    getCookie: function(name) {     
+        var c = document.cookie.split(';');
+        for(var i=0; i<c.length; i++) {
+            var t = Utils.trim(c[i]);           
+            if(t.substring(0, name.length)==name)
+                return t.substring(name.length+1, t.length);
+        }
+        return null;
+    },
+    createCookie: function(name, value, secs) {
+        var expires = Utils.isNumber(secs) ? new Date((1000*secs) + new Date().getTime()).toGMTString() : '';   
+        document.cookie = [name,'=',value,'; expires=', expires].join('');
+    },
+    validateForm: function(currentForm, feedbackEl, resolveName) {
+        if(resolveName)
+            return Utils.validateFormResolveName(currentForm, feedbackEl);
+        for(var i=0; i<currentForm.elements.length; i++) {
+            var formEl = currentForm.elements[i];
+            if('true'!=formEl.getAttribute('required'))
+                continue;               
+            if(formEl.type.toLowerCase()=='text') {             
+                formEl.value = Utils.trim(formEl.value);            
+                if(formEl.value.length<1) {
+                    var name = Utils.getName(formEl);
+                    var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');              
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    formEl.focus();                 
+                    return false;
+                }   
+            }
+            else if(formEl.type.toLowerCase()=='textarea') {            
+                var ta = formEl;
+                ta.value = Utils.trimLineBreaks(ta.value);
+                ta.value = Utils.trim(ta.value);
+                if(ta.value.length<1) {
+                    var name = Utils.getName(ta);
+                    var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    return false;
+                }       
+            }       
+            else if(formEl.nodeName.toLowerCase()=='select') {          
+                var sel = formEl;                       
+                if(sel.value.length<1) {
+                    var name = Utils.getName(sel);
+                    var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    return false;
+                }               
+            }               
+            else if(formEl.type.toLowerCase()=='password') {
+                var formPw = formEl;
+                var firstLength = formPw.value.length;
+                var secondLength = Utils.trim(formPw.value).length;
+                if(firstLength==0) {
+                    var name = Utils.getName(formPw);
+                    var msg = ['Required field: ', name.substring(0,1).toUpperCase(), name.substring(1)].join('');
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    formPw.focus();
+                    formPw.select();
+                    return false;               
+                }               
+                if(firstLength != secondLength) {
+                    var msg = 'Your password must not contain any whitespace.';
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    formPw.focus();
+                    formPw.select();
+                    return false;
+                }
+            }
+        
+        }   
+        return true;    
+    },
+    validateFormResolveName: function(currentForm, feedbackEl) {
+        for(var i=0; i<currentForm.elements.length; i++) {
+            var formEl = currentForm.elements[i];
+            if('true'!=formEl.getAttribute('required'))
+                continue;           
+            if(formEl.type.toLowerCase()=='text') {             
+                formEl.value = Utils.trim(formEl.value);            
+                if(formEl.value.length<1) {
+                    var msg = ['Required field: ', Utils.getParentName(formEl)].join('');               
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    formEl.focus();                 
+                    return false;
+                }   
+            }
+            else if(formEl.type.toLowerCase()=='textarea') {            
+                var ta = formEl;
+                ta.value = Utils.trimLineBreaks(ta.value);
+                ta.value = Utils.trim(ta.value);
+                if(ta.value.length<1) {
+                    var msg = ['Required field: ', Utils.getParentName(ta)].join('');
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    return false;
+                }   
+            }       
+            else if(formEl.nodeName.toLowerCase()=='select') {          
+                var sel = formEl;                       
+                if(sel.value.length<1) {
+                    var msg = ['Required field: ', Utils.getParentName(sel)].join('');
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    return false;
+                }               
+            }       
+            else if(formEl.type.toLowerCase()=='password') {
+                var formPw = formEl;
+                var firstLength = formPw.value.length;              
+                var secondLength = Utils.trim(formPw.value).length;
+                if(firstLength==0) {
+                    var msg = ['Required field: ', Utils.getParentName(formPw)].join('');
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    formPw.focus();
+                    formPw.select();
+                    return false;               
+                }
+                if(firstLength != secondLength) {
+                    var msg = 'Your password must not contain any whitespace.';
+                    if(Utils.isNode(feedbackEl))
+                        feedbackEl.innerHTML = msg;
+                    else
+                        alert(msg);
+                    formPw.focus();
+                    formPw.select();
+                    return false;
+                }
+            }
+        }   
+        return true;    
+    }
 };
 
 var History = {
@@ -509,11 +509,11 @@ function AbstractCollection() {
     this.__extends = JSObject;
     this.__extends();
     
-	this.isEmpty = function() {}
-	this.clear = function() {}
-	this.size = function() {}
-	this.get = function(obj) {}
-	this.remove = function(obj) {}
+    this.isEmpty = function() {}
+    this.clear = function() {}
+    this.size = function() {}
+    this.get = function(obj) {}
+    this.remove = function(obj) {}
     
     function construct() {
     
@@ -565,10 +565,10 @@ function ArrayList() {
         }
         return -1;
     }
-	
-	this.contains = function(obj) {
-		return _this.indexOf(obj)!=-1;
-	}
+    
+    this.contains = function(obj) {
+        return _this.indexOf(obj)!=-1;
+    }
     
     this.size = function() {
         return _list.length;
@@ -604,17 +604,17 @@ function IndexedList(reflect) {
     this.__extends = ArrayList;
     this.__extends();
     
-	var _reflect = Utils.isBoolean(reflect) ? reflect : true;
-	
+    var _reflect = Utils.isBoolean(reflect) ? reflect : true;
+    
     var super_add = this.add;    
     this.add = function(obj) {
         if(obj) {
-			if(!obj.setIndex) {
-				obj.setIndex = function(idx){obj.__index = idx;};
-				obj.getIndex = function(){return obj.__index;};
-			}
-			super_add(obj);
-		}
+            if(!obj.setIndex) {
+                obj.setIndex = function(idx){obj.__index = idx;};
+                obj.getIndex = function(){return obj.__index;};
+            }
+            super_add(obj);
+        }
     }
     
     this._a_onAdd = function(obj, index, size) {
@@ -629,7 +629,7 @@ function IndexedList(reflect) {
     
     this._a_onRemove = function(obj, index, size) {
         if(_reflect)
-			reflectRemoval(index, size);        
+            reflectRemoval(index, size);        
     }
     
     function construct() {
@@ -702,17 +702,17 @@ function IndexedMap(reflect) {
     this.__extends = HashMap;
     this.__extends();
     
-	var _reflect = Utils.isBoolean(reflect) ? reflect : true;
+    var _reflect = Utils.isBoolean(reflect) ? reflect : true;
     
-	var super_put = this.put;
+    var super_put = this.put;
     this.put = function(key, value) {
         if(value) {
-			if(!value.setIndex) {
-				value.setIndex = function(idx){value.__index = idx;};
-				value.getIndex = function(){return value.__index;};
-			}
-			super_put(key, value);
-		}
+            if(!value.setIndex) {
+                value.setIndex = function(idx){value.__index = idx;};
+                value.getIndex = function(){return value.__index;};
+            }
+            super_put(key, value);
+        }
     }    
     
     this._a_onPut = function(key, value, size) {
@@ -721,21 +721,21 @@ function IndexedMap(reflect) {
     
     function reflectRemoval(value, size) {
         var map = _this.__wrappedGet();
-        var index = value.getIndex();		
+        var index = value.getIndex();       
         for(var i in map) {
-			var v = map[i];
-			if(v && v.getIndex()>index)			
-				v.setIndex(v.getIndex()-1);
+            var v = map[i];
+            if(v && v.getIndex()>index)         
+                v.setIndex(v.getIndex()-1);
         }
     }
     
     this._a_onRemove = function(key, value, size) {
         if(_reflect)
-			reflectRemoval(value, size);
+            reflectRemoval(value, size);
     }
     
     function construct() {
-		
+        
     }
     
     construct();
@@ -770,14 +770,14 @@ function PooledRequest(pl) {
                 _this.eval(_request.responseText);
         }       
     }
-	
-	this.sendCachable = function(url, params, handler, method) {
-		_currentHandler = handler;
-		_request.open(method, url, true);
-		_request.onreadystatechange = handleDefault;
-		_request.send(params);
-	}
-	
+    
+    this.sendCachable = function(url, params, handler, method) {
+        _currentHandler = handler;
+        _request.open(method, url, true);
+        _request.onreadystatechange = handleDefault;
+        _request.send(params);
+    }
+    
     this.send = function(url, params, handler, method) {
         //var theURL = url.indexOf('?')==-1 ?[ url, '?callback=this.handle'].join('') : [url,'&callback=this.handle'].join('');
         _currentHandler = handler;
@@ -787,22 +787,22 @@ function PooledRequest(pl) {
         _request.setRequestHeader('Content-Length', params.length);
         _request.send(params);
     }
-	
-	this.doGet = function(url, params, handler) {
-		_this.sendCachable(url, params, handler, 'GET');
-	}
-	
-	this.doDelete = function(url, params, handler) {
-		_this.sendCachable(url, params, handler, 'DELETE');
-	}
-	
-	this.doPost = function(url, params, handler) {
-		_this.send(url, params, handler, 'POST');
-	}
-	
-	this.doPut = function(url, params, handler) {
-		_this.send(url, params, handler, 'PUT');
-	}
+    
+    this.doGet = function(url, params, handler) {
+        _this.sendCachable(url, params, handler, 'GET');
+    }
+    
+    this.doDelete = function(url, params, handler) {
+        _this.sendCachable(url, params, handler, 'DELETE');
+    }
+    
+    this.doPost = function(url, params, handler) {
+        _this.send(url, params, handler, 'POST');
+    }
+    
+    this.doPut = function(url, params, handler) {
+        _this.send(url, params, handler, 'PUT');
+    }
 
     this.getRequest = function() {
         return _request;
@@ -833,7 +833,7 @@ function RequestPool(size) {
     this.send = function(url, params, handler) {
         _requests.shift().send(url, params, handler, 'POST');
     }
-	
+    
     this.doPut = function(url, params, handler) {     
         _requests.shift().doPut(url, params, handler);
     }
@@ -841,14 +841,14 @@ function RequestPool(size) {
     this.doPost = function(url, params, handler) {     
         _requests.shift().doPost(url, params, handler);
     }
-	
+    
     this.doGet = function(url, params, handler) {     
         _requests.shift().doGet(url, params, handler);
     }
 
     this.doDelete = function(url, params, handler) {     
         _requests.shift().doDelete(url, params, handler);
-    }	
+    }   
     
     function construct(size) {
         var len = size ? size : 4;
@@ -1061,39 +1061,39 @@ function CometdClient(u, obj, type) {
 /* ==================================== MOVING ELEMENTS ==================================== */
 
 var DragUtil = {
-	getInitialLeft: function(el) {
-		if(el.style.left) 
-			return parseInt(el.style.left);
-		var left = Utils.getCssStyle(el, 'left');
-		var idx = left.indexOf('px');
-		return idx==-1 ? 0 : parseInt(left.substring(0, idx));
-	},
-	getInitialTop: function(el) {
-		if(el.style.top)
-			return parseInt(el.style.top);
-		var top = Utils.getCssStyle(el, 'top');
-		var idx = top.indexOf('px');
-		return idx==-1 ? 0 : parseInt(top.substring(0, idx));
-	},
-	_draggables: new HashMap(),
-	_dropabbles: new HashMap(),
-	addDrag: function(el, drag) {
-		DragUtil._draggables.put(el, drag);
-	},
-	addDragDrop: function(el, dragdrop) {
-		DragUtil._droppables.put(el, dragdrop);
-	},
-	_front: null,
-	bringToFront: function(draggable) {		
-		if(Utils.isNode(draggable))
-			draggable = draggable.__drag;
-		if(draggable && draggable.bringToFront) {
-			if(DragUtil._front)
-				DragUtil._front.bringToBack();
-			DragUtil._front = draggable;
-			draggable.bringToFront();
-		}
-	}
+    getInitialLeft: function(el) {
+        if(el.style.left) 
+            return parseInt(el.style.left);
+        var left = Utils.getCssStyle(el, 'left');
+        var idx = left.indexOf('px');
+        return idx==-1 ? 0 : parseInt(left.substring(0, idx));
+    },
+    getInitialTop: function(el) {
+        if(el.style.top)
+            return parseInt(el.style.top);
+        var top = Utils.getCssStyle(el, 'top');
+        var idx = top.indexOf('px');
+        return idx==-1 ? 0 : parseInt(top.substring(0, idx));
+    },
+    _draggables: new HashMap(),
+    _dropabbles: new HashMap(),
+    addDrag: function(el, drag) {
+        DragUtil._draggables.put(el, drag);
+    },
+    addDragDrop: function(el, dragdrop) {
+        DragUtil._droppables.put(el, dragdrop);
+    },
+    _front: null,
+    bringToFront: function(draggable) {     
+        if(Utils.isNode(draggable))
+            draggable = draggable.__drag;
+        if(draggable && draggable.bringToFront) {
+            if(DragUtil._front)
+                DragUtil._front.bringToBack();
+            DragUtil._front = draggable;
+            draggable.bringToFront();
+        }
+    }
 };
 
 function Draggable(el, controlEl) {
@@ -1107,32 +1107,32 @@ function Draggable(el, controlEl) {
     var _oldZIndex = null;    
     var _controlEl = null;
     var _position = null;
-	var _originalCoords = null;	
-	
-	this.getElement = function() {
-		return _el;
-	}
-	
-	this.bringToFront = function() {
-		_el.style.zIndex = 10000;
-	}
-	
-	this.bringToBack = function() {
-		_el.style.zIndex = _oldZIndex;			
-	}
-	
-	this.reset = function() {
-		if(_originalCoords) {
-			if(_position!='absolute' && _position!='fixed') {
-				_el.style.left = [_originalCoords.relX, 'px'].join('');
-				_el.style.top = [_originalCoords.relY, 'px'].join('');
-			}
-			else {
-				_el.style.left = [_originalCoords.initX, 'px'].join('');
-				_el.style.top = [_originalCoords.initY, 'px'].join('');
-			}
-		}
-	}
+    var _originalCoords = null; 
+    
+    this.getElement = function() {
+        return _el;
+    }
+    
+    this.bringToFront = function() {
+        _el.style.zIndex = 10000;
+    }
+    
+    this.bringToBack = function() {
+        _el.style.zIndex = _oldZIndex;          
+    }
+    
+    this.reset = function() {
+        if(_originalCoords) {
+            if(_position!='absolute' && _position!='fixed') {
+                _el.style.left = [_originalCoords.relX, 'px'].join('');
+                _el.style.top = [_originalCoords.relY, 'px'].join('');
+            }
+            else {
+                _el.style.left = [_originalCoords.initX, 'px'].join('');
+                _el.style.top = [_originalCoords.initY, 'px'].join('');
+            }
+        }
+    }
     
     function mouseMove(e) {
         if(!e) e = window.event;
@@ -1150,31 +1150,31 @@ function Draggable(el, controlEl) {
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
         if(el!=_controlEl) {
-			if(el==_el)
-				DragUtil.bringToFront(_this);			
-			return;
-		}
+            if(el==_el)
+                DragUtil.bringToFront(_this);           
+            return;
+        }
         if(_position!='absolute' && _position!='fixed') {
-			if(!_originalCoords) {				
-				_originalCoords = Utils.getCoords(_el);
-				_originalCoords.relX = DragUtil.getInitialLeft(_el);
-				_originalCoords.relY = DragUtil.getInitialTop(_el);
-				_currentX = _originalCoords.relX - e.clientX;
-				_currentY = _originalCoords.relY - e.clientY;
-			}
-			else {
-				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
-				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
-				_currentX = offsetX - e.clientX;
-				_currentY = offsetY - e.clientY;         
-			}
+            if(!_originalCoords) {              
+                _originalCoords = Utils.getCoords(_el);
+                _originalCoords.relX = DragUtil.getInitialLeft(_el);
+                _originalCoords.relY = DragUtil.getInitialTop(_el);
+                _currentX = _originalCoords.relX - e.clientX;
+                _currentY = _originalCoords.relY - e.clientY;
+            }
+            else {
+                var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+                var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
+                _currentX = offsetX - e.clientX;
+                _currentY = offsetY - e.clientY;         
+            }
         }
         else {
-			if(!_originalCoords) {				
-				_originalCoords = Utils.getCoords(_el);			
-				_originalCoords.initX = DragUtil.getInitialLeft(_el);
-				_originalCoords.initY = DragUtil.getInitialTop(_el);				
-			}
+            if(!_originalCoords) {              
+                _originalCoords = Utils.getCoords(_el);         
+                _originalCoords.initX = DragUtil.getInitialLeft(_el);
+                _originalCoords.initY = DragUtil.getInitialTop(_el);                
+            }
             _currentX = _el.offsetLeft - e.clientX;
             _currentY = _el.offsetTop - e.clientY;
         }        
@@ -1187,20 +1187,20 @@ function Draggable(el, controlEl) {
     }
     
     function construct(el, controlEl) {
-		_el = el;		
+        _el = el;       
         _el.onmousedown = mouseDown;
-		_el.style.cursor = 'default';
-		_oldZIndex = Utils.getZIndex(_el);
-		_controlEl = controlEl;
-		if(_controlEl)
-			_controlEl.style.cursor = 'default';
-		else
-			_controlEl = _el;		
+        _el.style.cursor = 'default';
+        _oldZIndex = Utils.getZIndex(_el);
+        _controlEl = controlEl;
+        if(_controlEl)
+            _controlEl.style.cursor = 'default';
+        else
+            _controlEl = _el;       
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';
-		_el.__drag = _this;
-		DragUtil.addDrag(_el, _this);
+        _el.__drag = _this;
+        DragUtil.addDrag(_el, _this);
     }
     
     construct(el, controlEl);
@@ -1217,45 +1217,45 @@ function DraggableBounded(el, controlEl, container) {
     var _oldZIndex = null;    
     var _controlEl = null;
     var _position = null;
-	var _originalCoords = null;	
-	var _container = null;
-	var _parentPoints = null;
-	var _parentOffset = null;
-	
-	this.getElement = function() {
-		return _el;
-	}
-	
-	this.bringToFront = function() {
-		_el.style.zIndex = 10000;
-	}
-	
-	this.bringToBack = function() {
-		_el.style.zIndex = _oldZIndex;			
-	}	
-	
-	this.reset = function() {
-		if(_originalCoords) {
-			if(_position!='absolute' && _position!='fixed') {
-				_el.style.left = [_originalCoords.relX, 'px'].join('');
-				_el.style.top = [_originalCoords.relY, 'px'].join('');
-			}
-			else {
-				_el.style.left = [_originalCoords.initX, 'px'].join('');
-				_el.style.top = [_originalCoords.initY, 'px'].join('');
-			}
-		}
-	}
-	
+    var _originalCoords = null; 
+    var _container = null;
+    var _parentPoints = null;
+    var _parentOffset = null;
+    
+    this.getElement = function() {
+        return _el;
+    }
+    
+    this.bringToFront = function() {
+        _el.style.zIndex = 10000;
+    }
+    
+    this.bringToBack = function() {
+        _el.style.zIndex = _oldZIndex;          
+    }   
+    
+    this.reset = function() {
+        if(_originalCoords) {
+            if(_position!='absolute' && _position!='fixed') {
+                _el.style.left = [_originalCoords.relX, 'px'].join('');
+                _el.style.top = [_originalCoords.relY, 'px'].join('');
+            }
+            else {
+                _el.style.left = [_originalCoords.initX, 'px'].join('');
+                _el.style.top = [_originalCoords.initY, 'px'].join('');
+            }
+        }
+    }
+    
     function mouseMove(e) {
-        if(!e) e = window.event;		
-		var x = _currentX + e.clientX + _originalCoords.x - _originalCoords.relX + _parentOffset.x;
-		var y = _currentY + e.clientY + _originalCoords.y - _originalCoords.relY + _parentOffset.y;
-		if(_parentPoints.xa<x+1 && _parentPoints.ya<y+1 && _parentPoints.xb>x-1+_el.offsetWidth && _parentPoints.yb>y-1+_el.offsetHeight) {
-			_el.style.left = [_currentX + e.clientX, 'px'].join('');
-			_el.style.top = [_currentY + e.clientY, 'px'].join('');
-		}
-    }	
+        if(!e) e = window.event;        
+        var x = _currentX + e.clientX + _originalCoords.x - _originalCoords.relX + _parentOffset.x;
+        var y = _currentY + e.clientY + _originalCoords.y - _originalCoords.relY + _parentOffset.y;
+        if(_parentPoints.xa<x+1 && _parentPoints.ya<y+1 && _parentPoints.xb>x-1+_el.offsetWidth && _parentPoints.yb>y-1+_el.offsetHeight) {
+            _el.style.left = [_currentX + e.clientX, 'px'].join('');
+            _el.style.top = [_currentY + e.clientY, 'px'].join('');
+        }
+    }   
     
     function mouseUp(e) {        
         document.onmousemove = null;
@@ -1267,78 +1267,78 @@ function DraggableBounded(el, controlEl, container) {
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
         if(el!=_controlEl) {
-			if(el==_el)
-				DragUtil.bringToFront(_this);			
-			return;
-		}   
+            if(el==_el)
+                DragUtil.bringToFront(_this);           
+            return;
+        }   
         if(_position!='absolute' && _position!='fixed') {
-			if(!_originalCoords) {
-				_parentOffset = {x:0, y:0};
-				_originalCoords = Utils.getCoords(_el);
-				_originalCoords.relX = DragUtil.getInitialLeft(_el);
-				_originalCoords.relY = DragUtil.getInitialTop(_el);				
-				if(_container==document.body) {
-					_parentCoords = {x:0, y:0, relX:0, relY:0};					
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+document.body.clientWidth, 
-						ya: _parentCoords.y, 
-						yb: document.body.clientHeight
-					};				
-				}
-				else {
-					_parentCoords = Utils.getCoords(_container);
-					_parentCoords.relX = 0;
-					_parentCoords.relY = 0;
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+_container.offsetWidth, 
-						ya: _parentCoords.y, 
-						yb: _parentCoords.y+_container.offsetHeight
-					};				
-				}				
-				_currentX = _originalCoords.relX - e.clientX;
-				_currentY = _originalCoords.relY - e.clientY;
-			}
-			else {
-				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
-				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
-				_currentX = offsetX - e.clientX;
-				_currentY = offsetY - e.clientY;         
-			}
+            if(!_originalCoords) {
+                _parentOffset = {x:0, y:0};
+                _originalCoords = Utils.getCoords(_el);
+                _originalCoords.relX = DragUtil.getInitialLeft(_el);
+                _originalCoords.relY = DragUtil.getInitialTop(_el);             
+                if(_container==document.body) {
+                    _parentCoords = {x:0, y:0, relX:0, relY:0};                 
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+document.body.clientWidth, 
+                        ya: _parentCoords.y, 
+                        yb: document.body.clientHeight
+                    };              
+                }
+                else {
+                    _parentCoords = Utils.getCoords(_container);
+                    _parentCoords.relX = 0;
+                    _parentCoords.relY = 0;
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+_container.offsetWidth, 
+                        ya: _parentCoords.y, 
+                        yb: _parentCoords.y+_container.offsetHeight
+                    };              
+                }               
+                _currentX = _originalCoords.relX - e.clientX;
+                _currentY = _originalCoords.relY - e.clientY;
+            }
+            else {
+                var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+                var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;
+                _currentX = offsetX - e.clientX;
+                _currentY = offsetY - e.clientY;         
+            }
         }
         else {
-			if(!_originalCoords) {				
-				_originalCoords = Utils.getCoords(_el);
-				_originalCoords.initX = DragUtil.getInitialLeft(_el);
-				_originalCoords.initY = DragUtil.getInitialTop(_el);
-				if(_container==document.body) {					
-					_parentCoords = {x:0, y:0, relX:0, relY:0};
-					_parentOffset = {x:0, y:0};
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+document.body.clientWidth, 
-						ya: _parentCoords.y, 
-						yb: document.body.clientHeight
-					};				
-				}
-				else {
-					_parentCoords = Utils.getCoords(_container);
-					_parentCoords.relX = DragUtil.getInitialLeft(_container);
-					_parentCoords.relY = DragUtil.getInitialTop(_container);
-					var pos = _container.style.position ? _container.style.position : Utils.getCssStyle(_container, 'position');
-					if(pos=='static')
-						_parentOffset = {x:0, y:0};
-					else
-						_parentOffset = _parentCoords;
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+_container.offsetWidth, 
-						ya: _parentCoords.y, 
-						yb: _parentCoords.y+_container.offsetHeight
-					};				
-				}				
-			}
+            if(!_originalCoords) {              
+                _originalCoords = Utils.getCoords(_el);
+                _originalCoords.initX = DragUtil.getInitialLeft(_el);
+                _originalCoords.initY = DragUtil.getInitialTop(_el);
+                if(_container==document.body) {                 
+                    _parentCoords = {x:0, y:0, relX:0, relY:0};
+                    _parentOffset = {x:0, y:0};
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+document.body.clientWidth, 
+                        ya: _parentCoords.y, 
+                        yb: document.body.clientHeight
+                    };              
+                }
+                else {
+                    _parentCoords = Utils.getCoords(_container);
+                    _parentCoords.relX = DragUtil.getInitialLeft(_container);
+                    _parentCoords.relY = DragUtil.getInitialTop(_container);
+                    var pos = _container.style.position ? _container.style.position : Utils.getCssStyle(_container, 'position');
+                    if(pos=='static')
+                        _parentOffset = {x:0, y:0};
+                    else
+                        _parentOffset = _parentCoords;
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+_container.offsetWidth, 
+                        ya: _parentCoords.y, 
+                        yb: _parentCoords.y+_container.offsetHeight
+                    };              
+                }               
+            }
             _currentX = _el.offsetLeft - e.clientX;
             _currentY = _el.offsetTop - e.clientY;
         }        
@@ -1351,21 +1351,21 @@ function DraggableBounded(el, controlEl, container) {
     }
     
     function construct(el, controlEl, container) {
-		_el = el;		
+        _el = el;       
         _el.onmousedown = mouseDown;
-		_el.style.cursor = 'default';
-		_oldZIndex = Utils.getZIndex(_el);
-		_controlEl = controlEl;
-		if(_controlEl)
-			_controlEl.style.cursor = 'default';
-		else
-			_controlEl = _el;		
+        _el.style.cursor = 'default';
+        _oldZIndex = Utils.getZIndex(_el);
+        _controlEl = controlEl;
+        if(_controlEl)
+            _controlEl.style.cursor = 'default';
+        else
+            _controlEl = _el;       
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';
-		_container = Utils.isNode(container) ? container : _el.parentNode;
-		_el.__drag = _this;
-		DragUtil.addDrag(_el, _this);
+        _container = Utils.isNode(container) ? container : _el.parentNode;
+        _el.__drag = _this;
+        DragUtil.addDrag(_el, _this);
     }
     
     construct(el, controlEl, container);
@@ -1382,55 +1382,55 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
     var _oldZIndex = null;    
     var _controlEl = null;
     var _position = null;
-	var _originalCoords = null;
-	var _moveEl = null;	
-	var _resizeProxy = true;
-	var _moveOriginal = true;	
-	
-	this.getElement = function() {
-		return _el;
-	}
-	
-	this.bringToFront = function() {
-		_el.style.zIndex = 10000;
-	}
-	
-	this.bringToBack = function() {
-		_el.style.zIndex = _oldZIndex;			
-	}	
-	
-	this.setResizeProxy = function(resizeProxy) {
-		_resizeProxy = resizeProxy;
-	}
-	
-	this.isResizeProxy = function() {
-		return _resizeProxy;
-	}
-	
-	this.setMoveOriginal = function(moveOriginal) {
-		_moveOriginal = moveOriginal;
-	}
-	
-	this.isMoveOriginal = function() {
-		return _moveOriginal;
-	}
-	
-	this.reset = function() {
-		if(_originalCoords) {
-			if(_position!='absolute' && _position!='fixed') {
-				_el.style.left = [_originalCoords.relX, 'px'].join('');
-				_el.style.top = [_originalCoords.relY, 'px'].join('');
-			}
-			else {
-				_el.style.left = [_originalCoords.initX, 'px'].join('');
-				_el.style.top = [_originalCoords.initY, 'px'].join('');
-			}
-		}
-	}
+    var _originalCoords = null;
+    var _moveEl = null; 
+    var _resizeProxy = true;
+    var _moveOriginal = true;   
+    
+    this.getElement = function() {
+        return _el;
+    }
+    
+    this.bringToFront = function() {
+        _el.style.zIndex = 10000;
+    }
+    
+    this.bringToBack = function() {
+        _el.style.zIndex = _oldZIndex;          
+    }   
+    
+    this.setResizeProxy = function(resizeProxy) {
+        _resizeProxy = resizeProxy;
+    }
+    
+    this.isResizeProxy = function() {
+        return _resizeProxy;
+    }
+    
+    this.setMoveOriginal = function(moveOriginal) {
+        _moveOriginal = moveOriginal;
+    }
+    
+    this.isMoveOriginal = function() {
+        return _moveOriginal;
+    }
+    
+    this.reset = function() {
+        if(_originalCoords) {
+            if(_position!='absolute' && _position!='fixed') {
+                _el.style.left = [_originalCoords.relX, 'px'].join('');
+                _el.style.top = [_originalCoords.relY, 'px'].join('');
+            }
+            else {
+                _el.style.left = [_originalCoords.initX, 'px'].join('');
+                _el.style.top = [_originalCoords.initY, 'px'].join('');
+            }
+        }
+    }
     
     function mouseMove(e) {
         if(!e) e = window.event;
-		_moveEl.style.display = '';
+        _moveEl.style.display = '';
         _moveEl.style.left = [_currentX + e.clientX + _originalCoords.x - _originalCoords.relX, 'px'].join('');
         _moveEl.style.top = [_currentY + e.clientY + _originalCoords.y - _originalCoords.relY, 'px'].join('');   
     }
@@ -1439,54 +1439,54 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
         document.onmousemove = null;
         document.onselectstart = null;
         document.onmouseup = null;
-		if(_moveOriginal) {
-			var x = parseInt(_moveEl.style.left);
-			var y = parseInt(_moveEl.style.top);
-			_el.style.left = [x - _originalCoords.x + _originalCoords.relX, 'px'].join('');
-			_el.style.top = [y - _originalCoords.y + _originalCoords.relY, 'px'].join('');		
-		}
-        _moveEl.style.zIndex = null;		
-		_moveEl.style.display = 'none';
+        if(_moveOriginal) {
+            var x = parseInt(_moveEl.style.left);
+            var y = parseInt(_moveEl.style.top);
+            _el.style.left = [x - _originalCoords.x + _originalCoords.relX, 'px'].join('');
+            _el.style.top = [y - _originalCoords.y + _originalCoords.relY, 'px'].join('');      
+        }
+        _moveEl.style.zIndex = null;        
+        _moveEl.style.display = 'none';
     }
     
     function mouseDown(e) {     
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
         if(el!=_controlEl) {
-			if(el==_el)
-				DragUtil.bringToFront(_this);			
-			return;
-		}
+            if(el==_el)
+                DragUtil.bringToFront(_this);           
+            return;
+        }
         if(_position!='absolute' && _position!='fixed') {
-			if(!_originalCoords) {				
-				_originalCoords = Utils.getCoords(_el);
-				_originalCoords.relX = DragUtil.getInitialLeft(_el);
-				_originalCoords.relY = DragUtil.getInitialTop(_el);				
-				_currentX = _originalCoords.relX - e.clientX;
-				_currentY = _originalCoords.relY - e.clientY;
-			}
-			else {
-				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
-				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;			
-				_currentX = offsetX - e.clientX;
-				_currentY = offsetY - e.clientY;		
-			}
+            if(!_originalCoords) {              
+                _originalCoords = Utils.getCoords(_el);
+                _originalCoords.relX = DragUtil.getInitialLeft(_el);
+                _originalCoords.relY = DragUtil.getInitialTop(_el);             
+                _currentX = _originalCoords.relX - e.clientX;
+                _currentY = _originalCoords.relY - e.clientY;
+            }
+            else {
+                var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+                var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;          
+                _currentX = offsetX - e.clientX;
+                _currentY = offsetY - e.clientY;        
+            }
         }
         else {
-			if(!_originalCoords) {				
-				_originalCoords = {x:0, y:0, relX:0, relY:0};			
-				_originalCoords.initX = DragUtil.getInitialLeft(_el);
-				_originalCoords.initY = DragUtil.getInitialTop(_el);				
-			}
-			_currentX = _el.offsetLeft - e.clientX;
-			_currentY = _el.offsetTop - e.clientY;
+            if(!_originalCoords) {              
+                _originalCoords = {x:0, y:0, relX:0, relY:0};           
+                _originalCoords.initX = DragUtil.getInitialLeft(_el);
+                _originalCoords.initY = DragUtil.getInitialTop(_el);                
+            }
+            _currentX = _el.offsetLeft - e.clientX;
+            _currentY = _el.offsetTop - e.clientY;
         }
         _oldZIndex = _el.style.zIndex;
-		if(_resizeProxy) {
-			_moveEl.style.width = [_el.offsetWidth, 'px'].join('');
-			_moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
-		}
-		DragUtil.bringToFront(_this);
+        if(_resizeProxy) {
+            _moveEl.style.width = [_el.offsetWidth, 'px'].join('');
+            _moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
+        }
+        DragUtil.bringToFront(_this);
         _moveEl.style.zIndex = 10000;       
         document.onmouseup = mouseUp;
         document.onmousemove = mouseMove;
@@ -1496,30 +1496,30 @@ function DraggableProxy(el, controlEl, proxyClassName, moveOriginal, resizeProxy
     }
     
     function construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy) {
-		_el = el;
+        _el = el;
         _el.onmousedown = mouseDown;
-		_el.style.cursor = 'default';
-		_oldZIndex = Utils.getZIndex(_el);
-		_controlEl = controlEl;
-		if(_controlEl)
-			_controlEl.style.cursor = 'default';
-		else
-			_controlEl = _el;		
+        _el.style.cursor = 'default';
+        _oldZIndex = Utils.getZIndex(_el);
+        _controlEl = controlEl;
+        if(_controlEl)
+            _controlEl.style.cursor = 'default';
+        else
+            _controlEl = _el;       
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';
-		_moveEl = document.createElement('div');
-		if(proxyClassName)
-			_moveEl.className = proxyClassName;
-		_moveEl.style.position = 'absolute';
-		_moveEl.style.display = 'none';
-		document.body.appendChild(_moveEl);
-		if(Utils.isBoolean(resizeProxy))
-			_resizeProxy = resizeProxy;
-		if(Utils.isBoolean(moveOriginal))
-			_moveOriginal = moveOriginal;
-		_el.__drag = _this;
-		DragUtil.addDrag(_el, _this);		
+        _moveEl = document.createElement('div');
+        if(proxyClassName)
+            _moveEl.className = proxyClassName;
+        _moveEl.style.position = 'absolute';
+        _moveEl.style.display = 'none';
+        document.body.appendChild(_moveEl);
+        if(Utils.isBoolean(resizeProxy))
+            _resizeProxy = resizeProxy;
+        if(Utils.isBoolean(moveOriginal))
+            _moveOriginal = moveOriginal;
+        _el.__drag = _this;
+        DragUtil.addDrag(_el, _this);       
     }
     
     construct(el, controlEl, proxyClassName, moveOriginal, resizeProxy);
@@ -1536,174 +1536,174 @@ function DraggableProxyBounded(el, controlEl, container, proxyClassName, moveOri
     var _oldZIndex = null;    
     var _controlEl = null;
     var _position = null;
-	var _originalCoords = null;
-	var _moveEl = null;
-	var _parentCoords = null;
-	var _parentPoints = null;
-	var _parentOffset = null;
-	var _resizeProxy = true;
-	var _moveOriginal = true;
-	var _container = null;	
-	
-	this.getElement = function() {
-		return _el;
-	}
-	
-	this.bringToFront = function() {
-		_el.style.zIndex = 10000;
-	}
-	
-	this.bringToBack = function() {
-		_el.style.zIndex = _oldZIndex;			
-	}	
-	
-	this.setResizeProxy = function(resizeProxy) {
-		_resizeProxy = resizeProxy;
-	}
-	
-	this.isResizeProxy = function() {
-		return _resizeProxy;
-	}
-	
-	this.setMoveOriginal = function(moveOriginal) {
-		_moveOriginal = moveOriginal;
-	}
-	
-	this.isMoveOriginal = function() {
-		return _moveOriginal;
-	}
-	
-	this.setContainer = function(container) {
-		if(Utils.isNode(container))
-			_container = container;
-	}
-	
-	this.getContainer = function() {
-		return _container;
-	}
-	
-	this.reset = function() {
-		if(_originalCoords) {
-			if(_position!='absolute' && _position!='fixed') {
-				_el.style.left = [_originalCoords.relX, 'px'].join('');
-				_el.style.top = [_originalCoords.relY, 'px'].join('');
-			}
-			else {
-				_el.style.left = [_originalCoords.initX, 'px'].join('');
-				_el.style.top = [_originalCoords.initY, 'px'].join('');
-			}
-		}
-	}
+    var _originalCoords = null;
+    var _moveEl = null;
+    var _parentCoords = null;
+    var _parentPoints = null;
+    var _parentOffset = null;
+    var _resizeProxy = true;
+    var _moveOriginal = true;
+    var _container = null;  
+    
+    this.getElement = function() {
+        return _el;
+    }
+    
+    this.bringToFront = function() {
+        _el.style.zIndex = 10000;
+    }
+    
+    this.bringToBack = function() {
+        _el.style.zIndex = _oldZIndex;          
+    }   
+    
+    this.setResizeProxy = function(resizeProxy) {
+        _resizeProxy = resizeProxy;
+    }
+    
+    this.isResizeProxy = function() {
+        return _resizeProxy;
+    }
+    
+    this.setMoveOriginal = function(moveOriginal) {
+        _moveOriginal = moveOriginal;
+    }
+    
+    this.isMoveOriginal = function() {
+        return _moveOriginal;
+    }
+    
+    this.setContainer = function(container) {
+        if(Utils.isNode(container))
+            _container = container;
+    }
+    
+    this.getContainer = function() {
+        return _container;
+    }
+    
+    this.reset = function() {
+        if(_originalCoords) {
+            if(_position!='absolute' && _position!='fixed') {
+                _el.style.left = [_originalCoords.relX, 'px'].join('');
+                _el.style.top = [_originalCoords.relY, 'px'].join('');
+            }
+            else {
+                _el.style.left = [_originalCoords.initX, 'px'].join('');
+                _el.style.top = [_originalCoords.initY, 'px'].join('');
+            }
+        }
+    }
     
     function mouseMove(e) {
         if(!e) e = window.event;
-		_moveEl.style.display = '';
-		var x = _currentX + e.clientX + _originalCoords.x - _originalCoords.relX + _parentOffset.x;
-		var y = _currentY + e.clientY + _originalCoords.y - _originalCoords.relY + _parentOffset.y;
-		if(_parentPoints.xa<x+1 && _parentPoints.ya<y+1 && _parentPoints.xb>x-1+_el.offsetWidth && _parentPoints.yb>y-1+_el.offsetHeight) {
-			_moveEl.style.left = [x, 'px'].join('');
-			_moveEl.style.top = [y, 'px'].join('');
-		}
+        _moveEl.style.display = '';
+        var x = _currentX + e.clientX + _originalCoords.x - _originalCoords.relX + _parentOffset.x;
+        var y = _currentY + e.clientY + _originalCoords.y - _originalCoords.relY + _parentOffset.y;
+        if(_parentPoints.xa<x+1 && _parentPoints.ya<y+1 && _parentPoints.xb>x-1+_el.offsetWidth && _parentPoints.yb>y-1+_el.offsetHeight) {
+            _moveEl.style.left = [x, 'px'].join('');
+            _moveEl.style.top = [y, 'px'].join('');
+        }
     }
     
     function mouseUp(e) {        
         document.onmousemove = null;
         document.onselectstart = null;
         document.onmouseup = null;
-		if(_moveOriginal) {
-			var x = parseInt(_moveEl.style.left);
-			var y = parseInt(_moveEl.style.top);
-			_el.style.left = [x - _originalCoords.x + _originalCoords.relX - _parentOffset.x, 'px'].join('');
-			_el.style.top = [y - _originalCoords.y + _originalCoords.relY - _parentOffset.y, 'px'].join('');				
-		}		
-        _moveEl.style.zIndex = null;		
-		_moveEl.style.display = 'none';
+        if(_moveOriginal) {
+            var x = parseInt(_moveEl.style.left);
+            var y = parseInt(_moveEl.style.top);
+            _el.style.left = [x - _originalCoords.x + _originalCoords.relX - _parentOffset.x, 'px'].join('');
+            _el.style.top = [y - _originalCoords.y + _originalCoords.relY - _parentOffset.y, 'px'].join('');                
+        }       
+        _moveEl.style.zIndex = null;        
+        _moveEl.style.display = 'none';
     }
     
     function mouseDown(e) {     
         if(!e) e = window.event;
         var el = e.target ? e.target : e.srcElement;
         if(el!=_controlEl) {
-			if(el==_el)
-				DragUtil.bringToFront(_this);			
-			return;
-		}
+            if(el==_el)
+                DragUtil.bringToFront(_this);           
+            return;
+        }
         if(_position!='absolute' && _position!='fixed') {
-			if(!_originalCoords) {						
-				_parentOffset = {x:0, y:0};
-				_originalCoords = Utils.getCoords(_el);
-				_originalCoords.relX = DragUtil.getInitialLeft(_el);
-				_originalCoords.relY = DragUtil.getInitialTop(_el);
-				if(_container==document.body) {
-					_parentCoords = {x:0, y:0, relX:0, relY:0};					
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+document.body.clientWidth, 
-						ya: _parentCoords.y, 
-						yb: document.body.clientHeight
-					};				
-				}
-				else {
-					_parentCoords = Utils.getCoords(_container);
-					_parentCoords.relX = 0;
-					_parentCoords.relY = 0;
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+_container.offsetWidth, 
-						ya: _parentCoords.y, 
-						yb: _parentCoords.y+_container.offsetHeight
-					};				
-				}
-				_currentX = _originalCoords.relX - e.clientX;
-				_currentY = _originalCoords.relY - e.clientY;
-			}
-			else {
-				var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
-				var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;			
-				_currentX = offsetX - e.clientX;
-				_currentY = offsetY - e.clientY;		
-			}
+            if(!_originalCoords) {                      
+                _parentOffset = {x:0, y:0};
+                _originalCoords = Utils.getCoords(_el);
+                _originalCoords.relX = DragUtil.getInitialLeft(_el);
+                _originalCoords.relY = DragUtil.getInitialTop(_el);
+                if(_container==document.body) {
+                    _parentCoords = {x:0, y:0, relX:0, relY:0};                 
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+document.body.clientWidth, 
+                        ya: _parentCoords.y, 
+                        yb: document.body.clientHeight
+                    };              
+                }
+                else {
+                    _parentCoords = Utils.getCoords(_container);
+                    _parentCoords.relX = 0;
+                    _parentCoords.relY = 0;
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+_container.offsetWidth, 
+                        ya: _parentCoords.y, 
+                        yb: _parentCoords.y+_container.offsetHeight
+                    };              
+                }
+                _currentX = _originalCoords.relX - e.clientX;
+                _currentY = _originalCoords.relY - e.clientY;
+            }
+            else {
+                var offsetX = _el.style.left ? parseInt(_el.style.left) : 0;
+                var offsetY = _el.style.top ? parseInt(_el.style.top) : 0;          
+                _currentX = offsetX - e.clientX;
+                _currentY = offsetY - e.clientY;        
+            }
         }
         else {
-			if(!_originalCoords) {				
-				_originalCoords = {x:0, y:0, relX:0, relY:0};
-				_originalCoords.initX = DragUtil.getInitialLeft(_el);
-				_originalCoords.initY = DragUtil.getInitialTop(_el);
-				if(_container==document.body) {					
-					_parentCoords = {x:0, y:0, relX:0, relY:0};
-					_parentOffset = {x:0, y:0};
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+document.body.clientWidth, 
-						ya: _parentCoords.y, 
-						yb: document.body.clientHeight
-					};				
-				}
-				else {
-					_parentCoords = Utils.getCoords(_container);
-					_parentCoords.relX = DragUtil.getInitialLeft(_container);
-					_parentCoords.relY = DragUtil.getInitialTop(_container);
-					var pos = _container.style.position ? _container.style.position : Utils.getCssStyle(_container, 'position');
-					if(pos=='static')
-						_parentOffset = {x:0, y:0};
-					else
-						_parentOffset = _parentCoords;
-					_parentPoints = {
-						xa: _parentCoords.x, 
-						xb: _parentCoords.x+_container.offsetWidth, 
-						ya: _parentCoords.y, 
-						yb: _parentCoords.y+_container.offsetHeight
-					};				
-				}				
-			}
-			_currentX = _el.offsetLeft - e.clientX;
-			_currentY = _el.offsetTop - e.clientY;
+            if(!_originalCoords) {              
+                _originalCoords = {x:0, y:0, relX:0, relY:0};
+                _originalCoords.initX = DragUtil.getInitialLeft(_el);
+                _originalCoords.initY = DragUtil.getInitialTop(_el);
+                if(_container==document.body) {                 
+                    _parentCoords = {x:0, y:0, relX:0, relY:0};
+                    _parentOffset = {x:0, y:0};
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+document.body.clientWidth, 
+                        ya: _parentCoords.y, 
+                        yb: document.body.clientHeight
+                    };              
+                }
+                else {
+                    _parentCoords = Utils.getCoords(_container);
+                    _parentCoords.relX = DragUtil.getInitialLeft(_container);
+                    _parentCoords.relY = DragUtil.getInitialTop(_container);
+                    var pos = _container.style.position ? _container.style.position : Utils.getCssStyle(_container, 'position');
+                    if(pos=='static')
+                        _parentOffset = {x:0, y:0};
+                    else
+                        _parentOffset = _parentCoords;
+                    _parentPoints = {
+                        xa: _parentCoords.x, 
+                        xb: _parentCoords.x+_container.offsetWidth, 
+                        ya: _parentCoords.y, 
+                        yb: _parentCoords.y+_container.offsetHeight
+                    };              
+                }               
+            }
+            _currentX = _el.offsetLeft - e.clientX;
+            _currentY = _el.offsetTop - e.clientY;
         }        
-		if(_resizeProxy) {
-			_moveEl.style.width = [_el.offsetWidth, 'px'].join('');
-			_moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
-		}
-		DragUtil.bringToFront(_this);
+        if(_resizeProxy) {
+            _moveEl.style.width = [_el.offsetWidth, 'px'].join('');
+            _moveEl.style.height = [_el.offsetHeight, 'px'].join('');        
+        }
+        DragUtil.bringToFront(_this);
         _moveEl.style.zIndex = 10000; 
         document.onmouseup = mouseUp;
         document.onmousemove = mouseMove;
@@ -1713,31 +1713,31 @@ function DraggableProxyBounded(el, controlEl, container, proxyClassName, moveOri
     }
     
     function construct(el, controlEl, container, proxyClassName, moveOriginal, resizeProxy) {
-		_el = el;
+        _el = el;
         _el.onmousedown = mouseDown;
-		_el.style.cursor = 'default';
-		_oldZIndex = Utils.getZIndex(_el);
-		_controlEl = controlEl;
-		if(_controlEl)
-			_controlEl.style.cursor = 'default';
-		else
-			_controlEl = _el;		
+        _el.style.cursor = 'default';
+        _oldZIndex = Utils.getZIndex(_el);
+        _controlEl = controlEl;
+        if(_controlEl)
+            _controlEl.style.cursor = 'default';
+        else
+            _controlEl = _el;       
         _position = _el.style.position ? _el.style.position : Utils.getCssStyle(_el, 'position');       
         if(_position!='absolute' && _position!='fixed')
             _el.style.position = 'relative';
-		_moveEl = document.createElement('div');
-		if(proxyClassName)
-			_moveEl.className = proxyClassName;
-		_moveEl.style.position = 'absolute';
-		_moveEl.style.display = 'none';
-		document.body.appendChild(_moveEl);
-		if(Utils.isBoolean(resizeProxy))
-			_resizeProxy = resizeProxy;
-		if(Utils.isBoolean(moveOriginal))
-			_moveOriginal = moveOriginal;
-		_container = Utils.isNode(container) ? container : _el.parentNode;		
-		_el.__drag = _this;
-		DragUtil.addDrag(_el, _this);	
+        _moveEl = document.createElement('div');
+        if(proxyClassName)
+            _moveEl.className = proxyClassName;
+        _moveEl.style.position = 'absolute';
+        _moveEl.style.display = 'none';
+        document.body.appendChild(_moveEl);
+        if(Utils.isBoolean(resizeProxy))
+            _resizeProxy = resizeProxy;
+        if(Utils.isBoolean(moveOriginal))
+            _moveOriginal = moveOriginal;
+        _container = Utils.isNode(container) ? container : _el.parentNode;      
+        _el.__drag = _this;
+        DragUtil.addDrag(_el, _this);   
     }
     
     construct(el, controlEl, container, proxyClassName, moveOriginal, resizeProxy);
@@ -1775,43 +1775,43 @@ function SimpleWidget(el, className) {
     var _element = null;
     var _parent = null;
     var _styles = new Array();
-	var _attributes = null;
+    var _attributes = null;
 
     this.setAttribute = function(name, value) {
-		if(!_attributes)
-			_attributes = new HashMap();
+        if(!_attributes)
+            _attributes = new HashMap();
         _attributes.put(name, value);
     }
     
     this.getAttribute = function(name) {
-		if(!_attributes)
-			_attributes = new HashMap();
+        if(!_attributes)
+            _attributes = new HashMap();
         return _attributes.get(name);
     }
     
     this.removeAttribute = function(name) {
-		if(!_attributes)
-			_attributes = new HashMap();	
+        if(!_attributes)
+            _attributes = new HashMap();    
         return _attributes.remove(name);
     }
 
-	this.getAttributeMap = function() {
-		return _attributes;
-	}
+    this.getAttributeMap = function() {
+        return _attributes;
+    }
     
     this.isSimple = function() {
         return true;
     }
-	
-	this.props = {};	
+    
+    this.props = {};    
     
     this.setElement = function(el) {
         if(!_element && Utils.isNode(el)) {
             _element = el;
-			if(_element.__wrapper) {
-				_styles = _element.__wrapper.getStyles();			
-				_attributes = _element.__wrapper.getAttributeMap();
-			}
+            if(_element.__wrapper) {
+                _styles = _element.__wrapper.getStyles();           
+                _attributes = _element.__wrapper.getAttributeMap();
+            }
             _element.__wrapper = _this;             
         }
     }
@@ -1898,10 +1898,10 @@ function SimpleWidget(el, className) {
     this.getStyle = function() {
         return _element.className;
     }
-	
-	this.getStyles = function() {
-		return _styles;
-	}
+    
+    this.getStyles = function() {
+        return _styles;
+    }
     
     this.setStyleProperty = function(name, value) {
         _element.style[name] = value;
@@ -1942,10 +1942,10 @@ function SimpleWidget(el, className) {
     this.isVisible = function() {
         return _element.style.display!='none';
     }
-	
-	this.toggle = function() {
-		_element.style.display = _element.style.display=='none' ? '' : 'none';
-	}
+    
+    this.toggle = function() {
+        _element.style.display = _element.style.display=='none' ? '' : 'none';
+    }
     
     this._a_onAttach = function() {}
     this._a_onDetach = function() {}
@@ -2032,14 +2032,14 @@ function AbstractContainerWidget() {
         }               
         return child;
     }
-	
-	this.removeChildren = function(startIndex, endIndex) {
-		var size = _children.size();
-		var end = endIndex ? (endIndex>size ? size : endIndex) : size;
-		var start = startIndex ? (startIndex<end ? startIndex : end) : 0;
-		for(var i=0,len=end-start;i<len; i++)
-			_this.removeChild(start);
-	}
+    
+    this.removeChildren = function(startIndex, endIndex) {
+        var size = _children.size();
+        var end = endIndex ? (endIndex>size ? size : endIndex) : size;
+        var start = startIndex ? (startIndex<end ? startIndex : end) : 0;
+        for(var i=0,len=end-start;i<len; i++)
+            _this.removeChild(start);
+    }
     
     this._a_filterAddCandidate = function(child) {
         return child;
@@ -2061,10 +2061,10 @@ function CustomWidget() {
     this.__extends();
     
     var _widget = null;
-	
-	this.isSimple = function() {
-		return false;
-	}
+    
+    this.isSimple = function() {
+        return false;
+    }
     
     this.setWidget = function(widget) {
         if(!_widget && Utils.isWidget(widget)) {
@@ -2116,7 +2116,7 @@ function SimpleCellPanel(child) {
     this._a_removeChildElement = function(childElement) {
         _td.removeChild(childElement);
     }
-	
+    
     this.setBorder = function(border) {
         _this.setElementProperty('border', border);
     }
@@ -2127,7 +2127,7 @@ function SimpleCellPanel(child) {
     
     this.setPadding = function(padding) {
         _this.setElementProperty('cellPadding', padding);
-    }	
+    }   
     
     function construct(child) {
         var table = document.createElement('table');
@@ -2333,22 +2333,22 @@ function DeckPanel() {
     }    
     
     this.show = function(index) {
-		var child = _this.getChild(index);        
+        var child = _this.getChild(index);        
         if(child) {
-			if(_current)
-				_current.setStyleProperty('display', 'none'); 
+            if(_current)
+                _current.setStyleProperty('display', 'none'); 
             _current = child;
             _current.setStyleProperty('display', '');
         } 
-		else if(_current) {
-			_current.setStyleProperty('display', 'none'); 
-			_current = null;
-		}
+        else if(_current) {
+            _current.setStyleProperty('display', 'none'); 
+            _current = null;
+        }
     }
-	
-	this.getCurrentWidget = function() {
-		return _current;
-	}
+    
+    this.getCurrentWidget = function() {
+        return _current;
+    }
      
     function construct() {       
         _this.setElement(document.createElement('div'));                          
@@ -2476,7 +2476,7 @@ function SimpleTable(rows, cols, className) {
             var cell = _this.getElement().rows[row].cells[col];
             Utils.refreshElement(cell);
             if(Utils.isWidget(widget))
-				cell.appendChild(widget.getElement());         
+                cell.appendChild(widget.getElement());         
         }        
     }
     
@@ -2499,8 +2499,8 @@ function SimpleTable(rows, cols, className) {
     }
     
     this.styleOddEvenRows = function(oddStyle, evenStyle, startIndex, endIndex) {        
-		var end = endIndex ? (endIndex>_rows ? _rows : endIndex) : _rows;
-		var start = startIndex ? (startIndex<end ? startIndex : end) : 0;		
+        var end = endIndex ? (endIndex>_rows ? _rows : endIndex) : _rows;
+        var start = startIndex ? (startIndex<end ? startIndex : end) : 0;       
         for(var i=0,len=end-start; i<len; i++, start++)
             _this.getElement().rows[start].className = start%2==0 ? evenStyle : oddStyle;          
     }
@@ -2511,40 +2511,40 @@ function SimpleTable(rows, cols, className) {
             tr.insertCell(j);        
         return _rows++;
     }
-	
-	this.insertRow = function(row) {
-		if(row<_rows) {
-			var tr = _this.getElement().insertRow(row);
-			for(var j=0; j<_cols; j++)
-				tr.insertCell(j);
-			return _rows++;
-		}
-		return _rows;
-	}
-	
-	this.removeRow = function(row) {
-		if(row<_rows) {			
-			_this.getElement().deleteRow(row);
-			_rows--;
-			return true;
-		}
-		return false;
-	}
-	
-	this.removeRows = function(startIndex, endIndex) {
-		var end = endIndex ? (endIndex>_rows ? _rows : endIndex) : _rows;
-		var start = startIndex ? (startIndex<end ? startIndex : end) : 0;
-		for(var i=0,len=end-start; i<len; i++, _rows--)
-			_this.getElement().deleteRow(start);					
-	}
+    
+    this.insertRow = function(row) {
+        if(row<_rows) {
+            var tr = _this.getElement().insertRow(row);
+            for(var j=0; j<_cols; j++)
+                tr.insertCell(j);
+            return _rows++;
+        }
+        return _rows;
+    }
+    
+    this.removeRow = function(row) {
+        if(row<_rows) {         
+            _this.getElement().deleteRow(row);
+            _rows--;
+            return true;
+        }
+        return false;
+    }
+    
+    this.removeRows = function(startIndex, endIndex) {
+        var end = endIndex ? (endIndex>_rows ? _rows : endIndex) : _rows;
+        var start = startIndex ? (startIndex<end ? startIndex : end) : 0;
+        for(var i=0,len=end-start; i<len; i++, _rows--)
+            _this.getElement().deleteRow(start);                    
+    }
     
     this.getTD = function(row, col) {
         return _rows>row && _cols>col ? _this.getElement().rows[row].cells[col] : null;
     }
-	
-	this.getTR = function(row) {
-		return _rows>row ? _this.getElement().rows[row] : null;
-	}
+    
+    this.getTR = function(row) {
+        return _rows>row ? _this.getElement().rows[row] : null;
+    }
     
     this.getRowCount = function() {
         return _rows;
@@ -2598,7 +2598,7 @@ function SimpleTable(rows, cols, className) {
                 tr.insertCell(j);
         }
         _this.setElement(table);
-		_this.setStyle(className);
+        _this.setStyle(className);
         _this.setElementProperty('cellSpacing', 0);
         _this.setElementProperty('cellPadding', 0);        
     }
@@ -2619,7 +2619,7 @@ function Hyperlink(display, token, className) {
             a.appendChild(display);
         else if(Utils.isWidget(display))
             a.appendChild(display.getElement());
-        a.href = ['#', token].join('');		
+        a.href = ['#', token].join('');     
         _this.setElement(a);
         _this.setStyle(className);    
     }
@@ -2631,83 +2631,83 @@ function SelectBox(hasFirst) {
     var _this = this;
     this.__extends = SimpleWidget;
     this.__extends();
-	
-	var _value = '';
-	var _handlers = new Array();	
-	
-	var super_setElementProperty = this.setElementProperty;
-	this.setElementProperty = function(name, value) {
-		if(name!='value') {
-			super_setElementProperty(name, value);
-			return;
-		}
-		_this.getElement().selectedIndex = 0;
-	}
-	
-	var super_getElementProperty = this.getElementProperty;
-	this.getElementProperty = function(name) {
-		return name!='value' ? super_getElementProperty(name) : _this.getValue();
-	}
-	
-	var super_addEventHandler = this.addEventHandler;
-	this.addEventHandler = function(event, handler) {
-		if(event!='onchange') {
-			super_addEventHandler(event, handler);
-			return;
-		}
-		_handlers.push(handler);
-	}
-	
-	this.getValue = function() {
-		if(_this.size()>0) {
-			var sel = _this.getElement();
-			_value = sel.options[sel.selectedIndex].value		
-		}
-		else
-			_value = '';
-		return _value;
-	}	
-	
-	this.size = function() {
-		return _this.getElement().options.length;
-	}	
-	
-	this.addEntry = function(value, display) {
-		var option = document.createElement('option');
-		option.value = value;
-		option.innerHTML = display;
-		_this.getElement().appendChild(option);
-	}
-	
-	this.removeEntry = function(idx) {
-		if(idx<_this.getElement().options.length) {		
-			_this.getElement().remove(idx);			
-			return true;
-		}
-		return false;
-	}
-	
-	this.removeEntries = function(startIndex, endIndex) {
-		var size = _this.size();
-		var end = endIndex ? (endIndex>_rows ? size : endIndex) : size;
-		var start = startIndex ? (startIndex<end ? startIndex : end) : 0;
-		for(var i=0,len=end-start; i<len; i++)
-			_this.getElement().remove(start);
-	}
-	
-	function onChange(e) {
-		var sel = _this.getElement();
-		_value = sel.options[sel.selectedIndex].value;
-		for(var i in _handlers)
-			_handlers[i](e, _value);	
-	}
+    
+    var _value = '';
+    var _handlers = new Array();    
+    
+    var super_setElementProperty = this.setElementProperty;
+    this.setElementProperty = function(name, value) {
+        if(name!='value') {
+            super_setElementProperty(name, value);
+            return;
+        }
+        _this.getElement().selectedIndex = 0;
+    }
+    
+    var super_getElementProperty = this.getElementProperty;
+    this.getElementProperty = function(name) {
+        return name!='value' ? super_getElementProperty(name) : _this.getValue();
+    }
+    
+    var super_addEventHandler = this.addEventHandler;
+    this.addEventHandler = function(event, handler) {
+        if(event!='onchange') {
+            super_addEventHandler(event, handler);
+            return;
+        }
+        _handlers.push(handler);
+    }
+    
+    this.getValue = function() {
+        if(_this.size()>0) {
+            var sel = _this.getElement();
+            _value = sel.options[sel.selectedIndex].value       
+        }
+        else
+            _value = '';
+        return _value;
+    }   
+    
+    this.size = function() {
+        return _this.getElement().options.length;
+    }   
+    
+    this.addEntry = function(value, display) {
+        var option = document.createElement('option');
+        option.value = value;
+        option.innerHTML = display;
+        _this.getElement().appendChild(option);
+    }
+    
+    this.removeEntry = function(idx) {
+        if(idx<_this.getElement().options.length) {     
+            _this.getElement().remove(idx);         
+            return true;
+        }
+        return false;
+    }
+    
+    this.removeEntries = function(startIndex, endIndex) {
+        var size = _this.size();
+        var end = endIndex ? (endIndex>_rows ? size : endIndex) : size;
+        var start = startIndex ? (startIndex<end ? startIndex : end) : 0;
+        for(var i=0,len=end-start; i<len; i++)
+            _this.getElement().remove(start);
+    }
+    
+    function onChange(e) {
+        var sel = _this.getElement();
+        _value = sel.options[sel.selectedIndex].value;
+        for(var i in _handlers)
+            _handlers[i](e, _value);    
+    }
     
     function construct(hasFirst) {
-		var select = document.createElement('select');
-		Utils.addHandlerToEvent(onChange, select, 'onchange');		
-		_this.setElement(select);		
-		if(hasFirst)		
-			_this.addEntry('', '');		
+        var select = document.createElement('select');
+        Utils.addHandlerToEvent(onChange, select, 'onchange');      
+        _this.setElement(select);       
+        if(hasFirst)        
+            _this.addEntry('', '');     
     }
     
     construct(hasFirst);
@@ -2723,9 +2723,9 @@ function AbstractPane() {
     var _name = null;    
     var _parent = null;
     var _token = null;
-	var _delim = '/';
-	
-	this.linkHidden = false;
+    var _delim = '/';
+    
+    this.linkHidden = false;
     
     this.getPanel = function() {
         return _this;
@@ -2738,14 +2738,14 @@ function AbstractPane() {
     this.getName = function() {
         return _name;
     }
-	
-	this.setDelim = function(delim) {
-		_delim = delim;
-	}
-	
-	this.getDelim = function() {
-		return _delim;
-	}
+    
+    this.setDelim = function(delim) {
+        _delim = delim;
+    }
+    
+    this.getDelim = function() {
+        return _delim;
+    }
     
     this.setParentPane = function(parent) {
         if(parent && parent.getCompositeToken) {
@@ -2757,10 +2757,10 @@ function AbstractPane() {
     this.getParentPane = function() {
         return _parent;
     }
-	
-	this.isRootPane = function() {
-		return _parent==null;
-	}
+    
+    this.isRootPane = function() {
+        return _parent==null;
+    }
     
     this._a_onParentPaneSet = function(){}
     
@@ -2787,8 +2787,8 @@ function AbstractPane() {
     this.passivate = function(tokens) { return true; }
     
     this.init = function() {}
-	
-	this.reset = function() {}
+    
+    this.reset = function() {}
     
     function construct() {
         
@@ -2801,136 +2801,136 @@ function AbstractTreePane() {
     var _this = this;
     this.__extends = AbstractPane;
     this.__extends();
-	
-	var _defaultLinkStyle = null;
-	var _paneMap = new IndexedMap();
-	var _expanded = true;
-	var _indented = true;
-	
-	this.setIndented = function(indented) {
-		_indented = indented;
-	}
+    
+    var _defaultLinkStyle = null;
+    var _paneMap = new IndexedMap();
+    var _expanded = true;
+    var _indented = true;
+    
+    this.setIndented = function(indented) {
+        _indented = indented;
+    }
 
-	this.isIndented = function() {
-		return _indented;
-	}
-	
-	this.isExpanded = function() {
-		return _expanded;
-	}	
-	
-	function expandOrCollapse(panes, expand) {
-		for(var i=0; i<panes.length; i++) {
-			var p = panes[i];
-			p.setVisible(expand);
-			if(p.props.panes)
-				expandOrCollapse(p.props.panes, expand);			
-		}	
-	}
-	
-	this.collapsePanes = function() {
-		_expanded = false;
-		expandOrCollapse(_this.props.panes, _expanded);
-	}
-	
-	this.expandPanes = function() {
-		_expanded = true;
-		expandOrCollapse(_this.props.panes, _expanded);
-	}
-	
-	this.toggleTree = function() {
-		_expanded = !_expanded;
-		expandOrCollapse(_this.props.panes, _expanded);
-	}
-	
-	this.setDefaultLinkStyle = function(className) {
-		_defaultLinkStyle = className;
-	}
-	
-	this.getDefaultLinkStyle = function() {
-		if(!_defaultLinkStyle) {
-			var parent = _this.getParentPane();
-			_defaultLinkStyle = parent ? parent.getDefaultLinkStyle() : null;
-		}			
-		return _defaultLinkStyle;
-	}
-	
-	this.newLink = function(title, className) {
-		return WidgetFactory.create('a', title, className);
-	}
-	
-	this.newPane = function(className) {
-		return new FlowPanel(className);
-	}
-	
-	this.newEntryPane = function(title, p, styles) {				
-		return styles ? _this.addEntry(WidgetFactory.create('a', title, styles.k), new FlowPanel(styles.v), p) : 
-			_this.addEntry(title, new FlowPanel(), p);
-	}
-	
-	this.addTreePane = function(pane) {
-		this.addEntry(pane.getName(), pane);
-	}
+    this.isIndented = function() {
+        return _indented;
+    }
+    
+    this.isExpanded = function() {
+        return _expanded;
+    }   
+    
+    function expandOrCollapse(panes, expand) {
+        for(var i=0; i<panes.length; i++) {
+            var p = panes[i];
+            p.setVisible(expand);
+            if(p.props.panes)
+                expandOrCollapse(p.props.panes, expand);            
+        }   
+    }
+    
+    this.collapsePanes = function() {
+        _expanded = false;
+        expandOrCollapse(_this.props.panes, _expanded);
+    }
+    
+    this.expandPanes = function() {
+        _expanded = true;
+        expandOrCollapse(_this.props.panes, _expanded);
+    }
+    
+    this.toggleTree = function() {
+        _expanded = !_expanded;
+        expandOrCollapse(_this.props.panes, _expanded);
+    }
+    
+    this.setDefaultLinkStyle = function(className) {
+        _defaultLinkStyle = className;
+    }
+    
+    this.getDefaultLinkStyle = function() {
+        if(!_defaultLinkStyle) {
+            var parent = _this.getParentPane();
+            _defaultLinkStyle = parent ? parent.getDefaultLinkStyle() : null;
+        }           
+        return _defaultLinkStyle;
+    }
+    
+    this.newLink = function(title, className) {
+        return WidgetFactory.create('a', title, className);
+    }
+    
+    this.newPane = function(className) {
+        return new FlowPanel(className);
+    }
+    
+    this.newEntryPane = function(title, p, styles) {                
+        return styles ? _this.addEntry(WidgetFactory.create('a', title, styles.k), new FlowPanel(styles.v), p) : 
+            _this.addEntry(title, new FlowPanel(), p);
+    }
+    
+    this.addTreePane = function(pane) {
+        this.addEntry(pane.getName(), pane);
+    }
 
-	this.addEntry = function(titleOrLink, pane, p) {		
-		var link = Utils.isString(titleOrLink) ? _this.newLink(titleOrLink) : titleOrLink;
-		var parent = Utils.isWidget(p) ? (p.props.tree==_this ? p : _this) : _this;
-		if(_indented)
-			pane.setStyleProperty('margin', '2px 0 2px 10px');
-		//pane.setStyleProperty('position', 'relative');
-		//pane.setStyleProperty('left', '10px');
-		//pane.setStyleProperty('top', '2px');
-		link.addEventHandler('onclick', function(e){
-			pane.toggle();
-		});
-		parent.addChild(new SimplePanel(link));
-		parent.addChild(pane);
-		if(pane.getDepth) {			
-			pane.setParentPane(parent);
-			if(_this.equals(parent))
-				_paneMap.put(pane.getToken(), pane);
-		}
-		link.addStyle(_this.getDefaultLinkStyle());
-		pane.props.tree = _this;
-		if(!parent.props.panes)
-			parent.props.panes = new Array();
-		parent.props.panes.push(pane);		
-		return pane;
-	}
-	
-	this.init = function() {
-		if(_this.isRootPane())
-			_this.collapsePanes(_this.props.panes);		
-		var map = _paneMap.__wrappedGet();
-		for(var i in map)
-			map[i].init();		
-	}
-	
-	this.activate = function(tokens) {
-		_this.setVisible(true);
-		var sub = _this.getDepth() + 1;
-		if(sub==tokens.length)
-			return;
-		var pane = _paneMap.get(tokens[sub]);
-		if(pane)
-			pane.activate(tokens);
-		return true;
-	}
-	
-	this.passivate = function(tokens) {
-		/*_this.setVisible(false);
-		var sub = _this.getDepth() + 1;
-		if(sub==tokens.length)
-			return;
-		var pane = _paneMap.get(tokens[sub]);
-		if(pane)
-			pane.passivate(tokens);
-		*/
-		return true;
-	}
-	
-	function construct() {
-		_this.props.panes = new Array();
-	}
-	construct();
+    this.addEntry = function(titleOrLink, pane, p) {        
+        var link = Utils.isString(titleOrLink) ? _this.newLink(titleOrLink) : titleOrLink;
+        var parent = Utils.isWidget(p) ? (p.props.tree==_this ? p : _this) : _this;
+        if(_indented)
+            pane.setStyleProperty('margin', '2px 0 2px 10px');
+        //pane.setStyleProperty('position', 'relative');
+        //pane.setStyleProperty('left', '10px');
+        //pane.setStyleProperty('top', '2px');
+        link.addEventHandler('onclick', function(e){
+            pane.toggle();
+        });
+        parent.addChild(new SimplePanel(link));
+        parent.addChild(pane);
+        if(pane.getDepth) {         
+            pane.setParentPane(parent);
+            if(_this.equals(parent))
+                _paneMap.put(pane.getToken(), pane);
+        }
+        link.addStyle(_this.getDefaultLinkStyle());
+        pane.props.tree = _this;
+        if(!parent.props.panes)
+            parent.props.panes = new Array();
+        parent.props.panes.push(pane);      
+        return pane;
+    }
+    
+    this.init = function() {
+        if(_this.isRootPane())
+            _this.collapsePanes(_this.props.panes);     
+        var map = _paneMap.__wrappedGet();
+        for(var i in map)
+            map[i].init();      
+    }
+    
+    this.activate = function(tokens) {
+        _this.setVisible(true);
+        var sub = _this.getDepth() + 1;
+        if(sub==tokens.length)
+            return;
+        var pane = _paneMap.get(tokens[sub]);
+        if(pane)
+            pane.activate(tokens);
+        return true;
+    }
+    
+    this.passivate = function(tokens) {
+        /*_this.setVisible(false);
+        var sub = _this.getDepth() + 1;
+        if(sub==tokens.length)
+            return;
+        var pane = _paneMap.get(tokens[sub]);
+        if(pane)
+            pane.passivate(tokens);
+        */
+        return true;
+    }
+    
+    function construct() {
+        _this.props.panes = new Array();
+    }
+    construct();
 }
