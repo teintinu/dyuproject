@@ -91,7 +91,7 @@
   <modules>
     <module>modules/util</module>
     <module>modules/web</module>
-	<module>modules/persistence</module>
+    <module>modules/web-ext</module>	
 	<module>modules/demos</module>
   </modules>
   
@@ -106,7 +106,8 @@
 	<hsqldb-version>1.8.0.7</hsqldb-version>
 	<derby-version>10.4.1.3</derby-version>	
 	<hibernate-entitymanager-version>3.3.1.ga</hibernate-entitymanager-version>
-	<hibernate-annotations-version>3.3.1.GA</hibernate-annotations-version>	
+	<hibernate-annotations-version>3.3.1.GA</hibernate-annotations-version>
+    <velocity-version>1.5</velocity-version>
   </properties>
   
 </project>
