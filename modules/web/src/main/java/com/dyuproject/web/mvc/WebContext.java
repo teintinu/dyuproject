@@ -254,23 +254,18 @@ public class WebContext
         return _controllers.get(resourceName);
     }
     
-    public void setMimes(Properties mimes)
+    public void setMime(Properties mimes)
     {
         if(_mime!=null)
-            throw new IllegalStateException("mimes already set");
+            throw new IllegalStateException("mime already set");
         
         _mime = mimes;
-    }
-    
-    public void setMime(String resource)
-    {
-        setMime(_servletContext.getResourceAsStream(resource));
     }
     
     public void setMime(InputStream stream)
     {
         if(_mime!=null)
-            throw new IllegalStateException("mimes already set");
+            throw new IllegalStateException("mime already set");
         
         _mime = new Properties();
         try
@@ -304,14 +299,6 @@ public class WebContext
             throw new IllegalStateException("already initialized");
         
         _env.putAll(env);        
-    }
-    
-    public void setEnv(String resource)
-    {
-        if(_initialized)
-            throw new IllegalStateException("already initialized");
-        
-        setEnv(_servletContext.getResourceAsStream(resource));
     }
     
     public void setEnv(InputStream stream)

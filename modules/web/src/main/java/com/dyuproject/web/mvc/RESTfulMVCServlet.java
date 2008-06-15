@@ -70,10 +70,6 @@ public class RESTfulMVCServlet extends HttpServlet
             while(tokenizer.hasMoreTokens())
                 _webContext.addController((Controller)newObjectInstance(tokenizer.nextToken().trim()));
         }
-        
-        String mime = getInitParameter("mime");
-        if(mime!=null)
-            _webContext.setMime(mime);
     }
     
     private Object newObjectInstance(String className) throws Exception
