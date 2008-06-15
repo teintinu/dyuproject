@@ -103,7 +103,10 @@ public class HelloWorldController extends AbstractController
             response.setContentType("text/html");
             // dispatch to view
             request.setAttribute("helloWorldBean", new HelloWorldBean(verbOrId));
-            getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/helloworld/index.jsp", 
+            if("vm".equals(mime))
+                getWebContext().getViewDispatcher("vm").dispatch("/WEB-INF/velocity/helloworld/index.vm", request, response);
+            else
+                getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/helloworld/index.jsp", 
                     request, response);
         }        
         
