@@ -20,6 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.web.ext.velocity.VelocityDispatcher;
 import com.dyuproject.web.mvc.AbstractController;
 
 /**
@@ -33,7 +34,7 @@ public class MyDefaultController extends AbstractController
     @Override
     protected void init()
     {
-                
+        getWebContext().addViewDispatcher("vm", new VelocityDispatcher());
     }
 
     public void handle(String mime, HttpServletRequest request,
