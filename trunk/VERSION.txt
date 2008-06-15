@@ -1,8 +1,12 @@
 dyuproject-1.0-SNAPSHOT
++ Added support for velocity templates
++ Added support for spring ioc
++ WebContext.setMimes rename to WebContext.setMime
 + Added clientside widgets demo on todo-list
 + Added Validators - util for request input validation.
 + Fixed JSONConverter bug where a null string would be written as key:"null" instead of key:null.
 + helloworld demo
++ removed persistence module
 
 dyuproject-1.0.2 2008-06-06
 + Fixed CookieSession bug that always updates the cookie even if not modified.
