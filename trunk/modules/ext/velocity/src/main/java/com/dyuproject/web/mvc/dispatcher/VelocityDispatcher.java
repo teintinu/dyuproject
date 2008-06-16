@@ -45,7 +45,11 @@ public class VelocityDispatcher implements ViewDispatcher
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/velocity/";
     public static final String DEFAULT_FILE_EXTENSION = "vm";
     
-    private static final String VELOCITY_FILE_RESOURCE_LOADER_PATH = "file.resource.loader.path";    
+    private static final String VELOCITY_RESOURCE_LOADER = "resource.loader";
+    private static final String VELOCITY_FILE_RESOURCE_LOADER_DESCRIPTION = "file.resource.loader.description";    
+    private static final String VELOCITY_FILE_RESOURCE_LOADER_CLASS = "file.resource.loader.class";
+    private static final String VELOCITY_FILE_RESOURCE_LOADER_PATH = "file.resource.loader.path";   
+    
     private static final Log log = LogFactory.getLog(VelocityDispatcher.class);
     
     private Map<String, Template> _templates;
@@ -75,10 +79,21 @@ public class VelocityDispatcher implements ViewDispatcher
         if(!dir.isDirectory() || !dir.exists())
             throw new IllegalStateException("baseDir must be an existing directory");        
         
+        // apply velocity file resource loader defaults
+        _properties.setProperty(VELOCITY_RESOURCE_LOADER, "file");
+        
+        _properties.setProperty(VELOCITY_FILE_RESOURCE_LOADER_DESCRIPTION, 
+                "Velocity File Resource Loader");
+        
+        _properties.setProperty(VELOCITY_FILE_RESOURCE_LOADER_CLASS, 
+                "org.apache.velocity.runtime.resource.loader.FileResourceLoader");
+        
         try
-        {
+        {            
             _properties.setProperty(VELOCITY_FILE_RESOURCE_LOADER_PATH, dir.getCanonicalPath());
+            
             _engine = new VelocityEngine(_properties);
+            
             _templates = VelocityUtil.getTemplateMapping(_engine, dir, _baseDir, _fileExtension);
         }
         catch(Exception e)
