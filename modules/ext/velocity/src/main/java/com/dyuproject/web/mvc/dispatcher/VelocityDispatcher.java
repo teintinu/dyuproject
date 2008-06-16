@@ -19,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
@@ -42,17 +41,16 @@ import com.dyuproject.web.mvc.WebContext;
 public class VelocityDispatcher implements ViewDispatcher
 {
 
-    public static final String DEFAULT_BASE_DIR = "/WEB-INF/velocity/";
+    public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/velocity/";
     public static final String DEFAULT_FILE_EXTENSION = "vm";
     
     private static final String VELOCITY_RESOURCE_LOADER = "resource.loader";
     private static final String VELOCITY_FILE_RESOURCE_LOADER_DESCRIPTION = "file.resource.loader.description";    
     private static final String VELOCITY_FILE_RESOURCE_LOADER_CLASS = "file.resource.loader.class";
-    private static final String VELOCITY_FILE_RESOURCE_LOADER_PATH = "file.resource.loader.path";   
+    private static final String VELOCITY_FILE_RESOURCE_LOADER_PATH = "file.resource.loader.path";
     
     private static final Log log = LogFactory.getLog(VelocityDispatcher.class);
     
-    private Map<String, Template> _templates;
     private VelocityEngine _engine;
     private String _baseDir, _fileExtension;
     private boolean _initialized = false;
@@ -90,34 +88,36 @@ public class VelocityDispatcher implements ViewDispatcher
         
         try
         {            
-            _properties.setProperty(VELOCITY_FILE_RESOURCE_LOADER_PATH, dir.getCanonicalPath());
-            
-            _engine = new VelocityEngine(_properties);
-            
-            _templates = VelocityUtil.getTemplateMapping(_engine, dir, _baseDir, _fileExtension);
+            _properties.setProperty(VELOCITY_FILE_RESOURCE_LOADER_PATH, dir.getCanonicalPath());            
+            _engine = new VelocityEngine(_properties);            
         }
         catch(Exception e)
         {
             throw new RuntimeException(e);
         }
         _initialized = true;
+        log.info("baseDir: " + _baseDir);
+        log.info("fileExtension: " + _fileExtension);    
+        log.info("initialized.");
     }
 
     public void dispatch(String uri, HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException
     {
-        if(uri.charAt(0)!='/')
-            uri =  _baseDir + uri;
+        if(uri.charAt(0)=='/')
+            uri = uri.substring(_baseDir.length());
         
-        Template template = _templates.get(uri);
-        if(template==null)
+        Template template = null;
+        try
         {
-            log.warn("template: " + uri + " not found.");
-            response.sendError(404);
-            return;
+            template = _engine.getTemplate(uri);
         }
-        
-        template.merge(LocalizedVelocityContext.getContext(request), response.getWriter());
+        catch(Exception e)
+        {
+            throw new ServletException(e);
+        }
+        template.merge(LocalizedVelocityContext.getContext(request), 
+                response.getWriter());
     }
     
     public void setBaseDir(String baseDir)
