@@ -92,7 +92,7 @@
   <modules>
     <module>modules/util</module>
     <module>modules/web</module>
-    <module>modules/web-ext</module>	
+    <module>modules/ext</module>	
 	<module>modules/demos</module>
   </modules>
   
