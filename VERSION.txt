@@ -1,6 +1,3 @@
-dyuproject-1.0-SNAPSHOT
-+
-
 dyuproject-1.0.3 2008-06-16
 + default view structure: /WEB-INF/views/jsp/ , /WEB-INF/views/velocity/
 + Maven artifacts renamed (the "dyuproject-" prefix removed)
