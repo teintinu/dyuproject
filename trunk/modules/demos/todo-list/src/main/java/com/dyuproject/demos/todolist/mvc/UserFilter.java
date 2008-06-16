@@ -53,7 +53,7 @@ public class UserFilter extends AbstractFilter
         if(session!=null && session.getAttribute(Constants.ID)!=null)
             return true;
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/login/index.jsp", request, 
+        getWebContext().getJSPDispatcher().dispatch("login/index.jsp", request, 
                 response);
         return false;
     }
