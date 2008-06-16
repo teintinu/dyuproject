@@ -41,8 +41,8 @@
         <version>${project.version}</version>
     </dependency>
     <dependency>
-        <groupId>com.dyuproject.web.ext</groupId>
-        <artifactId>web-ext-velocity</artifactId>
+        <groupId>com.dyuproject.ext</groupId>
+        <artifactId>ext-velocity</artifactId>
         <version>${project.version}</version>
     </dependency>    
     <dependency>
