@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ Maven artifacts renamed (the "dyuproject-" prefix removed)
 + Added support for velocity templates
 + Added support for spring ioc
 + WebContext.setMimes rename to WebContext.setMime
