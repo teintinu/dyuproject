@@ -102,7 +102,7 @@ public class TodosController extends CRUDController
                 /*request.setAttribute(Constants.MSG, Constants.TODO_CREATED);
                 request.setAttribute(Constants.USER, user);
                 response.setContentType(Constants.TEXT_HTML);
-                getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/users/id.jsp", 
+                getWebContext().getJSPDispatcher().dispatch("users/id.jsp", 
                         request, response);*/
                 response.sendRedirect(request.getContextPath() + "/users/" + user.getId() + "/todos");
             }
@@ -250,7 +250,7 @@ public class TodosController extends CRUDController
     {
         request.setAttribute(Constants.TODO, todo);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/todos/form.jsp", request, response);
+        getWebContext().getJSPDispatcher().dispatch("todos/form.jsp", request, response);
     }
     
     private void dispatchToView(Todo todo, HttpServletRequest request, 
@@ -258,7 +258,7 @@ public class TodosController extends CRUDController
     {
         request.setAttribute(Constants.TODO, todo);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/todos/id.jsp", request, response);
+        getWebContext().getJSPDispatcher().dispatch("todos/id.jsp", request, response);
     }
 
     private void dispatchToView(List<?> todos, HttpServletRequest request, 
@@ -266,7 +266,7 @@ public class TodosController extends CRUDController
     {
         request.setAttribute(Constants.TODOS, todos);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/todos/list.jsp", request, 
+        getWebContext().getJSPDispatcher().dispatch("todos/list.jsp", request, 
                 response);
     }
     

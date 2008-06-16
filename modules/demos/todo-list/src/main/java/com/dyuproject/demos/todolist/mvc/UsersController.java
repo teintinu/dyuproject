@@ -298,7 +298,7 @@ public class UsersController extends CRUDController
     {
         request.setAttribute(Constants.USER, user);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/users/form.jsp", request, response);
+        getWebContext().getJSPDispatcher().dispatch("users/form.jsp", request, response);
     }
     
     private void dispatchToView(User user, HttpServletRequest request, 
@@ -306,7 +306,7 @@ public class UsersController extends CRUDController
     {
         request.setAttribute(Constants.USER, user);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/users/id.jsp", request, response);
+        getWebContext().getJSPDispatcher().dispatch("users/id.jsp", request, response);
     }
 
     private void dispatchToView(List<?> users, HttpServletRequest request, 
@@ -314,7 +314,7 @@ public class UsersController extends CRUDController
     {
         request.setAttribute(Constants.USERS, users);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/users/list.jsp", request, 
+        getWebContext().getJSPDispatcher().dispatch("users/list.jsp", request, 
                 response);
     }
     

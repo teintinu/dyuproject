@@ -41,7 +41,7 @@ public class DefaultController extends AbstractController
             HttpServletResponse response) throws IOException, ServletException
     {
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/index.jsp", request, response);        
+        getWebContext().getJSPDispatcher().dispatch("index.jsp", request, response);        
     }
 
 }
