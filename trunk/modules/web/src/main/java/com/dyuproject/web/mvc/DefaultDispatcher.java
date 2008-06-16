@@ -21,6 +21,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * @author David Yu
  * @created May 16, 2008
@@ -29,12 +32,17 @@ import javax.servlet.http.HttpServletResponse;
 public class DefaultDispatcher implements ViewDispatcher
 {
     
+    private static final Log log = LogFactory.getLog(DefaultDispatcher.class);
+    
     RequestDispatcher _default;
     
     public void init(WebContext context)
     {
         if(_default==null)
+        {
             _default = context.getServletContext().getNamedDispatcher("default");
+            log.info("initialized.");
+        }        
     }
 
     public void dispatch(String uri, HttpServletRequest request,
