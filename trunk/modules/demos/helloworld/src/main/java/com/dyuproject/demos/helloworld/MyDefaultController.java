@@ -34,13 +34,14 @@ public class MyDefaultController extends AbstractController
     @Override
     protected void init()
     {
-        getWebContext().addViewDispatcher("vm", new VelocityDispatcher());
+        // velocity template
+        getWebContext().addViewDispatcher("velocity", new VelocityDispatcher());
     }
 
     public void handle(String mime, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException
     {
-        getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/index.jsp", request, response);        
+        getWebContext().getJSPDispatcher().dispatch("index.jsp", request, response);        
     }
 
 }
