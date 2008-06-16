@@ -100,13 +100,20 @@ public class HelloWorldController extends AbstractController
         }
         else
         {
-            response.setContentType("text/html");
-            // dispatch to view
+            response.setContentType("text/html");            
             request.setAttribute("helloWorldBean", new HelloWorldBean(verbOrId));
+            
+            
+            // for demo purposes, 2 templating engines are used.
+            // normally, you'd only have to choose one.
+            // velocity is configured via: WebContext.addViewDispatcher("velocity", new VelocityDispatcher());
             if("vm".equals(mime))
-                getWebContext().getViewDispatcher("vm").dispatch("/WEB-INF/velocity/helloworld/index.vm", request, response);
+            {
+                getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index.vm", 
+                        request, response);
+            }
             else
-                getWebContext().getJSPDispatcher().dispatch("/WEB-INF/jsp/helloworld/index.jsp", 
+                getWebContext().getJSPDispatcher().dispatch("helloworld/index.jsp", 
                     request, response);
         }        
         
