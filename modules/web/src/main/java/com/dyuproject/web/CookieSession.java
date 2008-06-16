@@ -183,8 +183,6 @@ public class CookieSession
     
     public void setMaxAge(int maxAge)
     {
-        if(_maxAge==maxAge)
-            return;
         _maxAge = maxAge;
         _modified = true;
     }
