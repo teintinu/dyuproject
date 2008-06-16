@@ -20,8 +20,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.web.ext.velocity.VelocityDispatcher;
 import com.dyuproject.web.mvc.AbstractController;
+import com.dyuproject.web.mvc.dispatcher.VelocityDispatcher;
 
 /**
  * @author David Yu
