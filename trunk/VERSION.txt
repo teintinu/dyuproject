@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ default view structure: /WEB-INF/views/jsp/ , /WEB-INF/views/velocity/
 + Maven artifacts renamed (the "dyuproject-" prefix removed)
 + Added support for velocity templates
 + Added support for spring ioc
