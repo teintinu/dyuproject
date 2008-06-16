@@ -8,7 +8,7 @@
   </parent>  
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject</groupId>
-  <artifactId>dyuproject-util</artifactId>
+  <artifactId>util</artifactId>
   <name>common utils</name>
   <packaging>jar</packaging>
   
