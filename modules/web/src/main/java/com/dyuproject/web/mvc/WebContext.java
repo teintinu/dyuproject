@@ -111,7 +111,10 @@ public class WebContext
         {
             URL resource = _servletContext.getResource(DEFAULT_ENV_LOCATION);
             if(resource!=null)
+            {
                 setEnv(resource.openStream());
+                log.info("loaded: " + DEFAULT_ENV_LOCATION);
+            }
         }
         catch(Exception e)
         {                
@@ -142,7 +145,10 @@ public class WebContext
             {
                 URL resource = _servletContext.getResource(DEFAULT_MIME_LOCATION);
                 if(resource!=null)
+                {
                     setMime(resource.openStream());
+                    log.info("loaded: " + DEFAULT_MIME_LOCATION);
+                }
             }
             catch(Exception e)
             {                
@@ -162,6 +168,7 @@ public class WebContext
         }
         
         _initializing = false;
+        log.info("initialized.");
     }
     
     public ServletContext getServletContext()
