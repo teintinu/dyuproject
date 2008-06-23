@@ -14,8 +14,6 @@
 
 package com.dyuproject.web;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.util.Delim;
+import com.dyuproject.util.digest.MD5;
 
 /**
  * @author David Yu
@@ -35,9 +34,6 @@ public class CookieSession
     
     public static final String TIMESTAMP_ATTR = "cs.ts";
     public static final String SIG_ATTR = "cs.sig";
-    
-    private static boolean __initialized = false;
-    private static MessageDigest __MD5 = null;    
     
     static CookieSession get(String secretKey, String cookieName, HttpServletRequest request, 
             boolean includeRemoteAddr)
@@ -77,17 +73,10 @@ public class CookieSession
         //remote address, prevents session hijacking
         String remoteAddr = includeRemoteAddr ? request.getRemoteAddr() : null;
         if(remoteAddr!=null)
-            toDigest.append(remoteAddr);
-        
-        byte[] dg = __MD5.digest(toDigest.toString().getBytes());
-        StringBuilder toCompare = new StringBuilder();
-        for (int i=0; i<dg.length; i++) 
-        {
-            toCompare.append(Integer.toHexString((dg[i] & 0xf0) >>> 4));
-            toCompare.append(Integer.toHexString(dg[i] & 0x0f));
-        }
+            toDigest.append(remoteAddr);        
+
         // verify signature        
-        if(sig.equals(toCompare.toString()))
+        if(sig.equals(MD5.digest(toDigest.toString())))
         {
             CookieSession session = new CookieSession(secretKey, cookie, remoteAddr);            
             for(int i=0,len=pairs.length-1; i<len ;i++)
@@ -100,30 +89,6 @@ public class CookieSession
             return session;
         }
         return null;
-    }
-    
-    static synchronized void init()
-    {
-        if(__initialized)
-            return;
-        if(__MD5==null)
-        {
-            try
-            {
-                __MD5 = MessageDigest.getInstance("MD5");
-            } 
-            catch (NoSuchAlgorithmException e)
-            {
-                __MD5 = null;
-                throw new RuntimeException(e);
-            }            
-        }
-        __initialized = true;
-    }
-    
-    public static boolean isAvailable()
-    {
-        return __initialized && __MD5!=null;
     }
     
     static CookieSession create(String secretKey, String cookieName, HttpServletRequest request, 
@@ -274,15 +239,7 @@ public class CookieSession
         if(_remoteAddr!=null)
             toDigest.append(_remoteAddr);
         
-        byte[] dg = __MD5.digest(toDigest.toString().getBytes());
-        StringBuilder buffer = new StringBuilder();
-        for (int i=0; i<dg.length; i++) 
-        {
-            buffer.append(Integer.toHexString((dg[i] & 0xf0) >>> 4));
-            buffer.append(Integer.toHexString(dg[i] & 0x0f));
-        }
-        
-        String sig = buffer.toString();
+        String sig = MD5.digest(toDigest.toString());
         output.append('&').append(SIG_ATTR).append('=').append(sig);
         return output.toString();
     }

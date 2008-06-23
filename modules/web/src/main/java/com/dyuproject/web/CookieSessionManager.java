@@ -77,7 +77,6 @@ public class CookieSessionManager
             _includeRemoteAddr = Boolean.parseBoolean(includeRemoteAddr);
         
         init();
-        CookieSession.init();
         _started = true;
     }
     
