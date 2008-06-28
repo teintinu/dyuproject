@@ -19,104 +19,43 @@ import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.demos.todolist.dao.TodoDao;
-import com.dyuproject.demos.todolist.dao.UserDao;
-import com.dyuproject.demos.todolist.mvc.AuthController;
-import com.dyuproject.demos.todolist.mvc.DefaultController;
-import com.dyuproject.demos.todolist.mvc.OverviewController;
-import com.dyuproject.demos.todolist.mvc.LoginController;
-import com.dyuproject.demos.todolist.mvc.LogoutController;
-import com.dyuproject.demos.todolist.mvc.TodosController;
-import com.dyuproject.demos.todolist.mvc.UserFilter;
-import com.dyuproject.demos.todolist.mvc.UsersController;
 import com.dyuproject.web.mvc.AbstractFilter;
-import com.dyuproject.web.mvc.Controller;
-import com.dyuproject.web.mvc.FilterCollection;
-import com.dyuproject.web.mvc.WebContext;
 
 /**
  * @author David Yu
  * @created May 21, 2008
  */
 
-public class ServiceManager extends AbstractFilter implements ServletContextListener
+public class ServiceManager extends AbstractFilter
 {
     
     private static final ThreadLocal<EntityManagerWrapper> __wrapper = new ThreadLocal<EntityManagerWrapper>();
     
     private EntityManagerFactory _factory;
-    private WebContext _webContext;
     
     public static EntityManagerWrapper getCurrentEntityManagerWrapper()
     {
         return __wrapper.get();
     }
 
+    public ServiceManager()
+    {
+        _factory = Persistence.createEntityManagerFactory("todo-list-persistence");
+    }
     
     protected void init()
     {        
         
     }
     
-    public void contextDestroyed(ServletContextEvent event)
+    public void destroy()
     {
         if(_factory!=null)
             _factory.close();        
-    }
-
-    public void contextInitialized(ServletContextEvent event)
-    {
-        _webContext = new WebContext();
-        _factory = Persistence.createEntityManagerFactory("todo-list-persistence");
-        System.err.println("FACTORY: " + _factory);
-        
-        TodoDao todoDao = new TodoDao();  
-        UserDao userDao = new UserDao();
-        todoDao.setServiceManager(this);
-        userDao.setServiceManager(this);
-        _webContext.addAttribute("todoDao", todoDao);
-        _webContext.addAttribute("userDao", userDao);
-        
-        UserFilter userFilter = new UserFilter();
-        
-        FilterCollection userFilterChain = new FilterCollection();
-        userFilterChain.addFilter(this);
-        userFilterChain.addFilter(userFilter);
-        
-        TodosController todos = new TodosController();
-        
-        UsersController users = new UsersController();
-        
-        LoginController login = new LoginController();        
-        
-        OverviewController home = new OverviewController();
-        
-        AuthController auth = new AuthController();
-        
-        LogoutController logout = new LogoutController();
-        
-        auth.setFilter(this);
-        todos.setFilter(this);
-        users.setFilter(this);        
-        home.setFilter(userFilterChain);        
-        
-        _webContext.setDefaultController(new DefaultController());
-        _webContext.setControllers(new Controller[]{
-                todos,
-                users,
-                login,
-                logout,
-                home,
-                auth
-        });        
-        
-        event.getServletContext().setAttribute(WebContext.class.getName(), _webContext);       
     }
 
     public void postHandle(boolean handled, String mime,
