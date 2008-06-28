@@ -34,6 +34,7 @@ public interface Controller
     public static final String DELETE = "DELETE";
     
     public void init(WebContext webContext);
+    public void destroy(WebContext webContext);
     
     public void handle(String mime, HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException;
@@ -41,7 +42,6 @@ public interface Controller
     public String getIdentifier();
     public String getIdentifierAttribute();
     
-    public Filter getFilter();
-    public void destroy();
+    public Filter getFilter();    
 
 }

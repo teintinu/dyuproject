@@ -25,7 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractController implements Controller
 {
     
-    private boolean _initialized = false;
+    private boolean _initialized = false, _destroyed = false;
     
     private String _identifier, _identifierAttribute;
     private WebContext _webContext;
@@ -44,6 +44,8 @@ public abstract class AbstractController implements Controller
     }
     
     protected abstract void init();
+    protected void destroy()
+    {}
     
     protected boolean isInitialized()
     {
@@ -93,9 +95,15 @@ public abstract class AbstractController implements Controller
             (String)request.getAttribute(getIdentifierAttribute());
     }
     
-    public void destroy()
+    public void destroy(WebContext webContext)
     {
+        if(_destroyed || !_initialized)
+            return;
         
+        _destroyed = true;
+        if(getFilter()!=null)
+            getFilter().destroy(webContext);
+        destroy();
     }
 
 }
