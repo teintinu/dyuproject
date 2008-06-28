@@ -101,6 +101,7 @@ public class ServiceManager extends AbstractFilter implements ServletContextList
         
         LogoutController logout = new LogoutController();
         
+        auth.setFilter(this);
         todos.setFilter(this);
         users.setFilter(this);        
         home.setFilter(userFilterChain);        
