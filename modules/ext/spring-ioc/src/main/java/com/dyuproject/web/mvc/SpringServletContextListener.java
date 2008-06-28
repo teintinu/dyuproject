@@ -16,17 +16,16 @@ package com.dyuproject.web.mvc;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
 
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-
-import com.dyuproject.web.mvc.WebContext;
 
 /**
  * @author David Yu
  * @created Jun 15, 2008
  */
 
-public class SpringServletContextListener
+public class SpringServletContextListener implements ServletContextListener
 {
     
     public static final String RESOURCE_LOCATION = "/WEB-INF/webContext.xml";
