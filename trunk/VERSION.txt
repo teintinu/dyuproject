@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ fixed SpringServletContextListener bug (did not implement ServletContextListener)
 + added method destroy on filters
 + added com.dyuproject.util.digest.MD5
 
