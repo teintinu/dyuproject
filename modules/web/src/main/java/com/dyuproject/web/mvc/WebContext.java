@@ -538,7 +538,7 @@ public class WebContext
     void destroy()
     {
         for(Controller c : _controllers.values())
-            c.destroy();
+            c.destroy(this);
     }
 
 }

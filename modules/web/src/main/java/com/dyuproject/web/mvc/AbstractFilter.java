@@ -22,7 +22,7 @@ package com.dyuproject.web.mvc;
 public abstract class AbstractFilter implements Filter
 {
     
-    private boolean _initialized = false;
+    private boolean _initialized = false, _destroyed = false;
     private WebContext _webContext;    
     
     public final void init(WebContext webContext)
@@ -35,7 +35,20 @@ public abstract class AbstractFilter implements Filter
         init();
     }
     
+    
+    
+    public final void destroy(WebContext webContext)
+    {
+        if(_destroyed || !_initialized)
+            return;
+        
+        _destroyed = true;
+        destroy();
+    }
+    
     protected abstract void init();
+    protected void destroy()
+    {}
     
     public WebContext getWebContext()
     {

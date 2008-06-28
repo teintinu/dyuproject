@@ -29,6 +29,7 @@ public interface Filter
 {
     
     public void init(WebContext webContext);
+    public void destroy(WebContext webContext);
     
     public boolean preHandle(String mime, HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException; 

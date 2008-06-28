@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ added method destroy on filters
 + added com.dyuproject.util.digest.MD5
 
 dyuproject-1.0.3 2008-06-16
