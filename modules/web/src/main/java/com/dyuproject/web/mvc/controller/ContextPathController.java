@@ -150,7 +150,7 @@ public class ContextPathController extends AbstractController
             HttpServletResponse response) throws IOException, ServletException
     {
         if(_defaultController==null)
-            response.sendError(404);
+            getWebContext().getDefaultDispatcher().dispatch(null, request, response);
         else
             WebContext.handle(_defaultController, mime, request, response);
     }
