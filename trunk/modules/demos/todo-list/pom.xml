@@ -36,8 +36,8 @@
   
   <dependencies>
     <dependency>
-        <groupId>com.dyuproject</groupId>
-        <artifactId>web</artifactId>
+        <groupId>com.dyuproject.ext</groupId>
+        <artifactId>ext-spring-ioc</artifactId>
         <version>${project.version}</version>
     </dependency>  
     <dependency>

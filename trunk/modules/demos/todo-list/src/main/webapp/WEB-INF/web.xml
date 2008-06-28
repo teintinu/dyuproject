@@ -6,8 +6,8 @@
    version="2.5" metadata-complete="true">
    
     <listener>
-      <listener-class>com.dyuproject.demos.todolist.ServiceManager</listener-class>
-    </listener>   
+      <listener-class>com.dyuproject.web.mvc.SpringServletContextListener</listener-class>
+    </listener>
    
     <servlet>
         <servlet-name>rest</servlet-name>
