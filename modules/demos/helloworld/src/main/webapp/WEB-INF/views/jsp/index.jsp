@@ -49,8 +49,13 @@
     </p>
     <p>    
       html | <a href="<c:url value="/helloworld/delete"/>">helloworld/delete</a>
-    </p>	
-
+    </p>
+  </div>
+  <hr/>
+  <div>
+    <p style="font-weight:bold">page with authentication</p>
+    <p><a href="<c:url value="/protected"/>">protected</a></p>
+    <p><b>credentials:</b> hello/world, foo/bar</p>
   </div>  
 </div>
 </body>

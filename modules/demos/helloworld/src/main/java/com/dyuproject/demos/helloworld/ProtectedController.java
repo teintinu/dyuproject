@@ -17,33 +17,46 @@ package com.dyuproject.demos.helloworld;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.web.mvc.AbstractController;
-import com.dyuproject.web.mvc.dispatcher.VelocityDispatcher;
 
 /**
  * @author David Yu
- * @created Jun 7, 2008
+ * @created Jun 29, 2008
  */
 
-public class MyDefaultController extends AbstractController
+public class ProtectedController extends AbstractController
 {
+    
+    public static final String IDENTIFIER = "protected";
+    
+    public ProtectedController()
+    {
+        setIdentifier(IDENTIFIER);
+        // /protected/*
+        setIdentifierAttribute("*");
+        
+        setFilter(new DigestAuthFilter());
+    }
 
     @Override
     protected void init()
     {
-        // velocity template
-        getWebContext().addViewDispatcher("velocity", new VelocityDispatcher());
-        
-        getWebContext().addController(new ProtectedController());
+       
     }
 
     public void handle(String mime, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException
+            HttpServletResponse response) throws IOException,
+            ServletException
     {
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", request, response);        
+        response.setContentType("text/html");
+        ServletOutputStream out = response.getOutputStream();
+        out.print("<html><head><title>Protected Page</title></head>");
+        out.print("<body><h1>Protected Page</h1><h3>Successful authentication!</h3></body></html>");
+        out.close();
     }
 
 }

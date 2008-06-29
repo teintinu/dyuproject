@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.helloworld;
+package com.dyuproject.web.auth;
 
 import java.io.IOException;
 
@@ -20,30 +20,20 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.web.mvc.AbstractController;
-import com.dyuproject.web.mvc.dispatcher.VelocityDispatcher;
-
 /**
+ * The credential datasource.  Could be from a properties file, database, or any other datasource.
+ * 
  * @author David Yu
- * @created Jun 7, 2008
+ * @created Jun 28, 2008
  */
 
-public class MyDefaultController extends AbstractController
+public interface CredentialSource
 {
-
-    @Override
-    protected void init()
-    {
-        // velocity template
-        getWebContext().addViewDispatcher("velocity", new VelocityDispatcher());
-        
-        getWebContext().addController(new ProtectedController());
-    }
-
-    public void handle(String mime, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException
-    {
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", request, response);        
-    }
+    
+    public String getPassword(String realm, String username, HttpServletRequest request);
+    
+    public void onAuthenticated(String realm, String username, String password, 
+            HttpServletRequest request, HttpServletResponse response) throws ServletException, 
+            IOException;
 
 }

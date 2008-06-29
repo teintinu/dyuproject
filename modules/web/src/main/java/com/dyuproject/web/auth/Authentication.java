@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.helloworld;
+package com.dyuproject.web.auth;
 
 import java.io.IOException;
 
@@ -20,30 +20,35 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.web.mvc.AbstractController;
-import com.dyuproject.web.mvc.dispatcher.VelocityDispatcher;
-
 /**
  * @author David Yu
- * @created Jun 7, 2008
+ * @created Jun 28, 2008
  */
 
-public class MyDefaultController extends AbstractController
+public abstract class Authentication
 {
-
-    @Override
-    protected void init()
+    
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String WWW_AUTHENTICATE= "WWW-Authenticate";
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
+    public static final String REALM = "realm";
+    
+    private CredentialSource _authDataSource;
+    
+    public void setAuthDataSource(CredentialSource authDataSource)
     {
-        // velocity template
-        getWebContext().addViewDispatcher("velocity", new VelocityDispatcher());
-        
-        getWebContext().addController(new ProtectedController());
+        _authDataSource = authDataSource;
     }
-
-    public void handle(String mime, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException
+    
+    public CredentialSource getAuthDataSource()
     {
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", request, response);        
+        return _authDataSource;
     }
+    
+    public abstract boolean authenticate(String realm, HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException;
+    
+    public abstract String getType();
 
 }
