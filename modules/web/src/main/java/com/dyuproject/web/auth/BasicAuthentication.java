@@ -55,9 +55,9 @@ public class BasicAuthentication extends Authentication
         int idx = credentials.indexOf(':');
         String username = credentials.substring(0, idx);
         String password = credentials.substring(idx+1);
-        if(password.equals(getAuthDataSource().getPassword(realm, username, request)))
+        if(password.equals(getCredentialSource().getPassword(realm, username, request)))
         {
-            getAuthDataSource().onAuthenticated(realm, username, password, request, response);
+            getCredentialSource().onAuthenticated(realm, username, password, request, response);
             return true;
         }            
         sendChallenge(realm, request, response);
