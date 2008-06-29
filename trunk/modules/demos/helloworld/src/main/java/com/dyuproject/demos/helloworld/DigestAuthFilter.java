@@ -15,35 +15,52 @@
 package com.dyuproject.demos.helloworld;
 
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.web.mvc.AbstractController;
-import com.dyuproject.web.mvc.dispatcher.VelocityDispatcher;
+import com.dyuproject.web.auth.Authentication;
+import com.dyuproject.web.auth.DigestAuthentication;
+import com.dyuproject.web.auth.SimpleCredentialSource;
+import com.dyuproject.web.mvc.AbstractFilter;
 
 /**
  * @author David Yu
- * @created Jun 7, 2008
+ * @created Jun 29, 2008
  */
 
-public class MyDefaultController extends AbstractController
+public class DigestAuthFilter extends AbstractFilter
 {
+    
+    private Authentication _authentication = new DigestAuthentication("secret");
+    
+    public DigestAuthFilter()
+    {
+        Properties props = new Properties();
+        props.setProperty("foo", "bar");
+        props.setProperty("hello", "world");        
+        _authentication.setAuthDataSource(new SimpleCredentialSource(props));  
+    }
 
     @Override
     protected void init()
     {
-        // velocity template
-        getWebContext().addViewDispatcher("velocity", new VelocityDispatcher());
-        
-        getWebContext().addController(new ProtectedController());
+      
     }
 
-    public void handle(String mime, HttpServletRequest request,
-            HttpServletResponse response) throws IOException, ServletException
-    {
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", request, response);        
+    public void postHandle(boolean handled, String mime,
+            HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException
+    {       
+        
+    }
+
+    public boolean preHandle(String mime, HttpServletRequest request,
+            HttpServletResponse response) throws ServletException, IOException
+    {        
+        return _authentication.authenticate(ProtectedController.IDENTIFIER, request, response);
     }
 
 }
