@@ -34,16 +34,16 @@ public abstract class Authentication
     public static final String PASSWORD = "password";
     public static final String REALM = "realm";
     
-    private CredentialSource _authDataSource;
+    private CredentialSource _credentialSource;
     
-    public void setAuthDataSource(CredentialSource authDataSource)
+    public void setCredentialSource(CredentialSource credentialSource)
     {
-        _authDataSource = authDataSource;
+        _credentialSource = credentialSource;
     }
     
-    public CredentialSource getAuthDataSource()
+    public CredentialSource getCredentialSource()
     {
-        return _authDataSource;
+        return _credentialSource;
     }
     
     public abstract boolean authenticate(String realm, HttpServletRequest request, 

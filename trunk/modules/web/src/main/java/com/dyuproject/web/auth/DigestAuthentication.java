@@ -84,7 +84,7 @@ public class DigestAuthentication extends Authentication
                       if (USERNAME.equalsIgnoreCase(name))
                       {
                           username=tok;
-                          password = getAuthDataSource().getPassword(realm, username, request);
+                          password = getCredentialSource().getPassword(realm, username, request);
                           if(password==null)
                           {
                               sendChallenge(realm, request, response);
@@ -111,7 +111,7 @@ public class DigestAuthentication extends Authentication
         }        
         if(check(username, password, rlm, nonce, nc, cnonce, qop, uri, rsp, request))
         {
-            getAuthDataSource().onAuthenticated(realm, username, password, request, response);
+            getCredentialSource().onAuthenticated(realm, username, password, request, response);
             return true;
         }
         sendChallenge(realm, request, response);

@@ -41,7 +41,7 @@ public class DigestAuthFilter extends AbstractFilter
         Properties props = new Properties();
         props.setProperty("foo", "bar");
         props.setProperty("hello", "world");        
-        _authentication.setAuthDataSource(new SimpleCredentialSource(props));  
+        _authentication.setCredentialSource(new SimpleCredentialSource(props));  
     }
 
     @Override
