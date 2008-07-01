@@ -36,11 +36,9 @@ public class DigestAuthentication extends Authentication
     
     public static final String TYPE = "Digest";
     
-    private String _secretKey;
-    
-    public DigestAuthentication(String secretKey)
+    public DigestAuthentication(CredentialSource credentialSource)
     {
-        _secretKey = secretKey==null ? "" : secretKey;
+        super(credentialSource);
     }
     
     public String getType()
@@ -163,7 +161,7 @@ public class DigestAuthentication extends Authentication
         }        
     }
     
-    private void sendChallenge(String realm, HttpServletRequest request,
+    protected void sendChallenge(String realm, HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException
     {
         String domain=request.getContextPath();
@@ -176,9 +174,10 @@ public class DigestAuthentication extends Authentication
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
     
-    private String newNonce(HttpServletRequest request)
+    protected String newNonce(HttpServletRequest request)
     {        
-        return B64Code.encode(TYPE + _secretKey + System.currentTimeMillis());
+        return B64Code.encode(new StringBuilder().append(request.getRemoteAddr()).append(':')
+                .append(System.currentTimeMillis()).toString());
     }
     
     private static String encode(byte[] data)

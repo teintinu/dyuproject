@@ -32,10 +32,10 @@ public class BasicAuthentication extends Authentication
     
     public static final String TYPE = "Basic";
     
-    public BasicAuthentication()
+    public BasicAuthentication(CredentialSource credentialSource)
     {
-        
-    }
+        super(credentialSource);        
+    }   
     
     public String getType()
     {

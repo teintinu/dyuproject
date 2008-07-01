@@ -21,6 +21,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Delim;
 import com.dyuproject.util.digest.MD5;
 
@@ -53,7 +54,7 @@ public class CookieSession
     private static CookieSession parse(String secretKey, Cookie cookie, HttpServletRequest request,
             boolean includeRemoteAddr)
     {
-        String value = cookie.getValue();
+        String value = B64Code.decode(cookie.getValue());
         String[] pairs = Delim.AMPER.split(value);
         if(pairs.length<2)
             return null;
@@ -165,7 +166,7 @@ public class CookieSession
             {
                 _written = true;
             }
-            Cookie cookie = new Cookie(_cookieName, generateCookieValue());            
+            Cookie cookie = new Cookie(_cookieName, getHashValue());            
             cookie.setMaxAge(_maxAge);
             cookie.setPath(_path);
             if(_domain!=null)
@@ -193,7 +194,7 @@ public class CookieSession
                 _written = false;
                 return false;
             }            
-            Cookie cookie = new Cookie(_cookie.getName(), generateCookieValue());            
+            Cookie cookie = new Cookie(_cookie.getName(), getHashValue());            
             cookie.setMaxAge(cookie.getMaxAge());
             cookie.setPath(cookie.getPath());
             if(_cookie.getDomain()!=null)
@@ -203,7 +204,7 @@ public class CookieSession
             return true;
         }        
         
-        Cookie cookie = new Cookie(_cookieName, generateCookieValue());            
+        Cookie cookie = new Cookie(_cookieName, getHashValue());            
         cookie.setMaxAge(_maxAge);
         cookie.setPath(_path);
         if(_domain!=null)
@@ -213,7 +214,7 @@ public class CookieSession
         return true;
     }
     
-    private String generateCookieValue()
+    public String getHashValue()
     {
         StringBuilder toDigest = new StringBuilder();
         StringBuilder output = new StringBuilder();
@@ -241,7 +242,7 @@ public class CookieSession
         
         String sig = MD5.digest(toDigest.toString());
         output.append('&').append(SIG_ATTR).append('=').append(sig);
-        return output.toString();
+        return B64Code.encode(output.toString());
     }
     
     public boolean invalidate(HttpServletResponse response)
@@ -255,7 +256,7 @@ public class CookieSession
         }        
         //String oldSecretKey = _secretKey;
         //_secretKey = String.valueOf(System.currentTimeMillis());
-        Cookie cookie = new Cookie(_cookie.getName(), generateCookieValue());
+        Cookie cookie = new Cookie(_cookie.getName(), getHashValue());
         //_secretKey = oldSecretKey;
         cookie.setMaxAge(0);
         cookie.setPath(cookie.getPath());
