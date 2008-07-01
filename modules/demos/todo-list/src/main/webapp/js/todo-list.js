@@ -24,7 +24,7 @@ function Services() {
             var user = params.user;
             var buffer = new Array();
             for(var i in user)
-                fill(buffer, i, user[i]);
+                fill(buffer, i, user[i]);            
             _request.doPost('users.json', buffer.join('&'), handler);
         },
         update: function(handler, params) {
@@ -239,47 +239,49 @@ function Users(module) {
     }
         
     function newCreateUserWidget() {
-        var status = WidgetFactory.create('div', null, 'padded red');        
+        var feedback = WidgetFactory.create('div', null, 'padded red');        
         var firstName = WidgetFactory.createInput('text');
         var lastName = WidgetFactory.createInput('text');
         var email = WidgetFactory.createInput('text');        
         var username = WidgetFactory.createInput('text');
         var password = WidgetFactory.createInput('password');
-        var confirm = WidgetFactory.createInput('password');
+        var confirmPw = WidgetFactory.createInput('password');
         var create = WidgetFactory.create('button', 'Create');        
         create.addEventHandler('onclick', function(e) {
-            Utils.refreshElement(status.getElement());
+            Utils.refreshElement(feedback.getElement());
             var fn = Utils.trim(firstName.getElementProperty('value'));
             var ln = Utils.trim(lastName.getElementProperty('value'));
             var e = Utils.trim(email.getElementProperty('value'));
             var un = Utils.trim(username.getElementProperty('value'));                
             var pw = Utils.trim(password.getElementProperty('value'));
-            var c = Utils.trim(confirm.getElementProperty('value'));            
+            var c = Utils.trim(confirmPw.getElementProperty('value'));            
             if(un && pw && c && fn && ln && e) {
                 if(pw!=c) {
-                    status.getElement().innerHTML = 'Password did not match.';
+                    feedback.getElement().innerHTML = 'Password did not match.';
                     return;
                 }                          
                 _services.getUsersService().create(function(t) {
                     if(t.error) {
-                        status.getElement().innerHTML = t.msg;
+                        feedback.getElement().innerHTML = t.msg;
                         return;
                     }
                     _content.removeChildren();
                     _module.getPopup().hide();
                     fill(t);
                 }, {
-                    firstName: un,
-                    lastName: fn,
-                    email: e,
-                    username: un,
-                    password: pw,
-                    confirmPassword: c
+                	user: {
+                        firstName: un,
+                        lastName: fn,
+                        email: e,
+                        username: un,
+                        password: pw,
+                        confirmPassword: c
+                	}
                 });
             
             }
             else
-                status.getElement().innerHTML = 'Required Parameters: First Name, Last Name, Email, Username, Password, Confirm Password.';            
+                feedback.getElement().innerHTML = 'Required Parameters: First Name, Last Name, Email, Username, Password, Confirm Password.';            
         });
         var table = new SimpleTable(7, 2);
         table.setWidget(0, 0, WidgetFactory.create('span', 'First Name'));
@@ -293,28 +295,28 @@ function Users(module) {
         table.setWidget(4, 0, WidgetFactory.create('span', 'Password'));
         table.setWidget(4, 1, password);
         table.setWidget(5, 0, WidgetFactory.create('span', 'Confirm Password'));
-        table.setWidget(5, 1, confirm);
+        table.setWidget(5, 1, confirmPw);
         table.setWidget(6, 1, create);
         table.setSpacing(2);
         var panel = new FlowPanel('padded');
-        panel.addChild(status);
+        panel.addChild(feedback);
         panel.addChild(table);
         return panel;
     }
     
     function newCreateTodoWidget() {
-        var status = WidgetFactory.create('div', null, 'padded red');
+        var feedback = WidgetFactory.create('div', null, 'padded red');
         var title = WidgetFactory.createInput('text');
         var content = WidgetFactory.create('textarea');
         var create = WidgetFactory.create('button', 'Create');
         create.addEventHandler('onclick', function(e) {
-            Utils.refreshElement(status.getElement());
+            Utils.refreshElement(feedback.getElement());
             var t = Utils.trim(title.getElementProperty('value'));
             var c = Utils.trim(content.getElementProperty('value'));
             if(t) {
                 _services.getTodosService().create(function(data) {
                     if(data.error) {
-                        status.getElement().innerHTML = data.msg;
+                        feedback.getElement().innerHTML = data.msg;
                         return;
                     }
                     _module.getPopup().hide();
@@ -327,7 +329,7 @@ function Users(module) {
                 });
             }
             else
-                status.getElement().innerHTML = 'Required Parameters: Title';
+                feedback.getElement().innerHTML = 'Required Parameters: Title';
         });
         var table = new SimpleTable(3, 2);
         table.setWidget(0, 0, WidgetFactory.create('span', 'Title'));
@@ -337,7 +339,7 @@ function Users(module) {
         table.setWidget(2, 1, create);
         table.setSpacing(2);
         var panel = new FlowPanel('padded');
-        panel.addChild(status);
+        panel.addChild(feedback);
         panel.addChild(table);
         return panel;        
     }
