@@ -34,14 +34,14 @@ import com.dyuproject.web.mvc.AbstractFilter;
 public class DigestAuthFilter extends AbstractFilter
 {
     
-    private Authentication _authentication = new DigestAuthentication("secret");
+    private Authentication _authentication;
     
     public DigestAuthFilter()
     {
         Properties props = new Properties();
         props.setProperty("foo", "bar");
         props.setProperty("hello", "world");        
-        _authentication.setCredentialSource(new SimpleCredentialSource(props));  
+        _authentication = new DigestAuthentication(new SimpleCredentialSource(props));  
     }
 
     @Override

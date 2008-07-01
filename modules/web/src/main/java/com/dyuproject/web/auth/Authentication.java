@@ -36,6 +36,11 @@ public abstract class Authentication
     
     private CredentialSource _credentialSource;
     
+    public Authentication(CredentialSource credentialSource)
+    {
+        setCredentialSource(credentialSource);
+    }
+    
     public void setCredentialSource(CredentialSource credentialSource)
     {
         _credentialSource = credentialSource;
