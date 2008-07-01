@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.web.auth.Authentication;
-import com.dyuproject.web.auth.DigestAuthentication;
 import com.dyuproject.web.auth.SimpleCredentialSource;
+import com.dyuproject.web.auth.SmartDigestAuthentication;
 import com.dyuproject.web.mvc.AbstractFilter;
 
 /**
@@ -41,7 +41,8 @@ public class DigestAuthFilter extends AbstractFilter
         Properties props = new Properties();
         props.setProperty("foo", "bar");
         props.setProperty("hello", "world");        
-        _authentication = new DigestAuthentication(new SimpleCredentialSource(props));  
+        _authentication = new SmartDigestAuthentication(new SimpleCredentialSource(props), 
+                "secret", 30);
     }
 
     @Override

@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ added SmartDigestAuthentication (expiration, remoteAddress sniffing, hashed with secretKey)
 + CookieSession value now MD5 hashed + Base64 encoded
 + added Basic and Digest Authentication
 + fixed SpringServletContextListener bug (did not implement ServletContextListener)
