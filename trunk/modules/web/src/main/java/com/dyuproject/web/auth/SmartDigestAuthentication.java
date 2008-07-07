@@ -70,7 +70,7 @@ public class SmartDigestAuthentication extends DigestAuthentication
             HttpServletRequest request)
     {
         String[] tokens = Delim.COLON.split(B64Code.decode(nonce));        
-        if(tokens.length!=3)
+        if(tokens.length!=3 || !tokens[0].equals(request.getRemoteAddr()))
             return false;
         
         // check if nonce was not altered
