@@ -1,4 +1,4 @@
-dyuproject-1.0-SNAPSHOT
+dyuproject-1.0.4 2008-07-07
 + added SmartDigestAuthentication (expiration, remoteAddress sniffing, hashed with secretKey)
 + CookieSession value now MD5 hashed + Base64 encoded
 + added Basic and Digest Authentication
