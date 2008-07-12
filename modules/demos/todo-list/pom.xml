@@ -34,6 +34,17 @@
     </plugins>	
   </build>
   
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <id>download-java-net</id>
+      <name>download-java-net</name>
+      <url>http://download.java.net/maven/2</url>
+    </repository>
+  </repositories>  
+ 
   <dependencies>
     <dependency>
         <groupId>com.dyuproject.ext</groupId>
