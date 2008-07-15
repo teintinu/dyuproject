@@ -61,7 +61,7 @@ public class SmartDigestAuthentication extends DigestAuthentication
         String sig = MD5.digest(remoteAddr + ts + _secretKey);
         
         StringBuilder buffer = new StringBuilder();
-        buffer.append(remoteAddr).append(':').append(ts).append(':').append(sig);
+        buffer.append(remoteAddr).append(',').append(ts).append(',').append(sig);
         return B64Code.encode(buffer.toString());
     }
     
@@ -69,7 +69,7 @@ public class SmartDigestAuthentication extends DigestAuthentication
             String nc, String cnonce, String qop, String uri, String response, 
             HttpServletRequest request)
     {
-        String[] tokens = Delim.COLON.split(B64Code.decode(nonce));        
+        String[] tokens = Delim.COMMA.split(B64Code.decode(nonce));        
         if(tokens.length!=3 || !tokens[0].equals(request.getRemoteAddr()))
             return false;
         
