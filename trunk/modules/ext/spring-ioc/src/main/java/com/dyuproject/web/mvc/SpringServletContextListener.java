@@ -19,6 +19,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 
 /**
  * @author David Yu
@@ -42,10 +44,35 @@ public class SpringServletContextListener implements ServletContextListener
     {
         ServletContext sc = event.getServletContext();
 
-        _applicationContext = new FileSystemXmlApplicationContext(sc.getRealPath(RESOURCE_LOCATION));
+        _applicationContext = new ApplicationContext(sc);
 
         // This will be picked up by RESTfulMVCServlet            
         sc.setAttribute(WebContext.class.getName(), _applicationContext.getBean(BEAN_NAME));      
+    }
+    
+    private static class ApplicationContext extends FileSystemXmlApplicationContext
+    {        
+        ServletContext _servletContext;
+        
+        ApplicationContext(ServletContext servletContext)
+        {
+            _servletContext = servletContext;
+            refresh();
+        }
+        
+        public Resource[] getConfigResources()
+        {
+            try
+            {
+                return new Resource[]{new UrlResource(
+                        _servletContext.getResource(RESOURCE_LOCATION))};
+            }
+            catch(Exception e)
+            {
+                throw new RuntimeException(e);
+            }                    
+        }
+        
     }
 
 
