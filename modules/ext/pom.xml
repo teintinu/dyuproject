@@ -14,8 +14,8 @@
   <name>ext</name>
   
   <build>    
-	<defaultGoal>install</defaultGoal>
-	<plugins>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>

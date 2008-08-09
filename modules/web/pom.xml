@@ -13,8 +13,8 @@
   <packaging>jar</packaging>
   
   <build>    
-	<defaultGoal>install</defaultGoal>
-	<plugins>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
@@ -26,19 +26,19 @@
             </goals>
            </execution>
         </executions>
-      </plugin>	
-	</plugins>
+      </plugin>
+    </plugins>
   </build>
   
   <dependencies>
     <dependency>
       <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>	       
+      <artifactId>commons-logging</artifactId>
     </dependency>  
     <dependency>
       <groupId>com.dyuproject</groupId>
       <artifactId>util</artifactId>
-      <version>${project.version}</version>	       
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
@@ -47,10 +47,10 @@
     </dependency>
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
-      <artifactId>servlet-api-3.0</artifactId>
-      <version>${jetty-version}</version>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
       <scope>provided</scope>
-	</dependency>    
+    </dependency>    
   </dependencies>
   
 </project>
