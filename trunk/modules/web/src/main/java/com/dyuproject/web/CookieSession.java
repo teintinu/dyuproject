@@ -77,19 +77,18 @@ public class CookieSession
             toDigest.append(remoteAddr);        
 
         // verify signature        
-        if(sig.equals(MD5.digest(toDigest.toString())))
+        if(!sig.equals(MD5.digest(toDigest.toString())))
+            return null;
+        
+        CookieSession session = new CookieSession(secretKey, cookie, remoteAddr);
+        // exclude signature on attributes map
+        for(int i=0,len=pairs.length-1; i<len ;i++)
         {
-            CookieSession session = new CookieSession(secretKey, cookie, remoteAddr);            
-            for(int i=0,len=pairs.length-1; i<len ;i++)
-            {
-                String[] param = Delim.EQUALS.split(pairs[i]);
-                if(param.length==2)
-                    session._attributes.put(param[0], param[1]);
-            }
-            session._modified = false;
-            return session;
-        }
-        return null;
+            String[] param = Delim.EQUALS.split(pairs[i]);
+            if(param.length==2)
+                session._attributes.internalPut(param[0], param[1]);
+        }            
+        return session;
     }
     
     static CookieSession create(String secretKey, String cookieName, HttpServletRequest request, 
@@ -100,9 +99,9 @@ public class CookieSession
     }    
     
     private boolean _parsed = false, _modified = false, _written = false;
-    private Map<String,String>_attributes = new AttributesMap<String,String>();
+    private AttributesMap<String,String>_attributes = new AttributesMap<String,String>();
     private Cookie _cookie;
-    private String _secretKey, _cookieName, _domain, _path, _remoteAddr;
+    private String _secretKey, _cookieName, _domain, _path, _remoteAddr, _hashValue;
     private int _maxAge;
     private Object _writeLock = new Object();
     
@@ -216,20 +215,25 @@ public class CookieSession
     
     public String getHashValue()
     {
+        if(_hashValue==null)
+            _hashValue = generateHashValue();
+        return _hashValue;
+    }
+    
+    private String generateHashValue()
+    {
         StringBuilder toDigest = new StringBuilder();
         StringBuilder output = new StringBuilder();
         
-        long now = System.currentTimeMillis();
-        toDigest.append(TIMESTAMP_ATTR).append('=').append(now);
-        output.append(TIMESTAMP_ATTR).append('=').append(now);
+        _attributes.internalPut(TIMESTAMP_ATTR, String.valueOf(System.currentTimeMillis()));
         
         for(Map.Entry<String, String> entry : _attributes.entrySet())
         {
             String key = entry.getKey();
-            if(!TIMESTAMP_ATTR.equals(key) && !SIG_ATTR.equals(key))
+            if(!SIG_ATTR.equals(key))
             {
                 String value = entry.getValue();
-                output.append('&').append(key).append('=').append(value);
+                output.append(key).append('=').append(value).append('&');
                 toDigest.append(key).append('=').append(value);
             }
         }        
@@ -238,10 +242,9 @@ public class CookieSession
         
         //remote address, prevents session hijacking
         if(_remoteAddr!=null)
-            toDigest.append(_remoteAddr);
+            toDigest.append(_remoteAddr);        
         
-        String sig = MD5.digest(toDigest.toString());
-        output.append('&').append(SIG_ATTR).append('=').append(sig);
+        output.append(SIG_ATTR).append('=').append(MD5.digest(toDigest.toString()));
         return B64Code.encode(output.toString());
     }
     
@@ -286,6 +289,11 @@ public class CookieSession
         AttributesMap()
         {
             super(8);
+        }
+        
+        private V internalPut(K key, V value)
+        {            
+            return super.put(key, value);
         }
         
         public V put(K key, V value)
