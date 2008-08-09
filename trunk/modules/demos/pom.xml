@@ -14,9 +14,9 @@
   <name>demos</name>
   
   <build>    
-	<defaultGoal>install</defaultGoal>
+    <defaultGoal>install</defaultGoal>
     <finalName>${project.artifactId}-${project.version}</finalName>
-	<plugins>
+    <plugins>
       <plugin>
         <artifactId>maven-antrun-plugin</artifactId>
         <executions>
@@ -45,8 +45,8 @@
             </configuration>
           </execution>
         </executions>
-      </plugin>  
-    </plugins>	
+      </plugin>
+    </plugins>
   </build>
   
   <modules>

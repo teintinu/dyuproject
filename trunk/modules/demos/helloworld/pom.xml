@@ -31,7 +31,7 @@
           <reload>manual</reload>
         </configuration>
       </plugin>
-    </plugins>	
+    </plugins>
   </build>
   
   <dependencies>
@@ -47,10 +47,10 @@
     </dependency>    
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
-      <artifactId>servlet-api-3.0</artifactId>
-      <version>${jetty-version}</version>
+      <artifactId>servlet-api</artifactId>
+      <version>${servlet-api-version}</version>
       <scope>provided</scope>
-	</dependency>	
+    </dependency>
   </dependencies>
 
 </project>
