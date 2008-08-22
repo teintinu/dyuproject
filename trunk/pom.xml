@@ -9,7 +9,6 @@
   <name>dyuproject</name>
   <url>http://code.google.com/p/dyuproject</url>
   <build>    
-    <finalName>dyuproject-${project.artifactId}-${project.version}</finalName>
     <plugins>  
       <plugin>
         <inherited>true</inherited>

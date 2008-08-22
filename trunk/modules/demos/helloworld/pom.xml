@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject.demos</groupId>
   <artifactId>helloworld</artifactId>
-  <name>helloworld</name>  
+  <name>demos :: helloworld</name>  
   <packaging>war</packaging>
 
   <build>

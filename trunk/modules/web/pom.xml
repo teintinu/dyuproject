@@ -8,8 +8,8 @@
   </parent>  
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject</groupId>
-  <artifactId>web</artifactId>
-  <name>web</name>
+  <artifactId>dyuproject-web</artifactId>
+  <name>restful web framework</name>
   <packaging>jar</packaging>
   
   <build>    
