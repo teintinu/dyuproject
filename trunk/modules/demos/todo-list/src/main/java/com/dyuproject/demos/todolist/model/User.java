@@ -134,7 +134,7 @@ public class User implements Serializable, FormatConverter.Bean
     
     @Column(name="todos")
     @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY)
-    @JoinColumn(name="todo_id")
+    @JoinColumn(name="user_id")
     public Set<Todo> getTodos()
     {
         return _todos;
