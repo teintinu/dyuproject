@@ -36,14 +36,14 @@
   
   <dependencies>
     <dependency>
-        <groupId>com.dyuproject</groupId>
-        <artifactId>web</artifactId>
-        <version>${project.version}</version>
+      <groupId>com.dyuproject</groupId>
+      <artifactId>dyuproject-web</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-        <groupId>com.dyuproject.ext</groupId>
-        <artifactId>ext-velocity</artifactId>
-        <version>${project.version}</version>
+      <groupId>com.dyuproject.ext</groupId>
+      <artifactId>dyuproject-velocity</artifactId>
+      <version>${project.version}</version>
     </dependency>    
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
