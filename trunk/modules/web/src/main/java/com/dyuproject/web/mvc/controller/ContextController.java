@@ -36,20 +36,20 @@ import com.dyuproject.web.mvc.WebContext;
  * @created Jun 5, 2008
  */
 
-public class ContextPathController extends AbstractController
+public class ContextController extends AbstractController
 {
     
-    private static final Log log = LogFactory.getLog(ContextPathController.class);
+    private static final Log log = LogFactory.getLog(ContextController.class);
     
     private Controller _defaultController;
     private Map<String,Controller> _controllers = new HashMap<String,Controller>();
     
-    public ContextPathController()
+    public ContextController()
     {
         this(null);
     }
     
-    public ContextPathController(String identifier)
+    public ContextController(String identifier)
     {
         setIdentifier(identifier);
         setIdentifierAttribute("*");
