@@ -100,7 +100,7 @@ public class Todo implements Serializable, FormatConverter.Bean
     }
     
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="todo_id")
+    @JoinColumn(name="user_id")
     public User getUser()
     {
         return _user;
