@@ -2,6 +2,7 @@ dyuproject-1.0-SNAPSHOT
 + updated maven artifact ids: prefixed with "dyuproject-" (namespaced to not conflict with other artifacts especially on webapp/WEB-INF/lib
 + changed the nonce separator of SmartDigestAuthentication
 + refactored SpringServletContextListener as a workaround for a bug in FileSystemApplicationContext on unix 
++ renamed ContextPathController to ContextController 
 
 dyuproject-1.0.4 2008-07-07
 + added SmartDigestAuthentication (expiration, remoteAddress sniffing, hashed with secretKey)
