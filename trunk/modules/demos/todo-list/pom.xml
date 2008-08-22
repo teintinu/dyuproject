@@ -48,7 +48,7 @@
   <dependencies>
     <dependency>
         <groupId>com.dyuproject.ext</groupId>
-        <artifactId>ext-spring-ioc</artifactId>
+        <artifactId>dyuproject-spring-ioc</artifactId>
         <version>${project.version}</version>
     </dependency>  
     <dependency>

@@ -37,7 +37,7 @@
     </dependency>  
     <dependency>
       <groupId>com.dyuproject</groupId>
-      <artifactId>util</artifactId>
+      <artifactId>dyuproject-util</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
