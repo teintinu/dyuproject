@@ -8,6 +8,18 @@
   <packaging>pom</packaging>
   <name>dyuproject</name>
   <url>http://code.google.com/p/dyuproject</url>
+  <developers>
+    <developer>
+      <id>dyu</id>
+      <name>David Yu</name>
+      <email>david.yu.ftw@gmail.com</email>
+      <url>http://www.linkedin.com/in/davidyuftw</url>
+    </developer>
+  </developers>    
+  <scm>
+    <connection>scm:svn:https://dyuproject.googlecode.com/svn/trunk</connection>
+    <developerConnection>scm:svn:https://dyuproject.googlecode.com/svn/trunk</developerConnection>    
+  </scm>  
   <build>    
     <plugins>  
       <plugin>
