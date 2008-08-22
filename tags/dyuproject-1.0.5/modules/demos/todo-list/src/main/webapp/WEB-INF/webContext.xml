@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<beans>
+
+  <bean id="serviceManager" class="com.dyuproject.demos.todolist.ServiceManager"/>
+  
+  <bean id="userFilter" class="com.dyuproject.web.mvc.FilterCollection">
+    <property name="filters">
+      <list>
+        <ref bean="serviceManager"/>
+        <bean class="com.dyuproject.demos.todolist.mvc.UserFilter"/>
+      </list>
+    </property>  
+  </bean>
+  
+  <bean id="todoDao" class="com.dyuproject.demos.todolist.dao.TodoDao">
+    <property name="serviceManager" ref="serviceManager"/>
+  </bean>  
+  
+  <bean id="userDao" class="com.dyuproject.demos.todolist.dao.UserDao">
+    <property name="serviceManager" ref="serviceManager"/>
+  </bean>
+  
+  <bean id="webContext" class="com.dyuproject.web.mvc.WebContext">
+    <property name="attributes">
+      <map>
+        <entry key="todoDao" value-ref="todoDao"/>
+        <entry key="userDao" value-ref="userDao"/>      
+      </map>
+    </property>
+    
+    <property name="defaultController">
+      <bean class="com.dyuproject.demos.todolist.mvc.DefaultController"/>   
+    </property>
+    
+    <property name="controllers">    
+      <list>
+        <bean class="com.dyuproject.demos.todolist.mvc.AuthController">
+          <property name="filter" ref="serviceManager"/>
+        </bean>
+        
+        <bean class="com.dyuproject.demos.todolist.mvc.LoginController"/>
+        
+        <bean class="com.dyuproject.demos.todolist.mvc.LogoutController"/>
+        
+        <bean class="com.dyuproject.demos.todolist.mvc.OverviewController">
+          <property name="filter" ref="userFilter"/>
+        </bean>
+        
+        <bean class="com.dyuproject.demos.todolist.mvc.TodosController">
+          <property name="filter" ref="serviceManager"/>
+        </bean>
+        
+        <bean class="com.dyuproject.demos.todolist.mvc.UsersController">
+          <property name="filter" ref="serviceManager"/>
+        </bean>        
+      </list>
+    </property>  
+  </bean>
+
+</beans>
