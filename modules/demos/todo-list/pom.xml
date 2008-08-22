@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject.demos</groupId>
   <artifactId>todo-list</artifactId>
-  <name>todo-list</name>  
+  <name>demos :: todo-list</name>  
   <packaging>war</packaging>
 
   <build>

@@ -8,8 +8,8 @@
   </parent>  
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject.ext</groupId>
-  <artifactId>ext-spring-ioc</artifactId>
-  <name>ext-spring-ioc</name>
+  <artifactId>dyuproject-spring-ioc</artifactId>
+  <name>ext :: dyuproject-spring-ioc</name>
   <packaging>jar</packaging>
 
   <build>    

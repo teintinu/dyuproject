@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ updated maven artifact ids: prefixed with "dyuproject-" (namespaced to not conflict with other artifacts especially on webapp/WEB-INF/lib
 + changed the nonce separator of SmartDigestAuthentication
 + refactored SpringServletContextListener as a workaround for a bug in FileSystemApplicationContext on unix 
 

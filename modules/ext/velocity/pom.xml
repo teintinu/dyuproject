@@ -8,8 +8,8 @@
   </parent>  
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject.ext</groupId>
-  <artifactId>ext-velocity</artifactId>
-  <name>ext-velocity</name>
+  <artifactId>dyuproject-velocity</artifactId>
+  <name>ext :: dyuproject-velocity</name>
   <packaging>jar</packaging>
 
   <build>    
