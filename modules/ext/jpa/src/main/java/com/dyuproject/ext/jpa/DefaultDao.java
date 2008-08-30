@@ -29,12 +29,12 @@ public class DefaultDao
     
     protected EntityManagerManager _entityManagerManager;
     
-    public void setServiceManager(EntityManagerManager entityManagerManager)
+    public void setEntityManagerManager(EntityManagerManager entityManagerManager)
     {
         _entityManagerManager = entityManagerManager;
     }
     
-    public EntityManagerManager getServiceManager()
+    public EntityManagerManager setEntityManagerManager()
     {
         return _entityManagerManager;
     }
