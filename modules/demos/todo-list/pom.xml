@@ -50,7 +50,12 @@
       <groupId>com.dyuproject.ext</groupId>
       <artifactId>dyuproject-spring-ioc</artifactId>
       <version>${project.version}</version>
-    </dependency>  
+    </dependency>
+    <dependency>
+      <groupId>com.dyuproject.ext</groupId>
+      <artifactId>dyuproject-jpa</artifactId>
+      <version>${project.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>

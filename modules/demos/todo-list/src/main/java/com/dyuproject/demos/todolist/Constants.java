@@ -40,22 +40,10 @@ public class Constants
     
     public static final String DISABLED = "disabled";
     
-    public static final String NO_CHANGES_MADE = "No changes made.";
-
     // todos constants
     
     public static final String TODO = "todo";
-    public static final String TODOS = "todos";  
-    
-    public static final String TODO_CREATED = "Todo created.";
-    public static final String TODO_UPDATED = "Todo updated.";
-    public static final String TODO_DELETED = "Todo deleted.";
-    
-    public static final String TODO_NOT_FOUND = "Todo not found.";    
-    
-    public static final String COULD_NOT_CREATE_TODO = "Could not create todo.";
-    public static final String COULD_NOT_UPDATE_TODO = "Could not update todo.";
-    public static final String COULD_NOT_DELETE_TODO = "Could not delete todo.";
+    public static final String TODOS = "todos";
     
     public static final String TITLE = "title";
     public static final String CONTENT = "content";
@@ -66,16 +54,6 @@ public class Constants
     public static final String USER = "user";
     public static final String USERS = "users";
     
-    public static final String USER_CREATED = "User created.";
-    public static final String USER_UPDATED = "User updated.";
-    public static final String USER_DELETED = "User deleted.";
-    
-    public static final String USER_NOT_FOUND = "User not found."; 
-    
-    public static final String COULD_NOT_CREATE_USER = "Could not create user.";
-    public static final String COULD_NOT_UPDATE_USER = "Could not update user.";
-    public static final String COULD_NOT_DELETE_USER = "Could not delete user.";  
-    
     public static final String FIRST_NAME = "firstName";
     public static final String LAST_NAME = "lastName";
     public static final String EMAIL = "email";
@@ -85,11 +63,7 @@ public class Constants
     public static final String OLD_PASSWORD = "oldPassword";
     public static final String NEW_PASSWORD = "newPassword";
     
-    public static final String PASSWORD_CHANGED = "Password changed.";
-    
-    public static final String REQUIRED_PARAMS_USER_CREATE = "The ff are required: First Name, Last Name, Email, Username, Password, Confirm Password";
-    public static final String REQUIRED_PARAMS_CHANGE_PASSWORD = "Old and new password are required.";
-    public static final String PASSWORD_DID_NOT_MATCH = "Password did not match.";
+
     
 
 }

@@ -25,23 +25,59 @@ import com.dyuproject.util.format.FormatConverter.Builder;
 public class Feedback implements FormatConverter.Bean
 {
     
-    public static final Feedback USER_NOT_FOUND = new Feedback(Constants.USER_NOT_FOUND, false);  
+    public static final Feedback USER_NOT_FOUND = new Feedback("User not found.", false);  
     
-    public static final Feedback COULD_NOT_CREATE_USER = new Feedback(Constants.COULD_NOT_CREATE_USER, false);
-    public static final Feedback COULD_NOT_UPDATE_USER = new Feedback(Constants.COULD_NOT_UPDATE_USER, false);
-    public static final Feedback COULD_NOT_DELETE_USER = new Feedback(Constants.COULD_NOT_DELETE_USER, false);
+    public static final Feedback COULD_NOT_CREATE_USER = new Feedback(
+            "Could not create user.", false);
     
-    public static final Feedback TODO_NOT_FOUND = new Feedback(Constants.TODO_NOT_FOUND, false);
+    public static final Feedback COULD_NOT_UPDATE_USER = new Feedback(
+            "Could not update user.", false);
     
-    public static final Feedback COULD_NOT_CREATE_TODO = new Feedback(Constants.COULD_NOT_CREATE_TODO, false);
-    public static final Feedback COULD_NOT_UPDATE_TODO = new Feedback(Constants.COULD_NOT_UPDATE_TODO, false);
-    public static final Feedback COULD_NOT_DELETE_TODO = new Feedback(Constants.COULD_NOT_DELETE_TODO, false);
+    public static final Feedback COULD_NOT_DELETE_USER = new Feedback(
+            "Could not delete user.", false);
     
-    public static final Feedback NO_CHANGES_MADE = new Feedback(Constants.NO_CHANGES_MADE, false);
+    public static final Feedback TODO_NOT_FOUND = new Feedback(
+            "Todo not found.", false);
     
-    public static final Feedback REQUIRED_PARAMS_USER_CREATE = new Feedback(Constants.REQUIRED_PARAMS_USER_CREATE, false);
-    public static final Feedback REQUIRED_PARAMS_CHANGE_PASSWORD = new Feedback(Constants.REQUIRED_PARAMS_CHANGE_PASSWORD, false);
-    public static final Feedback PASSWORD_DID_NOT_MATCH = new Feedback(Constants.PASSWORD_DID_NOT_MATCH, false);
+    public static final Feedback COULD_NOT_CREATE_TODO = new Feedback(
+            "Could not create todo.", false);
+    
+    public static final Feedback COULD_NOT_UPDATE_TODO = new Feedback(
+            "Could not update todo.", false);
+    
+    public static final Feedback COULD_NOT_DELETE_TODO = new Feedback(
+            "Could not delete todo.", false);
+    
+    public static final Feedback NO_CHANGES_MADE = new Feedback(
+            "No changes made.", false);
+    
+    public static final Feedback REQUIRED_PARAMS_USER_CREATE = new Feedback(
+            "The ff are required: First Name, Last Name, Email, Username, Password, Confirm Password", false);
+    
+    public static final Feedback REQUIRED_PARAMS_CHANGE_PASSWORD = new Feedback(
+            "Old and new password are required.", false);
+    
+    public static final Feedback PASSWORD_DID_NOT_MATCH = new Feedback(
+            "Password did not match.", false);
+    
+    /* ---------------------------------------------------------------------------- */
+    
+    public static final Feedback PASSWORD_CHANGED = new Feedback("Password changed.", true);
+    
+    public static final Feedback TODO_CREATED = new Feedback("Todo created.", true);
+    
+    public static final Feedback TODO_UPDATED = new Feedback("Todo updated.", true);
+    
+    public static final Feedback TODO_DELETED = new Feedback("Todo deleted.", true);
+    
+    public static final Feedback USER_CREATED = new Feedback("User created.", true);
+    
+    public static final Feedback USER_UPDATED = new Feedback("User updated.", true);
+    
+    public static final Feedback USER_DELETED = new Feedback("User deleted.", true);    
+    
+    /* ---------------------------------------------------------------------------- */
+    
     
     private String _msg;
     private boolean _positive;
