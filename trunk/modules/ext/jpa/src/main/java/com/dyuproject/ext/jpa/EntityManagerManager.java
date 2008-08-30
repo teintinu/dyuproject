@@ -48,6 +48,18 @@ public class EntityManagerManager extends AbstractFilter
         
     }
     
+    public EntityManagerManager(String persistenceUnitName)
+    {
+        this(persistenceUnitName, true);
+    }
+    
+    public EntityManagerManager(String persistenceUnitName, boolean init) 
+    {
+        setPersistenceUnitName(persistenceUnitName);
+        if(init)
+            init();
+    }
+    
     public void setPersistenceUnitName(String persistenceUnitName)
     {
         _persistenceUnitName = persistenceUnitName;
@@ -70,10 +82,13 @@ public class EntityManagerManager extends AbstractFilter
     }
 
     protected void init()
-    {
-        if(getPersistenceUnitName()==null)
-            throw new IllegalStateException("*persistenceUnitName* not set.");
-        _entityManagerFactory = Persistence.createEntityManagerFactory(getPersistenceUnitName());       
+    {        
+        if(_entityManagerFactory==null)
+        {
+            if(getPersistenceUnitName()==null)
+                throw new IllegalStateException("*persistenceUnitName* not set.");
+            _entityManagerFactory = Persistence.createEntityManagerFactory(getPersistenceUnitName());
+        }
     }
     
     public void destroy()
