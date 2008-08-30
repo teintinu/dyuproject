@@ -1,5 +1,5 @@
 dyuproject-1.0-SNAPSHOT
-+ 
++ added dyuproject-jpa(modules/ext/jpa)
 
 dyuproject-1.0.5 2008-08-22
 + updated maven artifact ids: prefixed with "dyuproject-" (namespaced to not conflict with other artifacts especially on webapp/WEB-INF/lib
