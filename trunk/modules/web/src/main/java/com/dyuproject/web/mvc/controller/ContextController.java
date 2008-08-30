@@ -122,9 +122,10 @@ public class ContextController extends AbstractController
         return _controllers.get(resourceName);
     }
     
-    protected int getIndex(HttpServletRequest request)
+    public final int getIndex(HttpServletRequest request)
     {
-        return ((Integer)request.getAttribute(WebContext.PATHINFO_INDEX_ATTR)).intValue();
+        Integer idx = (Integer)request.getAttribute(WebContext.PATHINFO_INDEX_ATTR);
+        return idx!=null ? idx.intValue() : -1;
     }
     
     /* ================================================================================= */
@@ -134,6 +135,11 @@ public class ContextController extends AbstractController
     {
         int pathIndex = getIndex(request);
         // must be root context
+        if(pathIndex==-1)
+        {
+            handleRoot(mime, request, response);
+            return;
+        }
         if(pathIndex!=0)
         {
             response.sendError(404);
