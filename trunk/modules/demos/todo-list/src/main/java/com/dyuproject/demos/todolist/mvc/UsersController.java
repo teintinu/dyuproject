@@ -85,7 +85,7 @@ public class UsersController extends CRUDController
             }
             else
             {
-                request.setAttribute(Constants.MSG, Constants.REQUIRED_PARAMS_USER_CREATE);
+                request.setAttribute(Constants.MSG, Feedback.REQUIRED_PARAMS_USER_CREATE.getMsg());
                 request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);  
                 dispatchToFormView(null, request, response);
             }
@@ -113,7 +113,7 @@ public class UsersController extends CRUDController
             }
             else
             {
-                request.setAttribute(Constants.MSG, Constants.PASSWORD_DID_NOT_MATCH);
+                request.setAttribute(Constants.MSG, Feedback.PASSWORD_DID_NOT_MATCH.getMsg());
                 request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);  
                 dispatchToFormView(null, request, response);
             }
@@ -145,14 +145,14 @@ public class UsersController extends CRUDController
         {
             if(created)
             {       
-                //request.setAttribute(Constants.MSG, Constants.USER_CREATED);                
+                //request.setAttribute(Constants.MSG, Feedback.USER_CREATED.getMsg());                
                 //dispatchToView(user, request, response);
                 response.sendRedirect(request.getContextPath() + "/users/" +user.getId());
             }
             else
             {                
-                request.setAttribute(Constants.MSG, UserDao.getCurrentErrorMessage()!=null ? 
-                        UserDao.getCurrentErrorMessage() : Constants.COULD_NOT_CREATE_USER);
+                request.setAttribute(Constants.MSG, UserDao.getCurrentFeedback()!=null ? 
+                        UserDao.getCurrentFeedback().getMsg() : Feedback.COULD_NOT_CREATE_USER);
                 request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
                 dispatchToFormView(user, request, response);
             }
@@ -184,8 +184,8 @@ public class UsersController extends CRUDController
         }
         else
         {
-            request.setAttribute(Constants.MSG, deleted ? Constants.USER_DELETED : 
-                Constants.COULD_NOT_DELETE_USER);
+            request.setAttribute(Constants.MSG, deleted ? Feedback.USER_DELETED.getMsg() : 
+                Feedback.COULD_NOT_DELETE_USER.getMsg());
             
             dispatchToView(user, request, response);
         }
@@ -283,9 +283,9 @@ public class UsersController extends CRUDController
         }
         else
         {            
-            request.setAttribute(Constants.MSG, updated ? Constants.USER_UPDATED : 
-                UserDao.getCurrentErrorMessage()!=null ? UserDao.getCurrentErrorMessage() : 
-                    Constants.COULD_NOT_UPDATE_USER);
+            request.setAttribute(Constants.MSG, updated ? Feedback.USER_UPDATED : 
+                UserDao.getCurrentFeedback()!=null ? UserDao.getCurrentFeedback().getMsg() : 
+                    Feedback.COULD_NOT_UPDATE_USER.getMsg());
             dispatchToFormView(user, request, response);            
         }
         
@@ -348,23 +348,19 @@ public class UsersController extends CRUDController
         String oldPassword = request.getParameter(Constants.OLD_PASSWORD);
         String newPassword = request.getParameter(Constants.NEW_PASSWORD);
         
-        String msg = null;
         Feedback feedback = null;
         
         if(oldPassword==null || newPassword==null)
         {
-            msg = Constants.REQUIRED_PARAMS_CHANGE_PASSWORD;
             feedback = Feedback.REQUIRED_PARAMS_CHANGE_PASSWORD;
         }
         else if(oldPassword.equals(newPassword))
         {
-            msg = Constants.PASSWORD_DID_NOT_MATCH;
             feedback = Feedback.PASSWORD_DID_NOT_MATCH;
         }
         User user = id!=null ? _userDao.get(Long.valueOf(id)) : null;
         if(user==null)
         {
-            msg = Constants.USER_NOT_FOUND;
             feedback = Feedback.USER_NOT_FOUND;
         }
         
@@ -378,7 +374,9 @@ public class UsersController extends CRUDController
         }
         else
         {
-            request.setAttribute(Constants.MSG, msg==null ? Constants.PASSWORD_CHANGED : msg);
+            if(feedback==null)
+                feedback = Feedback.PASSWORD_CHANGED;
+            request.setAttribute(Constants.MSG, feedback.getMsg());
             dispatchToView(user, request, response);
         }        
         
@@ -415,7 +413,7 @@ public class UsersController extends CRUDController
         {
             User user = _userDao.get(Long.valueOf(id));
             if(user==null)
-                request.setAttribute(Constants.MSG, Constants.USER_NOT_FOUND);
+                request.setAttribute(Constants.MSG, Feedback.USER_NOT_FOUND.getMsg());
             else
                 request.setAttribute(Constants.USER, user);
             request.setAttribute(Constants.ACTION, Constants.ACTION_EDIT);

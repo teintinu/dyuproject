@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.demos.todolist.Constants;
+import com.dyuproject.demos.todolist.Feedback;
 import com.dyuproject.demos.todolist.dao.UserDao;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.CookieSession;
@@ -70,7 +71,7 @@ public class AuthController extends AbstractController
         User user = _userDao.get(username, password);
         if(user==null)
         {
-            request.setAttribute(Constants.MSG, Constants.USER_NOT_FOUND);
+            request.setAttribute(Constants.MSG, Feedback.USER_NOT_FOUND.getMsg());
             response.setContentType(Constants.TEXT_HTML);
             getWebContext().getJSPDispatcher().dispatch("login/index.jsp", request, 
                     response); 

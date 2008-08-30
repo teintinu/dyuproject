@@ -4,23 +4,25 @@
 
 <beans>
 
-  <bean id="serviceManager" class="com.dyuproject.demos.todolist.ServiceManager"/>
+  <bean id="entityManagerManager" class="com.dyuproject.ext.jpa.EntityManagerManager">
+    <property name="persistenceUnitName" value="todo-list-persistence"/>
+  </bean>
   
   <bean id="userFilter" class="com.dyuproject.web.mvc.FilterCollection">
     <property name="filters">
       <list>
-        <ref bean="serviceManager"/>
+        <ref bean="entityManagerManager"/>
         <bean class="com.dyuproject.demos.todolist.mvc.UserFilter"/>
       </list>
     </property>  
   </bean>
   
   <bean id="todoDao" class="com.dyuproject.demos.todolist.dao.TodoDao">
-    <property name="serviceManager" ref="serviceManager"/>
+    <property name="entityManagerManager" ref="entityManagerManager"/>
   </bean>  
   
   <bean id="userDao" class="com.dyuproject.demos.todolist.dao.UserDao">
-    <property name="serviceManager" ref="serviceManager"/>
+    <property name="entityManagerManager" ref="entityManagerManager"/>
   </bean>
   
   <bean id="webContext" class="com.dyuproject.web.mvc.WebContext">
@@ -38,7 +40,7 @@
     <property name="controllers">    
       <list>
         <bean class="com.dyuproject.demos.todolist.mvc.AuthController">
-          <property name="filter" ref="serviceManager"/>
+          <property name="filter" ref="entityManagerManager"/>
         </bean>
         
         <bean class="com.dyuproject.demos.todolist.mvc.LoginController"/>
@@ -50,11 +52,11 @@
         </bean>
         
         <bean class="com.dyuproject.demos.todolist.mvc.TodosController">
-          <property name="filter" ref="serviceManager"/>
+          <property name="filter" ref="entityManagerManager"/>
         </bean>
         
         <bean class="com.dyuproject.demos.todolist.mvc.UsersController">
-          <property name="filter" ref="serviceManager"/>
+          <property name="filter" ref="entityManagerManager"/>
         </bean>        
       </list>
     </property>  

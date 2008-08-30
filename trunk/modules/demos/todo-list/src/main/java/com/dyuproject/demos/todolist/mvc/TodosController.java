@@ -99,7 +99,7 @@ public class TodosController extends CRUDController
         {
             if(created)
             {
-                /*request.setAttribute(Constants.MSG, Constants.TODO_CREATED);
+                /*request.setAttribute(Constants.MSG, Feedback.TODO_CREATED.getMsg());
                 request.setAttribute(Constants.USER, user);
                 response.setContentType(Constants.TEXT_HTML);
                 getWebContext().getJSPDispatcher().dispatch("users/id.jsp", 
@@ -108,7 +108,7 @@ public class TodosController extends CRUDController
             }
             else
             {
-                request.setAttribute(Constants.MSG, Constants.COULD_NOT_CREATE_TODO);
+                request.setAttribute(Constants.MSG, Feedback.COULD_NOT_CREATE_TODO.getMsg());
                 request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
                 dispatchToFormView(todo, request, response);
             }
@@ -140,8 +140,8 @@ public class TodosController extends CRUDController
         }
         else
         {            
-            request.setAttribute(Constants.MSG, deleted ? Constants.TODO_DELETED : 
-                Constants.COULD_NOT_DELETE_TODO);
+            request.setAttribute(Constants.MSG, deleted ? Feedback.TODO_DELETED.getMsg() : 
+                Feedback.COULD_NOT_DELETE_TODO.getMsg());
             
             dispatchToView(todo, request, response);
         }        
@@ -236,8 +236,8 @@ public class TodosController extends CRUDController
         }
         else
         {            
-            request.setAttribute(Constants.MSG, updated ? Constants.TODO_UPDATED : 
-                Constants.COULD_NOT_UPDATE_TODO);            
+            request.setAttribute(Constants.MSG, updated ? Feedback.TODO_UPDATED.getMsg() : 
+                Feedback.COULD_NOT_UPDATE_TODO.getMsg());            
             dispatchToFormView(todo, request, response); 
         }        
        
@@ -324,7 +324,7 @@ public class TodosController extends CRUDController
         else        
         {
             if(!updated)
-                request.setAttribute(Constants.MSG, Constants.COULD_NOT_UPDATE_TODO);            
+                request.setAttribute(Constants.MSG, Feedback.COULD_NOT_UPDATE_TODO.getMsg());            
             String referer = request.getHeader("Referer");
             if(referer==null)                
                 dispatchToView(todo, request, response);
@@ -364,7 +364,7 @@ public class TodosController extends CRUDController
         {
             Todo todo = _todoDao.get(Long.valueOf(id));
             if(todo==null)
-                request.setAttribute(Constants.MSG, Constants.TODO_NOT_FOUND);
+                request.setAttribute(Constants.MSG, Feedback.TODO_NOT_FOUND.getMsg());
             else
                 request.setAttribute(Constants.TODO, todo);
             request.setAttribute(Constants.ACTION, Constants.ACTION_EDIT);

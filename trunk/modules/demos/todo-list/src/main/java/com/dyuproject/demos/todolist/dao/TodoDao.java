@@ -23,7 +23,7 @@ import com.dyuproject.demos.todolist.model.Todo;
  * @created May 21, 2008
  */
 
-public class TodoDao extends DefaultDao
+public class TodoDao extends AbstractDao
 {
     
     static final String GET = "select t from " + Todo.class.getSimpleName() + " t";

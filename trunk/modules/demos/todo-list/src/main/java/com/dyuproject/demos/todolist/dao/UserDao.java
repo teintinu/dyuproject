@@ -26,15 +26,14 @@ import com.dyuproject.demos.todolist.model.User;
  * @created May 21, 2008
  */
 
-public class UserDao extends DefaultDao
+public class UserDao extends AbstractDao
 {
     
     private static final String GET = "select u from " + User.class.getSimpleName() + " u";
     private static final String GET_BY_USERNAME = GET + " where u.username=?";
     private static final String GET_BY_USER_AND_PASS = GET + " where u.username=? and u.password=?";
     
-    private static final String USERNAME_ALREADY_EXISTS_STR = "Username already exists.";
-    private static final Feedback USERNAME_ALREADY_EXISTS = new Feedback(USERNAME_ALREADY_EXISTS_STR, false);
+    private static final Feedback USERNAME_ALREADY_EXISTS = new Feedback("Username already exists.", false);
     
     public User get(String username, String password)
     {
@@ -71,8 +70,7 @@ public class UserDao extends DefaultDao
             created = persist(user);
         } 
         catch(EntityExistsException e)
-        {
-            setCurrentErrorMessage(USERNAME_ALREADY_EXISTS_STR);
+        {            
             setCurrentFeedback(USERNAME_ALREADY_EXISTS);
             created = false;
         }
@@ -80,8 +78,7 @@ public class UserDao extends DefaultDao
         {
             if(e.getCause()!=null && 
                     e.getCause().getClass().getSimpleName().equals(CONSTRAINT_VIOLATION))
-            {
-                setCurrentErrorMessage(USERNAME_ALREADY_EXISTS_STR);
+            {                
                 setCurrentFeedback(USERNAME_ALREADY_EXISTS);
             }
             else
@@ -99,8 +96,7 @@ public class UserDao extends DefaultDao
             updated = persist(user);
         } 
         catch(Exception e)
-        {
-            setCurrentErrorMessage(USERNAME_ALREADY_EXISTS_STR);
+        {            
             setCurrentFeedback(USERNAME_ALREADY_EXISTS);
             updated = false;
         }
