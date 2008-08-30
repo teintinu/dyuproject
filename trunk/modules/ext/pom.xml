@@ -50,6 +50,7 @@
   <modules>
     <module>spring-ioc</module>
     <module>velocity</module>
+    <module>jpa</module>
   </modules>
   
 </project>
