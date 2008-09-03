@@ -53,7 +53,7 @@ public class User implements Serializable, FormatConverter.Bean
     private String _username;
     private String _password;
     
-    private Set<Todo> _todos = new HashSet<Todo>();
+    private Set<Todo> _todos;
     
     public void setId(Long id)
     {
@@ -129,10 +129,11 @@ public class User implements Serializable, FormatConverter.Bean
     
     public void addTodo(Todo todo)
     {
+        if(_todos==null)
+            _todos = new HashSet<Todo>();
         _todos.add(todo);
-    }
-    
-    @Column(name="todos")
+    }    
+
     @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY)
     @JoinColumn(name="user_id")
     public Set<Todo> getTodos()
