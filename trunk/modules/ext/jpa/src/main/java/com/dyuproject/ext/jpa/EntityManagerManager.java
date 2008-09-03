@@ -19,7 +19,11 @@ import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -30,7 +34,7 @@ import com.dyuproject.web.mvc.AbstractFilter;
  * @created Aug 30, 2008
  */
 
-public class EntityManagerManager extends AbstractFilter
+public class EntityManagerManager extends AbstractFilter implements javax.servlet.Filter
 {
     
     private static final ThreadLocal<EntityManager> __entityManager = new ThreadLocal<EntityManager>();
@@ -111,6 +115,31 @@ public class EntityManagerManager extends AbstractFilter
         __entityManager.set(null);
         if(manager!=null)
             manager.close();
+    }
+
+    public void doFilter(ServletRequest sreq, ServletResponse sresp,
+            FilterChain chain) throws IOException, ServletException
+    {
+        try
+        {
+            chain.doFilter(sreq, sresp);
+        }
+        finally
+        {
+            postHandle(true, null, (HttpServletRequest)sreq, (HttpServletResponse)sresp);
+        }        
+    }
+
+    public void init(FilterConfig config) throws ServletException
+    {
+        if(_persistenceUnitName==null)
+        {
+            _persistenceUnitName = config.getInitParameter("persistenceUnitName");
+            if(_persistenceUnitName==null)
+                throw new IllegalStateException("*persistenceUnitName* init-param not set.");
+        }
+        
+        init();        
     }
 
 }
