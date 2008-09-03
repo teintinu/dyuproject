@@ -135,6 +135,7 @@ public abstract class FormatConverter
         public void put(String key, Collection<Object> value);
         public void put(String key, Map<String, Object> value);
         public void put(String key, Bean value);
+        public void putRaw(String key, CharSequence value);
     }
     
 }

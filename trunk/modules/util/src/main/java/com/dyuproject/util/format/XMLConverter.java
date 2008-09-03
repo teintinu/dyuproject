@@ -350,6 +350,11 @@ public class XMLConverter extends FormatConverter
             _buffer.append(PROP_S);       
         }
         
+        public void putRaw(String key, CharSequence value)
+        {
+            throw new UnsupportedOperationException();
+        }
+        
     }
 
 }

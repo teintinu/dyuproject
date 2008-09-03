@@ -494,6 +494,13 @@ public class JSONConverter extends FormatConverter
             processConverterBean(this, value);
         }
         
+        public void putRaw(String key, CharSequence value)
+        {
+            _buffer.append(',');
+            addKey(_buffer, key);
+            _buffer.append(value==null ? NULL : value.toString());
+        }
+        
     }
     
 }
