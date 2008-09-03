@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ added method "putRaw" on FormatConverter.Bean
 + fixed ContextController bug when on root context and without subContexts
 + added dyuproject-jpa(modules/ext/jpa)
 
