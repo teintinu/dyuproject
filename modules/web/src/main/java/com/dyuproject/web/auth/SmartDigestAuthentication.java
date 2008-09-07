@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Delim;
-import com.dyuproject.util.digest.MD5;
+import com.dyuproject.util.DigestUtil;
 
 /**
  * @author David Yu
@@ -58,7 +58,7 @@ public class SmartDigestAuthentication extends DigestAuthentication
     {
         String remoteAddr = request.getRemoteAddr();
         String ts = String.valueOf(System.currentTimeMillis());
-        String sig = MD5.digest(remoteAddr + ts + _secretKey);
+        String sig = DigestUtil.digestMD5(remoteAddr + ts + _secretKey);
         
         StringBuilder buffer = new StringBuilder();
         buffer.append(remoteAddr).append(',').append(ts).append(',').append(sig);
@@ -74,7 +74,7 @@ public class SmartDigestAuthentication extends DigestAuthentication
             return false;
         
         // check if nonce was not altered
-        String sig = MD5.digest(tokens[0] + tokens[1] + _secretKey);        
+        String sig = DigestUtil.digestMD5(tokens[0] + tokens[1] + _secretKey);        
         if(!sig.equals(tokens[2]))
             return false;
         

@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Delim;
-import com.dyuproject.util.digest.MD5;
+import com.dyuproject.util.DigestUtil;
 
 /**
  * @author David Yu
@@ -77,7 +77,7 @@ public class CookieSession
             toDigest.append(remoteAddr);        
 
         // verify signature        
-        if(!sig.equals(MD5.digest(toDigest.toString())))
+        if(!sig.equals(DigestUtil.digestMD5(toDigest.toString())))
             return null;
         
         CookieSession session = new CookieSession(secretKey, cookie, remoteAddr);
@@ -244,7 +244,7 @@ public class CookieSession
         if(_remoteAddr!=null)
             toDigest.append(_remoteAddr);        
         
-        output.append(SIG_ATTR).append('=').append(MD5.digest(toDigest.toString()));
+        output.append(SIG_ATTR).append('=').append(DigestUtil.digestMD5(toDigest.toString()));
         return B64Code.encode(output.toString());
     }
     
