@@ -44,7 +44,7 @@ public abstract class DigestUtil
             int l = (data[i] & 0xf0) >>> 4;
             int r = data[i] & 0x0f; 
             out[y++] = HEXADECIMAL[l];
-            out[y++] = HEXADECIMAL[r];            
+            out[y++] = HEXADECIMAL[r];       
         }
         return out;
     }
@@ -64,6 +64,11 @@ public abstract class DigestUtil
     throws UnsupportedEncodingException
     {
         return getDigestedValue(type, data.getBytes(charset), charset);
+    }
+    
+    public static String getDigestedValue(String type, String data)
+    {
+        return getDigestedValue(type, data.getBytes());
     }
     
     static String getDigestedValue(String type, byte[] data, String charset)
