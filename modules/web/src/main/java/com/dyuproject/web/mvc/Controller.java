@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Serves REST requests
+ * 
  * @author David Yu
  * @created May 9, 2008
  */

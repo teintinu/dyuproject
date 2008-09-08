@@ -27,6 +27,8 @@ import org.mortbay.util.TypeUtil;
 import com.dyuproject.util.B64Code;
 
 /**
+ * Web authorization using MD5 digest.
+ * 
  * @author David Yu
  * @created Jun 28, 2008
  */

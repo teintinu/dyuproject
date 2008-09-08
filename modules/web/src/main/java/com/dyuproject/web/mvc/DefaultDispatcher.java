@@ -25,6 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Dispatches to the container's default servlet
+ * 
  * @author David Yu
  * @created May 16, 2008
  */

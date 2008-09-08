@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.web.mvc.AbstractController;
 
 /**
+ * A context controller that dispatches all the requests to the container's default servlet.
+ * 
+ * 
  * @author David Yu
  * @created May 22, 2008
  */

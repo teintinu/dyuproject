@@ -28,6 +28,9 @@ import org.apache.commons.logging.LogFactory;
 import com.dyuproject.util.ResourceUtil;
 
 /**
+ * A utility servlet that serves a javascript file that is external from the webapp.
+ * Refreshes the content-served when content changes.
+ * 
  * @author David Yu
  * @created Feb 14, 2008
  */

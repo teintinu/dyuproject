@@ -26,6 +26,10 @@ import com.dyuproject.util.Delim;
 import com.dyuproject.util.DigestUtil;
 
 /**
+ * Session attribues being stored on the client cookie.
+ * Improves performance as we're not using the backend to store the state.
+ * Allows string attributes only.
+ * 
  * @author David Yu
  * @created May 19, 2008
  */

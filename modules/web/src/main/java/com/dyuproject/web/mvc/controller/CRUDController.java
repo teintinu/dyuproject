@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Helper controller for CRUD restful requests
+ * 
  * @author David Yu
  * @created May 22, 2008
  */

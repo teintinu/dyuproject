@@ -25,6 +25,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
+ * Efficiently dispatches to the jsp servlet.
+ * 
  * @author David Yu
  * @created May 16, 2008
  */

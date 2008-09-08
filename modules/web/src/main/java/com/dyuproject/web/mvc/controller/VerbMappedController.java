@@ -27,6 +27,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.web.mvc.AbstractController;
 
 /**
+ * REST verbs are mapped to the methods with a specific method signature.
+ * Any method that takes a (String, request, response) signature will be called
+ * when the verb matches
+ * 
  * @author David Yu
  * @created May 16, 2008
  */

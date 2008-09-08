@@ -21,6 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Pre-handling and post-handling of REST requests allowing the request to continue or not.
+ * Security handling is decoupled/contained.
+ * Also works as an interceptor.
+ * 
  * @author David Yu
  * @created May 18, 2008
  */

@@ -37,6 +37,8 @@ import com.dyuproject.web.CookieSession;
 import com.dyuproject.web.CookieSessionManager;
 
 /**
+ * The REST web application context.
+ * 
  * @author David Yu
  * @created May 11, 2008
  */

@@ -20,6 +20,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Manages the CookieSession.
+ * The environment is setup from a java.util.Properties 
+ * and taking the valaues of session.* keys
+ * 
  * @author David Yu
  * @created Jun 2, 2008
  */
