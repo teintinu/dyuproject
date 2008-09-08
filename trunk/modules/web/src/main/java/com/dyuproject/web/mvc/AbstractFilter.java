@@ -15,6 +15,8 @@
 package com.dyuproject.web.mvc;
 
 /**
+ * Base filter to pre-handle and post-handle requests
+ * 
  * @author David Yu
  * @created May 18, 2008
  */

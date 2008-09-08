@@ -17,6 +17,9 @@ package com.dyuproject.web;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Checks if the request is valid.
+ * Useful for containing/decoupling the pre-requisites of a request.
+ * 
  * @author David Yu
  * @created Jun 8, 2008
  */

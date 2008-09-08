@@ -23,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * The REST servlet to handle all the requests to a webapp.
+ * 
  * @author David Yu
  * @created May 10, 2008
  */

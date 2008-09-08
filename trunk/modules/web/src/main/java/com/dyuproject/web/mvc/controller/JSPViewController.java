@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.web.mvc.AbstractController;
 
 /**
+ * Takes a string argument to a jsp view.
+ * Dispatches all requests to the specific jsp view.
+ * 
  * @author David Yu
  * @created Jun 3, 2008
  */

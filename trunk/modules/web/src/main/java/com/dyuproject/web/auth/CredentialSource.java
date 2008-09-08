@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The credential datasource.  Could be from a properties file, database, or any other datasource.
+ * The credential datasource that the Authentication uses.  
+ * It could be from a properties file, database, or any other datasource.
  * 
  * @author David Yu
  * @created Jun 28, 2008

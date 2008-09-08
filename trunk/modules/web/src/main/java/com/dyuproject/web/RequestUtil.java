@@ -28,6 +28,9 @@ import org.mortbay.util.UrlEncoded;
 import com.dyuproject.util.Delim;
 
 /**
+ * Util for reading request parameters from a PUT request.
+ * This is not needed if Jetty is used.
+ * 
  * @author David Yu
  */
 

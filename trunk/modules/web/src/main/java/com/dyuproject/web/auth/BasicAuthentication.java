@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.util.B64Code;
 
 /**
+ * Web authorization using BASIC.
+ * Use only if in secure https mode because the user/pass is passed in clear test.
+ * 
  * @author David Yu
  * @created Jun 28, 2008
  */

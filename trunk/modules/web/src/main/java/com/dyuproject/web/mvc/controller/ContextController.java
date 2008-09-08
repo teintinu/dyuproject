@@ -32,6 +32,8 @@ import com.dyuproject.web.mvc.WebContext;
 
 
 /**
+ * A controller with subControllers and is being attached to a specific context.
+ * 
  * @author David Yu
  * @created Jun 5, 2008
  */

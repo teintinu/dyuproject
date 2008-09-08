@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Dispatches a request to generate a view from a Model
+ * 
  * @author David Yu
  * @created May 16, 2008
  */

@@ -21,6 +21,8 @@ import com.dyuproject.util.Delim;
 import com.dyuproject.util.DigestUtil;
 
 /**
+ * Web authorization using MD5 digest with expiry and prevents session hi-jacking
+ * 
  * @author David Yu
  * @created Jul 1, 2008
  */

@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 
 
 /**
+ * The base controller to serve REST requests.
+ * 
  * @author David Yu
  * @created May 16, 2008
  */

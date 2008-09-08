@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Web authorization
+ * 
  * @author David Yu
  * @created Jun 28, 2008
  */
