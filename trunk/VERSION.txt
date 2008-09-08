@@ -1,4 +1,7 @@
 dyuproject-1.0-SNAPSHOT
++ DigestUtil for SHA-1, SHA-256, MD5, etc
++ DiffieHellman
++ javadoc
 + added method "putRaw" on FormatConverter.Bean
 + fixed ContextController bug when on root context and without subContexts
 + added dyuproject-jpa(modules/ext/jpa)
