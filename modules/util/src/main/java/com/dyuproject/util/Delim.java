@@ -17,6 +17,9 @@ package com.dyuproject.util;
 import java.util.regex.Pattern;
 
 /**
+ * Common delimiters (used to split strings into arrays) 
+ * that are pre-compiled to increase efficiency.  
+ * 
  * @author David Yu
  */
 

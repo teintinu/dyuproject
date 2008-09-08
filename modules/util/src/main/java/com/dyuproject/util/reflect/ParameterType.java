@@ -15,6 +15,8 @@
 package com.dyuproject.util.reflect;
 
 /**
+ * The java.lang.* primitive and primitive wrapper types
+ * 
  * @author David Yu
  * @created Mar 14, 2008
  */

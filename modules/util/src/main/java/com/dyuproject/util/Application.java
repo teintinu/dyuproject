@@ -28,6 +28,9 @@ import java.util.Properties;
 import java.util.StringTokenizer;
 
 /**
+ * An executable jar ,containing the dependencies of an application, bundling the entire
+ * application in a single contained jar.
+ * 
  * @author David Yu
  * @created Feb 25, 2008
  */

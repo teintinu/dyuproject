@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 
 /**
+ * Util for files and streams.
+ * 
  * @author David Yu
  */
 

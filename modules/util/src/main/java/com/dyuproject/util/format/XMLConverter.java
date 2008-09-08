@@ -23,6 +23,8 @@ import java.util.Map;
 import com.dyuproject.util.Delim;
 
 /**
+ * Converts a bean to a string in XML format.
+ * 
  * @author David Yu
  */
 

@@ -17,6 +17,8 @@ package com.dyuproject.util.reflect;
 import java.util.Map;
 
 /**
+ * A bean that can be constructed from a set of string/value pairs
+ * 
  * @author David Yu
  * @created Mar 14, 2008
  */
