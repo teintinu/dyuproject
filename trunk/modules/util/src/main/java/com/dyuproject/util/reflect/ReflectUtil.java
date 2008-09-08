@@ -20,6 +20,8 @@ import java.util.Map;
 
 
 /**
+ * Util for java reflections
+ * 
  * @author David Yu
  * @created Mar 14, 2008
  */

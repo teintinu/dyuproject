@@ -18,6 +18,8 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 
 /**
+ * Util for digesting and encoding bytes/strings.
+ * 
  * @author David Yu
  * @created Sep 7, 2008
  */

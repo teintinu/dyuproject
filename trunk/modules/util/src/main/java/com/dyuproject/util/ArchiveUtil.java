@@ -22,6 +22,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
 /**
+ * Util for extracting *.jar, *.war and *.zip archives.
+ * 
  * @author David Yu
  * @created Feb 25, 2008
  */

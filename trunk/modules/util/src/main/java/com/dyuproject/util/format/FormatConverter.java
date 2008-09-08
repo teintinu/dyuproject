@@ -14,7 +14,6 @@
 
 package com.dyuproject.util.format;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,6 +22,8 @@ import java.util.Set;
 
 
 /**
+ * Converts a bean to a string in another format.
+ * 
  * @author David Yu
  */
 
