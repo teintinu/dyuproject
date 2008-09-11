@@ -101,6 +101,20 @@ public abstract class DigestUtil
         }
     }
     
+    public static byte[] getPlainDigestedValue(String type, byte[] data)
+    {
+        try
+        {
+            MessageDigest digest = MessageDigest.getInstance(type);
+            return digest.digest(data);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    
     public static String digestMD5(String data)
     {
         return getDigestedValue(MD5, data.getBytes());
