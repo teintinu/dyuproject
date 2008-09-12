@@ -131,7 +131,7 @@ public class Cryptography
     
     public String decrypt(String input, String charset) throws Exception
     {
-        return new String(input.getBytes(charset), charset);
+        return new String(decrypt(input.getBytes(charset)), charset);
     }
     
     public String decryptDecode(String input) throws Exception
