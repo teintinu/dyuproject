@@ -43,10 +43,24 @@ public abstract class DigestUtil
         byte[] out = new byte[data.length*2];        
         for (int i=0,y=0; i<data.length; i++) 
         {            
-            int l = (data[i] & 0xf0) >>> 4;
+            int l = (data[i] & 0xf0) >> 4;
             int r = data[i] & 0x0f; 
             out[y++] = HEXADECIMAL[l];
             out[y++] = HEXADECIMAL[r];       
+        }
+        return out;
+    }
+    
+    public static char[] getHexChars(byte[] data)
+    {
+
+        char[] out = new char[data.length*2];        
+        for (int i=0,y=0; i<data.length; i++) 
+        {            
+            int l = (data[i] & 0xf0) >> 4;
+            int r = data[i] & 0x0f; 
+            out[y++] = (char)HEXADECIMAL[l];
+            out[y++] = (char)HEXADECIMAL[r];       
         }
         return out;
     }
