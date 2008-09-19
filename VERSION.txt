@@ -1,4 +1,5 @@
 dyuproject-1.0-SNAPSHOT
++ openid implementation (consumer/relying party)
 + lazy xml parsing utils
 + DigestUtil for SHA-1, SHA-256, MD5, etc
 + DiffieHellman
