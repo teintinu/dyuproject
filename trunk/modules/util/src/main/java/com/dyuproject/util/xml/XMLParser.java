@@ -124,7 +124,8 @@ public class XMLParser
                                 {
                                     if(searchRoot)
                                     {
-                                        handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim());
+                                        if(!handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                            return;
                                         searchRoot = false;
                                     }
                                     else if(!handler.startElement(new String(cbuf, mark+1, offset-mark-1).trim()))
@@ -161,6 +162,7 @@ public class XMLParser
                         }
                         continue;
                         
+                    case '?':
                     case '!':
                         switch(state)
                         {
@@ -275,7 +277,8 @@ public class XMLParser
                                 {
                                     if(searchRoot)
                                     {
-                                        handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim());
+                                        if(handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                            return;
                                         searchRoot = false;
                                     }
                                     else if(!handler.startElement(new String(cbuf, mark+1, offset-mark-1).trim()))
@@ -299,7 +302,8 @@ public class XMLParser
                                 {
                                     if(searchRoot)
                                     {
-                                        handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim());
+                                        if(!handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                            return;
                                         searchRoot = false;
                                     }
                                     else if(!handler.startElement(new String(cbuf, mark+1, offset-mark-1).trim()))
