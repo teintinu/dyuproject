@@ -32,10 +32,6 @@ public interface Node
     
     public boolean isRoot();
     
-    public void setIndex(int index, Node parent);
-    
-    public int getIndex();
-    
     public int size();
     
     public void setName(String name);

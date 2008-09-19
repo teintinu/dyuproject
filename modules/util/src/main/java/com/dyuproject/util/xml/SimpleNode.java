@@ -34,7 +34,6 @@ public class SimpleNode implements Node
     private List<Node> _nodes;
     private Map<String,String> _attributes;
     private StringBuilder _text;
-    private int _index = 0;
     
     public SimpleNode(String name)
     {
@@ -67,17 +66,6 @@ public class SimpleNode implements Node
     public boolean isRoot()
     {
         return _parent!=null;
-    }
-    
-    public void setIndex(int index, Node parent)
-    {
-        if(_parent==parent)
-            _index = index;
-    }
-    
-    public int getIndex()
-    {
-        return _index;
     }
     
     public int size()
@@ -139,8 +127,7 @@ public class SimpleNode implements Node
         if(_nodes==null)
             _nodes = new ArrayList<Node>();
         
-        node.setParent(this);
-        node.setIndex(_nodes.size(), this);
+        node.setParent(this);        
         _nodes.add(node);
     }
     
