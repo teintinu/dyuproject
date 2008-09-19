@@ -277,7 +277,7 @@ public class XMLParser
                                 {
                                     if(searchRoot)
                                     {
-                                        if(handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                        if(!handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
                                             return;
                                         searchRoot = false;
                                     }
