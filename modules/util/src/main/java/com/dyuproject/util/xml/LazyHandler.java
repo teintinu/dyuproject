@@ -26,7 +26,7 @@ package com.dyuproject.util.xml;
 public interface LazyHandler
 {
     
-    public void rootElement(String name);
+    public boolean rootElement(String name);
     
     public boolean startElement(String name);
     

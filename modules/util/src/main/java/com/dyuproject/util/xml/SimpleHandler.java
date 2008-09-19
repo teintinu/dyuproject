@@ -35,11 +35,12 @@ public class SimpleHandler implements LazyHandler
         return _root;
     }
     
-    public void rootElement(String name)
+    public boolean rootElement(String name)
     {        
         _stack.clear();
         _root = new SimpleNode(name);
         _stack.push(_root);
+        return true;
     }
 
     public boolean startElement(String name)
