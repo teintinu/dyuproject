@@ -36,6 +36,8 @@ import com.dyuproject.util.DigestUtil;
 public class DiffieHellmanAssociation implements Association
 {
     
+    static final String CLIENT_PRIVATE_KEY_ATTR = "client.privateKey";
+    
     private SessionType _type;
     
     public DiffieHellmanAssociation()
@@ -74,7 +76,7 @@ public class DiffieHellmanAssociation implements Association
         BigInteger privateKey = keys[0];
         BigInteger publicKey = keys[1];
         
-        associationData.put("client.privateKey", privateKey);        
+        associationData.put(CLIENT_PRIVATE_KEY_ATTR, privateKey);        
         
         String publicKeyString = new String(B64Code.encode(publicKey.toByteArray()));
         associationData.put(Constants.OPENID_DH_CONSUMER_PUBLIC, publicKeyString);
@@ -82,7 +84,7 @@ public class DiffieHellmanAssociation implements Association
         try
         {            
             br = new BufferedReader(new InputStreamReader(context.getHttpConnector().doGET(
-                    user.getOpenIdServer(), associationData, context), "UTF-8"), 1024);
+                    user.getOpenIdServer(), associationData, context), Constants.DEFAULT_ENCODING), 1024);
             parseInputByLineSeparator(br, ':', associationData);
         }
         finally
@@ -118,7 +120,7 @@ public class DiffieHellmanAssociation implements Association
         byte[] dhServerPublic = B64Code.decode(associationData.get(
                 Constants.Assoc.DH_SERVER_PUBLIC).toString().toCharArray());       
         
-        BigInteger privateKey = (BigInteger)associationData.get("client.privateKey");
+        BigInteger privateKey = (BigInteger)associationData.get(CLIENT_PRIVATE_KEY_ATTR);
         BigInteger serverPublic = new BigInteger(dhServerPublic);
         BigInteger sharedSecretKey = DiffieHellman.getSharedSecretKey(privateKey, 
                 Constants.DIFFIE_HELLMAN_MODULUS, serverPublic);        
@@ -139,7 +141,7 @@ public class DiffieHellmanAssociation implements Association
         String generatedSig = null;
         try
         {
-            byte[] b = _type.getSignature(secretKey, buffer.toString().getBytes("UTF-8"));
+            byte[] b = _type.getSignature(secretKey, buffer.toString().getBytes(Constants.DEFAULT_ENCODING));
             generatedSig = new String(B64Code.encode(b));                            
         } 
         catch (Exception e)

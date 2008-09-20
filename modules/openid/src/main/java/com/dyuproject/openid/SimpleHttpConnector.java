@@ -37,7 +37,7 @@ public class SimpleHttpConnector implements HttpConnector
     {
         URL target = new URL(url);
         HttpURLConnection connection = (HttpURLConnection)target.openConnection();
-        connection.setRequestMethod("GET");
+        connection.setRequestMethod(GET);
         connection.setDoInput(true);
         connection.setInstanceFollowRedirects(true);
         connection.connect();
@@ -62,8 +62,8 @@ public class SimpleHttpConnector implements HttpConnector
     {
         URL target = new URL(url);
         HttpURLConnection connection = (HttpURLConnection)target.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        connection.setRequestMethod(POST);
+        connection.setRequestProperty(CONTENT_TYPE_HEADER, X_WWW_FORM_URLENCODED);
         connection.setDoInput(true);
         connection.setDoOutput(true);
         connection.setInstanceFollowRedirects(true);
@@ -75,8 +75,8 @@ public class SimpleHttpConnector implements HttpConnector
     {
         URL target = new URL(url);
         HttpURLConnection connection = (HttpURLConnection)target.openConnection();
-        connection.setRequestMethod("POST");
-        connection.setRequestProperty("Content-Type", contentType);
+        connection.setRequestMethod(POST);
+        connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);
         connection.setDoInput(true);
         connection.setDoOutput(true);
         connection.setInstanceFollowRedirects(true);
@@ -85,7 +85,7 @@ public class SimpleHttpConnector implements HttpConnector
         return new HttpInputStream(connection);
     }
     
-    
+    // Disconnects the http url connection when inputstream is closed.
     public static class HttpInputStream extends InputStream
     {
         

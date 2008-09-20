@@ -15,8 +15,6 @@
 package com.dyuproject.openid;
 
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 import com.dyuproject.util.xml.LazyHandler;
 import com.dyuproject.util.xml.XMLParser;
@@ -29,14 +27,20 @@ import com.dyuproject.util.xml.XMLParser;
  */
 
 public class LinkHrefDiscovery implements Discovery
-{
+{    
+    
+    static final String HTML = "html";
+    static final String HEAD = "head";
+    static final String LINK = "link";
+    static final String REL = "rel";
+    static final String HREF = "href";    
     
     public OpenIdUser discover(String claimedId, OpenIdContext context)
     throws Exception
-    {
-        OpenIdXmlHandler handler = new OpenIdXmlHandler();
+    {        
         InputStreamReader reader = new InputStreamReader(context.getHttpConnector().doGET(claimedId, 
-                context), "UTF-8");
+                context), Constants.DEFAULT_ENCODING);
+        OpenIdXmlHandler handler = new OpenIdXmlHandler();
         XMLParser.parse(reader, handler, false);
         return handler._openIdServer==null ? null : new OpenIdUser(claimedId, 
                 handler._openIdServer, handler._openIdDelegate);
@@ -52,7 +56,7 @@ public class LinkHrefDiscovery implements Discovery
         private int _stack = 0;
         private boolean _headFound = false;
         private boolean _link = false;        
-        private boolean _terminate = false;
+        private boolean _searching = true;
         
         OpenIdXmlHandler()
         {
@@ -61,7 +65,15 @@ public class LinkHrefDiscovery implements Discovery
 
         public boolean rootElement(String name)
         {            
-            return "html".equalsIgnoreCase(name);            
+            /*_headFound = false;
+            _link = false;
+            _searching = true;
+            _openIdServer = null;
+            _openIdDelegate = null;
+            _lastHref = null;
+            _lastRel = null;*/
+            _stack = 1;
+            return HTML.equalsIgnoreCase(name);            
         }
 
         public boolean startElement(String name)
@@ -69,26 +81,25 @@ public class LinkHrefDiscovery implements Discovery
             _stack++;
             if(_headFound)
             {                
-                _link="link".equalsIgnoreCase(name);
+                _link = LINK.equalsIgnoreCase(name);
                 return true;
             }
-            _headFound = "head".equalsIgnoreCase(name);
+            _headFound = HEAD.equalsIgnoreCase(name);
             return _headFound;
         }
 
         public boolean endElement()
         {
             _lastRel = null;
-            _lastHref = null;
-            _stack--;            
-            return _terminate || _stack!=0;
+            _lastHref = null;            
+            return _searching && 1<--_stack;
         }
         
         public void attribute(String name, String value)
         {
             if(_link)
             {
-                if(_lastRel==null && "rel".equalsIgnoreCase(name))
+                if(_lastRel==null && REL.equalsIgnoreCase(name))
                 {
                     _lastRel = value;
                     if(_lastHref!=null)
@@ -96,18 +107,18 @@ public class LinkHrefDiscovery implements Discovery
                         if(OPENID_SERVER.equals(value))
                         {
                             _openIdServer = _lastHref;
-                            _terminate = _openIdDelegate!=null;                                
+                            _searching = _openIdDelegate==null;                                
                         }
                         else if(OPENID_DELEGATE.equals(value))
                         {
                             _openIdDelegate = _lastHref;
-                            _terminate = _openIdServer!=null;
+                            _searching = _openIdServer==null;
                         }
                         _lastRel = null;
                         _lastHref = null;
                     }
                 }
-                else if(_lastHref==null && "href".equalsIgnoreCase(name))
+                else if(_lastHref==null && HREF.equalsIgnoreCase(name))
                 {
                     _lastHref = value;
                     if(_lastRel!=null)
@@ -115,12 +126,12 @@ public class LinkHrefDiscovery implements Discovery
                         if(OPENID_SERVER.equals(_lastRel))
                         {
                             _openIdServer = value;
-                            _terminate = _openIdDelegate!=null;   
+                            _searching = _openIdDelegate==null;   
                         }
                         else if(OPENID_DELEGATE.equals(_lastRel))
                         {
                             _openIdDelegate = value;
-                            _terminate = _openIdServer!=null;                            
+                            _searching = _openIdServer==null;                            
                         }
                         _lastRel = null;
                         _lastHref = null;
@@ -136,19 +147,4 @@ public class LinkHrefDiscovery implements Discovery
         
     }
 
-    public static void main(String[] args) throws Exception
-    {
-        String url = "http://davidyuftw.blogspot.com";
-        HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
-        con.setRequestMethod("GET");
-        con.setDefaultUseCaches(false);
-        con.setInstanceFollowRedirects(false);
-        con.setDoInput(true);
-        con.connect();        
-        OpenIdXmlHandler handler = new OpenIdXmlHandler();
-        InputStreamReader reader = new InputStreamReader(con.getInputStream(), "UTF-8");
-        XMLParser.parse(reader, handler, false);
-        System.err.println(handler._openIdServer + " | " + handler._openIdDelegate);
-        con.disconnect();
-    }
 }
