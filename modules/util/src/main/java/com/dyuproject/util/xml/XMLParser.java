@@ -344,15 +344,18 @@ public class XMLParser
                             case STATE_COMMENT_DASH_START:
                                 throw new IOException("invlalid xml file");
                         }
-                    continue;                       
+                        continue;
                 }            
             }
-                        
-            if(mark!=-1)
+            
+            if(mark==-1)
+                offset = 0;
+            else
             {
                 if(state==STATE_EL_TEXT)
                 {
-                    handler.characters(cbuf, mark+1, offset-mark-2);                    
+                    if(includeInnerText)
+                        handler.characters(cbuf, mark+1, offset-mark-2);                    
                     offset = 0;
                     mark = -1;
                 }
@@ -363,13 +366,7 @@ public class XMLParser
                     mark = 0;   
                 }             
             }
-            else
-            {
-                offset = 0;
-            }
-        }
-        
-    }   
-    
+        }        
+    }    
 
 }
