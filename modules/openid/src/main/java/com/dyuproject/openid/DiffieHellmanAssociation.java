@@ -104,7 +104,7 @@ public class DiffieHellmanAssociation implements Association
         if(user.isAuthenticated())
             return true;
         
-        if(authRedirect==null || Constants.Mode.ID_RES.equals(authRedirect.get(Constants.OPENID_MODE)))
+        if(authRedirect==null || !Constants.Mode.ID_RES.equals(authRedirect.get(Constants.OPENID_MODE)))
             return false;
         
         if(!user.isAssociated())
