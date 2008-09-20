@@ -264,7 +264,7 @@ public class CookieSession
 
         Cookie cookie = new Cookie(_cookie.getName(), "0");
         cookie.setMaxAge(0);
-        cookie.setPath(cookie.getPath());
+        cookie.setPath(_cookie.getPath());
         if(_cookie.getDomain()!=null)
             cookie.setDomain(_cookie.getDomain());
         //_cookie = cookie;
