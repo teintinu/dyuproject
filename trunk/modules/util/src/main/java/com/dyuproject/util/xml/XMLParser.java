@@ -336,13 +336,13 @@ public class XMLParser
                             case STATE_COMMENT_STARTING:
                                 
                                 if(stateBeforeComment!=0)
-                                    throw new IOException("invlalid xml file");
+                                    throw new IOException("invalid xml.");
                                 
                                 mark = -1;
                                 state = STATE_IGNORE;
                                 continue;
                             case STATE_COMMENT_DASH_START:
-                                throw new IOException("invlalid xml file");
+                                throw new IOException("invalid xml.");
                         }
                         continue;
                 }            
