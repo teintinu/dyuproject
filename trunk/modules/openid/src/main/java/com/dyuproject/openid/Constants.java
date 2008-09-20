@@ -26,6 +26,8 @@ import java.math.BigInteger;
 public abstract class Constants
 {
     
+    public static final String DEFAULT_ENCODING = "UTF-8";
+    
     public static final String DEFAULT_VERSION = "2.0";
     public static final String DEFAULT_NS = "http://specs.openid.net/auth/2.0";
     

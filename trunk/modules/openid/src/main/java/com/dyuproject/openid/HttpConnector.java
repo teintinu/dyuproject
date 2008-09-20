@@ -28,6 +28,12 @@ import java.util.Map;
 public interface HttpConnector
 {
     
+    public static final String GET = "GET";
+    public static final String POST = "POST";
+    
+    public static final String CONTENT_TYPE_HEADER = "Content-Type";
+    public static final String X_WWW_FORM_URLENCODED = "x-www-form-urlencoded";    
+    
     public InputStream doGET(String url, OpenIdContext context) throws IOException;
     
     public InputStream doGET(String url, Map<String,Object> parameters, OpenIdContext context) 
