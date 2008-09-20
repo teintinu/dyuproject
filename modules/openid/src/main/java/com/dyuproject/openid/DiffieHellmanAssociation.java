@@ -65,7 +65,11 @@ public class DiffieHellmanAssociation implements Association
         if(user.isAssociated())
             return true;
         
-        Map<String,Object> associationData = new HashMap<String,Object>();
+        Map<String,Object> associationData = user.getAssociationData();
+        if(associationData==null)
+            associationData = new HashMap<String,Object>();
+        else
+            associationData.clear();
         
         associationData.put(Constants.OPENID_NS, Constants.DEFAULT_NS);        
         associationData.put(Constants.OPENID_MODE, Constants.Mode.ASSOCIATE);
@@ -76,7 +80,7 @@ public class DiffieHellmanAssociation implements Association
         BigInteger privateKey = keys[0];
         BigInteger publicKey = keys[1];
         
-        associationData.put(CLIENT_PRIVATE_KEY_ATTR, privateKey);        
+        associationData.put(CLIENT_PRIVATE_KEY_ATTR, privateKey.toString());        
         
         String publicKeyString = new String(B64Code.encode(publicKey.toByteArray()));
         associationData.put(Constants.OPENID_DH_CONSUMER_PUBLIC, publicKeyString);
@@ -118,9 +122,9 @@ public class DiffieHellmanAssociation implements Association
         byte[] encMacKey = B64Code.decode(associationData.get(
                 Constants.Assoc.ENC_MAC_KEY).toString().toCharArray());        
         byte[] dhServerPublic = B64Code.decode(associationData.get(
-                Constants.Assoc.DH_SERVER_PUBLIC).toString().toCharArray());       
+                Constants.Assoc.DH_SERVER_PUBLIC).toString().toCharArray());        
         
-        BigInteger privateKey = (BigInteger)associationData.get(CLIENT_PRIVATE_KEY_ATTR);
+        BigInteger privateKey = new BigInteger(associationData.get(CLIENT_PRIVATE_KEY_ATTR).toString());
         BigInteger serverPublic = new BigInteger(dhServerPublic);
         BigInteger sharedSecretKey = DiffieHellman.getSharedSecretKey(privateKey, 
                 Constants.DIFFIE_HELLMAN_MODULUS, serverPublic);        
