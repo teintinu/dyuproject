@@ -261,15 +261,13 @@ public class CookieSession
         {
             _written = true;                
         }        
-        //String oldSecretKey = _secretKey;
-        //_secretKey = String.valueOf(System.currentTimeMillis());
-        Cookie cookie = new Cookie(_cookie.getName(), getHashValue());
-        //_secretKey = oldSecretKey;
+
+        Cookie cookie = new Cookie(_cookie.getName(), "0");
         cookie.setMaxAge(0);
         cookie.setPath(cookie.getPath());
         if(_cookie.getDomain()!=null)
             cookie.setDomain(_cookie.getDomain());
-        _cookie = cookie;
+        //_cookie = cookie;
         _modified = false;
         response.addCookie(cookie);
         return true;
