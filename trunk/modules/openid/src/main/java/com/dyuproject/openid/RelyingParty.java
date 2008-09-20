@@ -69,7 +69,12 @@ public class RelyingParty
         _context = context;
     }
     
-    public OpenIdUser resolveUser(String claimedId) throws Exception
+    public OpenIdContext getOpenIdContext()
+    {
+        return _context;
+    }
+    
+    public OpenIdUser discoverAndAssociate(String claimedId) throws Exception
     {
         if(_context==null)
             throw new IllegalStateException("OpenIdContext not set.");
@@ -85,7 +90,27 @@ public class RelyingParty
         return user;        
     }
     
-    public boolean verifyUserAuth(OpenIdUser user, Map<String,String> authRedirect) throws Exception
+    public OpenIdUser discover(String claimedId) throws Exception
+    {
+        if(_context==null)
+            throw new IllegalStateException("OpenIdContext not set.");
+        
+        if(!PREFIX.matcher(claimedId).find())
+            throw new IllegalArgumentException("openid.identifier type not supported.");
+        
+        return _context.getDiscovery().discover(claimedId, _context);
+    }
+    
+    public boolean associate(OpenIdUser user) throws Exception
+    {
+        if(_context==null)
+            throw new IllegalStateException("OpenIdContext not set.");
+        
+        return _context.getAssociation().associate(user, _context);
+    }
+    
+    public boolean verifyAuth(OpenIdUser user, Map<String,String> authRedirect) 
+    throws Exception
     {
         if(_context==null)
             throw new IllegalStateException("OpenIdContext not set.");
@@ -97,9 +122,13 @@ public class RelyingParty
             String returnTo)
     {
         if(!user.isAssociated())
-            throw new IllegalStateException("claimed_id of user has not been verified.");
+            throw new IllegalArgumentException("claimed_id of user has not been verified.");
         
         UrlEncodedParameterMap map = new UrlEncodedParameterMap(user.getOpenIdServer());
+        
+        String identity = user.getOpenIdDelegate();
+        if(identity==null)
+            identity = user.getClaimedId();
         
         map.put(Constants.OPENID_NS, Constants.DEFAULT_NS);
         map.put(Constants.OPENID_MODE, Constants.Mode.CHECKID_SETUP);
@@ -108,8 +137,8 @@ public class RelyingParty
         map.put(Constants.OPENID_REALM, realm);
         map.put(Constants.OPENID_RETURN_TO, returnTo);
         
-        map.put(Constants.OPENID_IDENTITY, user.getClaimedId());
-        map.put(Constants.OPENID_CLAIMED_ID, user.getClaimedId());
+        map.put(Constants.OPENID_IDENTITY, identity);
+        map.put(Constants.OPENID_CLAIMED_ID, identity);
         map.put(Constants.OPENID_ASSOC_HANDLE, user.getAssocHandle());
         
         return map;
@@ -119,7 +148,11 @@ public class RelyingParty
             String returnTo)
     {
         if(!user.isAssociated())
-            throw new IllegalStateException("claimed_id of user has not been verified.");    
+            throw new IllegalArgumentException("claimed_id of user has not been verified.");    
+        
+        String identity = user.getOpenIdDelegate();
+        if(identity==null)
+            identity = user.getClaimedId();
         
         StringBuilder buffer = new StringBuilder().append(user.getOpenIdServer());        
         
@@ -136,9 +169,9 @@ public class RelyingParty
                 UrlEncodedParameterMap.encode(returnTo));
         
         buffer.append('&').append(Constants.OPENID_IDENTITY).append('=').append(
-                UrlEncodedParameterMap.encode(user.getClaimedId()));
+                UrlEncodedParameterMap.encode(identity));
         buffer.append('&').append(Constants.OPENID_CLAIMED_ID).append('=').append(
-                UrlEncodedParameterMap.encode(user.getClaimedId()));
+                UrlEncodedParameterMap.encode(identity));
         buffer.append('&').append(Constants.OPENID_ASSOC_HANDLE).append('=').append(
                 UrlEncodedParameterMap.encode(user.getAssocHandle()));        
         
