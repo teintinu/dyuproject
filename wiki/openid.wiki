@@ -3,7 +3,7 @@ openid relying party howto
 
 = Configuration =
 *_openid.properties_*
-This will be used by RelyingParty.getInstance();
+This will be used by {{{RelyingParty.getInstance();}}}
 
 {{{
 #required
