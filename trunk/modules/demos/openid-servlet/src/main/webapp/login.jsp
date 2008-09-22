@@ -1,0 +1,16 @@
+<%@ page session="false" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Login</title>
+</head>
+<body>
+<div>
+  <p>Login with your open id ... e.g "http://username.myopenid.com"</p>
+  <form method="POST">
+    <input name="openid_identifier" type="text" size="40"/>
+    <input type="submit" value="send"/>
+  </form>
+</div>
+</body>
+</html>
