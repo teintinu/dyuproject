@@ -14,110 +14,132 @@
 
 package com.dyuproject.openid;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
+import java.util.Properties;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
- * RelyingParty - in other words, the "consumer", the host that redirects the user to its
- * openid provider for authentication and verification.
+ * Relying party which discovers, associates and verifies the authentication of a user. 
  * 
  * @author David Yu
- * @created Sep 8, 2008
+ * @created Sep 21, 2008
  */
 
 public class RelyingParty
-{    
+{
     
-    private static final Pattern PREFIX = Pattern.compile("^https?://");
+    public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
+    public static final String DEFAULT_PARAMETER = "openid_identifier";    
     
-    private static RelyingParty __instance;
+    private static RelyingParty __instance = null;
     
     public static RelyingParty getInstance()
     {
         if(__instance==null)
         {
-            synchronized(PREFIX)
+            synchronized(DEFAULT_RESOURCE_PATH)
             {
                 if(__instance==null)
-                {                    
-                    OpenIdContext context = new OpenIdContext();
-                    context.setAssociation(new DiffieHellmanAssociation());
-                    context.setHttpConnector(new SimpleHttpConnector());
-                    context.setDiscovery(new LinkHrefDiscovery());                    
-                    __instance = new RelyingParty(context);
-                }
+                    __instance = newInstance(DEFAULT_RESOURCE_PATH);
             }
         }
         return __instance;
     }
     
-    
-    private OpenIdContext _context;
-    
-    public RelyingParty()
-    {
-        
+    public static RelyingParty newInstance(String properties)
+    {        
+        URL resource = RelyingParty.class.getClassLoader().getResource(properties);
+        if(resource==null)
+            resource = Thread.currentThread().getContextClassLoader().getResource(properties);
+        if(resource==null)
+            throw new IllegalStateException(properties + " could not be resolved in classpath.");
+        try
+        {
+            return newInstance(resource);
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException(e);
+        }        
     }
     
-    public RelyingParty(OpenIdContext context)
+    public static RelyingParty newInstance(URL properties) throws IOException
     {
-        setOpenIdContext(context);
+        return newInstance(properties.openStream());
     }
     
-    public void setOpenIdContext(OpenIdContext context)
+    public static RelyingParty newInstance(InputStream properties) throws IOException
     {
-        _context = context;
+        Properties props = new Properties();
+        props.load(properties);
+        return newInstance(props);
     }
     
-    public OpenIdContext getOpenIdContext()
+    public static RelyingParty newInstance(Properties properties) throws IOException
     {
-        return _context;
+        // required
+        String cookieName = properties.getProperty("openid.cookie.name");
+        String secretKey = properties.getProperty("openid.cookie.security.secretKey");
+        
+        // optional
+        String cookiePath = properties.getProperty("openid.cookie.path");
+        String cookieDomain = properties.getProperty("openid.cookie.domain");
+        String cookieMaxAge = properties.getProperty("openid.cookie.maxAge");
+        String securityType = properties.getProperty("openid.cookie.security.type");
+        
+        String openIdParameter = properties.getProperty("openid.parameter");
+        boolean encrypt = "encrypted".equals(securityType);
+        
+        if(cookieName==null)
+            throw new IllegalStateException("openid.cookie.name must be set.");
+        
+        if(secretKey==null)
+            throw new IllegalStateException("openid.cookie.security.secretKey must be set.");
+        
+        OpenIdUserManager manager = new OpenIdUserManager(cookieName, secretKey, encrypt);
+        manager.setCookiePath(cookiePath);
+        manager.setCookieDomain(cookieDomain);
+        if(cookieMaxAge!=null)
+            manager.setMaxAge(Integer.parseInt(cookieMaxAge));
+        
+        OpenIdContext context = new OpenIdContext();
+        context.setAssociation(new DiffieHellmanAssociation());
+        context.setDiscovery(new LinkHrefDiscovery());
+        context.setHttpConnector(new SimpleHttpConnector());
+        
+        RelyingParty relyingParty = new RelyingParty();
+        relyingParty._manager = manager;
+        relyingParty._context = context;
+        if(openIdParameter!=null)
+            relyingParty._openIdParameter = openIdParameter;
+        
+        return relyingParty;
     }
     
-    public OpenIdUser discoverAndAssociate(String claimedId) throws Exception
+    public static Map<String,String> getAuthParameters(HttpServletRequest request)
     {
-        if(_context==null)
-            throw new IllegalStateException("OpenIdContext not set.");
-        
-        if(!PREFIX.matcher(claimedId).find())
-            throw new IllegalArgumentException("openid.identifier type not supported.");
-        
-        OpenIdUser user = _context.getDiscovery().discover(claimedId, _context);                    
-        if(user==null)
-            throw new IllegalStateException("there was no openid.server found for \""  + claimedId + "\"");
-        
-        _context.getAssociation().associate(user, _context);
-        return user;        
+        Map<String,String> params = new HashMap<String,String>();
+        Enumeration<String> names = (Enumeration<String>)request.getParameterNames();
+        while(names.hasMoreElements())
+        {
+            String name = names.nextElement();
+            params.put(name, request.getParameter(name));
+        }        
+        return params;
     }
     
-    public OpenIdUser discover(String claimedId) throws Exception
+    public static boolean isAuthResponse(HttpServletRequest request)
     {
-        if(_context==null)
-            throw new IllegalStateException("OpenIdContext not set.");
-        
-        if(!PREFIX.matcher(claimedId).find())
-            throw new IllegalArgumentException("openid.identifier type not supported.");
-        
-        return _context.getDiscovery().discover(claimedId, _context);
+        return Constants.Mode.ID_RES.equals(request.getParameter(Constants.OPENID_MODE));
     }
     
-    public boolean associate(OpenIdUser user) throws Exception
-    {
-        if(_context==null)
-            throw new IllegalStateException("OpenIdContext not set.");
-        
-        return _context.getAssociation().associate(user, _context);
-    }
-    
-    public boolean verifyAuth(OpenIdUser user, Map<String,String> authRedirect) 
-    throws Exception
-    {
-        if(_context==null)
-            throw new IllegalStateException("OpenIdContext not set.");
-        
-        return _context.getAssociation().verifyAuth(user, authRedirect, _context);
-    }
-
     public static UrlEncodedParameterMap getAuthUrlMap(OpenIdUser user, String trustRoot, String realm, 
             String returnTo)
     {
@@ -183,6 +205,95 @@ public class RelyingParty
     {
         return getAuthUrlBuffer(user, trustRoot, realm, returnTo).toString();
     }
+    
+    private OpenIdUserManager _manager;
+    private OpenIdContext _context;
+    private String _openIdParameter = DEFAULT_PARAMETER;
+    
+    public RelyingParty()
+    {
+        
+    }
+    
+    public RelyingParty(OpenIdContext context, OpenIdUserManager manager)
+    {
+        _context = context;
+        _manager = manager;
+    }
+    
+    public void setOpenIdUserManager(OpenIdUserManager manager)
+    {
+        if(_manager!=null)
+            throw new IllegalArgumentException("manager already set.");
+        
+        _manager = manager;            
+    }
+    
+    public OpenIdUserManager getOpenIdUserManager()
+    {
+        return _manager;
+    }
+    
+    public void setOpenIdContext(OpenIdContext context)
+    {
+        if(_context!=null)
+            throw new IllegalArgumentException("context already set.");
+        
+        _context = context;    
+    }
+    
+    public OpenIdContext getOpenIdContext()
+    {
+        return _context;
+    }
+    
+    public OpenIdUser discover(HttpServletRequest request) 
+    throws Exception
+    {
+        OpenIdUser user = (OpenIdUser)request.getAttribute(OpenIdUser.class.getName());
+        if(user!=null)
+            return user;
 
+        user = _manager.getUser(request);
+        if(user!=null)
+            return user;
+        
+        String claimedId = request.getParameter(_openIdParameter);
+        if(claimedId==null)
+            return null;
+        user = _context.getDiscovery().discover(claimedId, _context);
+        if(user!=null)
+            request.setAttribute(OpenIdUser.class.getName(), user);
+        
+        return user;
+    }
+    
+    public boolean verifyAuth(OpenIdUser user, HttpServletRequest request, 
+            HttpServletResponse response) throws Exception
+    {
+        boolean verified = _context.getAssociation().verifyAuth(user, getAuthParameters(request), 
+                _context);
+        if(!response.isCommitted())
+            _manager.saveUser(user, response);
+        
+        return verified;
+    }
+    
+    public boolean associate(OpenIdUser user, HttpServletRequest request, 
+            HttpServletResponse response) throws Exception
+    {
+        if(_context.getAssociation().associate(user, _context))
+        {
+            if(!response.isCommitted())
+                _manager.saveUser(user, response);
+            return true;
+        }        
+        return false;
+    }
+    
+    public boolean invalidate(HttpServletResponse response) throws IOException
+    {
+        return _manager.invalidate(response);
+    }
 
 }

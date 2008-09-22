@@ -41,7 +41,7 @@ public class OpenIdUserManager
     private String _cookieName;    
     private String _cookieDomain;
     private String _cookiePath;
-    private int _maxAgeSeconds = 60000; //10 minutes
+    private int _maxAge = 60000; //10 minutes
     private Cryptography _crypto;
     
     public OpenIdUserManager()
@@ -55,52 +55,52 @@ public class OpenIdUserManager
         setSecretKey(secretKey);        
     }
     
-    public OpenIdUserManager(String cookieName, String secretKey, boolean decryptWithSecretKey)
+    public OpenIdUserManager(String cookieName, String secretKey, boolean encrypted)
     {
         setCookieName(cookieName);
         setSecretKey(secretKey);
-        setDecryptWithSecretKey(decryptWithSecretKey);
+        setEncrypted(encrypted);
     }
     
     public void setSecretKey(String secretKey)
     {
-        if(_secretKey==null && secretKey!=null)
-            _secretKey = secretKey;
-        else
+        if(_secretKey!=null)
             throw new IllegalArgumentException("secretKey has already been set.");
+            
+        _secretKey = secretKey;            
     }    
     
     public void setCookieName(String cookieName)
     {
-        if(_cookieName==null && cookieName!=null)
-            _cookieName = cookieName;
-        else
+        if(_cookieName!=null)
             throw new IllegalArgumentException("cookieName has already been set.");
+        
+        _cookieName = cookieName;            
     }
     public void setCookiePath(String cookiePath)
     {
-        if(_cookiePath==null && cookiePath!=null)
-            _cookiePath = cookiePath;
-        else
+        if(_cookiePath!=null)
             throw new IllegalArgumentException("cookiePath has already been set.");
+        
+        _cookiePath = cookiePath;            
     }
     
     public void setCookieDomain(String cookieDomain)
     {
-        if(_cookieDomain==null && cookieDomain!=null)
-            _cookieDomain = cookieDomain;
-        else
+        if(_cookieDomain!=null)
             throw new IllegalArgumentException("cookieDomain has already been set.");
+        
+        _cookieDomain = cookieDomain;            
     }
     
-    public void setMaxAgeSeconds(int maxAgeSeconds)
+    public void setMaxAge(int maxAge)
     {
-        _maxAgeSeconds = maxAgeSeconds;
+        _maxAge = maxAge;
     }
     
-    public void setDecryptWithSecretKey(boolean decryptWithSecretKey)
+    public void setEncrypted(boolean encrypted)
     {
-        if(decryptWithSecretKey && _crypto==null)
+        if(encrypted && _crypto==null)
         {
             if(_secretKey.length()!=24)
             {
@@ -122,7 +122,7 @@ public class OpenIdUserManager
         }
     }
     
-    public OpenIdUser getUser(HttpServletRequest request, HttpServletResponse response) 
+    public OpenIdUser getUser(HttpServletRequest request) 
     throws IOException
     {
         Cookie[] cookies = request.getCookies();
@@ -132,41 +132,38 @@ public class OpenIdUserManager
         for(Cookie c : cookies)
         {
             if(_cookieName.equals(c.getName()))
-                return getUser(c, response);
+                return getUser(c);
         }        
         return null;
     }
     
-    OpenIdUser getUser(Cookie cookie, HttpServletResponse response) throws IOException
+    OpenIdUser getUser(Cookie cookie) throws IOException
     {       
-        try
-        {
-            return _crypto==null ? getUserVerifiedBySignature(cookie) : getUserByDecryption(cookie);
-        }
-        catch(IllegalStateException ise)
-        {
-            ise.printStackTrace();
-            if(!response.isCommitted())
-                invalidate(response);
-            return null;
-        }        
+        return _crypto==null ? getUserVerifiedBySignature(cookie) : getUserByDecryption(cookie);
     }
     
-    OpenIdUser getUserVerifiedBySignature(Cookie cookie) throws IOException
+    OpenIdUser getUserVerifiedBySignature(Cookie cookie) 
+    throws IOException
     {
         String[] values = Delim.AMPER.split(cookie.getValue());
         if(values.length!=2)
-            throw new IllegalStateException("Invalid cookie.");
-        
+        {
+            // invalid cookie.
+            return null;
+        }
         String sig = values[0];
         String u = values[1];
         if(!DigestUtil.digestMD5(u + _secretKey).equals(sig))
-            throw new IllegalStateException("Invalid cookie.");       
+        {
+            // invalid cookie.
+            return null;
+        }
         
         return (OpenIdUser)JSON.parse(B64Code.decode(u));
     }
     
-    OpenIdUser getUserByDecryption(Cookie cookie) throws IOException
+    OpenIdUser getUserByDecryption(Cookie cookie) 
+    throws IOException
     {
         String value = null;
         try
@@ -195,7 +192,7 @@ public class OpenIdUserManager
         String u = B64Code.encode(JSON.toString(user));
         String sig = DigestUtil.digestMD5(u + _secretKey);
         StringBuilder buffer = new StringBuilder().append(sig).append('&').append(u);
-        return save(buffer.toString(), response);
+        return write(buffer.toString(), _maxAge, response);
     }
     
     boolean saveUserWithEncryption(OpenIdUser user, HttpServletResponse response) throws IOException
@@ -208,35 +205,23 @@ public class OpenIdUserManager
         }
         catch(Exception e)
         {
+            // shouldn't happen
             e.printStackTrace();
             return false;
         }
-        return save(value, response);
-    }
+        return write(value, _maxAge, response);
+    }    
     
-    public boolean removeUser(OpenIdUser user, HttpServletResponse response) throws IOException
+    public boolean invalidate(HttpServletResponse response) throws IOException
     {
-        if(user==null)
-            throw new IllegalArgumentException("user must not be null.");
-        
-        return invalidate(response);
+        return write("0", 0, response);
     }
     
-    private boolean invalidate(HttpServletResponse response) throws IOException
-    {
-        Cookie cookie = new Cookie(_cookieName, "0");
-        cookie.setMaxAge(0);
-        cookie.setPath(_cookiePath);
-        if(_cookieDomain!=null)
-            cookie.setDomain(_cookieDomain);
-        response.addCookie(cookie);
-        return true;
-    }
-    
-    private boolean save(String value, HttpServletResponse response) throws IOException
+    private boolean write(String value, int maxAge, HttpServletResponse response) 
+    throws IOException
     {
         Cookie cookie = new Cookie(_cookieName, value);
-        cookie.setMaxAge(_maxAgeSeconds);
+        cookie.setMaxAge(maxAge);
         cookie.setPath(_cookiePath);
         if(_cookieDomain!=null)
             cookie.setDomain(_cookieDomain);
