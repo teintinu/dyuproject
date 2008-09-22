@@ -152,12 +152,14 @@ public class DiffieHellmanAssociation implements Association
         {            
             e.printStackTrace();
         }
-        if(serverSig.equals(generatedSig))
+        if(!serverSig.equals(generatedSig))
         {
-            user.setIdentity(authRedirect.get(Constants.OPENID_IDENTITY));
-            return user.isAuthenticated();
-        }        
-        return false;
+            user.setAssocHandle(null);
+            user.setAssociationData(null);
+            return false;
+        }
+        user.setIdentity(authRedirect.get(Constants.OPENID_IDENTITY));
+        return user.isAuthenticated();
     }
     
     public static byte[] xor(BigInteger sharedSecretKey, byte[] encMacKey, String digestType) 
