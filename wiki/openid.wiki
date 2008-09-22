@@ -1,0 +1,73 @@
+#labels openid,relyingparty,consumer
+openid relying party howto
+
+= Configuration =
+*_openid.properties_*
+This will be used by RelyingParty.getInstance();
+
+{{{
+#required
+
+openid.cookie.name=openidservlet
+openid.cookie.security.secretKey=secret
+
+
+#optional
+
+openid.cookie.path=/
+
+#openid.parameter=some_parameter
+#default value is "openid_identifier"
+
+
+
+#openid.cookie.domain=http://www.example.com
+
+#openid.coookie.security.type=encrypted
+#default type is MD5 signed (value + secretKey)
+
+#openid.coodie.maxAge=600
+#maxAge in seconds, default to 600(10 mins)
+}}}
+
+If you want custom configuration, you could do:
+{{{
+Properties props = new Properties();
+// set your custom properties...
+RelyingParty relyingParty = RelyingParty.newInstance(props);
+}}}
+
+
+= Usage =
+{{{
+RelyingParty _relyingParty = RelyingParty.getInstance();
+}}}
+
+{{{
+OpenIdUser user = _relyingParty.discover(request);
+}}}
+
+{{{
+if(_relyingParty.associate(user, request, response))
+{
+    // authenticate user to his/her openid provider
+    StringBuffer url = request.getRequestURL();
+    String trustRoot = url.substring(0, url.indexOf("/", 9));
+    String realm = url.substring(0, url.lastIndexOf("/"));
+    String returnTo = url.toString();
+    response.sendRedirect(RelyingParty.getAuthUrlString(user, trustRoot, realm, 
+        returnTo)); 
+}
+}}}
+
+{{{
+if(user.isAssociated() && RelyingParty.isAuthResponse(request))
+{
+    // verify authentication
+    if(_relyingParty.verifyAuth(user, request, response))
+    {
+        // authenticated
+        response.sendRedirect("/home/");
+    }
+}
+}}}
