@@ -41,7 +41,7 @@ public class OpenIdUserManager
     private String _cookieName;    
     private String _cookieDomain;
     private String _cookiePath;
-    private int _maxAge = 60000; //10 minutes
+    private int _maxAge = 600; //10 minutes
     private Cryptography _crypto;
     
     public OpenIdUserManager()
