@@ -62,7 +62,7 @@ public class DiffieHellmanAssociation implements Association
 
     public boolean associate(OpenIdUser user, OpenIdContext context) throws Exception
     {
-        if(user.isAssociated())
+        if(user.isAuthenticated())
             return true;
         
         Map<String,Object> associationData = user.getAssociationData();
