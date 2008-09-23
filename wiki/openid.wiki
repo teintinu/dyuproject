@@ -1,6 +1,8 @@
 #labels openid,relyingparty,consumer
 openid relying party howto
 
+For a working example, see [SampleOpenIdServlet].
+
 = Configuration =
 
 ====maven2====
