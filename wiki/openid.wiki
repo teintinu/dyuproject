@@ -21,9 +21,8 @@ If you're using maven2, you could put this in src/main/resources.
 {{{
 #required
 
-openid.cookie.name=openidservlet
-openid.cookie.security.secretKey=secret
-
+openid.cookie.name=your_app_name
+openid.cookie.security.secretKey=your_secret_key
 
 #optional
 
