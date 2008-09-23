@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +37,9 @@ public class RelyingParty
 {
     
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
-    public static final String DEFAULT_PARAMETER = "openid_identifier";    
+    public static final String DEFAULT_PARAMETER = "openid_identifier";
+    
+    private static final Pattern PREFIX = Pattern.compile("^https?://");
     
     private static RelyingParty __instance = null;
     
@@ -259,7 +262,7 @@ public class RelyingParty
             return user;
         
         String claimedId = request.getParameter(_openIdParameter);
-        if(claimedId==null)
+        if(claimedId==null || !PREFIX.matcher(claimedId).find())
             return null;
         user = _context.getDiscovery().discover(claimedId, _context);
         if(user!=null)
