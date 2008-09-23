@@ -5,6 +5,13 @@ The source is available [http://dyuproject.googlecode.com/svn/trunk/modules/demo
 
 Here's the [http://dp-openid.morphexchange.com/home/ live demo]
 
+{{{openid.properties}}}
+{{{
+openid.cookie.name=openidservlet
+openid.cookie.security.secretKey=secret
+openid.cookie.path=/
+}}}
+
 {{{web.xml}}}
 {{{
 <?xml version="1.0" encoding="ISO-8859-1"?>
