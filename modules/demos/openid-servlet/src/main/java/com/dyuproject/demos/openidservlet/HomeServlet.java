@@ -25,7 +25,8 @@ import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 
 /**
- * Home Servlet. If a user is authenticated, he/she gets forwarded to the login page. 
+ * Home Servlet. If a user is authenticated, he/she gets forwarded to the home page.
+ * If not authenticated, he/she gets forwarded to the login page. 
  * 
  * @author David Yu
  * @created Sep 22, 2008
