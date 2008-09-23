@@ -15,6 +15,7 @@ openid relying party howto
 
 ====openid.properties====
 This will be used by {{{RelyingParty.getInstance();}}}
+If you're using maven2, you could put this in src/main/resources.
 
 {{{
 #required
