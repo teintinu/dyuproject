@@ -38,6 +38,10 @@ public interface Node
     
     public String getName();
     
+    public void setNamespace(String namespace);
+    
+    public String getNamespace();
+    
     public void addText(char[] data, int start, int length);
     
     public void addText(String text);
