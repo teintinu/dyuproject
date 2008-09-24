@@ -82,6 +82,8 @@ public class OpenIdUser implements Serializable, JSON.Convertible
             _identity = identity;
             _assocHandle = null;
             _associationData = null;
+            if(_claimedId==null)
+                _identity = _claimedId;
         }
     }
     

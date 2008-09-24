@@ -179,10 +179,7 @@ public class OpenIdUserManager
     }
     
     public boolean saveUser(OpenIdUser user, HttpServletResponse response) throws IOException
-    {
-        if(!user.isAssociated())
-            throw new IllegalArgumentException("user has not been associated nor authenticated.");
-        
+    {        
         return _crypto==null ? saveUserWithSignature(user, response) : saveUserWithEncryption(user, 
                 response);
     }

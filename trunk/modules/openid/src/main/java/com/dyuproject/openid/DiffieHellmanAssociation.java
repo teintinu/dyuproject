@@ -21,6 +21,7 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.dyuproject.openid.HttpConnector.Response;
 import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Delim;
 import com.dyuproject.util.DiffieHellman;
@@ -84,17 +85,19 @@ public class DiffieHellmanAssociation implements Association
         
         String publicKeyString = new String(B64Code.encode(publicKey.toByteArray()));
         associationData.put(Constants.OPENID_DH_CONSUMER_PUBLIC, publicKeyString);
+        Response response = context.getHttpConnector().doGET(user.getOpenIdServer(), 
+                associationData, context);
         BufferedReader br = null;        
         try
         {            
-            br = new BufferedReader(new InputStreamReader(context.getHttpConnector().doGET(
-                    user.getOpenIdServer(), associationData, context), Constants.DEFAULT_ENCODING), 1024);
+            br = new BufferedReader(new InputStreamReader(response.getInputStream(), Constants.DEFAULT_ENCODING), 1024);
             parseInputByLineSeparator(br, ':', associationData);
         }
         finally
         {
             if(br!=null)
                 br.close();
+            response.close();
         }
         
         user.setAssocHandle((String)associationData.get(Constants.Assoc.ASSOC_HANDLE));

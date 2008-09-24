@@ -28,21 +28,37 @@ import java.util.Map;
 public interface HttpConnector
 {
     
+    public static final String HEAD = "HEAD";
     public static final String GET = "GET";
     public static final String POST = "POST";
+    public static final String PUT = "PUT";
+    public static final String DELETE = "DELETE";
     
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
-    public static final String X_WWW_FORM_URLENCODED = "x-www-form-urlencoded";    
+    public static final String X_WWW_FORM_URLENCODED = "x-www-form-urlencoded";
     
-    public InputStream doGET(String url, OpenIdContext context) throws IOException;
+    public Response doHEAD(String url, OpenIdContext context) throws IOException;
     
-    public InputStream doGET(String url, Map<String,Object> parameters, OpenIdContext context) 
+    public Response doGET(String url, OpenIdContext context) throws IOException;
+    
+    public Response doGET(String url, Map<String,Object> parameters, OpenIdContext context) 
     throws IOException;
     
-    public InputStream doPOST(String url, Map<String,Object> parameters, 
+    public Response doPOST(String url, Map<String,Object> parameters, 
             OpenIdContext context) throws IOException;
     
-    public InputStream doPOST(String url, String contentType, byte[] data, OpenIdContext context)
+    public Response doPOST(String url, String contentType, byte[] data, OpenIdContext context)
     throws IOException;
+    
+    public interface Response
+    {
+        
+        public InputStream getInputStream() throws IOException;
+        
+        public String getHeader(String name);
+        
+        public void close() throws IOException;
+
+    }
 
 }

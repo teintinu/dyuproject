@@ -31,8 +31,19 @@ import org.mortbay.util.UrlEncoded;
 
 public class SimpleHttpConnector implements HttpConnector
 {
+    
+    public Response doHEAD(String url, OpenIdContext context) throws IOException
+    {
+        URL target = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection)target.openConnection();
+        connection.setRequestMethod(HEAD);
+        connection.setDoInput(true);
+        connection.setInstanceFollowRedirects(true);
+        connection.connect();
+        return new HttpURLConnectionWrapper(connection);
+    }
 
-    public InputStream doGET(String url, OpenIdContext context)
+    public Response doGET(String url, OpenIdContext context)
     throws IOException
     {
         URL target = new URL(url);
@@ -41,10 +52,10 @@ public class SimpleHttpConnector implements HttpConnector
         connection.setDoInput(true);
         connection.setInstanceFollowRedirects(true);
         connection.connect();
-        return new HttpInputStream(connection);
+        return new HttpURLConnectionWrapper(connection);
     }    
 
-    public InputStream doGET(String url, Map<String, Object> parameters,
+    public Response doGET(String url, Map<String, Object> parameters,
             OpenIdContext context) throws IOException
     {
         StringBuilder buffer = new StringBuilder().append(url);
@@ -57,7 +68,7 @@ public class SimpleHttpConnector implements HttpConnector
         return doGET(buffer.toString(), context);
     }
 
-    public InputStream doPOST(String url, Map<String, Object> parameters,
+    public Response doPOST(String url, Map<String, Object> parameters,
             OpenIdContext context) throws IOException
     {
         URL target = new URL(url);
@@ -67,10 +78,10 @@ public class SimpleHttpConnector implements HttpConnector
         connection.setDoInput(true);
         connection.setDoOutput(true);
         connection.setInstanceFollowRedirects(true);
-        return new HttpInputStream(connection);
+        return new HttpURLConnectionWrapper(connection);
     }
     
-    public InputStream doPOST(String url, String contentType, byte[] data, OpenIdContext context)
+    public Response doPOST(String url, String contentType, byte[] data, OpenIdContext context)
     throws IOException
     {
         URL target = new URL(url);
@@ -82,87 +93,32 @@ public class SimpleHttpConnector implements HttpConnector
         connection.setInstanceFollowRedirects(true);
         connection.getOutputStream().write(data);
         connection.getOutputStream().flush();        
-        return new HttpInputStream(connection);
+        return new HttpURLConnectionWrapper(connection);
     }
     
-    // Disconnects the http url connection when inputstream is closed.
-    public static class HttpInputStream extends InputStream
+    static class HttpURLConnectionWrapper implements Response
     {
-        
         private HttpURLConnection _connection;
-        private InputStream _is;
         
-        private HttpInputStream(HttpURLConnection connection) throws IOException
+        HttpURLConnectionWrapper(HttpURLConnection connection)
         {
-            _connection = connection;            
-            _is = _connection.getInputStream();
+            _connection = connection;
         }
-
-        @Override
-        public int read() throws IOException
-        {            
-            return _is.read();
-        }
-        
-        public int read(byte[] b) throws IOException
-        {
-            return _is.read(b);
-        }
-        
-        public int read(byte[] b, int off, int len) throws IOException
-        {
-            return _is.read(b, off, len);
-        }
-        
-        public long skip(long n) throws IOException
-        {
-            return _is.skip(n);
-        }
-        
-        public int available() throws IOException
-        {
-            return _is.available();
-        }
-        
         public void close() throws IOException
         {
-            try
-            {
-                _is.close();
-            }
-            finally
-            {
-                _connection.disconnect();
-            }            
+            _connection.disconnect();            
         }
-        
-        public void mark(int readlimit)
-        {
-            _is.mark(readlimit);
+        public String getHeader(String name)
+        {            
+            return _connection.getHeaderField(name);
         }
-        
-        public void reset() throws IOException
-        {
-            _is.reset();
+        public InputStream getInputStream() throws IOException
+        {            
+            return _connection.getInputStream();
         }
-        
-        public boolean markSupported()
-        {
-            return _is.markSupported();
-        }
-        
-        public int hashCode()
-        {
-            return _connection.getContentLength();
-        }
-        
-        public String toString()
-        {
-            return _connection.getContentType() + ';' + _connection.getContentEncoding();
-        }
-        
-        
     }
+    
+
 
 
 }
