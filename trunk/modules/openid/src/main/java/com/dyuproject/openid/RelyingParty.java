@@ -292,12 +292,13 @@ public class RelyingParty
     public boolean verifyAuth(OpenIdUser user, HttpServletRequest request, 
             HttpServletResponse response) throws Exception
     {
-        boolean verified = _context.getAssociation().verifyAuth(user, getAuthParameters(request), 
-                _context);
-        if(!response.isCommitted())
-            _manager.saveUser(user, response);
-        
-        return verified;
+        if(_context.getAssociation().verifyAuth(user, getAuthParameters(request), _context))
+        {
+            if(!response.isCommitted())
+                _manager.saveUser(user, response);
+            return true;
+        }        
+        return false;
     }
     
     public boolean associate(OpenIdUser user, HttpServletRequest request, 
