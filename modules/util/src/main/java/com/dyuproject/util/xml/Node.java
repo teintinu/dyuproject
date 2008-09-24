@@ -80,8 +80,16 @@ public interface Node
     
     public Node getNode(String name, int startingIndex);
     
-    public int findNode(String name);
+    public Node getNodeFromLast(String name);    
     
-    public int findNode(String name, int startingIndex);   
+    public Node getNodeFromLast(String name, int startingIndex);
+    
+    public int indexOf(String name);
+    
+    public int indexOf(String name, int startingIndex);
+    
+    public int lastIndexOf(String name);
+    
+    public int lastIndexOf(String name, int startingIndex);
 
 }
