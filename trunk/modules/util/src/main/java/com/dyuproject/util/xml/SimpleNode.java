@@ -93,7 +93,7 @@ public class SimpleNode implements Node
     public void setAttribute(String name, String value)
     {
         if(_attributes==null)
-            _attributes = new HashMap<String,String>();        
+            _attributes = new HashMap<String,String>(5);
         
         _attributes.put(name, value);
     }
