@@ -30,7 +30,7 @@ public class SimpleNode implements Node
 {
     
     private Node _parent;
-    private String _name;
+    private String _name, _namespace;
     private List<Node> _nodes;
     private Map<String,String> _attributes;
     private StringBuilder _text;
@@ -40,11 +40,23 @@ public class SimpleNode implements Node
         setName(name);
     }
     
+    public SimpleNode(String name, String namespace)
+    {
+        setName(name);
+        setNamespace(namespace);
+    }
+    
     public SimpleNode(String name, Node parent)
     {
         setName(name);
         if(parent!=null)
             parent.addNode(this);
+    }
+    
+    public SimpleNode(String name, Node parent, String namespace)
+    {
+        this(name, parent);
+        setNamespace(namespace);
     }
     
     public void setParent(Node parent)
@@ -101,6 +113,18 @@ public class SimpleNode implements Node
         return _name;
     }
     
+    public void setNamespace(String namespace)
+    {
+        _namespace = namespace;
+    }
+    
+    public String getNamespace()
+    {
+        if(_namespace==null)
+            return _parent==null ? null : _parent.getNamespace();
+        return _namespace;
+    }
+    
     public List<Node> getNodes()
     {
         return _nodes;
@@ -114,7 +138,7 @@ public class SimpleNode implements Node
         ArrayList<Node> list = new ArrayList<Node>();
         for(Node n : _nodes)
         {
-            if(n.getName().equals(name))
+            if(n.getName().equalsIgnoreCase(name))
                 list.add(n);
         }
         return list.isEmpty() ? null : list;
@@ -221,7 +245,7 @@ public class SimpleNode implements Node
             for(int i=startingIndex; i<_nodes.size(); i++)
             {
                 Node node = _nodes.get(i);
-                if(node.getName().equals(name))
+                if(node.getName().equalsIgnoreCase(name))
                     return node;
             }
         }           
@@ -239,7 +263,7 @@ public class SimpleNode implements Node
         {
             for(int i=startingIndex; i<_nodes.size(); i++)
             {
-                if(_nodes.get(i).getName().equals(name))
+                if(_nodes.get(i).getName().equalsIgnoreCase(name))
                     return i;
             }
         }           

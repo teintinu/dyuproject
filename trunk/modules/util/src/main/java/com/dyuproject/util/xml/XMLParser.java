@@ -64,6 +64,7 @@ public class XMLParser
         int stateBeforeComment = 0;
         int mark = -1;
         int elwsMark = -1;
+        int nsMark = -1;
         String attrName = null;
         String attrValue = null;
         boolean dq = true;
@@ -122,16 +123,25 @@ public class XMLParser
                             case STATE_EL_STARTING:
                                 if(elwsMark==-1)
                                 {
+                                    String name = null;
+                                    String namespace = null;                                    
+                                    if(nsMark==-1)
+                                        name = new String(cbuf, mark+1, offset-mark-1).trim();
+                                    else
+                                    {
+                                        namespace = new String(cbuf, mark+1, nsMark-mark-1).trim();
+                                        name = new String(cbuf, nsMark+1, offset-mark-1).trim();
+                                    }
                                     if(searchRoot)
                                     {
-                                        if(!handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                        if(!handler.rootElement(name, namespace))
                                             return;
                                         searchRoot = false;
                                     }
-                                    else if(!handler.startElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                    else if(!handler.startElement(name, namespace))
                                         return;                                                                    
                                 }
-                                                                    
+                                nsMark = -1;
                                 elwsMark = -1;
                                 state = STATE_EL_STARTED;
                                 mark = -1;
@@ -161,7 +171,17 @@ public class XMLParser
                                 
                         }
                         continue;
-                        
+                    
+                    case ':':
+                        switch(state)
+                        {
+                            case STATE_EL_STARTING:
+                                if(nsMark!=-1)
+                                    throw new IOException("invalid xml.");
+                                nsMark = offset;
+                                continue;
+                        }                        
+                        continue;
                     case '?':
                     case '!':
                         switch(state)
@@ -265,31 +285,7 @@ public class XMLParser
                         
                     case ' ':
                     case '\t':
-                    case '\r':                    
-                        switch(state)
-                        {
-                            case STATE_COMMENT_STARTED:
-                            case STATE_IGNORE:                                
-                                continue;
-                            case STATE_EL_STARTING:
-                                state = STATE_EL_ATTR_NAME_START;
-                                if(elwsMark==-1)
-                                {
-                                    if(searchRoot)
-                                    {
-                                        if(!handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
-                                            return;
-                                        searchRoot = false;
-                                    }
-                                    else if(!handler.startElement(new String(cbuf, mark+1, offset-mark-1).trim()))
-                                        return;                                
-                                }
-                                elwsMark = offset;
-                                mark = offset;                           
-                                continue;
-                        }
-                        continue;
-                        
+                    case '\r':
                     case '\n':
                         switch(state)
                         {
@@ -299,16 +295,26 @@ public class XMLParser
                             case STATE_EL_STARTING:
                                 state = STATE_EL_ATTR_NAME_START;
                                 if(elwsMark==-1)
-                                {
+                                {                                    
+                                    String name = null;
+                                    String namespace = null;
+                                    if(nsMark==-1)
+                                        name = new String(cbuf, mark+1, offset-mark-1).trim();
+                                    else
+                                    {
+                                        namespace = new String(cbuf, mark+1, nsMark-mark-1).trim();
+                                        name = new String(cbuf, nsMark+1, offset-mark-1).trim();
+                                    }
                                     if(searchRoot)
                                     {
-                                        if(!handler.rootElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                        if(!handler.rootElement(name, namespace))
                                             return;
                                         searchRoot = false;
                                     }
-                                    else if(!handler.startElement(new String(cbuf, mark+1, offset-mark-1).trim()))
+                                    else if(!handler.startElement(name, namespace))
                                         return;                                
                                 }
+                                nsMark = -1;
                                 elwsMark = offset;
                                 mark = offset;                           
                                 continue;

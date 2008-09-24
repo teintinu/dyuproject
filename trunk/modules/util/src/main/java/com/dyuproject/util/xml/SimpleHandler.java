@@ -35,17 +35,17 @@ public class SimpleHandler implements LazyHandler
         return _root;
     }
     
-    public boolean rootElement(String name)
+    public boolean rootElement(String name, String namespace)
     {        
         _stack.clear();
-        _root = new SimpleNode(name);
+        _root = new SimpleNode(name, namespace);
         _stack.push(_root);
         return true;
     }
 
-    public boolean startElement(String name)
+    public boolean startElement(String name, String namespace)
     {       
-        _stack.push(new SimpleNode(name, _stack.peek()));
+        _stack.push(new SimpleNode(name, _stack.peek(), namespace));
         return true;
     }
 
@@ -53,7 +53,7 @@ public class SimpleHandler implements LazyHandler
     {
         _stack.pop();
         return true;
-    }    
+    }
 
     public void attribute(String name, String value)
     {        
