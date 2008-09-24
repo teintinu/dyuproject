@@ -252,12 +252,40 @@ public class SimpleNode implements Node
         return null;
     }
     
-    public int findNode(String name)
+    public Node getNodeFromLast(String name)
     {
-        return findNode(name);
+        if(_nodes!=null)
+        {
+            for(int i=_nodes.size(); 0<--i;)
+            {
+                Node node = _nodes.get(i);
+                if(node.getName().equalsIgnoreCase(name))
+                    return node;
+            }
+        }
+        return null;
     }
     
-    public int findNode(String name, int startingIndex)
+    public Node getNodeFromLast(String name, int startingIndex)
+    {
+        if(_nodes!=null)
+        {
+            for(int i=startingIndex+1; 0<--i;)
+            {
+                Node node = _nodes.get(i);
+                if(node.getName().equalsIgnoreCase(name))
+                    return node;
+            }
+        }
+        return null;
+    }
+    
+    public int indexOf(String name)
+    {
+        return indexOf(name, 0);
+    }
+    
+    public int indexOf(String name, int startingIndex)
     {
         if(_nodes!=null)
         {
@@ -267,6 +295,32 @@ public class SimpleNode implements Node
                     return i;
             }
         }           
+        return -1;
+    }
+    
+    public int lastIndexOf(String name)
+    {
+        if(_nodes!=null)
+        {
+            for(int i=_nodes.size(); 0<--i;)
+            {
+                if(_nodes.get(i).getName().equalsIgnoreCase(name))
+                    return i;
+            }
+        }
+        return -1;
+    }
+    
+    public int lastIndexOf(String name, int startingIndex)
+    {
+        if(_nodes!=null)
+        {
+            for(int i=startingIndex+1; 0<--i;)
+            {
+                if(_nodes.get(i).getName().equalsIgnoreCase(name))
+                    return i;
+            }
+        }
         return -1;
     }
 
