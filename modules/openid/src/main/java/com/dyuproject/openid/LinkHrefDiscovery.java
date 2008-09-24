@@ -16,6 +16,7 @@ package com.dyuproject.openid;
 
 import java.io.InputStreamReader;
 
+import com.dyuproject.openid.HttpConnector.Response;
 import com.dyuproject.util.xml.LazyHandler;
 import com.dyuproject.util.xml.XMLParser;
 
@@ -37,13 +38,34 @@ public class LinkHrefDiscovery implements Discovery
     
     public OpenIdUser discover(String claimedId, OpenIdContext context)
     throws Exception
-    {        
-        InputStreamReader reader = new InputStreamReader(context.getHttpConnector().doGET(claimedId, 
-                context), Constants.DEFAULT_ENCODING);
+    {
+        return discover(claimedId, context.getHttpConnector().doGET(claimedId, context));
+    }
+    
+    static OpenIdUser discover(String claimedId, Response response) throws Exception
+    {
+        OpenIdUser user = null;
+        InputStreamReader reader = null;
+        try
+        {
+            reader = new InputStreamReader(response.getInputStream(), Constants.DEFAULT_ENCODING);
+            user = discover(claimedId, reader);
+        }
+        finally
+        {
+            if(reader!=null)
+                reader.close();
+            response.close();
+        }
+        return user;
+    }
+    
+    static OpenIdUser discover(String claimedId, InputStreamReader reader) throws Exception
+    {
         OpenIdXmlHandler handler = new OpenIdXmlHandler();
         XMLParser.parse(reader, handler, false);
         return handler._openIdServer==null ? null : new OpenIdUser(claimedId, 
-                handler._openIdServer, handler._openIdDelegate);
+                handler._openIdServer, handler._openIdDelegate);        
     }
     
     static class OpenIdXmlHandler implements LazyHandler
@@ -63,7 +85,7 @@ public class LinkHrefDiscovery implements Discovery
             
         }
 
-        public boolean rootElement(String name)
+        public boolean rootElement(String name, String namespace)
         {            
             /*_headFound = false;
             _link = false;
@@ -76,7 +98,7 @@ public class LinkHrefDiscovery implements Discovery
             return HTML.equalsIgnoreCase(name);            
         }
 
-        public boolean startElement(String name)
+        public boolean startElement(String name, String namespace)
         {            
             _stack++;
             if(_headFound)

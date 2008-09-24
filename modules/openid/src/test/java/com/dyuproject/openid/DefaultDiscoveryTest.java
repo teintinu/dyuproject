@@ -14,21 +14,25 @@
 
 package com.dyuproject.openid;
 
+import junit.framework.TestCase;
+
 /**
- * Discovery
- * 
  * @author David Yu
- * @created Sep 10, 2008
+ * @created Sep 24, 2008
  */
 
-public interface Discovery
+public class DefaultDiscoveryTest extends TestCase
 {
     
-    public static final String OPENID_SERVER = "openid.server";
-    public static final String OPENID_DELEGATE = "openid.delegate";
-    public static final String OPENID2_PROVIDER = "openid2.provider";
-    public static final String OPENID2_LOCALID = "openid2.local_id";
-    
-    public OpenIdUser discover(String claimedId, OpenIdContext context) throws Exception;
+    public void testDefault() throws Exception
+    {        
+        OpenIdContext context = new OpenIdContext();
+        context.setHttpConnector(new SimpleHttpConnector());
+        context.setDiscovery(new DefaultDiscovery());
+        OpenIdUser user = context.getDiscovery().discover("http://yahoo.com", context);
+        assertTrue(user!=null && user.getOpenIdServer()!=null);
+        System.err.println(user.getOpenIdServer());
+        System.err.println(user.getClaimedId());
+    }
 
 }
