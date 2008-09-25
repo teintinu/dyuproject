@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>com.dyuproject.ext</groupId>
+  <artifactId>dyuproject-jpa</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <versioning>
+    <versions>
+      <version>1.0-SNAPSHOT</version>
+    </versions>
+    <lastUpdated>20080925110347</lastUpdated>
+  </versioning>
+</metadata>
