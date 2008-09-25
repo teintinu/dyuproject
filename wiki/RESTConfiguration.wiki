@@ -1,5 +1,5 @@
 #labels rest,configuration,webapp,ioc,webcontext,servlet,web,java
-web configuration
+
 
 You can find a sample controller [HelloWorldController here].
 
