@@ -95,7 +95,7 @@ public class RelyingParty
         String cookiePath = properties.getProperty("openid.cookie.path");
         String cookieDomain = properties.getProperty("openid.cookie.domain");
         String cookieMaxAge = properties.getProperty("openid.cookie.maxAge");
-        String securityType = properties.getProperty("openid.cookie.security.type");
+        String securityType = properties.getProperty("openid.cookie.security.type", "encrypted");
         
         String openIdParameter = properties.getProperty("openid.parameter");
         boolean encrypt = "encrypted".equals(securityType);
@@ -163,16 +163,8 @@ public class RelyingParty
         map.put(Constants.OPENID_RETURN_TO, returnTo);
         map.put(Constants.OPENID_ASSOC_HANDLE, user.getAssocHandle());
         
-        if(identity!=null)
-        {
-            map.put(Constants.OPENID_IDENTITY, identity);
-            map.put(Constants.OPENID_CLAIMED_ID, identity);
-        }
-        else
-        {
-            map.put(Constants.OPENID_IDENTITY, user.getOpenIdServer());
-            map.put(Constants.OPENID_CLAIMED_ID, user.getOpenIdServer());
-        }
+        map.put(Constants.OPENID_IDENTITY, identity);
+        map.put(Constants.OPENID_CLAIMED_ID, identity);
         
         return map;
     }
@@ -203,20 +195,10 @@ public class RelyingParty
         buffer.append('&').append(Constants.OPENID_ASSOC_HANDLE).append('=').append(
                 UrlEncodedParameterMap.encode(user.getAssocHandle())); 
         
-        if(identity!=null)
-        {
-            buffer.append('&').append(Constants.OPENID_IDENTITY).append('=').append(
-                    UrlEncodedParameterMap.encode(identity));
-            buffer.append('&').append(Constants.OPENID_CLAIMED_ID).append('=').append(
-                    UrlEncodedParameterMap.encode(identity));
-        }
-        else
-        {
-            buffer.append('&').append(Constants.OPENID_IDENTITY).append('=').append(
-                    UrlEncodedParameterMap.encode(user.getOpenIdServer()));
-            buffer.append('&').append(Constants.OPENID_CLAIMED_ID).append('=').append(
-                    UrlEncodedParameterMap.encode(user.getOpenIdServer()));
-        }       
+        buffer.append('&').append(Constants.OPENID_IDENTITY).append('=').append(
+                UrlEncodedParameterMap.encode(identity));
+        buffer.append('&').append(Constants.OPENID_CLAIMED_ID).append('=').append(
+                UrlEncodedParameterMap.encode(identity));      
         
         return buffer;
     }

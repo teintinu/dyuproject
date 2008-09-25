@@ -82,7 +82,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
             _identity = identity;
             _assocHandle = null;
             _associationData = null;
-            if(_claimedId==null)
+            if(_openIdDelegate==null)
                 _claimedId = identity;
         }
     }
@@ -118,6 +118,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         _assocHandle = (String)map.get("ah");
         _identity = (String)map.get("id");
         _openIdServer = (String)map.get("os");
+        _openIdDelegate = (String)map.get("od");
         _associationData = (Map<String,Object>)map.get("ad");    
     }
 
@@ -128,6 +129,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         out.add("ah", _assocHandle);
         out.add("id", _identity);
         out.add("os" ,_openIdServer);
+        out.add("od" ,_openIdDelegate);
         out.add("ad", _associationData);
     }
 }
