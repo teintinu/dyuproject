@@ -3,12 +3,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Login</title>
+<style type="text/css">
+    #openid_identifier {      
+      background-image: url(http://www.openid.net/login-bg.gif);
+      background-position: 3px 2px;
+      background-repeat: no-repeat;
+      margin: 0;
+      padding: 2px 2px 2px 20px;
+      vertical-align: middle;
+      width: 322px;
+    }
+</style>
 </head>
 <body>
 <div>
-  <p>Login with your open id ... e.g "http://username.myopenid.com"</p>
+  <p>Login with your openid</p>
   <form method="POST">
-    <input name="openid_identifier" type="text" size="40"/>
+    <input id="openid_identifier" name="openid_identifier" type="text" size="40"/>
     <input type="submit" value="send"/>
   </form>
 </div>
