@@ -111,11 +111,6 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     {
         return _associationData;
     }
-    
-    public int hashCode()
-    {
-        return _assocHandle!=null ? _assocHandle.hashCode() : _claimedId.hashCode();
-    }
 
     public void fromJSON(Map map)
     {
