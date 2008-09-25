@@ -39,7 +39,7 @@ public class HelloWorldController extends AbstractController
      * /helloworld/${token}
      * To get the value, you call request.getAttribute(IDENTIFIER_ATTR);
      */    
-    public static final String IDENTIFIER_ATTR = "helloworld.verbOrId";
+    public static final String IDENTIFIER_ATTR = HelloWorldController.class.getName(); 
     
     public HelloWorldController()
     {
