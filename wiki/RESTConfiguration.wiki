@@ -1,6 +1,8 @@
 #labels rest,configuration,webapp,ioc,webcontext,servlet,web,java
 ====Configuration:====
 
+See the [HelloWorldController].
+
 *_web.xml_*
 
 {{{
