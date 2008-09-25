@@ -21,14 +21,14 @@ import junit.framework.TestCase;
  * @created Sep 20, 2008
  */
 
-public class LinkHrefDiscoveryTest extends TestCase
+public class HtmlBasedDiscoveryTest extends TestCase
 {
     
     public void testDiscovery() throws Exception
     {        
         OpenIdContext context = new OpenIdContext();
         context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(new LinkHrefDiscovery());
+        context.setDiscovery(new HtmlBasedDiscovery());
         OpenIdUser user = context.getDiscovery().discover("http://davidyu.myopenid.com", context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
     }
