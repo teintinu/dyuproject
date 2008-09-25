@@ -113,7 +113,7 @@ public class OpenIdUserManager
             }
             try
             {
-                _crypto = Cryptography.createDES(_secretKey);
+                _crypto = Cryptography.createDESede(_secretKey);
             }
             catch(Exception e)
             {

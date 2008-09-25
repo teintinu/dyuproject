@@ -98,7 +98,7 @@ public class RelyingParty
         String securityType = properties.getProperty("openid.cookie.security.type", "encrypted");
         
         String openIdParameter = properties.getProperty("openid.parameter");
-        boolean encrypt = "encrypted".equals(securityType);
+        boolean encrypt = "encrypted".equalsIgnoreCase(securityType);
         
         if(cookieName==null)
             throw new IllegalStateException("openid.cookie.name must be set.");
