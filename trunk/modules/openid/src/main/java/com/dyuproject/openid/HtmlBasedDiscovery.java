@@ -27,7 +27,7 @@ import com.dyuproject.util.xml.XMLParser;
  * @created Sep 15, 2008
  */
 
-public class LinkHrefDiscovery implements Discovery
+public class HtmlBasedDiscovery implements Discovery
 {    
     
     static final String HTML = "html";
@@ -62,13 +62,13 @@ public class LinkHrefDiscovery implements Discovery
     
     static OpenIdUser discover(String claimedId, InputStreamReader reader) throws Exception
     {
-        OpenIdXmlHandler handler = new OpenIdXmlHandler();
+        XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, false);
         return handler._openIdServer==null ? null : new OpenIdUser(claimedId, 
                 handler._openIdServer, handler._openIdDelegate);        
     }
     
-    static class OpenIdXmlHandler implements LazyHandler
+    static class XmlHandler implements LazyHandler
     {
         
         private String _openIdServer;
@@ -80,7 +80,7 @@ public class LinkHrefDiscovery implements Discovery
         private boolean _link = false;        
         private boolean _searching = true;
         
-        OpenIdXmlHandler()
+        XmlHandler()
         {
             
         }

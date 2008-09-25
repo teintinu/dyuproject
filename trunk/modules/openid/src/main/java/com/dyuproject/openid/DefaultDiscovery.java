@@ -37,7 +37,7 @@ public class DefaultDiscovery implements Discovery
         {
             user = null;
         }
-        return user!=null ? user : LinkHrefDiscovery.discover(claimedId, 
+        return user!=null ? user : HtmlBasedDiscovery.discover(claimedId, 
                 context.getHttpConnector().doGET(claimedId, context));
     }
 
