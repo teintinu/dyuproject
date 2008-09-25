@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><metadata>
+  <groupId>com.dyuproject.demos</groupId>
+  <artifactId>todo-list</artifactId>
+  <version>1.0.5</version>
+  <versioning>
+    <versions>
+      <version>1.0.5</version>
+    </versions>
+    <lastUpdated>20080925104304</lastUpdated>
+  </versioning>
+</metadata>
