@@ -1,7 +1,9 @@
 #labels rest,configuration,webapp,ioc,webcontext,servlet,web,java
-====Configuration:====
+RESTful web configuration
 
-See the [HelloWorldController].
+You can find a sample controller [HelloWorldController here].
+
+====Configuration:====
 
 *_web.xml_*
 
