@@ -15,6 +15,7 @@
 package com.dyuproject.openid;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.mortbay.util.ajax.JSON;
@@ -34,9 +35,10 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     private String _openIdServer;
     private String _openIdDelegate;
     private String _identity;
-    private String _assocHandle;
+    private String _assocHandle;    
     
     private Map<String,Object> _associationData;
+    private Map<String,Object> _attributes;
     
     public OpenIdUser()
     {
@@ -111,19 +113,43 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     {
         return _associationData;
     }
+    
+    public void setAttribute(String key, Object value)
+    {
+        if(_attributes==null)
+            _attributes = new HashMap<String,Object>();
+        
+        _attributes.put(key, value);
+    }
+    
+    public Map<String,Object> getAttributes()
+    {
+        return _attributes;
+    }
+    
+    public Object getAttribute(String name)
+    {
+        return _attributes==null ? null : _attributes.get(name);
+    }
+    
+    public boolean removeAttribute(String name)
+    {
+        return _attributes!=null && _attributes.remove(name)!=null;
+    }
 
     public void fromJSON(Map map)
-    {
+    {        
         _claimedId = (String)map.get("ci");
         _assocHandle = (String)map.get("ah");
         _identity = (String)map.get("id");
         _openIdServer = (String)map.get("os");
         _openIdDelegate = (String)map.get("od");
-        _associationData = (Map<String,Object>)map.get("ad");    
+        _associationData = (Map<String,Object>)map.get("ad");
+        _attributes = (Map<String,Object>)map.get("at");
     }
 
     public void toJSON(Output out)
-    {
+    {        
         out.addClass(getClass());
         out.add("ci", _claimedId);
         out.add("ah", _assocHandle);
@@ -131,5 +157,6 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         out.add("os" ,_openIdServer);
         out.add("od" ,_openIdDelegate);
         out.add("ad", _associationData);
+        out.add("at", _attributes);
     }
 }
