@@ -77,7 +77,13 @@
       </plugin>
     </plugins>
   </build>
-  
+  <distributionManagement>
+    <repository>
+      <id>dyuproject.local.repo</id>
+      <name>dyuproject local repository</name>
+      <url>file:./../repos/maven2</url>
+    </repository>
+  </distributionManagement>    
   <dependencyManagement>
     <dependencies>
       <dependency>
