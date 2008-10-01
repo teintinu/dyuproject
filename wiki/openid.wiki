@@ -14,6 +14,24 @@ For a working example, see [SampleOpenIdServlet].
     </dependency>
 }}}
 
+{{{
+
+  <repositories>
+    <repository>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>dyuproject-repo</id>
+      <name>dyuproject-repo</name>      
+      <url>http://dyuproject.googlecode.com/svn/repos/maven2</url>
+    </repository>
+  </repositories>
+
+}}}
+
 
 ====openid.properties====
 This will be used by {{{RelyingParty.getInstance();}}}
