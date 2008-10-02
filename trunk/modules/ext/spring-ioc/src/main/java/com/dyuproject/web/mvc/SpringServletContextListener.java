@@ -18,7 +18,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
@@ -33,7 +33,7 @@ public class SpringServletContextListener implements ServletContextListener
     public static final String RESOURCE_LOCATION = "/WEB-INF/webContext.xml";
     public static final String BEAN_NAME = "webContext";
 
-    private FileSystemXmlApplicationContext _applicationContext;
+    private AbstractXmlApplicationContext _applicationContext;
 
     public void contextDestroyed(ServletContextEvent event)
     {
@@ -50,7 +50,7 @@ public class SpringServletContextListener implements ServletContextListener
         sc.setAttribute(WebContext.class.getName(), _applicationContext.getBean(BEAN_NAME));      
     }
     
-    private static class ApplicationContext extends FileSystemXmlApplicationContext
+    private static class ApplicationContext extends AbstractXmlApplicationContext
     {        
         ServletContext _servletContext;
         
