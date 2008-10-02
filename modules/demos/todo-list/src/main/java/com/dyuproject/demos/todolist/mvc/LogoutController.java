@@ -53,9 +53,7 @@ public class LogoutController extends AbstractController
             response.sendError(404);
             return;
         }
-        CookieSession session = getWebContext().getSession(request);
-        if(session!=null)
-            session.invalidate(response);
+        getWebContext().invalidateSession(response);
         response.sendRedirect(request.getContextPath() + "/overview");
     }
 

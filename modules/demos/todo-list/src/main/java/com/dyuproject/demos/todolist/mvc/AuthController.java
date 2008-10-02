@@ -78,8 +78,8 @@ public class AuthController extends AbstractController
             return;
         }
         CookieSession session = getWebContext().getSession(request, true);
-        session.setAttribute(Constants.ID, user.getId().toString());
-        session.saveIfNew(response);
+        session.setAttribute(Constants.ID, user.getId());
+        getWebContext().persistSession(session, request, response);
         response.setContentType(Constants.TEXT_HTML);
         response.sendRedirect(request.getContextPath() + "/overview");
     }
