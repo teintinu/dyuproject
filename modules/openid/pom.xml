@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject</groupId>
   <artifactId>dyuproject-openid</artifactId>
-  <name>openid consumer</name>
+  <name>openid relying party</name>
   <packaging>jar</packaging>
   
   <build>    
