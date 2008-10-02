@@ -117,9 +117,7 @@ public class RelyingParty
         context.setDiscovery(new DefaultDiscovery());
         context.setHttpConnector(new SimpleHttpConnector());
         
-        RelyingParty relyingParty = new RelyingParty();
-        relyingParty._manager = manager;
-        relyingParty._context = context;
+        RelyingParty relyingParty = new RelyingParty(context, manager);
         if(openIdParameter!=null)
             relyingParty._openIdParameter = openIdParameter;
         
