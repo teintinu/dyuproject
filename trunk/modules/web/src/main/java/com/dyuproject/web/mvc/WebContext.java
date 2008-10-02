@@ -94,6 +94,17 @@ public class WebContext
         return _sessionEnabled ? _cookieSessionManager.getSession(request, false) : null;
     }
     
+    public boolean persistSession(CookieSession session, HttpServletRequest request,
+            HttpServletResponse response) throws IOException
+    {     
+        return _sessionEnabled && _cookieSessionManager.persistSession(session, request, response);
+    }
+
+    public boolean invalidateSession(HttpServletResponse response) throws IOException
+    {
+        return _sessionEnabled && _cookieSessionManager.invalidateSession(response);
+    }
+    
     public boolean isSessionEnabled()
     {
         return _sessionEnabled;
@@ -390,7 +401,7 @@ public class WebContext
             finally
             {
                 if(_sessionEnabled)
-                    _cookieSessionManager.updateIfNecessary(response);
+                    _cookieSessionManager.postHandle(request, response);
             }                 
             return;
         }
@@ -454,7 +465,7 @@ public class WebContext
         finally
         {
             if(_sessionEnabled)
-                _cookieSessionManager.updateIfNecessary(response);
+                _cookieSessionManager.postHandle(request, response);
         }        
     }
     
