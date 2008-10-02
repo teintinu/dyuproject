@@ -10,7 +10,7 @@ For a working example, see [SampleOpenIdServlet].
     <dependency>
       <groupId>com.dyuproject</groupId>
       <artifactId>dyuproject-openid</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>1.0.6</version>
     </dependency>
 }}}
 
@@ -21,9 +21,6 @@ For a working example, see [SampleOpenIdServlet].
       <releases>
         <enabled>true</enabled>
       </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
       <id>dyuproject-repo</id>
       <name>dyuproject-repo</name>      
       <url>http://dyuproject.googlecode.com/svn/repos/maven2</url>
