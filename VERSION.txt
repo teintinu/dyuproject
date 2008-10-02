@@ -1,4 +1,4 @@
-dyuproject-1.0-SNAPSHOT
+dyuproject-1.0.6 2008-10-02
 + openid implementation (consumer/relying party)
 + lazy xml parsing utils
 + refactored CookieSession to support JSON.Convertible types
