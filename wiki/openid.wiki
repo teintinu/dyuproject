@@ -2,6 +2,7 @@
 openid relying party howto
 
 For a working example, see [SampleOpenIdServlet].
+To enable openid sreg extension, see [OpenIdSimpleRegistration].
 
 = Configuration =
 
