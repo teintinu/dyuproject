@@ -1,0 +1,55 @@
+#labels sreg,openid,simple,registration,1.1
+Enabling openid simple registration extension
+
+It is a matter of adding the extra parameters(encoded):
+{{{
+openid.ns.sreg = http://openid.net/extensions/sreg/1.1
+openid.sreg.optional = nickname,email,fullname,dob,gender,postcode,country,language,timezone
+}}}
+
+
+A snippet from [SampleOpenIdServlet] but with sreg enabled:
+{{{
+            if(user.isAssociated() && RelyingParty.isAuthResponse(request))
+            {
+                // verify authentication
+                if(_relyingParty.verifyAuth(user, request, response))
+                {
+                    // authenticated                    
+                    // redirect to home to remove the query params instead of doing:
+                    // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
+                    System.err.println(request.getParameter("openid.sreg.nickname"));
+                    System.err.println(request.getParameter("openid.sreg.email"));
+                    System.err.println(request.getParameter("openid.sreg.fullname"));
+                    System.err.println(request.getParameter("openid.sreg.dob"));
+                    System.err.println(request.getParameter("openid.sreg.gender"));
+                    System.err.println(request.getParameter("openid.sreg.postcode"));
+                    System.err.println(request.getParameter("openid.sreg.country"));
+                    System.err.println(request.getParameter("openid.sreg.language"));
+                    System.err.println(request.getParameter("openid.sreg.timezone"));
+                    response.sendRedirect("/home/");
+                }
+                else
+                {
+                    // failed verification ... re-authenticate
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
+                }
+                return;
+            }
+            
+            // associate user
+            if(_relyingParty.associate(user, request, response))
+            {
+                // authenticate user to his/her openid provider
+                StringBuffer url = request.getRequestURL();
+                String trustRoot = url.substring(0, url.indexOf("/", 9));
+                String realm = url.substring(0, url.lastIndexOf("/"));
+                String returnTo = url.toString();
+                StringBuilder authUrl = RelyingParty.getAuthUrlBuffer(user, trustRoot, realm, returnTo);
+                authUrl.append('&').append("openid.ns.sreg").append('=');
+                authUrl.append(UrlEncodedParameterMap.encode("http://openid.net/extensions/sreg/1.1"));
+                authUrl.append('&').append("openid.sreg.optional").append('=');
+                authUrl.append(UrlEncodedParameterMap.encode("nickname,email,fullname,dob,gender,postcode,country,language,timezone"));
+                response.sendRedirect(authUrl.toString());
+            }
+}}}
