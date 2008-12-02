@@ -1,5 +1,5 @@
 dyuproject-1.0-SNAPSHOT
-+
++ fix npe on CookieSessionManager when request.getCookies() returns null
 
 dyuproject-1.0.6 2008-10-02
 + openid implementation (consumer/relying party)

@@ -107,13 +107,14 @@ public class CookieSessionManager
             return session;
         
         Cookie[] cookies = request.getCookies();
-        if(cookies==null && create)
-            return create(request);
-        for(Cookie c : cookies)
+        if(cookies!=null)
         {
-            if(_cookieName.equals(c.getName()))
-                return read(c, request);
-        }        
+            for(Cookie c : cookies)
+            {
+                if(_cookieName.equals(c.getName()))
+                    return read(c, request);
+            }  
+        }      
         return create ? create(request) : null;
     }
     
