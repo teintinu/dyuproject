@@ -49,8 +49,9 @@
   </build>
   
   <modules>
-    <module>helloworld</module>
     <module>openid-servlet</module>
+    <module>helloworld</module>
+    <module>simple-service</module>
     <module>todo-list</module>
   </modules>
   
