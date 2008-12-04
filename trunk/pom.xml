@@ -128,6 +128,7 @@
     <hibernate-annotations-version>3.3.1.GA</hibernate-annotations-version>
     <velocity-version>1.5</velocity-version>
     <servlet-api-version>3.0.pre1</servlet-api-version>
+    <jra-version>1.0-alpha-4</jra-version>
   </properties>
   
 </project>
