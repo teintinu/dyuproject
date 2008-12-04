@@ -60,7 +60,16 @@ public class MyService extends AbstractService
     {
         RequestContext context = getWebContext().getRequestContext();
         context.getResponse().setContentType("text/plain");
-        context.getResponse().getOutputStream().print("foo with pathParameter: " + context.getPathParameter(1));
+        context.getResponse().getOutputStream().print("foo with pathParameter: " + context.getPathElement(1));
+    }
+    
+    @HttpResource(location="/foo/{a}/ff")
+    @Get
+    public void fooByIdff() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("foo with pathParameter: " + context.getPathElement(1) + " | ff");
     }
     
     @HttpResource(location="/foo/bar")
@@ -70,6 +79,15 @@ public class MyService extends AbstractService
         RequestContext context = getWebContext().getRequestContext();
         context.getResponse().setContentType("text/plain");
         context.getResponse().getOutputStream().print("foo & bar!");
+    }
+    
+    @HttpResource(location="/foo/bar/ff")
+    @Get
+    public void fooBarFF() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("foo & bar & ff!");
     }
     
     @HttpResource(location="/foo/baz")
@@ -88,6 +106,60 @@ public class MyService extends AbstractService
         RequestContext context = getWebContext().getRequestContext();
         context.getResponse().setContentType("text/plain");
         context.getResponse().getOutputStream().print("hello there!");
+    }
+    
+    @HttpResource(location="/a/b/c")
+    @Get
+    public void abc() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("abc");
+    }
+    
+    @HttpResource(location="/a/b/c/d/e")
+    @Get
+    public void abcde() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("abcde");
+    }
+    
+    @HttpResource(location="/a/b/$/d/e")
+    @Get
+    public void ab$de() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("ab | " + context.getPathElement(2) +  " | de");
+    }
+    
+    @HttpResource(location="/1/2/$")
+    @Get
+    public void _12$() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("12$");
+    }
+    
+    @HttpResource(location="/3/$/4")
+    @Get
+    public void _3$4() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("3$5");
+    }
+    
+    @HttpResource(location="/5/$/6/$/7")
+    @Get
+    public void _5$6$7() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print("5" + context.getPathElement(1) + "6"+ context.getPathElement(3) + "7");
     }
 
 
