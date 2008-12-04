@@ -34,7 +34,7 @@ public abstract class AbstractController implements Controller
     
     private String _identifier, _identifierAttribute;
     private WebContext _webContext;
-    private Interceptor _filter;
+    private Interceptor _interceptor;
 
     public final void init(WebContext webContext)
     {
@@ -83,14 +83,14 @@ public abstract class AbstractController implements Controller
         return _identifierAttribute;
     }
     
-    public void setFilter(Interceptor filter)
+    public void setInterceptor(Interceptor interceptor)
     {
-        _filter = filter;
+        _interceptor = interceptor;
     }
     
     public Interceptor getInterceptor()
     {
-        return _filter;
+        return _interceptor;
     }
     
     public String getVerbOrId(HttpServletRequest request)
