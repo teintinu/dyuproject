@@ -94,7 +94,7 @@ public class PathHandler
         resourceHandler.handle();
     }
     
-    public PathHandler addPathHandler(int index, String[] pathInfo, ResourceHandler resourceHandler)
+    public PathHandler map(int index, String[] pathInfo, ResourceHandler resourceHandler)
     {
         String id = pathInfo[index++];
         PathHandler pathHandler = _pathHandlers.get(id);
@@ -119,10 +119,10 @@ public class PathHandler
                 return pathHandler._parameterHandler;
             }            
             
-            return pathHandler._parameterHandler.addPathHandler(index, pathInfo, resourceHandler);
+            return pathHandler._parameterHandler.map(index, pathInfo, resourceHandler);
         }
         
-        return pathHandler.addPathHandler(--index, pathInfo, resourceHandler);
+        return pathHandler.map(--index, pathInfo, resourceHandler);
     }
     
     public void handle(int index, String[] pathInfo) throws IOException

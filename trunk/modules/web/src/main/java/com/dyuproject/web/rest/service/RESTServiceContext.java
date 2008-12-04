@@ -121,7 +121,7 @@ public class RESTServiceContext extends WebContext
                 if(location.length()==0)
                     _pathHandler.addDefaultHandler(handler);
                 else
-                    _pathHandler.addPathHandler(0, Delim.SLASH.split(location), handler);                
+                    _pathHandler.map(0, Delim.SLASH.split(location), handler);                
             }
         }
     }
