@@ -18,25 +18,24 @@ import java.io.IOException;
 import java.util.Properties;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.web.auth.Authentication;
 import com.dyuproject.web.auth.SimpleCredentialSource;
 import com.dyuproject.web.auth.SmartDigestAuthentication;
-import com.dyuproject.web.mvc.AbstractFilter;
+import com.dyuproject.web.rest.AbstractInterceptor;
+import com.dyuproject.web.rest.RequestContext;
 
 /**
  * @author David Yu
  * @created Jun 29, 2008
  */
 
-public class DigestAuthFilter extends AbstractFilter
+public class DigestAuthInterceptor extends AbstractInterceptor
 {
     
     private Authentication _authentication;
     
-    public DigestAuthFilter()
+    public DigestAuthInterceptor()
     {
         Properties props = new Properties();
         props.setProperty("foo", "bar");
@@ -45,23 +44,22 @@ public class DigestAuthFilter extends AbstractFilter
                 "secret", 30);
     }
 
-    @Override
     protected void init()
     {
       
     }
 
-    public void postHandle(boolean handled, String mime,
-            HttpServletRequest request, HttpServletResponse response)
+    public void postHandle(boolean handled, RequestContext requestContext)
             throws ServletException, IOException
-    {       
+    {        
         
     }
 
-    public boolean preHandle(String mime, HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException
+    public boolean preHandle(RequestContext requestContext)
+            throws ServletException, IOException
     {        
-        return _authentication.authenticate(ProtectedController.IDENTIFIER, request, response);
+        return _authentication.authenticate(ProtectedController.IDENTIFIER, 
+                requestContext.getRequest(), requestContext.getResponse());
     }
 
 }
