@@ -7,8 +7,12 @@
    
     <servlet>
         <servlet-name>rest</servlet-name>
-        <servlet-class>com.dyuproject.web.mvc.RESTfulMVCServlet</servlet-class>
+        <servlet-class>com.dyuproject.web.rest.RESTServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
+        <init-param>
+          <param-name>webContext</param-name>
+          <param-value>com.dyuproject.web.rest.mvc.RESTControllerContext</param-value>
+        </init-param>        
         <init-param>
           <param-name>defaultController</param-name>
           <param-value>com.dyuproject.demos.helloworld.MyDefaultController</param-value>
@@ -17,7 +21,7 @@
         <init-param>
           <param-name>controllers</param-name>
           <param-value>
-            com.dyuproject.demos.helloworld.HelloWorldController
+            com.dyuproject.demos.helloworld.HelloWorldController, com.dyuproject.demos.helloworld.ProtectedController
           </param-value>
         </init-param>       
     </servlet>

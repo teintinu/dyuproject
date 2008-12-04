@@ -26,7 +26,7 @@ import com.dyuproject.util.format.FormatConverter;
 import com.dyuproject.util.format.JSONConverter;
 import com.dyuproject.util.format.XMLConverter;
 import com.dyuproject.util.format.FormatConverter.Builder;
-import com.dyuproject.web.mvc.AbstractController;
+import com.dyuproject.web.rest.mvc.AbstractController;
 
 /**
  * @author David Yu
