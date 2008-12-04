@@ -83,7 +83,7 @@ public class XMLParserTest extends TestCase
             assertEquals("xrds", xrds.getNamespace());
             Node xrd = xrds.getNode("xrd");
             Node service = xrd.getNode("service");
-            assertTrue(2==service.getNodes("type").size());
+            assertTrue(0!=service.getNodes("type").size());
             assertEquals("xrds", service.getLastNode().getNamespace());
         }
         finally

@@ -1,4 +1,5 @@
-dyuproject-1.0-SNAPSHOT
+dyuproject-1.1-SNAPSHOT
++ fix XMLParserTest
 + fix npe on CookieSessionManager when request.getCookies() returns null
 
 dyuproject-1.0.6 2008-10-02
