@@ -11,7 +11,7 @@
    
     <servlet>
         <servlet-name>rest</servlet-name>
-        <servlet-class>com.dyuproject.web.mvc.RESTfulMVCServlet</servlet-class>
+        <servlet-class>com.dyuproject.web.rest.RESTServlet</servlet-class>
         <load-on-startup>1</load-on-startup>        
     </servlet>
 

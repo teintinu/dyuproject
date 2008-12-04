@@ -17,19 +17,18 @@ package com.dyuproject.demos.todolist.mvc;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.demos.todolist.Constants;
 import com.dyuproject.web.CookieSession;
-import com.dyuproject.web.mvc.AbstractFilter;
+import com.dyuproject.web.rest.AbstractInterceptor;
+import com.dyuproject.web.rest.RequestContext;
 
 /**
  * @author David Yu
  * @created Jun 3, 2008
  */
 
-public class UserFilter extends AbstractFilter
+public class UserInterceptor extends AbstractInterceptor
 {
 
     @Override
@@ -39,22 +38,21 @@ public class UserFilter extends AbstractFilter
         
     }
 
-    public void postHandle(boolean handled, String mime,
-            HttpServletRequest request, HttpServletResponse response)
+    public void postHandle(boolean handled, RequestContext requestContext)
             throws ServletException, IOException
     {
-
+        
     }
 
-    public boolean preHandle(String mime, HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException
+    public boolean preHandle(RequestContext requestContext)
+            throws ServletException, IOException
     {
-        CookieSession session = getWebContext().getSession(request);        
+        CookieSession session = getWebContext().getSession(requestContext.getRequest());        
         if(session!=null && session.getAttribute(Constants.ID)!=null)
             return true;
-        response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("login/index.jsp", request, 
-                response);
+        requestContext.getResponse().setContentType(Constants.TEXT_HTML);
+        getWebContext().getJSPDispatcher().dispatch("login/index.jsp", requestContext.getRequest(), 
+                requestContext.getResponse());
         return false;
     }
 

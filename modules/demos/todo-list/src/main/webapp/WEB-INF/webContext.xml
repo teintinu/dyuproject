@@ -8,11 +8,11 @@
     <property name="persistenceUnitName" value="todo-list-persistence"/>
   </bean>
   
-  <bean id="userFilter" class="com.dyuproject.web.mvc.FilterCollection">
-    <property name="filters">
+  <bean id="userInterceptor" class="com.dyuproject.web.rest.InterceptorCollection">
+    <property name="interceptors">
       <list>
         <ref bean="entityManagerManager"/>
-        <bean class="com.dyuproject.demos.todolist.mvc.UserFilter"/>
+        <bean class="com.dyuproject.demos.todolist.mvc.UserInterceptor"/>
       </list>
     </property>  
   </bean>
@@ -25,7 +25,7 @@
     <property name="entityManagerManager" ref="entityManagerManager"/>
   </bean>
   
-  <bean id="webContext" class="com.dyuproject.web.mvc.WebContext">
+  <bean id="webContext" class="com.dyuproject.web.rest.mvc.RESTControllerContext">
     <property name="attributes">
       <map>
         <entry key="todoDao" value-ref="todoDao"/>
@@ -40,7 +40,7 @@
     <property name="controllers">    
       <list>
         <bean class="com.dyuproject.demos.todolist.mvc.AuthController">
-          <property name="filter" ref="entityManagerManager"/>
+          <property name="interceptor" ref="entityManagerManager"/>
         </bean>
         
         <bean class="com.dyuproject.demos.todolist.mvc.LoginController"/>
@@ -48,15 +48,15 @@
         <bean class="com.dyuproject.demos.todolist.mvc.LogoutController"/>
         
         <bean class="com.dyuproject.demos.todolist.mvc.OverviewController">
-          <property name="filter" ref="userFilter"/>
+          <property name="interceptor" ref="userInterceptor"/>
         </bean>
         
         <bean class="com.dyuproject.demos.todolist.mvc.TodosController">
-          <property name="filter" ref="entityManagerManager"/>
+          <property name="interceptor" ref="entityManagerManager"/>
         </bean>
         
         <bean class="com.dyuproject.demos.todolist.mvc.UsersController">
-          <property name="filter" ref="entityManagerManager"/>
+          <property name="interceptor" ref="entityManagerManager"/>
         </bean>        
       </list>
     </property>  
