@@ -63,6 +63,11 @@ public abstract class WebContext
         return __currentContext.get();
     }
     
+    public RequestContext getRequestContext()
+    {
+        return getCurrentRequestContext();
+    }
+    
     public static final String DISPATCH_ATTR = "com.dyuproject.web.dispatch";
 
     public static final String PATH_SUFFIX_ATTR = "pathSuffix";
