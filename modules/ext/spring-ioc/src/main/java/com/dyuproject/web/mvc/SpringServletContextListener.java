@@ -22,6 +22,8 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
+import com.dyuproject.web.rest.WebContext;
+
 /**
  * @author David Yu
  * @created Jun 15, 2008
