@@ -69,7 +69,7 @@ public class RequestContext
         return _pathInfo;
     }
     
-    public String getPathParameter(int idx)
+    public String getPathElement(int idx)
     {
         return _pathInfo[idx];
     }

@@ -33,7 +33,7 @@ public class PathHandler
     
     private static Log _log = LogFactory.getLog(PathHandler.class);
     
-    public static boolean isUriParameter(String id)
+    public static boolean isPathParameter(String id)
     {
         char first = id.charAt(0);
         return first=='{' || first=='$';
@@ -41,16 +41,17 @@ public class PathHandler
     
     private String _id;
     private PathHandler _parent;
-    private Map<String,ResourceHandler> _defaultHandlers = new HashMap<String,ResourceHandler>(7);
-    private Map<String,ResourceHandler> _parameterHandlers = new HashMap<String,ResourceHandler>(7);
-    private Map<String,PathHandler> _pathHandlers = new HashMap<String,PathHandler>(7);   
+    
+    private PathHandler _parameterHandler = null;
+    private Map<String,PathHandler> _pathHandlers = new HashMap<String,PathHandler>(3);
+    private Map<String,ResourceHandler> _resourceHandlers = new HashMap<String,ResourceHandler>(3);
     
     public PathHandler(String id)
     {
         _id = id;
     }
     
-    public PathHandler(String id, PathHandler parent)
+    PathHandler(String id, PathHandler parent)
     {
         this(id);
         setParent(parent);
@@ -70,29 +71,27 @@ public class PathHandler
     
     void addPathHandler(PathHandler child)
     {
-        Object last = _pathHandlers.put(child.getId(), child);
+        PathHandler last = _pathHandlers.put(child.getId(), child);
         if(last!=null)
-        {
-            _log.warn("overridden: " + last);
-        }
+            _log.warn("path overridden: " + last.getId() + " | " + last);
     }
     
-    void addDefaultHandler(ResourceHandler invoker)
+    void addDefaultHandler(ResourceHandler resourceHandler)
     {
-        Object last = _defaultHandlers.put(invoker.getHttpMethod(), invoker);
+        ResourceHandler last = _resourceHandlers.put(resourceHandler.getHttpMethod(), resourceHandler);
         if(last!=null)
-        {
-            _log.warn("overridden: " + last);
-        }
-    }
+            _log.warn("resource overridden: " + last.getHttpMethod() + " | " + last);
+    }    
     
-    void addParameterHandler(ResourceHandler invoker)
+    void resourceHandle() throws IOException
     {
-        Object last = _parameterHandlers.put(invoker.getHttpMethod(), invoker);
-        if(last!=null)
+        ResourceHandler resourceHandler = _resourceHandlers.get(WebContext.getCurrentRequestContext().getRequest().getMethod());
+        if(resourceHandler==null)
         {
-            _log.warn("overridden: " + last);
-        }        
+            WebContext.getCurrentRequestContext().getResponse().sendError(404);
+            return;
+        }
+        resourceHandler.handle();
     }
     
     public PathHandler addPathHandler(int index, String[] pathInfo, ResourceHandler resourceHandler)
@@ -109,37 +108,21 @@ public class PathHandler
         }
         
         String next = pathInfo[index++];
-        if(isUriParameter(next) && index==pathInfo.length)
+        if(isPathParameter(next))
         {
-            pathHandler.addParameterHandler(resourceHandler);
-            return pathHandler;
+            if(pathHandler._parameterHandler==null)
+                pathHandler._parameterHandler = new PathHandler("/");
+            
+            if(index==pathInfo.length)
+            {
+                pathHandler._parameterHandler.addDefaultHandler(resourceHandler);
+                return pathHandler._parameterHandler;
+            }            
+            
+            return pathHandler._parameterHandler.addPathHandler(index, pathInfo, resourceHandler);
         }
-        else
-            index--;
-
-        return pathHandler.addPathHandler(index, pathInfo, resourceHandler).setParent(pathHandler);
-    }
-    
-    void handleDefault() throws IOException
-    {
-        ResourceHandler invoker = _defaultHandlers.get(WebContext.getCurrentRequestContext().getRequest().getMethod());
-        if(invoker==null)
-        {
-            WebContext.getCurrentRequestContext().getResponse().sendError(404);
-            return;
-        }
-        invoker.invoke();
-    }
-    
-    void handleParameter() throws IOException
-    {
-        ResourceHandler invoker = _parameterHandlers.get(WebContext.getCurrentRequestContext().getRequest().getMethod());
-        if(invoker==null)
-        {
-            WebContext.getCurrentRequestContext().getResponse().sendError(404);
-            return;
-        }
-        invoker.invoke();
+        
+        return pathHandler.addPathHandler(--index, pathInfo, resourceHandler);
     }
     
     public void handle(int index, String[] pathInfo) throws IOException
@@ -148,31 +131,17 @@ public class PathHandler
         PathHandler pathHandler = _pathHandlers.get(id);
         if(pathHandler==null)
         {
-            WebContext.getCurrentRequestContext().getResponse().sendError(404);
-            return;
-        }
-        if(index==pathInfo.length)
-        {
-            pathHandler.handleDefault();
-            return;
-        }
-        String next = pathInfo[index++];
-        PathHandler nextHandler = pathHandler._pathHandlers.get(next);        
-        if(nextHandler==null)
-        {
-            //WebContext.getCurrentRequestContext().setUriParameter(id, next);
-            if(index==pathInfo.length)
-            {
-                pathHandler.handleParameter();
-                return;
-            }
+            if(_parameterHandler==null)
+                WebContext.getCurrentRequestContext().getResponse().sendError(404);
+            else if(index==pathInfo.length)
+                _parameterHandler.resourceHandle();
+            else
+                _parameterHandler.handle(index, pathInfo);            
         }
         else if(index==pathInfo.length)
-        {
-            nextHandler.handleDefault();
-            return;
-        }
-        nextHandler.handle(index, pathInfo);
+            pathHandler.resourceHandle();
+        else
+            pathHandler.handle(index, pathInfo);
     }
 
 }

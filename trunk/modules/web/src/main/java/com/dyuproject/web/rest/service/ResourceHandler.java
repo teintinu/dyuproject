@@ -72,7 +72,7 @@ public class ResourceHandler
         return _httpMethod;
     }
     
-    public void invoke() throws IOException
+    public void handle() throws IOException
     {
         try
         {
