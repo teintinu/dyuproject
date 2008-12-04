@@ -14,9 +14,6 @@
 
 package com.dyuproject.web.rest;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -29,7 +26,6 @@ public class RequestContext
 {
     private HttpServletRequest _request;
     private HttpServletResponse _response;
-    private Map<String,String> _uriParameterMap = new HashMap<String,String>();
     private String _mime;
     private String[] _pathInfo;
     
@@ -51,11 +47,6 @@ public class RequestContext
     public HttpServletResponse getResponse()
     {
         return _response;
-    }
-    
-    public String getUriParameter(String name)
-    {
-        return _uriParameterMap.get(name);
     }
     
     void setMime(String mime)
@@ -87,7 +78,7 @@ public class RequestContext
     {
         _request = null;
         _response = null;
-        _uriParameterMap.clear();
+        _pathInfo = null;
     }
 
 }
