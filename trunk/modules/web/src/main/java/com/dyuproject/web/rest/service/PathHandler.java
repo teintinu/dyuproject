@@ -40,9 +40,7 @@ public class PathHandler
     }
     
     private String _id;
-    private PathHandler _parent;
-    
-    private PathHandler _parameterHandler = null;
+    private PathHandler _parent, _parameterHandler;
     private Map<String,PathHandler> _pathHandlers = new HashMap<String,PathHandler>(3);
     private Map<String,ResourceHandler> _resourceHandlers = new HashMap<String,ResourceHandler>(3);
     
@@ -111,7 +109,7 @@ public class PathHandler
         if(isPathParameter(next))
         {
             if(pathHandler._parameterHandler==null)
-                pathHandler._parameterHandler = new PathHandler("/");
+                pathHandler._parameterHandler = new PathHandler("$");
             
             if(index==pathInfo.length)
             {
