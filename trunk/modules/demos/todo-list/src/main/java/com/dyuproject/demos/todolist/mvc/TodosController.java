@@ -30,7 +30,7 @@ import com.dyuproject.demos.todolist.model.Todo;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.util.format.JSONConverter;
 import com.dyuproject.util.format.XMLConverter;
-import com.dyuproject.web.mvc.controller.CRUDController;
+import com.dyuproject.web.rest.mvc.controller.CRUDController;
 
 /**
  * @author David Yu

@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.demos.todolist.Constants;
-import com.dyuproject.web.mvc.AbstractController;
+import com.dyuproject.web.rest.mvc.AbstractController;
 
 /**
  * @author David Yu

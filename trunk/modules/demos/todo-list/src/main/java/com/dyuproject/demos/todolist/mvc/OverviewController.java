@@ -24,7 +24,7 @@ import com.dyuproject.demos.todolist.Constants;
 import com.dyuproject.demos.todolist.dao.UserDao;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.CookieSession;
-import com.dyuproject.web.mvc.AbstractController;
+import com.dyuproject.web.rest.mvc.AbstractController;
 
 /**
  * @author David Yu
