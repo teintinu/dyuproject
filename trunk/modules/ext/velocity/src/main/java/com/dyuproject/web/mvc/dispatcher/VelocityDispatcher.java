@@ -30,8 +30,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 
-import com.dyuproject.web.mvc.ViewDispatcher;
-import com.dyuproject.web.mvc.WebContext;
+import com.dyuproject.web.rest.ViewDispatcher;
+import com.dyuproject.web.rest.WebContext;
 
 /**
  * @author David Yu

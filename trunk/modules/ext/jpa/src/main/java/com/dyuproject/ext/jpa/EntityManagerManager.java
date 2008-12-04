@@ -24,17 +24,16 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.web.mvc.AbstractFilter;
+import com.dyuproject.web.rest.AbstractInterceptor;
+import com.dyuproject.web.rest.RequestContext;
 
 /**
  * @author David Yu
  * @created Aug 30, 2008
  */
 
-public class EntityManagerManager extends AbstractFilter implements javax.servlet.Filter
+public class EntityManagerManager extends AbstractInterceptor implements javax.servlet.Filter
 {
     
     private static final ThreadLocal<EntityManager> __entityManager = new ThreadLocal<EntityManager>();
@@ -101,15 +100,14 @@ public class EntityManagerManager extends AbstractFilter implements javax.servle
             _entityManagerFactory.close();
     }
 
-    public boolean preHandle(String mime, HttpServletRequest request,
-            HttpServletResponse response) throws ServletException, IOException
+    public boolean preHandle(RequestContext requestContext) 
+    throws ServletException, IOException
     {        
         return true;
     }
 
-    public void postHandle(boolean handled, String mime,
-            HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
+    public void postHandle(boolean handled, RequestContext requestContext) 
+    throws ServletException, IOException
     {
         EntityManager manager = getCurrentEntityManager();
         __entityManager.set(null);
@@ -126,7 +124,10 @@ public class EntityManagerManager extends AbstractFilter implements javax.servle
         }
         finally
         {
-            postHandle(true, null, (HttpServletRequest)sreq, (HttpServletResponse)sresp);
+            EntityManager manager = getCurrentEntityManager();
+            __entityManager.set(null);
+            if(manager!=null)
+                manager.close();
         }        
     }
 
