@@ -1,0 +1,73 @@
+dyuproject-1.0-SNAPSHOT
++ fix npe on CookieSessionManager when request.getCookies() returns null
+
+dyuproject-1.0.6 2008-10-02
++ openid implementation (consumer/relying party)
++ lazy xml parsing utils
++ refactored CookieSession to support JSON.Convertible types
++ DigestUtil for SHA-1, SHA-256, MD5, etc
++ DiffieHellman
++ javadoc and junit test-cases
++ added method "putRaw" on FormatConverter.Bean
++ fixed ContextController bug when on root context and without subContexts
++ added dyuproject-jpa(modules/ext/jpa)
+
+dyuproject-1.0.5 2008-08-22
++ updated maven artifact ids: prefixed with "dyuproject-" (namespaced to not conflict with other artifacts especially on webapp/WEB-INF/lib
++ changed the nonce separator of SmartDigestAuthentication
++ refactored SpringServletContextListener as a workaround for a bug in FileSystemApplicationContext on unix 
++ renamed ContextPathController to ContextController 
+
+dyuproject-1.0.4 2008-07-07
++ added SmartDigestAuthentication (expiration, remoteAddress sniffing, hashed with secretKey)
++ CookieSession value now MD5 hashed + Base64 encoded
++ added Basic and Digest Authentication
++ fixed SpringServletContextListener bug (did not implement ServletContextListener)
++ added method destroy on filters
++ added com.dyuproject.util.digest.MD5
+
+dyuproject-1.0.3 2008-06-16
++ default view structure: /WEB-INF/views/jsp/ , /WEB-INF/views/velocity/
++ Maven artifacts renamed (the "dyuproject-" prefix removed)
++ Added support for velocity templates
++ Added support for spring ioc
++ WebContext.setMimes rename to WebContext.setMime
++ Added clientside widgets demo on todo-list
++ Added Validators - util for request input validation.
++ Fixed JSONConverter bug where a null string would be written as key:"null" instead of key:null.
++ helloworld demo
++ removed persistence module
+
+dyuproject-1.0.2 2008-06-06
++ Fixed CookieSession bug that always updates the cookie even if not modified.
++ StaticResourceController now mapped as wildcard.
++ Added ContextPathController - handles a contextPath and dispatches to its controllers or its default controller.
++ CookieSession maxAge can now be set(overridden) at runtime.  Enables the "remember me" option.
+
+dyuproject-1.0.1 2008-06-04
++ CookieSession remoteAddress hash now optional - defaults to false
++ moved com.dyuproject.web.mvc.CookieSessionManager to com.dyuproject.web.CookieSessionManager 
++ moved com.dyuproject.web.mvc.CookieSession to com.dyuproject.web.CookieSession
++ added JSPViewController
++ RestfulMVCServlet renamed to RESTfulMVCServlet
++ added method destroy on controllers
++ added CookieSessionManager
++ support wildcard '*' on Controllers
++ added CRUDController
++ renamed MethodMappedController to VerbMappedController
++ added StaticResourceController
++ demos
++ servlet-api-2.5 to 3.0
+
+dyuproject-1.0.0 2008-05-20
++ session authentication controller helper class
++ CookieSession protect from session hijacking
++ CookieSession - MD5 Hash + secretKey
++ Filters
++ ViewDispatcher
++ RESTful MVC
++ POJO to JSON String tool
++ POJO to XML String tool
++ persistence tool for JDBC
++ persistence tool for Hibernate
++ application bundling for a single jar
