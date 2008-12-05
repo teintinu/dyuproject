@@ -29,51 +29,34 @@ import javax.servlet.ServletException;
 public class InterceptorCollection extends AbstractInterceptor
 {
     
-    private Interceptor[] _interceptors;
-    private List<Interceptor> _temp;
-    
-    public void setInterceptors(Interceptor[] intereptors)
-    {
-        _interceptors = intereptors;
-    }
+    private List<Interceptor> _interceptors = new ArrayList<Interceptor>();
     
     public void setInterceptors(List<Interceptor> interceptor)
     {
-        _temp = interceptor;
+        _interceptors.addAll(interceptor);
     }
     
     public void addInterceptor(Interceptor interceptor)
     {
-        if(_temp==null)
-            _temp = new ArrayList<Interceptor>();
-        _temp.add(interceptor);
+        _interceptors.add(interceptor);
+    }
+    
+    public List<Interceptor> getInterceptors()
+    {
+        return _interceptors;
     }
     
     protected void init()
-    {        
-        if(_interceptors==null)
-        {
-            if(_temp==null)
-                throw new IllegalStateException("no interceptor present");
-            _interceptors = _temp.toArray(new Interceptor[_temp.size()]);
-        }
-        else if(_temp!=null)
-        {
-            for(Interceptor f : _interceptors)
-                _temp.add(f);
-            _interceptors = _temp.toArray(new Interceptor[_temp.size()]);
-            _temp.clear();
-            _temp = null;
-        }
-        for(Interceptor f : _interceptors)
-            f.init(getWebContext());
+    {
+        for(Interceptor i : _interceptors)
+            i.init(getWebContext());
     }
 
     public void postHandle(boolean handled, RequestContext requestContext) 
     throws ServletException, IOException
     {
         if(handled)        
-            doPostHandleChain(_interceptors.length-1, true, requestContext);       
+            doPostHandleChain(_interceptors.size()-1, true, requestContext);       
     }
 
     public boolean preHandle(RequestContext requestContext) throws ServletException, IOException
@@ -82,11 +65,11 @@ public class InterceptorCollection extends AbstractInterceptor
         int i = 0;
         try
         {
-            for(;i<_interceptors.length; i++)
+            for(;i<_interceptors.size(); i++)
             {
                 // protect in case of exceptions
                 success = false;
-                if(_interceptors[i].preHandle(requestContext))                
+                if(_interceptors.get(i).preHandle(requestContext))                
                     success = true;                
                 else                    
                     break;                                   
@@ -103,18 +86,22 @@ public class InterceptorCollection extends AbstractInterceptor
     private void doPostHandleChain(int i, boolean handled, RequestContext requestContext) 
     throws ServletException, IOException
     {
-        if(i==0)
-        {
-            _interceptors[0].postHandle(handled, requestContext);
-            return;
-        }
         try
         {
-            _interceptors[i].postHandle(handled, requestContext);
+            _interceptors.get(i).postHandle(handled, requestContext);
         }
         finally
         {
-            doPostHandleChain(i-1, handled, requestContext);
+            if(i>0)
+                doPostHandleChain(i-1, handled, requestContext);
+        }
+    }
+    
+    public static class ThreadLocal extends java.lang.ThreadLocal<InterceptorCollection>
+    {
+        public InterceptorCollection initialValue()
+        {
+            return new InterceptorCollection();
         }
     }
 
