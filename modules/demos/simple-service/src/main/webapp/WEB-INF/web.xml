@@ -20,6 +20,14 @@
             com.dyuproject.demos.simpleservice.MyService
           </param-value>
         </init-param>
+        <init-param>
+          <param-name>interceptors</param-name>
+          <param-value>
+            com.dyuproject.demos.simpleservice.MyInterceptor@/a/b/c,
+            com.dyuproject.demos.simpleservice.MyInterceptorWC1@/a/b/*,
+            com.dyuproject.demos.simpleservice.MyInterceptorWC2@/a/**
+          </param-value>
+        </init-param>        
     </servlet>
 
     <servlet-mapping>

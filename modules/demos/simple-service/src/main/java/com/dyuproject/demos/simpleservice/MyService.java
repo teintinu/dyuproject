@@ -108,13 +108,40 @@ public class MyService extends AbstractService
         context.getResponse().getOutputStream().print("hello there!");
     }
     
+    @HttpResource(location="/a")
+    @Get
+    public void a() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print(" # a # ");
+    }
+    
+    @HttpResource(location="/a/b")
+    @Get
+    public void ab() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print(" # ab # ");
+    }
+    
     @HttpResource(location="/a/b/c")
     @Get
     public void abc() throws IOException
     {
         RequestContext context = getWebContext().getRequestContext();
         context.getResponse().setContentType("text/plain");
-        context.getResponse().getOutputStream().print("abc");
+        context.getResponse().getOutputStream().print(" # abc # ");
+    }
+    
+    @HttpResource(location="/a/b/c/d")
+    @Get
+    public void abcd() throws IOException
+    {
+        RequestContext context = getWebContext().getRequestContext();
+        context.getResponse().setContentType("text/plain");
+        context.getResponse().getOutputStream().print(" # abcd # ");
     }
     
     @HttpResource(location="/a/b/c/d/e")
@@ -123,7 +150,7 @@ public class MyService extends AbstractService
     {
         RequestContext context = getWebContext().getRequestContext();
         context.getResponse().setContentType("text/plain");
-        context.getResponse().getOutputStream().print("abcde");
+        context.getResponse().getOutputStream().print(" # abcde # ");
     }
     
     @HttpResource(location="/a/b/$/d/e")
@@ -132,7 +159,7 @@ public class MyService extends AbstractService
     {
         RequestContext context = getWebContext().getRequestContext();
         context.getResponse().setContentType("text/plain");
-        context.getResponse().getOutputStream().print("ab | " + context.getPathElement(2) +  " | de");
+        context.getResponse().getOutputStream().print(" # ab | " + context.getPathElement(2) +  " | de # ");
     }
     
     @HttpResource(location="/1/2/$")
