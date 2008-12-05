@@ -29,6 +29,16 @@ public class RequestContext
     private String _mime;
     private String[] _pathInfo;
     
+    RequestContext init(HttpServletRequest request, HttpServletResponse response, String[] pathInfo, 
+            String mime)
+    {
+        _request = request;
+        _response = response;
+        _pathInfo = pathInfo;
+        _mime = mime;
+        return this;
+    }
+    
     void setRequest(HttpServletRequest request)
     {
         _request = request;

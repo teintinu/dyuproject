@@ -361,12 +361,10 @@ public abstract class WebContext
         // root context /
         if(last<1)
         {
-            RequestContext requestContext = getCurrentRequestContext();
-            requestContext.setRequest(request);
-            requestContext.setResponse(response);
+            RequestContext requestContext = getCurrentRequestContext();                        
             try
             {
-                handleRoot(requestContext);
+                handleRoot(requestContext.init(request, response, null, null));
             }
             finally
             {
@@ -429,13 +427,9 @@ public abstract class WebContext
             return;
         }            
         RequestContext requestContext = getCurrentRequestContext();
-        requestContext.setRequest(request);
-        requestContext.setResponse(response);
-        requestContext.setPathInfo(tokens);
-        requestContext.setMime(mime);
         try
         {
-            handlePath(requestContext);
+            handlePath(requestContext.init(request, response, tokens, mime));            
         }
         finally
         {

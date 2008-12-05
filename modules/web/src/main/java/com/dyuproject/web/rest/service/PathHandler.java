@@ -122,10 +122,7 @@ public class PathHandler
     {
         if(_parent!=null)
         {
-            if(_parent._parent!=null)
-                appendWildcardToCollection(_parent._parent, interceptors);
-            
-            appendInterceptor(_parent._interceptors[2], interceptors);
+            appendWildcardToCollection(_parent, interceptors);            
             appendInterceptor(_parent._interceptors[1], interceptors);
         }
         //appendInterceptor(_interceptors[2], interceptors);
