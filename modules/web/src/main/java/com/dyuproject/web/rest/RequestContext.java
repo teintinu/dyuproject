@@ -39,19 +39,9 @@ public class RequestContext
         return this;
     }
     
-    void setRequest(HttpServletRequest request)
-    {
-        _request = request;
-    }
-    
     public HttpServletRequest getRequest()
     {
         return _request;
-    }
-    
-    void setResponse(HttpServletResponse response)
-    {
-        _response = response;
     }
     
     public HttpServletResponse getResponse()
@@ -59,19 +49,9 @@ public class RequestContext
         return _response;
     }
     
-    void setMime(String mime)
-    {
-        _mime = mime;
-    }
-    
     public String getMime()
     {
         return _mime;
-    }
-    
-    void setPathInfo(String[] pathInfo)
-    {
-        _pathInfo = pathInfo;
     }
     
     public String[] getPathInfo()

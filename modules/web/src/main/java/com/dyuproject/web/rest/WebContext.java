@@ -46,16 +46,14 @@ import com.dyuproject.web.CookieSessionManager;
 public abstract class WebContext
 {
     
-    private static final ThreadLocalRESTContext __currentContext = new ThreadLocalRESTContext();    
+    private static final ThreadLocalRequestContext __currentContext = new ThreadLocalRequestContext();    
     
-    static class ThreadLocalRESTContext extends ThreadLocal<RequestContext>
-    {
-        
+    static class ThreadLocalRequestContext extends ThreadLocal<RequestContext>
+    {        
         protected RequestContext initialValue()
         {
             return new RequestContext();
-        }
-        
+        }        
     }
     
     public static RequestContext getCurrentRequestContext()
@@ -79,7 +77,7 @@ public abstract class WebContext
     public static final String PATHINFO_ARRAY_ATTR = "rest.pathInfo.array";
     public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";    
     
-    private static final Log log = LogFactory.getLog(WebContext.class);
+    private static final Log _log = LogFactory.getLog(WebContext.class);
     
     public static CookieSession getCurrentSession()
     {
@@ -89,15 +87,14 @@ public abstract class WebContext
     private boolean _initialized = false, _sessionEnabled = false;
     private ServletContext _servletContext;
     
-    protected DefaultDispatcher _defaultDispatcher = new DefaultDispatcher();
-    protected JSPDispatcher _jspDispatcher = new JSPDispatcher();
+    private DefaultDispatcher _defaultDispatcher = new DefaultDispatcher();
+    private JSPDispatcher _jspDispatcher = new JSPDispatcher();
     private Map<String,ViewDispatcher> _viewDispatchers = new HashMap<String,ViewDispatcher>();
-
     
     private Map<String,Object> _attributes = new HashMap<String,Object>();
     
     private Properties _mime, _env = new Properties();
-    protected CookieSessionManager _cookieSessionManager;
+    private CookieSessionManager _cookieSessionManager;
     
     public WebContext()
     {
@@ -151,7 +148,7 @@ public abstract class WebContext
             if(resource!=null)
             {
                 setEnv(resource.openStream());
-                log.info("loaded: " + DEFAULT_ENV_LOCATION);
+                _log.info("loaded: " + DEFAULT_ENV_LOCATION);
             }
         }
         catch(Exception e)
@@ -167,7 +164,7 @@ public abstract class WebContext
                 if(resource!=null)
                 {
                     setMime(resource.openStream());
-                    log.info("loaded: " + DEFAULT_MIME_LOCATION);
+                    _log.info("loaded: " + DEFAULT_MIME_LOCATION);
                 }
             }
             catch(Exception e)
@@ -176,7 +173,7 @@ public abstract class WebContext
             }
             if(_mime==null)
             {
-                log.warn("no mime.properties found");
+                _log.warn("no mime.properties found");
                 _mime = new Properties();
             }
         }
@@ -198,7 +195,7 @@ public abstract class WebContext
         
         _initialized = true;        
         
-        log.info("initialized.");
+        _log.info("initialized.");
     }
     
     public ServletContext getServletContext()
@@ -437,6 +434,12 @@ public abstract class WebContext
             if(isSessionEnabled())
                 _cookieSessionManager.postHandle(request, response);
         }        
+    }
+    
+    void destroy(ServletContext servletContext)
+    {
+        destroy();
+        _log.info("destroyed.");
     }
     
     /* ================================================================================= */

@@ -37,9 +37,18 @@ import com.dyuproject.web.rest.WebContext;
 public class PathHandler
 {
     
+    public static final String ROOT = "/", PARAM = "$";
+    
     private static Log _log = LogFactory.getLog(PathHandler.class);
     private static final InterceptorCollection.ThreadLocal __currentInterceptors = 
         new InterceptorCollection.ThreadLocal();
+    
+    private static boolean __skipInterceptors = false;
+    
+    static void setSkipInterceptors(boolean skip)
+    {
+        __skipInterceptors = skip;
+    }
     
     public static boolean isPathParameter(String id)
     {
@@ -50,12 +59,17 @@ public class PathHandler
     private String _id;
     private PathHandler _parent, _parameterHandler;
     private Map<String,PathHandler> _pathHandlers = new HashMap<String,PathHandler>(3);
-    private Map<String,ResourceHandler> _resourceHandlers = new HashMap<String,ResourceHandler>(3);
+    private Map<String,Resource> _resources = new HashMap<String,Resource>(3);
     
     // /path/   /path/* and  /path/**
     private Interceptor[] _interceptors = new Interceptor[3];
     
-    public PathHandler(String id)
+    public PathHandler()
+    {
+        this(ROOT);
+    }
+    
+    PathHandler(String id)
     {
         _id = id;
     }
@@ -72,7 +86,7 @@ public class PathHandler
         return _id;
     }
     
-    PathHandler setOtherParent(PathHandler parent)
+    PathHandler setParent(PathHandler parent)
     {
         _parent = parent;
         return this;
@@ -85,9 +99,9 @@ public class PathHandler
             _log.warn("path overridden: " + last.getId() + " | " + last);
     }
     
-    void addResourceHandler(ResourceHandler resourceHandler)
+    void addResource(Resource resource)
     {
-        ResourceHandler last = _resourceHandlers.put(resourceHandler.getHttpMethod(), resourceHandler);
+        Resource last = _resources.put(resource.getHttpMethod(), resource);
         if(last!=null)
             _log.warn("resource overridden: " + last.getHttpMethod() + " | " + last);
     }
@@ -133,18 +147,23 @@ public class PathHandler
     void resourceHandle() throws ServletException, IOException
     {
         RequestContext requestContext = WebContext.getCurrentRequestContext();
-        ResourceHandler resourceHandler = _resourceHandlers.get(requestContext.getRequest().getMethod());
-        if(resourceHandler==null)
+        Resource Resource = _resources.get(requestContext.getRequest().getMethod());
+        if(Resource==null)
         {
             requestContext.getResponse().sendError(404);
             return;
-        }        
+        }
+        if(__skipInterceptors)
+        {
+            Resource.handle();
+            return;
+        }
         
         InterceptorCollection interceptor = __currentInterceptors.get();
         appendToCollection(interceptor);        
         if(interceptor.getInterceptors().size()==0)
         {
-            resourceHandler.handle();
+            Resource.handle();
             return;
         }
 
@@ -159,7 +178,7 @@ public class PathHandler
             {
                 try
                 {
-                    resourceHandler.handle();
+                    Resource.handle();
                 }
                 finally
                 {
@@ -168,20 +187,7 @@ public class PathHandler
             }
             else
                 interceptor.postHandle(false, requestContext);
-        }
-        
-        /*int i=3;
-        while(i-->0)
-        {            
-            if(_interceptors[i]!=null)
-                _interceptors[i].preHandle(requestContext);
-        }
-        resourceHandler.handle();
-        while(3>++i)
-        {            
-            if(_interceptors[i]!=null)
-                _interceptors[i].postHandle(true, requestContext);
-        }*/        
+        }      
     }    
     
     boolean map(int index, String[] pathInfo, Interceptor interceptor, int wildcard)
@@ -220,7 +226,7 @@ public class PathHandler
         return pathHandler.map(--index, pathInfo, interceptor, wildcard);
     }
     
-    PathHandler map(int index, String[] pathInfo, ResourceHandler resourceHandler)
+    PathHandler map(int index, String[] pathInfo, Resource Resource)
     {        
         String id = pathInfo[index++];
         PathHandler pathHandler = _pathHandlers.get(id);
@@ -229,7 +235,7 @@ public class PathHandler
         
         if(index==pathInfo.length)
         {            
-            pathHandler.addResourceHandler(resourceHandler);
+            pathHandler.addResource(Resource);
             return pathHandler;
         }
         
@@ -237,22 +243,26 @@ public class PathHandler
         if(isPathParameter(next))
         {
             if(pathHandler._parameterHandler==null)
-                pathHandler._parameterHandler = new PathHandler("$").setOtherParent(pathHandler);
+                pathHandler._parameterHandler = new PathHandler(PARAM).setParent(pathHandler);
             
             if(index==pathInfo.length)
             {
-                pathHandler._parameterHandler.addResourceHandler(resourceHandler);
+                pathHandler._parameterHandler.addResource(Resource);
                 return pathHandler._parameterHandler;
             }            
             
-            return pathHandler._parameterHandler.map(index, pathInfo, resourceHandler);
+            return pathHandler._parameterHandler.map(index, pathInfo, Resource);
         }
         
-        return pathHandler.map(--index, pathInfo, resourceHandler);
+        return pathHandler.map(--index, pathInfo, Resource);
     }
     
     public boolean map(String path, Interceptor interceptor)
     {
+        path = path.trim();
+        if(path.length()==0)
+            throw new IllegalStateException("invalid location/path");
+        
         int wildcard = 0;
         int lastSlashIdx = path.lastIndexOf('/');
         if(lastSlashIdx==path.length()-1)
@@ -294,17 +304,18 @@ public class PathHandler
         return map(0, Delim.SLASH.split(path), interceptor, wildcard);        
     }
     
-    public PathHandler map(String path, ResourceHandler resourceHandler)
+    public PathHandler map(String path, Resource resource)
     {
+        path = path.trim();
         if(path.length()==0 || path.indexOf('*')!=-1)
-            throw new IllegalStateException("invalid location/uri");
+            throw new IllegalStateException("invalid location/path");
         
         int lastSlashIdx = path.lastIndexOf('/');
         if(lastSlashIdx==path.length()-1)
         {
             if(path.length()==1)
             {
-                addResourceHandler(resourceHandler);
+                addResource(resource);
                 return this;
             }
             path = path.substring(0, path.length()-1);
@@ -313,7 +324,7 @@ public class PathHandler
         if(path.charAt(0)=='/')
             path = path.substring(1);        
      
-        return map(0, Delim.SLASH.split(path), resourceHandler);
+        return map(0, Delim.SLASH.split(path), resource);
     }
     
     public void handle(int index, String[] pathInfo) throws ServletException, IOException

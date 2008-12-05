@@ -44,8 +44,9 @@ public class RESTServiceContext extends WebContext
     
     private static Log _log = LogFactory.getLog(RESTServiceContext.class);
     
-    private PathHandler _pathHandler = new PathHandler("/");
+    private PathHandler _pathHandler = new PathHandler();
     private List<Service> _services = new ArrayList<Service>();
+    private Map<String,Resource> _resources = new HashMap<String,Resource>();
     private Map<String,Interceptor> _interceptors = new HashMap<String,Interceptor>();
     
     public void addService(Service service)
@@ -74,6 +75,22 @@ public class RESTServiceContext extends WebContext
             _services.add(s);        
     }
     
+    public void addResource(String path, Resource resource)
+    {
+        if(isInitialized())
+            throw new IllegalStateException("already initialized");
+        
+        add(path, resource);
+    }
+    
+    public void setResources(Map<String,Resource> resources)
+    {
+        if(isInitialized())
+            throw new IllegalStateException("already initialized");
+        
+        _resources.putAll(resources);
+    }
+    
     public void addInterceptor(String path, Interceptor interceptor)
     {
         if(isInitialized())
@@ -89,38 +106,67 @@ public class RESTServiceContext extends WebContext
         
         _interceptors.putAll(interceptors);
     }
+    
+    private void add(String path, Resource resource)
+    {
+        Resource last = _resources.put(path, resource);
+        if(last!=null)
+            _log.warn("overriden resource: " + last + " @ " + path);
+    }
 
     protected void init()
-    {
+    {       
         for(Service s : _services)
             initService(s);
         
+        for(Map.Entry<String, Resource> entry : _resources.entrySet())
+            initResource(entry.getKey(), entry.getValue());
+        
         for(Map.Entry<String, Interceptor> entry : _interceptors.entrySet())
             initInterceptor(entry.getKey(), entry.getValue());
+        
+        PathHandler.setSkipInterceptors(_interceptors.isEmpty());
+        
+        _log.info(_services.size() + " services initialized.");
+        _log.info(_resources.size() + " resources initialized.");
+        _log.info(_interceptors.size() + " interceptors initialized.");
     }    
     
     protected void destroy()
     {
         for(Service s : _services)
-            s.destroy(this);        
+            s.destroy(this);
+        
+        for(Resource r : _resources.values())
+            r.destroy(this);
         
         for(Interceptor i : _interceptors.values())
             i.destroy(this);
         
+        _log.info(_services.size() + " services destroyed.");
+        _log.info(_resources.size() + " resources destroyed.");
+        _log.info(_interceptors.size() + " interceptors destroyed.");
+        
         _services.clear();
+        _resources.clear();
         _interceptors.clear();
     }
     
-    void initInterceptor(String path, Interceptor interceptor)
+    private void initResource(String path, Resource resource)
     {
-        _pathHandler.map(path.trim(), interceptor);
+        _pathHandler.map(path, resource);
+        resource.init(this);
+    }
+    
+    private void initInterceptor(String path, Interceptor interceptor)
+    {
+        _pathHandler.map(path, interceptor);
         interceptor.init(this);
     }
     
-    void initService(Service service)
+    private void initService(Service service)
     {        
-        Method[] methods = service.getClass().getDeclaredMethods();
-        for(Method m : methods)
+        for(Method m : service.getClass().getDeclaredMethods())
         {
             String location = null;
             String httpMethod = null;
@@ -134,7 +180,7 @@ public class RESTServiceContext extends WebContext
                         location = ((HttpResource)a).location();                        
                         continue;
                     }
-                    String method = ResourceHandler.getHttpMethod(a.annotationType());
+                    String method = AnnotatedMethodResource.getHttpMethod(a.annotationType());
                     if(httpMethod!=null)
                     {
                         if(method!=null)
@@ -143,8 +189,7 @@ public class RESTServiceContext extends WebContext
                     else
                         httpMethod = method;                    
                 }
-            }
-            
+            }            
             if(location==null)
                 continue;
             
@@ -156,12 +201,12 @@ public class RESTServiceContext extends WebContext
             
             if(m.getParameterTypes().length!=0)
             {
-                _log.warn(location + " not mapped.  Annotated method should have no args.");
+                _log.warn(location + " not mapped.  Annotated method must have no args.");
                 continue;
             }
-
-            if(_pathHandler.map(location.trim(), new ResourceHandler(service, m, httpMethod))==null)
-                _log.warn(location + " not mapped.");
+            
+            m.setAccessible(true);            
+            add(location, new AnnotatedMethodResource(service, m, httpMethod));
         }
         service.init(this);
     }
@@ -176,21 +221,40 @@ public class RESTServiceContext extends WebContext
                 addService((Service)newObjectInstance(tokenizer.nextToken().trim()));
         }
         
+        String resourcesParam = config.getInitParameter("resources");
+        if(resourcesParam!=null)
+        {
+            StringTokenizer tokenizer = new StringTokenizer(resourcesParam, ",;");
+            while(tokenizer.hasMoreTokens())
+            {
+                String next = tokenizer.nextToken();
+                int idx = next.indexOf('@');
+                if(idx==-1)
+                {
+                    _log.warn("invalid resource mapping: " + next);
+                    continue;
+                }
+                String resourceClass = next.substring(0, idx).trim();
+                String path = next.substring(idx+1).trim();
+                addResource(path, (Resource)newObjectInstance(resourceClass));
+            }
+        }
+        
         String interceptorsParam = config.getInitParameter("interceptors");
         if(interceptorsParam!=null)
         {
             StringTokenizer tokenizer = new StringTokenizer(interceptorsParam, ",;");
             while(tokenizer.hasMoreTokens())
             {
-                String next = tokenizer.nextToken().trim();
+                String next = tokenizer.nextToken();
                 int idx = next.indexOf('@');
                 if(idx==-1)
                 {
                     _log.warn("invalid interceptor mapping: " + next);
                     continue;
                 }
-                String interceptorClass = next.substring(0, idx);
-                String path = next.substring(idx+1);
+                String interceptorClass = next.substring(0, idx).trim();
+                String path = next.substring(idx+1).trim();
                 addInterceptor(path, (Interceptor)newObjectInstance(interceptorClass));
             }
         }

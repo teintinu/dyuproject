@@ -20,6 +20,11 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.ServletException;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import com.dyuproject.web.rest.WebContext;
 
 /**
@@ -27,10 +32,10 @@ import com.dyuproject.web.rest.WebContext;
  * @created Dec 3, 2008
  */
 
-public class ResourceHandler
-{
+public class AnnotatedMethodResource implements Resource
+{    
     
-    public static final String GET = "GET", POST = "POST", PUT = "PUT", DELETE = "DELETE";
+    private static final Object[] __arg = new Object[]{};
     
     private static final Map<Class<?>,String> __httpMethods = new HashMap<Class<?>,String>();
     static
@@ -41,6 +46,8 @@ public class ResourceHandler
         __httpMethods.put(org.codehaus.jra.Delete.class, DELETE);        
     }
     
+    private static Log _log = LogFactory.getLog(AnnotatedMethodResource.class);
+    
     static String getHttpMethod(Class<?> clazz)
     {
         return __httpMethods.get(clazz);
@@ -50,11 +57,21 @@ public class ResourceHandler
     private Method _serviceMethod;
     private String _httpMethod;
     
-    public ResourceHandler(Service service, Method serviceMethod, String httpMethod)
+    public AnnotatedMethodResource(Service service, Method serviceMethod, String httpMethod)
     {
         _service = service;
         _serviceMethod = serviceMethod;
         _httpMethod = httpMethod;
+    }
+    
+    public void init(WebContext webContext)
+    {
+        
+    }
+    
+    public void destroy(WebContext webContext)
+    {
+        
     }
     
     public Service getService()
@@ -72,27 +89,33 @@ public class ResourceHandler
         return _httpMethod;
     }
     
-    public void handle() throws IOException
+    public void handle() throws ServletException, IOException
     {
         try
         {
-            _serviceMethod.invoke(_service, new Object[]{});
+            _serviceMethod.invoke(_service, __arg);
         } 
         catch (IllegalArgumentException e)
         {            
-            e.printStackTrace();
+            _log.warn(e.getMessage(), e);
             WebContext.getCurrentRequestContext().getResponse().sendError(404);
         } 
         catch (IllegalAccessException e)
         {            
-            e.printStackTrace();
+            _log.warn(e.getMessage(), e);
             WebContext.getCurrentRequestContext().getResponse().sendError(404);
         } 
         catch (InvocationTargetException e)
         {            
-            e.printStackTrace();
+            Throwable cause = e.getCause();
+            if(cause instanceof IOException)
+                throw (IOException)cause;
+            if(cause instanceof ServletException)
+                throw (ServletException)cause;
+            
+            _log.info(cause.getMessage(), cause);
             WebContext.getCurrentRequestContext().getResponse().sendError(404);
-        }        
+        }
     }
     
     public String toString()
