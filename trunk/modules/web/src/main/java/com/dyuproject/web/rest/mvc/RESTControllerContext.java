@@ -29,8 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.dyuproject.web.CookieSession;
-import com.dyuproject.web.CookieSessionManager;
 import com.dyuproject.web.rest.Interceptor;
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
@@ -42,12 +40,7 @@ import com.dyuproject.web.rest.WebContext;
 
 public class RESTControllerContext extends WebContext
 {    
-    private static final Log _log = LogFactory.getLog(RESTControllerContext.class);
-    
-    public static CookieSession getCurrentSession()
-    {
-        return CookieSessionManager.getCurrentSession();
-    }
+    private static final Log _log = LogFactory.getLog(RESTControllerContext.class);    
     
     private Controller _defaultController;
     private Map<String, Controller> _controllers = new HashMap<String,Controller>();
