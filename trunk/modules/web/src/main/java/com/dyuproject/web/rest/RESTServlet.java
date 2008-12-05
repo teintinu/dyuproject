@@ -72,7 +72,7 @@ public class RESTServlet extends HttpServlet
     public void destroy()
     {
         if(_webContext!=null)
-            _webContext.destroy();
+            _webContext.destroy(getServletContext());
     }
 
 }

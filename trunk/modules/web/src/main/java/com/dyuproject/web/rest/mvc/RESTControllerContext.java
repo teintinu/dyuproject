@@ -42,7 +42,7 @@ import com.dyuproject.web.rest.WebContext;
 
 public class RESTControllerContext extends WebContext
 {    
-    private static final Log log = LogFactory.getLog(WebContext.class);
+    private static final Log _log = LogFactory.getLog(RESTControllerContext.class);
     
     public static CookieSession getCurrentSession()
     {
@@ -80,7 +80,7 @@ public class RESTControllerContext extends WebContext
             if(resource!=null)
             {
                 setEnv(resource.openStream());
-                log.info("loaded: " + DEFAULT_ENV_LOCATION);
+                _log.info("loaded: " + DEFAULT_ENV_LOCATION);
             }
         }
         catch(Exception e)
@@ -90,12 +90,12 @@ public class RESTControllerContext extends WebContext
                 
         if(_defaultController==null)
             throw new IllegalStateException("default controller must be specified");      
-        _defaultController.init(this);
         
+        _defaultController.init(this);        
         for(Controller c : _controllers.values())
             c.init(this);
 
-        log.info("initialized.");
+        _log.info(1+_controllers.size() + " controllers initialized.");
     }     
     
     public void setDefaultController(Controller defaultController)
@@ -144,6 +144,7 @@ public class RESTControllerContext extends WebContext
         
         if(c.getIdentifier()==null)
             throw new IllegalStateException("Controller's resourceName must not be null");
+        
         _controllers.put(c.getIdentifier(), c);
     }
     
@@ -172,7 +173,7 @@ public class RESTControllerContext extends WebContext
         Controller c = _controllers.get(pathInfo[idx]);
         if(c==null)
         {
-            log.warn("No controller matched on: " + pathInfo[idx]);
+            _log.warn("No controller mapped on: " + pathInfo[idx]);
             response.sendError(404);
             return;
         }            
@@ -184,7 +185,7 @@ public class RESTControllerContext extends WebContext
         String verbOrIdAttr = c.getIdentifierAttribute();
         if(verbOrIdAttr==null)
         {
-            log.warn(pathInfo[idx+1] + " is not a verb nor an id of " + pathInfo[idx]);
+            _log.warn(pathInfo[idx+1] + " is not a verb nor an id of " + pathInfo[idx]);
             response.sendError(404);
             return;
         }
@@ -246,8 +247,16 @@ public class RESTControllerContext extends WebContext
     
     protected void destroy()
     {
+        int destroyed = 0;
+        if(_defaultController!=null)
+        {
+            _defaultController.destroy(this);
+            destroyed++;
+        }                
         for(Controller c : _controllers.values())
             c.destroy(this);
+        
+        _log.info(destroyed+_controllers.size() + " controllers destroyed.");
     }
     
 }
