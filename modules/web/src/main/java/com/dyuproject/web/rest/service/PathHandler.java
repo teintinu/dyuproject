@@ -261,7 +261,7 @@ public class PathHandler
     {
         path = path.trim();
         if(path.length()==0)
-            throw new IllegalStateException("invalid location/path");
+            throw new IllegalStateException("invalid path: " + path);
         
         int wildcard = 0;
         int lastSlashIdx = path.lastIndexOf('/');
@@ -281,16 +281,16 @@ public class PathHandler
         if(asteriskIdx!=-1)
         {
             if(asteriskIdx<lastSlashIdx)
-                throw new IllegalArgumentException("illegal path: " + path);
+                throw new IllegalStateException("invalid path: " + path);
             
             int len = asteriskIdx - lastSlashIdx;
             if(len>2 || asteriskIdx+1!=path.length())
-                throw new IllegalArgumentException("wild card path must end with /* or /**");
+                throw new IllegalArgumentException("wild card: " + path + " must end with /* or /**");
          
             if(len==2)
             {
                 if(path.charAt(asteriskIdx-1)!='*')
-                    throw new IllegalArgumentException("wild card path must end with /* or /**");
+                    throw new IllegalArgumentException("wild card: " + path + " must end with /* or /**");
                 wildcard = 2;
             }
             else
@@ -308,7 +308,7 @@ public class PathHandler
     {
         path = path.trim();
         if(path.length()==0 || path.indexOf('*')!=-1)
-            throw new IllegalStateException("invalid location/path: " + path);
+            throw new IllegalStateException("invalid path: " + path);
         
         int lastSlashIdx = path.lastIndexOf('/');
         if(lastSlashIdx==path.length()-1)
