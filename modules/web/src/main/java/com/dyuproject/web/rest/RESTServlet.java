@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * @created May 10, 2008
  */
 
+@SuppressWarnings("serial")
 public class RESTServlet extends HttpServlet
 {
     

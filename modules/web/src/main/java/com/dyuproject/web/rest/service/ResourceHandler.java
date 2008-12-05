@@ -94,5 +94,10 @@ public class ResourceHandler
             WebContext.getCurrentRequestContext().getResponse().sendError(404);
         }        
     }
+    
+    public String toString()
+    {
+        return getService().getClass().getSimpleName() + "." + getServiceMethod().getName() + "()";
+    }
 
 }
