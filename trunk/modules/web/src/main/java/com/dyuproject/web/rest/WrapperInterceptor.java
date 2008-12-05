@@ -38,26 +38,23 @@ public class WrapperInterceptor extends AbstractInterceptor
         return _interceptor;
     }
 
-    @Override
     protected void init()
-    {
-        // TODO Auto-generated method stubs
-        
+    {        
+        if(_interceptor!=null)
+            _interceptor.init(getWebContext());
     }
 
     public void postHandle(boolean handled, RequestContext requestContext)
             throws ServletException, IOException
     {
-        _interceptor.postHandle(handled, requestContext);        
+        if(_interceptor!=null)
+            _interceptor.postHandle(handled, requestContext);        
     }
 
     public boolean preHandle(RequestContext requestContext)
             throws ServletException, IOException
     {        
-        return _interceptor.preHandle(requestContext);
-    }
-
-    
-    
+        return _interceptor==null || _interceptor.preHandle(requestContext);
+    }    
 
 }
