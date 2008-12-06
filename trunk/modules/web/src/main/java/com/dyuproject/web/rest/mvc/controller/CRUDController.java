@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author David Yu
  * @created May 22, 2008
  */
-
+@Deprecated
 public abstract class CRUDController extends VerbMappedController
 {    
     

@@ -26,7 +26,7 @@ import com.dyuproject.web.rest.WebContext;
  * @author David Yu
  * @created May 16, 2008
  */
-
+@Deprecated
 public abstract class AbstractController implements Controller
 {
     

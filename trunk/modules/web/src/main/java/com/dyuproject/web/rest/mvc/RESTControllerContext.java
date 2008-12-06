@@ -39,7 +39,7 @@ import com.dyuproject.web.rest.WebContext;
  * @author David Yu
  * @created Dec 4, 2008
  */
-
+@Deprecated
 public class RESTControllerContext extends WebContext
 {    
     private static final Log _log = LogFactory.getLog(RESTControllerContext.class);    

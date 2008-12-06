@@ -38,7 +38,7 @@ import com.dyuproject.web.rest.mvc.RESTControllerContext;
  * @author David Yu
  * @created Jun 5, 2008
  */
-
+@Deprecated
 public class ContextController extends AbstractController
 {
     
