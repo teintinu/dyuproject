@@ -45,16 +45,22 @@ public class RESTServlet extends HttpServlet
                 throw new ServletException("*webContext* is missing from the servlet context's attributes/init-parameter");
             try
             {
-                _webContext = (WebContext)newObjectInstance(webContextClass);
-                _webContext.preConfigure(getServletConfig());
+                _webContext = (WebContext)newObjectInstance(webContextClass);                
             }
             catch(Exception e)
             {
                 throw new ServletException(e);
             }
         }
-
-        _webContext.init(getServletContext());
+        try
+        {            
+            _webContext.preConfigure(getServletConfig());
+            _webContext.init(getServletContext());
+        }
+        catch(Exception e)
+        {
+            throw new ServletException(e);
+        }        
     }
     
     public void service(HttpServletRequest request, HttpServletResponse response)
