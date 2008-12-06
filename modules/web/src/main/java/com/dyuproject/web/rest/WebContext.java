@@ -44,28 +44,7 @@ import com.dyuproject.web.CookieSessionManager;
  */
 
 public abstract class WebContext
-{
-    
-    private static final ThreadLocalRequestContext __currentContext = new ThreadLocalRequestContext();    
-    
-    static class ThreadLocalRequestContext extends ThreadLocal<RequestContext>
-    {        
-        protected RequestContext initialValue()
-        {
-            return new RequestContext();
-        }        
-    }
-    
-    public static RequestContext getCurrentRequestContext()
-    {
-        return __currentContext.get();
-    }
-    
-    public RequestContext getRequestContext()
-    {
-        return getCurrentRequestContext();
-    }
-    
+{    
     public static final String DISPATCH_ATTR = "com.dyuproject.web.dispatch";
 
     public static final String PATH_SUFFIX_ATTR = "pathSuffix";
@@ -77,12 +56,7 @@ public abstract class WebContext
     public static final String PATHINFO_ARRAY_ATTR = "rest.pathInfo.array";
     public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";    
     
-    private static final Log _log = LogFactory.getLog(WebContext.class);
-    
-    public static CookieSession getCurrentSession()
-    {
-        return CookieSessionManager.getCurrentSession();
-    }    
+    private static final Log _log = LogFactory.getLog(WebContext.class);   
     
     private boolean _initialized = false, _sessionEnabled = false;
     private ServletContext _servletContext;
@@ -95,6 +69,22 @@ public abstract class WebContext
     
     private Properties _mime, _env = new Properties();
     private CookieSessionManager _cookieSessionManager;
+    
+    private static final RequestContext.Local __currentContext = new RequestContext.Local();    
+    public static RequestContext getCurrentRequestContext()
+    {
+        return __currentContext.get();
+    }
+    
+    public RequestContext getRequestContext()
+    {
+        return getCurrentRequestContext();
+    }
+    
+    public static CookieSession getCurrentSession()
+    {
+        return CookieSessionManager.getCurrentSession();
+    } 
     
     public WebContext()
     {
@@ -353,8 +343,8 @@ public abstract class WebContext
             return;
         }
         
-        String pathInfo = request.getPathInfo();
-        int last = pathInfo.length()-1;
+        String uri = request.getPathInfo();
+        int last = uri.length()-1;
         // root context /
         if(last<1)
         {
@@ -362,6 +352,22 @@ public abstract class WebContext
             try
             {
                 handleRoot(requestContext.init(request, response, null, null));
+            }
+            catch(IllegalArgumentException e)
+            {                
+                if(!response.isCommitted())
+                {
+                    _log.debug(e.getMessage(), e);
+                    response.sendError(404);
+                }
+                else
+                    _log.warn(e.getMessage(), e);
+            }
+            catch(RuntimeException e)
+            {
+                _log.info(e.getMessage(), e);
+                if(!response.isCommitted())
+                    response.sendError(500);
             }
             finally
             {
@@ -375,7 +381,7 @@ public abstract class WebContext
         String mime = null;        
         String lastWord = null;        
         int dot = -1;
-        int lastSlash = pathInfo.lastIndexOf('/');
+        int lastSlash = uri.lastIndexOf('/');
         // ends with /
         if(lastSlash==last)
         {
@@ -384,11 +390,11 @@ public abstract class WebContext
                 response.sendError(404);
                 return;
             }*/
-            pathInfo = pathInfo.substring(1, last);
+            uri = uri.substring(1, last);
         }
         else
         {           
-            lastWord = pathInfo.substring(lastSlash+1);            
+            lastWord = uri.substring(lastSlash+1);            
             dot = lastWord.lastIndexOf('.');            
             if(dot!=-1)
             {
@@ -408,17 +414,17 @@ public abstract class WebContext
                 //response.sendRedirect(request.getRequestURL().append('/').toString());
                 //return;
             }
-            pathInfo = pathInfo.substring(1);
+            uri = uri.substring(1);
         }
-        String[] tokens = Delim.SLASH.split(pathInfo);
+        String[] pathInfo = Delim.SLASH.split(uri);
         /*if(dot!=-1 && tokens.length%2!=0)
         {
             response.sendError(404);
             return;
         }*/
         if(lastWord!=null)
-            tokens[tokens.length-1] = lastWord;
-        else if(tokens[tokens.length-1].indexOf('.')!=-1)
+            pathInfo[pathInfo.length-1] = lastWord;
+        else if(pathInfo[pathInfo.length-1].indexOf('.')!=-1)
         {
             response.sendError(404);
             return;
@@ -426,7 +432,23 @@ public abstract class WebContext
         RequestContext requestContext = getCurrentRequestContext();
         try
         {
-            handlePath(requestContext.init(request, response, tokens, mime));            
+            handlePath(requestContext.init(request, response, pathInfo, mime));            
+        }
+        catch(IllegalArgumentException e)
+        {                
+            if(!response.isCommitted())
+            {
+                _log.debug(e.getMessage(), e);
+                response.sendError(404);
+            }
+            else
+                _log.warn(e.getMessage(), e);
+        }
+        catch(RuntimeException e)
+        {
+            _log.info(e.getMessage(), e);
+            if(!response.isCommitted())
+                response.sendError(500);
         }
         finally
         {

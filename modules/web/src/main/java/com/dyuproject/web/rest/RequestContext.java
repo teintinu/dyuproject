@@ -72,5 +72,13 @@ public class RequestContext
         _response = null;
         _pathInfo = null;
     }
+    
+    public static class Local extends ThreadLocal<RequestContext>
+    {
+        protected RequestContext initialValue()
+        {
+            return new RequestContext();
+        }
+    }
 
 }
