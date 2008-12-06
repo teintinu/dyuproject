@@ -29,7 +29,7 @@ import com.dyuproject.web.rest.mvc.AbstractController;
  * @author David Yu
  * @created Jun 3, 2008
  */
-
+@Deprecated
 public class JSPViewController extends AbstractController
 {
     

@@ -34,7 +34,7 @@ import com.dyuproject.web.rest.mvc.AbstractController;
  * @author David Yu
  * @created May 16, 2008
  */
-
+@Deprecated
 public abstract class VerbMappedController extends AbstractController
 {
     

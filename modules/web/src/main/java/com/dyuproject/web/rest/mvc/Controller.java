@@ -29,7 +29,7 @@ import com.dyuproject.web.rest.WebContext;
  * @author David Yu
  * @created May 9, 2008
  */
-
+@Deprecated
 public interface Controller
 {
     

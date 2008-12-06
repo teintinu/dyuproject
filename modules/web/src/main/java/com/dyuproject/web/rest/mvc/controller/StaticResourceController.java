@@ -29,7 +29,7 @@ import com.dyuproject.web.rest.mvc.AbstractController;
  * @author David Yu
  * @created May 22, 2008
  */
-
+@Deprecated
 public class StaticResourceController extends AbstractController
 {
     
