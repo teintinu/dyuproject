@@ -48,7 +48,7 @@ public class RESTServiceContext extends WebContext
     
     private PathHandler _pathHandler = new PathHandler();
     private List<Service> _services = new ArrayList<Service>();
-    private Map<String,Resource> _resources = new HashMap<String,Resource>();
+    private List<Resource> _resources = new ArrayList<Resource>();
     private Map<String,Interceptor> _interceptors = new HashMap<String,Interceptor>();
     
     public void addService(Service service)
@@ -82,7 +82,7 @@ public class RESTServiceContext extends WebContext
         if(isInitialized())
             throw new IllegalStateException("already initialized");
         
-        add(path, resource);
+        mapResource(path, resource);
     }
     
     public void setResources(Map<String,Resource> resources)
@@ -90,7 +90,8 @@ public class RESTServiceContext extends WebContext
         if(isInitialized())
             throw new IllegalStateException("already initialized");
         
-        _resources.putAll(resources);
+        for(Map.Entry<String, Resource> entry : resources.entrySet())
+            mapResource(entry.getKey(), entry.getValue());
     }
     
     public void addInterceptor(String path, Interceptor interceptor)
@@ -108,21 +109,14 @@ public class RESTServiceContext extends WebContext
         
         _interceptors.putAll(interceptors);
     }
-    
-    private void add(String path, Resource resource)
-    {
-        Resource last = _resources.put(path, resource);
-        if(last!=null)
-            _log.warn("overriden resource: " + last + " @ " + path);
-    }
 
     protected void init()
     {       
         for(Service s : _services)
             initService(s);
         
-        for(Map.Entry<String, Resource> entry : _resources.entrySet())
-            initResource(entry.getKey(), entry.getValue());
+        for(Resource r : _resources)
+            initResource(r);
         
         for(Map.Entry<String, Interceptor> entry : _interceptors.entrySet())
             initInterceptor(entry.getKey(), entry.getValue());
@@ -139,7 +133,7 @@ public class RESTServiceContext extends WebContext
         for(Service s : _services)
             s.destroy(this);
         
-        for(Resource r : _resources.values())
+        for(Resource r : _resources)
             r.destroy(this);
         
         for(Interceptor i : _interceptors.values())
@@ -152,11 +146,16 @@ public class RESTServiceContext extends WebContext
         _services.clear();
         _resources.clear();
         _interceptors.clear();
+    }    
+    
+    private void mapResource(String path, Resource resource)
+    {
+        if(_pathHandler.map(path, resource)!=null)
+            _resources.add(resource);
     }
     
-    private void initResource(String path, Resource resource)
-    {
-        _pathHandler.map(path, resource);
+    private void initResource(Resource resource)
+    {        
         resource.init(this);
     }
     
@@ -208,7 +207,7 @@ public class RESTServiceContext extends WebContext
             }
             
             m.setAccessible(true);            
-            add(location, new AnnotatedMethodResource(service, m, httpMethod));
+            mapResource(location, new AnnotatedMethodResource(service, m, httpMethod));
         }
         service.init(this);
     }
