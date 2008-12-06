@@ -5,7 +5,7 @@
 <div>
   <div>
     <span class="big_label">Users</span>
-	<span><a href="<c:url value="/users/create"/>">Create</a></span>
+	<span><a href="<c:url value="/users/new"/>">New</a></span>
   </div>
   <div>    
 	<p class="msg"><span id="feedback">${msg}</span></p>

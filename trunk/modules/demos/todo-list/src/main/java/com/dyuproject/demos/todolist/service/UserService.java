@@ -260,7 +260,7 @@ public class UserService extends AbstractService
         updateById();  
     }
     
-    @HttpResource(location="/users/create")
+    @HttpResource(location="/users/new")
     @Get
     public void verb_create() throws IOException, ServletException
     {
@@ -269,7 +269,7 @@ public class UserService extends AbstractService
         dispatchToFormView((User)null, rc.getRequest(), rc.getResponse());
     }
     
-    @HttpResource(location="/users/create")
+    @HttpResource(location="/users/new")
     @Post
     public void form_create() throws IOException, ServletException
     {

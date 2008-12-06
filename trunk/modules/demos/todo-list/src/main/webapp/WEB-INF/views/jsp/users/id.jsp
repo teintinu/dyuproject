@@ -9,7 +9,7 @@
 	<c:choose>
 	  <c:when test="${empty action}">
 	  <span><a href="<c:url value="/users/${user.id}/edit"/>">Edit</a></span>
-	  <span><a href="<c:url value="/users/${user.id}/todos/create"/>">New Todo</a></span>
+	  <span><a href="<c:url value="/users/${user.id}/todos/new"/>">New Todo</a></span>
 	  </c:when>
 	  <c:otherwise>
 	  <span><a href="<c:url value="/"/>">Back to Home</a></span>
