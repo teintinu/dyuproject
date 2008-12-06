@@ -22,6 +22,8 @@ import javax.servlet.ServletException;
 
 
 /**
+ * Wraps a list of interceptors and does the handle chain.
+ * 
  * @author David Yu
  * @created May 18, 2008
  */

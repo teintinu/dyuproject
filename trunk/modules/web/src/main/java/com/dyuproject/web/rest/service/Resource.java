@@ -21,6 +21,8 @@ import javax.servlet.ServletException;
 import com.dyuproject.web.rest.WebContext;
 
 /**
+ * The REST resource.
+ * 
  * @author David Yu
  * @created Dec 6, 2008
  */

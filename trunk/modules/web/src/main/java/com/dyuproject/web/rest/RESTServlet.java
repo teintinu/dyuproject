@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * The REST servlet to handle all the requests to a webapp.
+ * The REST servlet to handle all the requests dispatched to the webapp.
  * 
  * @author David Yu
  * @created May 10, 2008

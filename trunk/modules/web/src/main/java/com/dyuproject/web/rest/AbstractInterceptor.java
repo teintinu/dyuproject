@@ -16,7 +16,7 @@ package com.dyuproject.web.rest;
 
 
 /**
- * Base filter to pre-handle and post-handle requests
+ * Base interceptor to pre-handle and post-handle requests
  * 
  * @author David Yu
  * @created May 18, 2008

@@ -30,6 +30,10 @@ import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
 
 /**
+ * Contains all the logic to handle the REST requests.
+ * Wraps the Resource and Interceptor.
+ * Wildcard interceptor supported.
+ * 
  * @author David Yu
  * @created Dec 3, 2008
  */

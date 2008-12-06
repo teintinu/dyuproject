@@ -17,6 +17,8 @@ package com.dyuproject.web.rest.service;
 import com.dyuproject.web.rest.WebContext;
 
 /**
+ * Base service to handle requests
+ * 
  * @author David Yu
  * @created Dec 4, 2008
  */
