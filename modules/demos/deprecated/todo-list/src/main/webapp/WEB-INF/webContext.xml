@@ -10,9 +10,9 @@
   
   <bean id="userInterceptor" class="com.dyuproject.web.rest.InterceptorCollection">
     <property name="interceptors">
-      <list>
-        <ref bean="entityManagerManager"/>
+      <list>        
         <bean class="com.dyuproject.demos.todolist.mvc.UserInterceptor"/>
+        <ref bean="entityManagerManager"/>
       </list>
     </property>  
   </bean>
