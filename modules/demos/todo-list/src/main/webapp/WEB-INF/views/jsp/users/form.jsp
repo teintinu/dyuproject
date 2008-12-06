@@ -23,7 +23,7 @@
 	    <td class="left_col">Email</td>
 		<td name="Email"><input name="email" type="text" value="${user.email}" required="true"/></td>
 	  </tr>
-	  <c:if test="${action=='Create'}">
+	  <c:if test="${action=='New'}">
 	  <tr>
 	    <td class="left_col">Username</td>
 		<td name="Username"><input name="username" type="text" value="${user.username}" required="true"/></td>

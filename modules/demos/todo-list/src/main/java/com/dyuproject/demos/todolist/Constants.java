@@ -35,7 +35,7 @@ public class Constants
     
     public static final String ACTION = "action";
     public static final String ACTION_EDIT = "Edit";
-    public static final String ACTION_CREATE = "Create";
+    public static final String ACTION_CREATE = "New";
     public static final String ACTION_DELETE = "Delete";
     
     public static final String DISABLED = "disabled";

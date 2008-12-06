@@ -244,18 +244,18 @@ public class TodoService extends AbstractService
         updateById();
     }
 
-    @HttpResource(location="/users/$/todos/create")
+    @HttpResource(location="/users/$/todos/new")
     @Get
-    public void verb_create() throws IOException, ServletException
+    public void verb_new() throws IOException, ServletException
     {
         RequestContext rc = getWebContext().getRequestContext();
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
         dispatchToFormView((Todo)null, rc.getRequest(), rc.getResponse());
     }
     
-    @HttpResource(location="/users/$/todos/create")
+    @HttpResource(location="/users/$/todos/new")
     @Post
-    public void form_create() throws IOException, ServletException
+    public void form_new() throws IOException, ServletException
     {
         createByUserId();
     }
@@ -288,9 +288,11 @@ public class TodoService extends AbstractService
             response.sendRedirect(referer);
     }
     
+    /* ================================== FILTERS ================================== */
+    
     @HttpResource(location="/users/$/todos/completed")
     @Get
-    public void aggregateByUserId_completed() throws IOException, ServletException
+    public void filter_user_completed() throws IOException, ServletException
     {
         RequestContext rc = getWebContext().getRequestContext();
         String userId = rc.getPathElement(1);
@@ -300,7 +302,7 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/users/$/todos/current")
     @Get
-    public void aggregateByUserId_current() throws IOException, ServletException
+    public void filter_user_current() throws IOException, ServletException
     {
         RequestContext rc = getWebContext().getRequestContext();
         String userId = rc.getPathElement(1);
@@ -310,7 +312,7 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos/current")
     @Get
-    public void aggregate_completed() throws IOException, ServletException
+    public void filter_completed() throws IOException, ServletException
     {
         RequestContext rc = getWebContext().getRequestContext();
         dispatchToView(_todoDao.getByStatus(true), rc.getRequest(), rc.getResponse());
@@ -318,7 +320,7 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos/current")
     @Get
-    public void aggregate_current() throws IOException, ServletException
+    public void filter_current() throws IOException, ServletException
     {
         RequestContext rc = getWebContext().getRequestContext();
         dispatchToView(_todoDao.getByStatus(false), rc.getRequest(), rc.getResponse());

@@ -6,7 +6,7 @@
   <div>
     <span class="big_label">Your Current Todos</span>
 	<p>
-	  <span><a href="<c:url value="/users/${user.id}/todos/create"/>">Create Todo</a></span>
+	  <span><a href="<c:url value="/users/${user.id}/todos/new"/>">New Todo</a></span>
 	</p>
   </div>
   <div>    
