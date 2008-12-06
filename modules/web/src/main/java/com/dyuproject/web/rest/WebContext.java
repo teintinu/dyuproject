@@ -58,7 +58,7 @@ public abstract class WebContext
     
     private static final Log _log = LogFactory.getLog(WebContext.class);   
     
-    private boolean _initialized = false, _sessionEnabled = false;
+    private boolean _initialized = false, _destroyed = false, _sessionEnabled = false;
     private ServletContext _servletContext;
     
     private DefaultDispatcher _defaultDispatcher = new DefaultDispatcher();
@@ -120,6 +120,16 @@ public abstract class WebContext
     public boolean isSessionEnabled()
     {
         return _sessionEnabled;
+    }    
+    
+    void destroy(ServletContext servletContext)
+    {
+        if(_destroyed || !_initialized)
+            return;
+        
+        _destroyed = true;
+        destroy();
+        _log.info("destroyed.");
     }
     
     void init(ServletContext servletContext)
@@ -456,12 +466,6 @@ public abstract class WebContext
             if(isSessionEnabled())
                 _cookieSessionManager.postHandle(request, response);
         }        
-    }
-    
-    void destroy(ServletContext servletContext)
-    {
-        destroy();
-        _log.info("destroyed.");
     }
     
     /* ================================================================================= */
