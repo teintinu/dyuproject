@@ -8,7 +8,7 @@
   </parent>  
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject.demos</groupId>
-  <artifactId>todo-list</artifactId>
+  <artifactId>deprecated-todo-list</artifactId>
   <name>demos :: todo-list</name>  
   <packaging>war</packaging>
 
