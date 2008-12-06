@@ -88,7 +88,21 @@ public class InterceptorCollection extends AbstractInterceptor
     private void doPostHandleChain(int i, boolean handled, RequestContext requestContext) 
     throws ServletException, IOException
     {
-        try
+        // minimize recursion
+        while(i!=-1)
+        {
+            try
+            {
+                _interceptors.get(i--).postHandle(handled, requestContext);
+            }
+            finally
+            {
+                if(true)
+                    continue;
+            }
+        }
+        
+        /*try
         {
             _interceptors.get(i).postHandle(handled, requestContext);
         }
@@ -96,10 +110,10 @@ public class InterceptorCollection extends AbstractInterceptor
         {
             if(i>0)
                 doPostHandleChain(i-1, handled, requestContext);
-        }
+        }*/
     }
     
-    public static class ThreadLocal extends java.lang.ThreadLocal<InterceptorCollection>
+    public static class Local extends ThreadLocal<InterceptorCollection>
     {
         public InterceptorCollection initialValue()
         {

@@ -114,9 +114,11 @@ public class AnnotatedMethodResource implements Resource
                 throw (IOException)cause;
             if(cause instanceof ServletException)
                 throw (ServletException)cause;
+            if(cause instanceof RuntimeException)
+                throw (RuntimeException)cause;
             
             _log.info(cause.getMessage(), cause);
-            WebContext.getCurrentRequestContext().getResponse().sendError(404);
+            WebContext.getCurrentRequestContext().getResponse().sendError(500);
         }
     }
     

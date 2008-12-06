@@ -44,8 +44,8 @@ public class PathHandler
     public static final String ROOT = "/", PARAM = "$";
     
     private static Log _log = LogFactory.getLog(PathHandler.class);
-    private static final InterceptorCollection.ThreadLocal __currentInterceptors = 
-        new InterceptorCollection.ThreadLocal();
+    private static final InterceptorCollection.Local __currentInterceptors = 
+        new InterceptorCollection.Local();
     
     private static boolean __skipInterceptors = false;
     
@@ -154,7 +154,7 @@ public class PathHandler
         Resource resource = _resources.get(requestContext.getRequest().getMethod());
         if(resource==null)
         {
-            requestContext.getResponse().sendError(404);
+            requestContext.getResponse().sendError(405);
             return;
         }
         if(__skipInterceptors)

@@ -1,5 +1,5 @@
 dyuproject-1.1-SNAPSHOT
-+ Now implements org.codehaus.jra jra(Java REST Annotations)
++ Implementation for Java REST Annotations (jra.codehaus.org)
 + Decoupled mapping of REST resources and interceptors
 + Filter has been renamed to Interceptor
 + refactored the the package: com.dyuproject.web.mvc.* to com.dyuproject.web.rest.mvc.*
