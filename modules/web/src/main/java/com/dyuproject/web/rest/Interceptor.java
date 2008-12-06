@@ -21,8 +21,7 @@ import javax.servlet.ServletException;
 
 /**
  * Pre-handling and post-handling of REST requests allowing the request to continue or not.
- * Security handling is decoupled/contained.
- * Also works as an interceptor.
+ * Security handling is decoupled/contained. 
  * 
  * @author David Yu
  * @created May 18, 2008

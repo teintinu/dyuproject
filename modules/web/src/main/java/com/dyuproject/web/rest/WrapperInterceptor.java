@@ -19,6 +19,9 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 /**
+ * Wraps an interceptor for pre-handling and post-handling.  This is generally subclassed to
+ * determine which interceptor executes first on pre-handle and post-handle.
+ * 
  * @author David Yu
  * @created Dec 4, 2008
  */

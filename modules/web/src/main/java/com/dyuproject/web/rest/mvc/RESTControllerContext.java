@@ -34,6 +34,8 @@ import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
 
 /**
+ * The application context using REST Controllers 
+ * 
  * @author David Yu
  * @created Dec 4, 2008
  */

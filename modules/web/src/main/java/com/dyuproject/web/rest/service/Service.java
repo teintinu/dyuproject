@@ -17,6 +17,8 @@ package com.dyuproject.web.rest.service;
 import com.dyuproject.web.rest.WebContext;
 
 /**
+ * A bean which contain annotated methods w/c will be a REST resource.
+ * 
  * @author David Yu
  * @created Dec 4, 2008
  */

@@ -18,6 +18,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * Wraps the request and response plus the bits and pieces needed in handling a REST requset.
+ * 
  * @author David Yu
  * @created Dec 4, 2008
  */

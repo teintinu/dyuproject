@@ -28,6 +28,8 @@ import org.apache.commons.logging.LogFactory;
 import com.dyuproject.web.rest.WebContext;
 
 /**
+ * Wraps the methods of a service to be invoked for request handling.
+ * 
  * @author David Yu
  * @created Dec 3, 2008
  */
