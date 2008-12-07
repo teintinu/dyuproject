@@ -1,4 +1,4 @@
-#labels REST,configuration,service,resources,interceptors,web.xml,ioc
+#labels REST,configuration,services,resources,interceptors,web.xml,ioc
 *dyuproject.1.1.x configuration:*
 
 *_2 ways to setup the REST services, resources and interceptors:*
@@ -312,4 +312,3 @@ WEB-INF/webContext.xml
 </beans>
 
 }}}
-
