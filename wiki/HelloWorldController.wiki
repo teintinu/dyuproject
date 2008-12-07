@@ -6,7 +6,7 @@ Below is a dyuproject-1.0.x configuration.
 
 With 1.1.x, package name has changed from _com.dyuproject.web.mvc_ to _com.dyuproject.web.*rest*.mvc_
 
-You can see the source [http://dyuproject.googlecode.com/svn/branches/dyuproject-1.0/modules/demos/deprecated/helloworld/src/main/java/com/dyuproject/demos/helloworld/HelloWorldController.java here]
+You can see the source [http://dyuproject.googlecode.com/svn/branches/dyuproject-1.0/modules/demos/helloworld/src/main/java/com/dyuproject/demos/helloworld/HelloWorldController.java here]
 
 {{{HelloWorldController.java}}}
 {{{
