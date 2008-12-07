@@ -7,8 +7,8 @@
 		
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		
-		<class>com.dyuproject.demos.todolist.model.User</class>
-        <class>com.dyuproject.demos.todolist.model.Todo</class>		
+		<class>com.dyuproject.demos.deprecated.todolist.model.User</class>
+        <class>com.dyuproject.demos.deprecated.todolist.model.Todo</class>
 		
 	</persistence-unit>
 </persistence>
