@@ -11,17 +11,17 @@
   <bean id="userInterceptor" class="com.dyuproject.web.rest.InterceptorCollection">
     <property name="interceptors">
       <list>        
-        <bean class="com.dyuproject.demos.todolist.mvc.UserInterceptor"/>
+        <bean class="com.dyuproject.demos.deprecated.todolist.mvc.UserInterceptor"/>
         <ref bean="entityManagerManager"/>
       </list>
     </property>  
   </bean>
   
-  <bean id="todoDao" class="com.dyuproject.demos.todolist.dao.TodoDao">
+  <bean id="todoDao" class="com.dyuproject.demos.deprecated.todolist.dao.TodoDao">
     <property name="entityManagerManager" ref="entityManagerManager"/>
   </bean>  
   
-  <bean id="userDao" class="com.dyuproject.demos.todolist.dao.UserDao">
+  <bean id="userDao" class="com.dyuproject.demos.deprecated.todolist.dao.UserDao">
     <property name="entityManagerManager" ref="entityManagerManager"/>
   </bean>
   
@@ -34,28 +34,28 @@
     </property>
     
     <property name="defaultController">
-      <bean class="com.dyuproject.demos.todolist.mvc.DefaultController"/>   
+      <bean class="com.dyuproject.demos.deprecated.todolist.mvc.DefaultController"/>   
     </property>
     
     <property name="controllers">    
       <list>
-        <bean class="com.dyuproject.demos.todolist.mvc.AuthController">
+        <bean class="com.dyuproject.demos.deprecated.todolist.mvc.AuthController">
           <property name="interceptor" ref="entityManagerManager"/>
         </bean>
         
-        <bean class="com.dyuproject.demos.todolist.mvc.LoginController"/>
+        <bean class="com.dyuproject.demos.deprecated.todolist.mvc.LoginController"/>
         
-        <bean class="com.dyuproject.demos.todolist.mvc.LogoutController"/>
+        <bean class="com.dyuproject.demos.deprecated.todolist.mvc.LogoutController"/>
         
-        <bean class="com.dyuproject.demos.todolist.mvc.OverviewController">
+        <bean class="com.dyuproject.demos.deprecated.todolist.mvc.OverviewController">
           <property name="interceptor" ref="userInterceptor"/>
         </bean>
         
-        <bean class="com.dyuproject.demos.todolist.mvc.TodosController">
+        <bean class="com.dyuproject.demos.deprecated.todolist.mvc.TodosController">
           <property name="interceptor" ref="entityManagerManager"/>
         </bean>
         
-        <bean class="com.dyuproject.demos.todolist.mvc.UsersController">
+        <bean class="com.dyuproject.demos.deprecated.todolist.mvc.UsersController">
           <property name="interceptor" ref="entityManagerManager"/>
         </bean>        
       </list>
