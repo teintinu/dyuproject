@@ -1,0 +1,7 @@
+#labels REST,Service,Java,Annotations,JRA
+#A REST Service basically contains methods annotated with  [http://jra.codehaus.org Java REST Annotations]
+
+= Introduction =
+
+todo
+
