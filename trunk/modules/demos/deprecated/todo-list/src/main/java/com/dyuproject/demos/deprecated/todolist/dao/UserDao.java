@@ -12,14 +12,14 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist.dao;
+package com.dyuproject.demos.deprecated.todolist.dao;
 
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
 
-import com.dyuproject.demos.todolist.Feedback;
-import com.dyuproject.demos.todolist.model.User;
+import com.dyuproject.demos.deprecated.todolist.Feedback;
+import com.dyuproject.demos.deprecated.todolist.model.User;
 
 /**
  * @author David Yu

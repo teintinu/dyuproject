@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist;
+package com.dyuproject.demos.deprecated.todolist;
 
 import com.dyuproject.util.format.FormatConverter;
 import com.dyuproject.util.format.FormatConverter.Builder;

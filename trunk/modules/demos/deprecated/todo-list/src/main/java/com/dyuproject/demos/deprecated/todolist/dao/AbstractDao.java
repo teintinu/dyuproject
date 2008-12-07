@@ -12,9 +12,9 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist.dao;
+package com.dyuproject.demos.deprecated.todolist.dao;
 
-import com.dyuproject.demos.todolist.Feedback;
+import com.dyuproject.demos.deprecated.todolist.Feedback;
 import com.dyuproject.ext.jpa.DefaultDao;
 
 /**

@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist.mvc;
+package com.dyuproject.demos.deprecated.todolist.mvc;
 
 import java.io.IOException;
 import java.util.List;
@@ -22,12 +22,12 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.demos.todolist.Constants;
-import com.dyuproject.demos.todolist.Feedback;
-import com.dyuproject.demos.todolist.dao.TodoDao;
-import com.dyuproject.demos.todolist.dao.UserDao;
-import com.dyuproject.demos.todolist.model.Todo;
-import com.dyuproject.demos.todolist.model.User;
+import com.dyuproject.demos.deprecated.todolist.Constants;
+import com.dyuproject.demos.deprecated.todolist.Feedback;
+import com.dyuproject.demos.deprecated.todolist.dao.TodoDao;
+import com.dyuproject.demos.deprecated.todolist.dao.UserDao;
+import com.dyuproject.demos.deprecated.todolist.model.Todo;
+import com.dyuproject.demos.deprecated.todolist.model.User;
 import com.dyuproject.util.format.JSONConverter;
 import com.dyuproject.util.format.XMLConverter;
 import com.dyuproject.web.rest.mvc.controller.CRUDController;
