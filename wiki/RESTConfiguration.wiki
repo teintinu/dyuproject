@@ -1,6 +1,5 @@
 #labels rest,configuration,webapp,ioc,webcontext,servlet,web,java
-
-*As of dyuproject-1.1, this is deprecated*
+*As of dyuproject-1.1.x, this is deprecated*
 
 You can find a sample controller [HelloWorldController here].
 
