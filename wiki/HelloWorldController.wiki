@@ -1,5 +1,5 @@
-#labels helloworld,rest,controller,sample,java
-hello world controller
+#labels helloworld,rest,controller,Deprecated
+*As of dyuproject-1.1.x, this is deprecated.  See [HelloWorldService] instead.*
 
 You can see the source [http://dyuproject.googlecode.com/svn/trunk/modules/demos/helloworld/src/main/java/com/dyuproject/demos/helloworld/HelloWorldController.java here]
 
