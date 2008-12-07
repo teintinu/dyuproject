@@ -118,12 +118,12 @@ public class PathHandler
         _interceptors[wildcard] = interceptor;        
     }
     
-    static void appendWildcardToCollection(PathHandler pathHandler, 
+    static void loadInterceptors(PathHandler pathHandler, 
             InterceptorCollection interceptors)
     {
         PathHandler parent = pathHandler._parent;
         if(parent!=null)
-            appendWildcardToCollection(parent, interceptors);
+            loadInterceptors(parent, interceptors);
         
         Interceptor interceptor = pathHandler._interceptors[2];
         if(interceptor!=null)
@@ -136,15 +136,15 @@ public class PathHandler
             interceptors.addInterceptor(i);
     }
     
-    void appendToCollection(InterceptorCollection interceptors)
+    void loadInterceptors(InterceptorCollection interceptors)
     {
         if(_parent!=null)
         {
-            appendWildcardToCollection(_parent, interceptors);            
+            loadInterceptors(_parent, interceptors);            
             appendInterceptor(_parent._interceptors[1], interceptors);
         }
-        //appendInterceptor(_interceptors[2], interceptors);
-        //appendInterceptor(_interceptors[1], interceptors);
+        appendInterceptor(_interceptors[2], interceptors);
+        appendInterceptor(_interceptors[1], interceptors);
         appendInterceptor(_interceptors[0], interceptors);        
     }
     
@@ -164,7 +164,7 @@ public class PathHandler
         }
         
         InterceptorCollection interceptor = __currentInterceptors.get();
-        appendToCollection(interceptor);        
+        loadInterceptors(interceptor);        
         if(interceptor.getInterceptors().size()==0)
         {
             resource.handle();
