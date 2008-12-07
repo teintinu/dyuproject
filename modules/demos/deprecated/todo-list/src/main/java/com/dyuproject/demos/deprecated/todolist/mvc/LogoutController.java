@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist.mvc;
+package com.dyuproject.demos.deprecated.todolist.mvc;
 
 import java.io.IOException;
 

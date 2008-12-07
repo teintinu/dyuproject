@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist.model;
+package com.dyuproject.demos.deprecated.todolist.model;
 
 import java.io.Serializable;
 import java.util.HashSet;

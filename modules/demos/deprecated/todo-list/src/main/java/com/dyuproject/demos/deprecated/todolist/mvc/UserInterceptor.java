@@ -12,13 +12,13 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist.mvc;
+package com.dyuproject.demos.deprecated.todolist.mvc;
 
 import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import com.dyuproject.demos.todolist.Constants;
+import com.dyuproject.demos.deprecated.todolist.Constants;
 import com.dyuproject.web.CookieSession;
 import com.dyuproject.web.rest.AbstractInterceptor;
 import com.dyuproject.web.rest.RequestContext;

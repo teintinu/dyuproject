@@ -12,11 +12,11 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.todolist.dao;
+package com.dyuproject.demos.deprecated.todolist.dao;
 
 import java.util.List;
 
-import com.dyuproject.demos.todolist.model.Todo;
+import com.dyuproject.demos.deprecated.todolist.model.Todo;
 
 /**
  * @author David Yu
