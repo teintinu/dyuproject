@@ -1,5 +1,188 @@
-#labels rest,configuration,webapp,ioc,webcontext,servlet,web,java
-*As of dyuproject-1.1.x, this is deprecated*
+#labels REST,configuration,service,resources,interceptors,web.xml,ioc
+*dyuproject.1.1.x configuration:*
+
+*_2 ways to setup the REST services, resources and interceptors:*
+
+*1.* Through the servlet's init-param:
+
+{{{
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+   xmlns="http://java.sun.com/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+   version="2.5" metadata-complete="true">
+   
+    <servlet>
+        <servlet-name>rest</servlet-name>
+        <servlet-class>com.dyuproject.web.rest.RESTServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param>
+          <param-name>webContext</param-name>
+          <param-value>com.dyuproject.web.rest.service.RESTServiceContext</param-value>
+        </init-param>          
+        <!-- separated by comma or semi colon -->
+        <init-param>
+          <param-name>services</param-name>
+          <param-value>
+            com.dyuproject.demos.helloworld.HelloWorldService
+          </param-value>
+        </init-param>
+        <init-param>
+          <param-name>resources</param-name>
+          <param-value>
+            com.example.SomeResource@/someresource,
+            com.example.AcmeResource@/acme
+          </param-value>
+        </init-param>
+        <init-param>
+          <param-name>interceptors</param-name>
+          <param-value>
+            com.dyuproject.demos.helloworld.DigestAuthInterceptor@/helloworld/protected,
+            com.dyuproject.demos.helloworld.SimpleInterceptor@/foo/bar/baz,
+            com.dyuproject.demos.helloworld.SimpleInterceptorWC1@/foo/bar/*,
+            com.dyuproject.demos.helloworld.SimpleInterceptorWC2@/foo/**
+          </param-value>
+        </init-param>        
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>rest</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    
+</web-app>
+
+}}}
+
+*2.* Through Spring IOC
+
+{{{
+
+    <dependency>
+        <groupId>com.dyuproject.ext</groupId>
+        <artifactId>dyuproject-spring-ioc</artifactId>
+        <version>1.1.0</version>
+    </dependency>  
+
+}}}
+
+WEB-INF/webContext.xml
+{{{
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+
+
+<beans>
+  
+  <bean id="loginInterceptor" class="com.dyuproject.demos.todolist.service.LoginInterceptor">
+      </bean>
+  
+  <bean id="webContext" class="com.dyuproject.web.rest.service.RESTServiceContext">    
+    <property name="interceptors">
+      <map>
+        <entry key="/overview" value-ref="loginInterceptor"/>
+      </map>
+    </property>    
+
+    <property name="services">    
+      <list>        
+        <bean class="com.dyuproject.demos.todolist.service.MainService"/>
+        <bean class="com.dyuproject.demos.todolist.service.TodoService"/>
+        <bean class="com.dyuproject.demos.todolist.service.UserService"/>
+      </list>
+    </property>  
+  </bean>
+
+</beans>
+
+}}}
+
+WEB-INF/web.xml
+{{{
+
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+   xmlns="http://java.sun.com/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+   version="2.5" metadata-complete="true">
+   
+    <listener>
+      <listener-class>com.dyuproject.web.mvc.SpringServletContextListener</listener-class>
+    </listener>
+   
+    <servlet>
+        <servlet-name>rest</servlet-name>
+        <servlet-class>com.dyuproject.web.rest.RESTServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>        
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>rest</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    
+</web-app>
+
+}}}
+
+
+*_session config_*
+
+By default, session is turned off.
+
+To enable, configure it on WEB-INF/*env.properties*:
+
+{{{
+
+session.enabled=true
+
+session.cookie.name=your_app_name
+
+session.cookie.secretKey=your_secret_key
+
+#----------optional------------
+#session.cookie.maxAge=3600
+#default value: 3600 (1 hour for the session to expire)
+
+#session.cookie.path=/
+
+#session.cookie.domain=some_domain
+
+#session.cookie.include.remoteAddress=true
+#default value: false  (setting to true prevents session hijacking)
+
+}}}
+
+If the session is enabled, getWebContext().getSession(request); will return a session if it already exists.
+
+Pass the second argument(boolean) getWebContext().getSession(request, true); to force it to create a session if ever none exists.
+
+*_mime types_*
+
+To allow a certain mime type to be handled, configure it on WEB-INF/*mime.properties*:
+
+{{{
+
+xml=text/xml
+json=text/plain
+
+#html=text/html
+#csv=text/plain
+
+}}}
+
+----
+
+*Configuration for dyuproject.1.0.x (Controllers are deprecated since 1.1.x)*
 
 You can find a sample controller [HelloWorldController here].
 
@@ -30,7 +213,7 @@ You can find a sample controller [HelloWorldController here].
 
 }}}
 
-*_3 ways to setup the controllers_*
+*_2 ways to setup the controllers_*
 
 *1.* Through the servlet's init-param:
 
@@ -130,108 +313,3 @@ WEB-INF/webContext.xml
 
 }}}
 
-*3.* Programmatically through a custom ServletContextListener
-
-WEB-INF/web.xml
-{{{
-
-    <listener>
-      <listener-class>com.acme.MyServletContextListener</listener-class>
-    </listener>   
-
-}}}
-
-{{{
-
-public class MyServletContextListener implements ServletContextListener
-{
-
-    public void contextDestroyed(ServletContextEvent event)
-    {
-        
-        
-    }
-
-    public void contextInitialized(ServletContextEvent event)
-    {
-        WebContext webContext = new WebContext();             
-        
-        MyDefaultController defaultController = new MyDefaultController();
-        
-        AuthenticationFilter auth = new AuthenticationFilter();   
-        
-        HelloWorldController helloworld = new HelloWorldController();        
-        
-        ServiceDAO dao = new ServiceDAO();
-        
-        FooController foo = new FooController();        
-        foo.setFilter(auth);
-        foo.setDao(dao);
-        
-        BarController bar = new BarController();
-        bar.setFilter(auth);
-        bar.setDao(dao);
-        
-        webContext.addAttribute("someObject", new SomeObject());
-        
-        webContext.setDefaultController(defaultController);
-
-        webContext.setControllers(new Controller[]{
-                helloworld,
-                foo,
-                bar
-        });
-        
-        // This will be picked up by RESTfulMVCServlet
-        event.getServletContext().setAttribute(WebContext.class.getName(), webContext);
-        
-    }
-
-}
-
-}}}
-
-*_session config_*
-
-By default, session is turned off.
-
-To enable, configure it on WEB-INF/*env.properties*:
-
-{{{
-
-session.enabled=true
-
-session.cookie.name=your_app_name
-
-session.cookie.secretKey=your_secret_key
-
-#----------optional------------
-#session.cookie.maxAge=3600
-#default value: 3600 (1 hour for the session to expire)
-
-#session.cookie.path=/
-
-#session.cookie.domain=some_domain
-
-#session.cookie.include.remoteAddress=true
-#default value: false  (setting to true prevents session hijacking)
-
-}}}
-
-If the session is enabled, getWebContext().getSession(request); will return a session if it already exists.
-
-Pass the second argument(boolean) getWebContext().getSession(request, true); to force it to create a session if ever none exists.
-
-*_mime types_*
-
-To allow a certain mime type to be handled, configure it on WEB-INF/*mime.properties*:
-
-{{{
-
-xml=text/xml
-json=text/plain
-
-#html=text/html
-#csv=text/plain
-
-}}}
