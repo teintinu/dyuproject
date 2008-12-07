@@ -26,44 +26,6 @@ public class HelloWorldService extends AbstractService
     {        
         
     }
-    
-    /* --------- PLAIN TEXT RESOURCES --------- */
-    
-    @HttpResource(location="/hello")
-    @Get
-    public void hello() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
-        rc.getResponse().setContentType("text/plain");
-        rc.getResponse().getOutputStream().print("hello!");
-    }
-    
-    @HttpResource(location="/hello/$")
-    @Get
-    public void helloStranger() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
-        rc.getResponse().setContentType("text/plain");
-        rc.getResponse().getOutputStream().print("hello " + rc.getPathElement(1) + "!");
-    }
-    
-    @HttpResource(location="/hello/$/world")
-    @Get
-    public void helloStrangerWorld() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
-        rc.getResponse().setContentType("text/plain");
-        rc.getResponse().getOutputStream().print("hello " + rc.getPathElement(1) + " world!");
-    }
-    
-    @HttpResource(location="/hello/sexy/$")
-    @Get
-    public void helloSexyStranger() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
-        rc.getResponse().setContentType("text/plain");
-        rc.getResponse().getOutputStream().print("hello sexy " + rc.getPathElement(2) + "!");
-    }
 
     /* --------- VIEWS (JSP) --------- */
     
@@ -107,6 +69,44 @@ public class HelloWorldService extends AbstractService
         rc.getRequest().setAttribute("timestamp", new Date());
         rc.getResponse().setContentType("text/html");
         getWebContext().getJSPDispatcher().dispatch("helloworld/index.jsp", rc.getRequest(), rc.getResponse());
+    }
+
+    /* --------- PLAIN TEXT RESOURCES --------- */
+    
+    @HttpResource(location="/hello")
+    @Get
+    public void hello() throws IOException
+    {
+        RequestContext rc = WebContext.getCurrentRequestContext();
+        rc.getResponse().setContentType("text/plain");
+        rc.getResponse().getOutputStream().print("hello!");
+    }
+    
+    @HttpResource(location="/hello/$")
+    @Get
+    public void helloStranger() throws IOException
+    {
+        RequestContext rc = WebContext.getCurrentRequestContext();
+        rc.getResponse().setContentType("text/plain");
+        rc.getResponse().getOutputStream().print("hello " + rc.getPathElement(1) + "!");
+    }
+    
+    @HttpResource(location="/hello/$/world")
+    @Get
+    public void helloStrangerWorld() throws IOException
+    {
+        RequestContext rc = WebContext.getCurrentRequestContext();
+        rc.getResponse().setContentType("text/plain");
+        rc.getResponse().getOutputStream().print("hello " + rc.getPathElement(1) + " world!");
+    }
+    
+    @HttpResource(location="/hello/sexy/$")
+    @Get
+    public void helloSexyStranger() throws IOException
+    {
+        RequestContext rc = WebContext.getCurrentRequestContext();
+        rc.getResponse().setContentType("text/plain");
+        rc.getResponse().getOutputStream().print("hello sexy " + rc.getPathElement(2) + "!");
     }
 
 }
