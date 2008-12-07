@@ -15,13 +15,14 @@
         </init-param>        
         <init-param>
           <param-name>defaultController</param-name>
-          <param-value>com.dyuproject.demos.helloworld.MyDefaultController</param-value>
+          <param-value>com.dyuproject.demos.deprecated.helloworld.MyDefaultController</param-value>
         </init-param>
         <!-- separated by comma or semi colon -->
         <init-param>
           <param-name>controllers</param-name>
           <param-value>
-            com.dyuproject.demos.helloworld.HelloWorldController, com.dyuproject.demos.helloworld.ProtectedController
+            com.dyuproject.demos.deprecated.helloworld.HelloWorldController, 
+            com.dyuproject.demos.deprecated.helloworld.ProtectedController
           </param-value>
         </init-param>       
     </servlet>
