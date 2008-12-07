@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.demos.helloworld;
+package com.dyuproject.demos.deprecated.helloworld;
 
 import java.io.IOException;
 import java.util.Date;
