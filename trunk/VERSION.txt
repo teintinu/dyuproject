@@ -1,4 +1,4 @@
-dyuproject-1.1-SNAPSHOT
+dyuproject-1.1.0 2008-12-08
 + Implementation for Java REST Annotations (jra.codehaus.org)
 + Decoupled mapping of REST resources and interceptors
 + Filter has been renamed to Interceptor
