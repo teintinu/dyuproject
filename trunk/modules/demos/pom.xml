@@ -50,8 +50,7 @@
   
   <modules>
     <module>openid-servlet</module>
-    <module>helloworld</module>
-    <module>simple-service</module>
+    <module>helloworld</module>    
     <module>todo-list</module>
   </modules>
   
