@@ -96,7 +96,7 @@
     <repository>
       <id>dyuproject.local.repo</id>
       <name>dyuproject local repository</name>
-      <url>file:./../../dyuproject/repos/maven2</url>
+      <url>file:./../repos/maven2</url>
     </repository>
   </distributionManagement>    
   <dependencyManagement>
