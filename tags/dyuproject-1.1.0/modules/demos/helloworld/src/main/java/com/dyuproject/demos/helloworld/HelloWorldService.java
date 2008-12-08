@@ -23,7 +23,7 @@ import org.codehaus.jra.Get;
 import org.codehaus.jra.HttpResource;
 import org.codehaus.jra.Post;
 
-import com.dyuproject.web.mvc.dispatcher.VelocityDispatcher;
+import com.dyuproject.web.rest.dispatcher.VelocityDispatcher;
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
 import com.dyuproject.web.rest.service.AbstractService;
