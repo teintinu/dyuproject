@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.mvc;
+package com.dyuproject.web.rest;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
