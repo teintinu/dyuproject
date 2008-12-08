@@ -2,7 +2,7 @@ dyuproject-1.1-SNAPSHOT
 + Implementation for Java REST Annotations (jra.codehaus.org)
 + Decoupled mapping of REST resources and interceptors
 + Filter has been renamed to Interceptor
-+ refactored the the package: com.dyuproject.web.mvc.* to com.dyuproject.web.rest.mvc.*
++ refactored the package: com.dyuproject.web.mvc.* to com.dyuproject.web.rest.mvc.*
 + fix XMLParserTest
 + fix npe on CookieSessionManager when request.getCookies() returns null
 
