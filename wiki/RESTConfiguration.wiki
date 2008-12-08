@@ -1,6 +1,8 @@
 #labels REST,configuration,services,resources,interceptors,web.xml,ioc
 *dyuproject.1.1.x configuration:*
 
+For a sample REST service, see [HelloWorldService]
+
 *_2 ways to setup the REST services, resources and interceptors:*
 
 *1.* Through the servlet's init-param:
