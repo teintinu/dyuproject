@@ -39,7 +39,7 @@
 	  </c:if>
 	  <tr>
 	    <td>&nbsp;</td>
-		<td><input type="submit" value="${action}"/></td>
+		<td><input type="submit" value="Submit"/></td>
 	  </tr>	  
     </table>
   </form>
