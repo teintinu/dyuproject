@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.mvc.dispatcher;
+package com.dyuproject.web.rest.dispatcher;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
