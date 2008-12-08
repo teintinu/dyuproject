@@ -20,7 +20,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.web.mvc.dispatcher.VelocityDispatcher;
+import com.dyuproject.web.rest.dispatcher.VelocityDispatcher;
 import com.dyuproject.web.rest.mvc.AbstractController;
 
 /**
