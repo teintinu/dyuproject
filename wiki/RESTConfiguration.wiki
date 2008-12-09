@@ -75,7 +75,7 @@ WEB-INF/web.xml
 {{{
 
     <listener>
-      <listener-class>com.dyuproject.web.mvc.SpringServletContextListener</listener-class>
+      <listener-class>com.dyuproject.web.rest.SpringServletContextListener</listener-class>
     </listener>
 }}}
 
