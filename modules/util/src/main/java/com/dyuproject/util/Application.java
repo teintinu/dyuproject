@@ -334,14 +334,14 @@ public class Application
     {
         URL newUrl = addCanonicalFile(new File(url.toString()));
         if(newUrl!=null)
-            _loader.loadURL(newUrl);
+            _loader.addURL(newUrl);
     }
     
     public void addFile(File file)
     {
         URL url = addCanonicalFile(file);
         if(url!=null)
-            _loader.loadURL(url);            
+            _loader.addURL(url);            
     }
     
     public void addLib(File dir)
@@ -353,7 +353,7 @@ public class Application
         {
             URL url = addCanonicalFile(f);
             if(url!=null)
-                _loader.loadURL(url);
+                _loader.addURL(url);
         }            
     }
     
@@ -370,14 +370,14 @@ public class Application
             System.setProperty("java.class.path", _builder.toString());
         }
         
+        public void addURL(URL url)
+        {
+            super.addURL(url);
+        }
+        
         public String toString()
         {
             return _builder.toString();
-        }
-        
-        public void loadURL(URL url)
-        {
-            
         }
         
         public Application getApplication()
