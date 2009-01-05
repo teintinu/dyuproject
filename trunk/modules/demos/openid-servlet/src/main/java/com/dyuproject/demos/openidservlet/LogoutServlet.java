@@ -42,7 +42,7 @@ public class LogoutServlet extends HttpServlet
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
     {
-        RelyingParty.getInstance().invalidate(response);
+        RelyingParty.getInstance().invalidate(request, response);
         response.sendRedirect("/home/");
     }
 
