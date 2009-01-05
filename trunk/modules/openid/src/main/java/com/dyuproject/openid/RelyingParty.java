@@ -38,6 +38,7 @@ public class RelyingParty
     
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
     public static final String DEFAULT_PARAMETER = "openid_identifier";
+    public static final String DEFAULT_USER_MANAGER = "com.dyuproject.openid.manager.CookieBasedUserManager";
     
     private static final Pattern PREFIX = Pattern.compile("^https?://");
     
@@ -86,32 +87,19 @@ public class RelyingParty
     }
     
     public static RelyingParty newInstance(Properties properties) throws IOException
-    {
-        // required
-        String cookieName = properties.getProperty("openid.cookie.name");
-        String secretKey = properties.getProperty("openid.cookie.security.secretKey");
-        
-        // optional
-        String cookiePath = properties.getProperty("openid.cookie.path");
-        String cookieDomain = properties.getProperty("openid.cookie.domain");
-        String cookieMaxAge = properties.getProperty("openid.cookie.maxAge");
-        String securityType = properties.getProperty("openid.cookie.security.type", "encrypted");
-        
-        String openIdParameter = properties.getProperty("openid.parameter");
-        boolean encrypt = "encrypted".equalsIgnoreCase(securityType);
-        
-        if(cookieName==null)
-            throw new IllegalStateException("openid.cookie.name must be set.");
-        
-        if(secretKey==null)
-            throw new IllegalStateException("openid.cookie.security.secretKey must be set.");
-        
-        OpenIdUserManager manager = new OpenIdUserManager(cookieName, secretKey, encrypt);
-        manager.setCookiePath(cookiePath);
-        manager.setCookieDomain(cookieDomain);
-        if(cookieMaxAge!=null)
-            manager.setMaxAge(Integer.parseInt(cookieMaxAge));
-        
+    {        
+        String openIdParameter = properties.getProperty("openid.parameter");          
+        OpenIdUserManager manager = null;
+        try
+        {
+            manager = (OpenIdUserManager)newObjectInstance(properties.getProperty("openid.user.manager", 
+                    DEFAULT_USER_MANAGER));
+            manager.init(properties);
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }  
         OpenIdContext context = new OpenIdContext();
         context.setAssociation(new DiffieHellmanAssociation());
         context.setDiscovery(new DefaultDiscovery());
@@ -122,6 +110,11 @@ public class RelyingParty
             relyingParty._openIdParameter = openIdParameter;
         
         return relyingParty;
+    }
+    
+    static Object newObjectInstance(String className) throws Exception
+    {
+        return RelyingParty.class.getClassLoader().loadClass(className).newInstance();
     }
     
     public static Map<String,String> getAuthParameters(HttpServletRequest request)
@@ -275,7 +268,7 @@ public class RelyingParty
         if(_context.getAssociation().verifyAuth(user, getAuthParameters(request), _context))
         {
             if(!response.isCommitted())
-                _manager.saveUser(user, response);
+                _manager.saveUser(user, request, response);
             return true;
         }        
         return false;
@@ -287,15 +280,16 @@ public class RelyingParty
         if(_context.getAssociation().associate(user, _context))
         {
             if(!response.isCommitted())
-                _manager.saveUser(user, response);
+                _manager.saveUser(user, request, response);
             return true;
         }        
         return false;
     }
     
-    public boolean invalidate(HttpServletResponse response) throws IOException
+    public boolean invalidate(HttpServletRequest request, HttpServletResponse response) 
+    throws IOException
     {
-        return _manager.invalidate(response);
+        return _manager.invalidate(request, response);
     }
 
 }
