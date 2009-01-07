@@ -54,9 +54,17 @@ public class HomeServlet extends HttpServlet
         {
             OpenIdUser user = _relyingParty.discover(request);
             if(user==null)
-            {
-                // new user                
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
+            {                
+                if(RelyingParty.isAuthResponse(request))
+                {
+                    // authentication timeout                    
+                    response.sendRedirect(request.getRequestURI());
+                }
+                else
+                {
+                    // new user
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
+                }
                 return;
             }
             
