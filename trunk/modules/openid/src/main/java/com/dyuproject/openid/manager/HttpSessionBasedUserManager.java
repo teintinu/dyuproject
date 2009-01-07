@@ -50,13 +50,15 @@ public class HttpSessionBasedUserManager implements OpenIdUserManager
     {
         HttpSession session = request.getSession(false);
         if(session!=null)
-            session.invalidate();
+            session.removeAttribute(OpenIdUser.class.getName());
         return true;
     }
 
     public boolean saveUser(OpenIdUser user, HttpServletRequest request,
             HttpServletResponse response) throws IOException
     {
+        if(user==null)
+            return false;
         request.getSession().setAttribute(OpenIdUser.class.getName(), user);
         return true;
     }

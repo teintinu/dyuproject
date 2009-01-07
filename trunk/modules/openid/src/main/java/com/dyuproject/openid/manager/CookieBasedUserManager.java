@@ -46,8 +46,18 @@ public class CookieBasedUserManager implements OpenIdUserManager
     private String _cookieName;    
     private String _cookieDomain;
     private String _cookiePath;
-    private int _maxAge = 600; //10 minutes
+    
     private Cryptography _crypto;
+
+    /**
+     * 10 minutes for the authenticated user's session to expire
+     */
+    private int _maxAge = 600; 
+    /**
+     * 1 minute for the discovered user to finish authentication on his openid provider
+     */
+    private int _loginTimeout = 60;
+    
     
     public CookieBasedUserManager()
     {
@@ -82,6 +92,11 @@ public class CookieBasedUserManager implements OpenIdUserManager
         String cookieMaxAge = properties.getProperty("openid.user.manager.cookie.maxAge");
         if(cookieMaxAge!=null)
             setMaxAge(Integer.parseInt(cookieMaxAge));
+        
+        String loginTimeout = properties.getProperty("openid.user.manager.cookie.loginTimeout");
+        if(loginTimeout!=null)
+            _loginTimeout = Integer.parseInt(loginTimeout);
+        
         String securityType = properties.getProperty("openid.user.manager.cookie.security.type", "encrypted");
         
         setEncrypted("encrypted".equalsIgnoreCase(securityType));
@@ -129,6 +144,11 @@ public class CookieBasedUserManager implements OpenIdUserManager
     public void setMaxAge(int maxAge)
     {
         _maxAge = maxAge;
+    }
+    
+    public void setLoginTimeout(int loginTimeout)
+    {
+        _loginTimeout = loginTimeout;
     }
     
     public void setEncrypted(boolean encrypted)
@@ -223,7 +243,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
         String u = B64Code.encode(JSON.toString(user));
         String sig = DigestUtil.digestMD5(u + _secretKey);
         StringBuilder buffer = new StringBuilder().append(sig).append('&').append(u);
-        return write(buffer.toString(), _maxAge, response);
+        return write(buffer.toString(), user.isAuthenticated() ? _maxAge : _loginTimeout, response);
     }
     
     boolean saveUserWithEncryption(OpenIdUser user, HttpServletResponse response) throws IOException
@@ -240,7 +260,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
             e.printStackTrace();
             return false;
         }
-        return write(value, _maxAge, response);
+        return write(value, user.isAuthenticated() ? _maxAge : _loginTimeout, response);
     }    
     
     public boolean invalidate(HttpServletRequest request, HttpServletResponse response) 
