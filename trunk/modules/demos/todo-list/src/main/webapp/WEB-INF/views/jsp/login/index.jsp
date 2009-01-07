@@ -25,7 +25,7 @@
 	  </tr>
     </table>
   </form>
-  <div><a href="<c:url value="/users/create"/>">New user?</a></div>
+  <div><a href="<c:url value="/users/new"/>">New user?</a></div>
 </div>
 <script type="text/javascript" src="<c:url value="/js/dyuproject.js"/>"></script>
 </tl:page>
