@@ -121,7 +121,7 @@ public class RESTServiceContext extends WebContext
         for(Map.Entry<String, Interceptor> entry : _interceptors.entrySet())
             initInterceptor(entry.getKey(), entry.getValue());
         
-        PathHandler.setSkipInterceptors(_interceptors.isEmpty());
+        _pathHandler.init();
         
         _log.info(_services.size() + " services initialized.");
         _log.info(_resources.size() + " resources initialized.");
@@ -138,6 +138,8 @@ public class RESTServiceContext extends WebContext
         
         for(Interceptor i : _interceptors.values())
             i.destroy(this);
+        
+        _pathHandler.destroy();
         
         _log.info(_services.size() + " services destroyed.");
         _log.info(_resources.size() + " resources destroyed.");
