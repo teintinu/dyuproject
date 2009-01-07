@@ -47,7 +47,7 @@ public class YadisDiscovery implements Discovery
     public OpenIdUser discover(String claimedId, OpenIdContext context)
             throws Exception
     {        
-        return discover(claimedId, context.getHttpConnector().doHEAD(claimedId, context), context);
+        return discover(claimedId, context.getHttpConnector().doHEAD(claimedId, null), context);
     }
     
     static OpenIdUser discover(String claimedId, Response response, OpenIdContext context) 
@@ -59,7 +59,7 @@ public class YadisDiscovery implements Discovery
             try{response.close();}catch(IOException e){}
             return null;
         }
-        response = context.getHttpConnector().doGET(location, context);
+        response = context.getHttpConnector().doGET(location, null);
         InputStreamReader reader = null;
         OpenIdUser user = null;
         try

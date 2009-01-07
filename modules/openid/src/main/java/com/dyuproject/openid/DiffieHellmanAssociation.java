@@ -85,8 +85,8 @@ public class DiffieHellmanAssociation implements Association
         
         String publicKeyString = new String(B64Code.encode(publicKey.toByteArray()));
         associationData.put(Constants.OPENID_DH_CONSUMER_PUBLIC, publicKeyString);
-        Response response = context.getHttpConnector().doGET(user.getOpenIdServer(), 
-                associationData, context);
+        Response response = context.getHttpConnector().doGET(user.getOpenIdServer(), null,
+                associationData);
         BufferedReader br = null;        
         try
         {            
