@@ -250,8 +250,10 @@ public class RelyingParty
 
         user = _manager.getUser(request);
         if(user!=null)
+        {
+            request.setAttribute(OpenIdUser.class.getName(), user);
             return user;
-        
+        }
         String claimedId = request.getParameter(_openIdParameter);
         if(claimedId==null || !PREFIX.matcher(claimedId).find())
             return null;
