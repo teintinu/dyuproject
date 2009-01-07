@@ -44,15 +44,6 @@ public class PathHandler
     public static final String ROOT = "/", PARAM = "$";
     
     private static Log _log = LogFactory.getLog(PathHandler.class);
-    private static final InterceptorCollection.Local __currentInterceptors = 
-        new InterceptorCollection.Local();
-    
-    private static boolean __skipInterceptors = false;
-    
-    static void setSkipInterceptors(boolean skip)
-    {
-        __skipInterceptors = skip;
-    }
     
     public static boolean isPathParameter(String id)
     {
@@ -66,7 +57,9 @@ public class PathHandler
     private Map<String,Resource> _resources = new HashMap<String,Resource>(3);
     
     // /path/   /path/* and  /path/**
-    private Interceptor[] _interceptors = new Interceptor[3];
+    
+    private Interceptor _interceptor;
+    private Interceptor[] _mappedInterceptors = new Interceptor[3];
     
     public PathHandler()
     {
@@ -85,15 +78,84 @@ public class PathHandler
         _parent.addPathHandler(this);        
     }
     
+    PathHandler setParent(PathHandler parent)
+    {
+        _parent = parent;
+        return this;
+    }
+    
+    public void init()
+    {
+        if(_mappedInterceptors==null)
+            return;
+        
+        for(PathHandler ph : _pathHandlers.values())
+            ph.init();
+        
+        if(_parent!=null)
+        {
+            loadInterceptors(this, _parent);
+            appendInterceptor(this, _parent._mappedInterceptors[1]);
+        }
+        appendInterceptor(this, _mappedInterceptors[2]);
+        appendInterceptor(this, _mappedInterceptors[1]);
+        appendInterceptor(this, _mappedInterceptors[0]);
+        
+        _mappedInterceptors = null;
+    }
+    
+    public void destroy()
+    {
+        if(_resources==null)
+            return;
+        
+        _resources.clear();        
+        _pathHandlers.clear();
+        _resources = null;
+        _pathHandlers = null;
+        _parent = null;
+        _parameterHandler = null;
+        _id = null;
+    }
+    
+    static void loadInterceptors(PathHandler toConfigure, PathHandler pathHandler)
+    {
+        PathHandler parent = pathHandler._parent;
+        if(parent!=null)
+            loadInterceptors(toConfigure, parent);
+        
+        appendInterceptor(toConfigure, pathHandler._mappedInterceptors[2]);  
+    }
+    
+    static void appendInterceptor(PathHandler ph, Interceptor i)
+    {
+        if(i!=null)
+        {
+            if(ph._interceptor==null)
+                ph._interceptor = i;
+            else if(ph._interceptor instanceof ConfiguredInterceptor)
+                ((ConfiguredInterceptor)ph._interceptor).addInterceptor(i);
+            else
+            {
+                ConfiguredInterceptor ci = new ConfiguredInterceptor();
+                ci.addInterceptor(ph._interceptor);
+                ci.addInterceptor(i);
+                ph._interceptor = ci;
+            }
+        }
+    }
+
     public String getId()
     {
         return _id;
     }
     
-    PathHandler setParent(PathHandler parent)
+    void addMappedInterceptor(Interceptor interceptor, int wildcard)
     {
-        _parent = parent;
-        return this;
+        if(_mappedInterceptors[wildcard]!=null)
+            _log.warn("interceptor overriden: " + _mappedInterceptors[wildcard]);
+                
+        _mappedInterceptors[wildcard] = interceptor;        
     }
     
     void addPathHandler(PathHandler child)
@@ -110,44 +172,6 @@ public class PathHandler
             _log.warn("resource overridden: " + last.getHttpMethod() + " | " + last);
     }
     
-    void addInterceptor(Interceptor interceptor, int wildcard)
-    {
-        if(_interceptors[wildcard]!=null)
-            _log.warn("interceptor overriden: " + _interceptors[wildcard]);
-                
-        _interceptors[wildcard] = interceptor;        
-    }
-    
-    static void loadInterceptors(PathHandler pathHandler, 
-            InterceptorCollection interceptors)
-    {
-        PathHandler parent = pathHandler._parent;
-        if(parent!=null)
-            loadInterceptors(parent, interceptors);
-        
-        Interceptor interceptor = pathHandler._interceptors[2];
-        if(interceptor!=null)
-            interceptors.addInterceptor(interceptor);   
-    }
-    
-    static void appendInterceptor(Interceptor i, InterceptorCollection interceptors)
-    {
-        if(i!=null)
-            interceptors.addInterceptor(i);
-    }
-    
-    void loadInterceptors(InterceptorCollection interceptors)
-    {
-        if(_parent!=null)
-        {
-            loadInterceptors(_parent, interceptors);            
-            appendInterceptor(_parent._interceptors[1], interceptors);
-        }
-        appendInterceptor(_interceptors[2], interceptors);
-        appendInterceptor(_interceptors[1], interceptors);
-        appendInterceptor(_interceptors[0], interceptors);        
-    }
-    
     void resourceHandle() throws ServletException, IOException
     {
         RequestContext requestContext = WebContext.getCurrentRequestContext();
@@ -156,16 +180,9 @@ public class PathHandler
         {
             requestContext.getResponse().sendError(405);
             return;
-        }
-        if(__skipInterceptors)
-        {
-            resource.handle();
-            return;
-        }
+        }        
         
-        InterceptorCollection interceptor = __currentInterceptors.get();
-        loadInterceptors(interceptor);        
-        if(interceptor.getInterceptors().size()==0)
+        if(_interceptor==null)
         {
             resource.handle();
             return;
@@ -174,7 +191,7 @@ public class PathHandler
         boolean success = false;
         try
         {
-            success = interceptor.preHandle(requestContext);
+            success = _interceptor.preHandle(requestContext);
         }
         finally
         {            
@@ -186,11 +203,11 @@ public class PathHandler
                 }
                 finally
                 {
-                    interceptor.postHandle(true, requestContext);
+                    _interceptor.postHandle(true, requestContext);
                 }
             }
             else
-                interceptor.postHandle(false, requestContext);
+                _interceptor.postHandle(false, requestContext);
         }      
     }    
     
@@ -206,7 +223,7 @@ public class PathHandler
         
         if(index==pathInfo.length)
         {            
-            pathHandler.addInterceptor(interceptor, wildcard);
+            pathHandler.addMappedInterceptor(interceptor, wildcard);
             return true;
         }
         
@@ -221,7 +238,7 @@ public class PathHandler
             
             if(index==pathInfo.length)
             {               
-                pathHandler._parameterHandler.addInterceptor(interceptor, wildcard);
+                pathHandler._parameterHandler.addMappedInterceptor(interceptor, wildcard);
                 return true;
             }            
             return pathHandler._parameterHandler.map(index, pathInfo, interceptor, wildcard);
@@ -273,7 +290,7 @@ public class PathHandler
         {
             if(path.length()==1)
             {
-                addInterceptor(interceptor, 0);
+                addMappedInterceptor(interceptor, 0);
                 return true;
             }
             
@@ -333,14 +350,7 @@ public class PathHandler
     
     public void handle(int index, String[] pathInfo) throws ServletException, IOException
     {
-        try
-        {
-            handle(this, 0, pathInfo);
-        }
-        finally
-        {
-            __currentInterceptors.get().getInterceptors().clear();
-        }
+        handle(this, 0, pathInfo);
 
         /*String id = pathInfo[index++];
         PathHandler pathHandler = _pathHandlers.get(id);
@@ -377,6 +387,12 @@ public class PathHandler
             pathHandler.resourceHandle();
         else
             handle(pathHandler, index, pathInfo);
+    }
+    
+    // for multiple interceptors mapped in PathHandler
+    private static class ConfiguredInterceptor extends InterceptorCollection
+    {
+        
     }
 
 }
