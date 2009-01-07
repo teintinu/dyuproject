@@ -31,14 +31,14 @@ public class DefaultDiscovery implements Discovery
         try
         {
             user = YadisDiscovery.discover(claimedId, context.getHttpConnector().doHEAD(claimedId, 
-                    context), context);            
+                    null), context);            
         }
         catch(Exception e)
         {
             user = null;
         }
         return user!=null ? user : HtmlBasedDiscovery.discover(claimedId, 
-                context.getHttpConnector().doGET(claimedId, context));
+                context.getHttpConnector().doGET(claimedId, null));
     }
 
 }

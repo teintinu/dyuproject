@@ -39,7 +39,7 @@ public class HtmlBasedDiscovery implements Discovery
     public OpenIdUser discover(String claimedId, OpenIdContext context)
     throws Exception
     {
-        return discover(claimedId, context.getHttpConnector().doGET(claimedId, context));
+        return discover(claimedId, context.getHttpConnector().doGET(claimedId, null));
     }
     
     static OpenIdUser discover(String claimedId, Response response) throws Exception

@@ -16,6 +16,9 @@ package com.dyuproject.openid;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
@@ -23,7 +26,7 @@ import java.util.Map;
 import org.mortbay.util.UrlEncoded;
 
 /**
- * Simple http connection using the built in HttpURLConnection
+ * Simple http connector using the built-in HttpURLConnection
  * 
  * @author David Yu
  * @created Sep 8, 2008
@@ -32,67 +35,224 @@ import org.mortbay.util.UrlEncoded;
 public class SimpleHttpConnector implements HttpConnector
 {
     
-    public Response doHEAD(String url, OpenIdContext context) throws IOException
+    private static int __bufferSize = 4096;
+    
+    public static void setBufferSize(int bufferSize)
     {
-        URL target = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection)target.openConnection();
-        connection.setRequestMethod(HEAD);
-        connection.setDoInput(true);
-        connection.setInstanceFollowRedirects(true);
-        connection.connect();
-        return new HttpURLConnectionWrapper(connection);
+        __bufferSize = bufferSize;
+    }
+    
+    public static int getBufferSize()
+    {
+        return __bufferSize;
+    }
+    
+    public SimpleHttpConnector()
+    {
+        
+    }    
+    
+    public Response doHEAD(String url, Map<?,?> headers) throws IOException
+    {
+        return send(HEAD, headers, (HttpURLConnection)new URL(url).openConnection());
     }
 
-    public Response doGET(String url, OpenIdContext context)
+    public Response doGET(String url, Map<?,?> headers)
     throws IOException
-    {
-        URL target = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection)target.openConnection();
-        connection.setRequestMethod(GET);
-        connection.setDoInput(true);
-        connection.setInstanceFollowRedirects(true);
-        connection.connect();
-        return new HttpURLConnectionWrapper(connection);
+    {        
+        return send(GET, headers, (HttpURLConnection)new URL(url).openConnection());
     }    
 
-    public Response doGET(String url, Map<String, Object> parameters,
-            OpenIdContext context) throws IOException
+    public Response doGET(String url, Map<?,?> headers, Map<?,?> parameters) 
+    throws IOException
     {
         StringBuilder buffer = new StringBuilder().append(url);
         char separator = '?';
-        for(Map.Entry<String, Object> entry : parameters.entrySet())
+        for(Map.Entry<?,?> entry : parameters.entrySet())
         {
-            buffer.append(separator).append(entry.getKey()).append('=').append(UrlEncoded.encodeString(entry.getValue().toString()));
+            buffer.append(separator).append(entry.getKey()).append('=').append(
+                    UrlEncoded.encodeString(entry.getValue().toString()));
             separator = '&';
         }
-        return doGET(buffer.toString(), context);
+        return doGET(buffer.toString(), headers);
+    }
+    
+    public Response doDELETE(String url, Map<?,?> headers)
+    throws IOException
+    {
+        return send(DELETE, headers, (HttpURLConnection)new URL(url).openConnection());
+    }
+    
+    public Response doDELETE(String url, Map<?,?> headers, Map<?,?> parameters) 
+    throws IOException
+    {
+        StringBuilder buffer = new StringBuilder().append(url);
+        char separator = '?';
+        for(Map.Entry<?,?> entry : parameters.entrySet())
+        {
+            buffer.append(separator).append(entry.getKey()).append('=').append(
+                    UrlEncoded.encodeString(entry.getValue().toString()));
+            separator = '&';
+        }
+        return doDELETE(buffer.toString(), headers);
+    }
+    
+    static Response send(String method, Map<?,?> headers, HttpURLConnection connection)
+    throws IOException
+    {
+        connection.setRequestMethod(method);
+        if(headers!=null)
+        {
+            for(Map.Entry<?,?> entry : headers.entrySet())
+            {
+                connection.setRequestProperty(entry.getKey().toString(), 
+                        entry.getValue().toString());
+            }
+        }
+        connection.setDoInput(true);
+        connection.setInstanceFollowRedirects(true);
+        connection.connect();
+        return new HttpURLConnectionWrapper(connection);
     }
 
-    public Response doPOST(String url, Map<String, Object> parameters,
-            OpenIdContext context) throws IOException
+    public Response doPOST(String url, Map<?,?> headers, Map<?,?> parameters, String charset) 
+    throws IOException
+    {       
+        StringBuilder buffer = new StringBuilder();
+        for(Map.Entry<?,?> entry : parameters.entrySet())
+        {
+            buffer.append('&').append(entry.getKey()).append('=').append(
+                    UrlEncoded.encodeString(entry.getValue().toString()));
+        }
+        byte[] data = null;
+        String contentType = null;
+        if(charset==null)
+        {
+            data = buffer.substring(1).getBytes();
+            contentType = X_WWW_FORM_URLENCODED;
+        }
+        else
+        {
+            data = buffer.substring(1).getBytes(charset);
+            contentType = X_WWW_FORM_URLENCODED + "; charset=" + charset;
+        }
+        return doPOST(url, headers, contentType, data);
+    }
+    
+    public Response doPOST(String url, Map<?,?> headers, String contentType, byte[] data)
+    throws IOException
     {
-        URL target = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection)target.openConnection();
-        connection.setRequestMethod(POST);
-        connection.setRequestProperty(CONTENT_TYPE_HEADER, X_WWW_FORM_URLENCODED);
+        return sendContent(POST, headers, (HttpURLConnection)new URL(url).openConnection(), 
+                contentType, data);
+    }    
+
+    public Response doPOST(String url, Map<?,?> headers, String contentType, 
+            InputStreamReader reader) throws IOException
+    {
+        return sendContent(POST, headers, (HttpURLConnection)new URL(url).openConnection(), 
+                contentType, reader);
+    }
+    
+    public Response doPUT(String url, Map<?,?> headers, Map<?,?> parameters, String charset) 
+    throws IOException
+    {       
+        StringBuilder buffer = new StringBuilder();
+        for(Map.Entry<?,?> entry : parameters.entrySet())
+        {
+            buffer.append('&').append(entry.getKey()).append('=').append(
+                    UrlEncoded.encodeString(entry.getValue().toString()));
+        }
+        byte[] data = null;
+        String contentType = null;
+        if(charset==null)
+        {
+            data = buffer.substring(1).getBytes();
+            contentType = X_WWW_FORM_URLENCODED;
+        }
+        else
+        {
+            data = buffer.substring(1).getBytes(charset);
+            contentType = X_WWW_FORM_URLENCODED + "; charset=" + charset;
+        }
+        return doPUT(url, headers, contentType, data);
+    }
+    
+    public Response doPUT(String url, Map<?,?> headers, String contentType, byte[] data)
+    throws IOException
+    {
+        return sendContent(PUT, headers, (HttpURLConnection)new URL(url).openConnection(), 
+                contentType, data);
+    }    
+
+    public Response doPUT(String url, Map<?,?> headers, String contentType, 
+            InputStreamReader reader) throws IOException
+    {
+        return sendContent(PUT, headers, (HttpURLConnection)new URL(url).openConnection(), 
+                contentType, reader);
+    }
+    
+    static Response sendContent(String method, Map<?,?> headers, HttpURLConnection connection, 
+            String contentType, byte[] data) throws IOException
+    {
+        connection.setRequestMethod(method);
+        if(headers!=null)
+        {
+            for(Map.Entry<?,?> entry : headers.entrySet())
+            {
+                connection.setRequestProperty(entry.getKey().toString(), 
+                        entry.getValue().toString());
+            }
+        }
+        connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);
+        connection.setRequestProperty(CONTENT_LENGTH_HEADER, String.valueOf(data.length));
         connection.setDoInput(true);
-        connection.setDoOutput(true);
         connection.setInstanceFollowRedirects(true);
+               
+        connection.setDoOutput(true); 
+        OutputStream out = null;
+        try
+        {
+            out = connection.getOutputStream();
+            out.write(data);
+        }
+        finally
+        {
+            if(out!=null)
+                out.close();
+        }        
         return new HttpURLConnectionWrapper(connection);
     }
     
-    public Response doPOST(String url, String contentType, byte[] data, OpenIdContext context)
-    throws IOException
+    static Response sendContent(String method, Map<?,?> headers, HttpURLConnection connection, String contentType, 
+            InputStreamReader reader) throws IOException
     {
-        URL target = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection)target.openConnection();
-        connection.setRequestMethod(POST);
-        connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);
+        connection.setRequestMethod(method);
+        if(headers!=null)
+        {
+            for(Map.Entry<?,?> entry : headers.entrySet())
+            {
+                connection.setRequestProperty(entry.getKey().toString(), 
+                        entry.getValue().toString());
+            }
+        }
+        connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);        
         connection.setDoInput(true);
-        connection.setDoOutput(true);
         connection.setInstanceFollowRedirects(true);
-        connection.getOutputStream().write(data);
-        connection.getOutputStream().flush();        
+        
+        connection.setDoOutput(true); 
+        OutputStreamWriter out = null;
+        try
+        {
+            out = new OutputStreamWriter(connection.getOutputStream(), reader.getEncoding());            
+            char[] buf = new char[__bufferSize];
+            for(int len=0; (len=reader.read(buf))!=-1;)
+                out.write(buf, 0, len);
+        }
+        finally
+        {
+            if(out!=null)
+                out.close();
+        }        
         return new HttpURLConnectionWrapper(connection);
     }
     
@@ -104,21 +264,35 @@ public class SimpleHttpConnector implements HttpConnector
         {
             _connection = connection;
         }
+        
         public void close() throws IOException
         {
             _connection.disconnect();            
         }
+        
         public String getHeader(String name)
         {            
             return _connection.getHeaderField(name);
         }
+        
         public InputStream getInputStream() throws IOException
         {            
             return _connection.getInputStream();
         }
+        
+        public int getStatus()
+        {
+            try
+            {
+                return _connection.getResponseCode();
+            }
+            catch(IOException e)
+            {
+                // TODO throw exception?
+                e.printStackTrace();
+                return 404;
+            }
+        }
     }
-    
-
-
 
 }

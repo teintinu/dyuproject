@@ -16,10 +16,11 @@ package com.dyuproject.openid;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 /**
- * HttpConnector - reads and writes bytes from urls.
+ * HttpConnector - reads/writes bytes from/to http endpoints.
  * 
  * @author David Yu
  * @created Sep 8, 2008
@@ -35,20 +36,41 @@ public interface HttpConnector
     public static final String DELETE = "DELETE";
     
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
+    public static final String CONTENT_LENGTH_HEADER = "Content-Length";
     public static final String X_WWW_FORM_URLENCODED = "x-www-form-urlencoded";
     
-    public Response doHEAD(String url, OpenIdContext context) throws IOException;
+    public Response doHEAD(String url, Map<?,?> headers) throws IOException;
     
-    public Response doGET(String url, OpenIdContext context) throws IOException;
+    public Response doGET(String url, Map<?,?> headers) throws IOException;
     
-    public Response doGET(String url, Map<String,Object> parameters, OpenIdContext context) 
+    public Response doGET(String url, Map<?,?> headers, Map<?,?> parameters) 
     throws IOException;
     
-    public Response doPOST(String url, Map<String,Object> parameters, 
-            OpenIdContext context) throws IOException;
+    public Response doDELETE(String url, Map<?,?> headers) throws IOException;
     
-    public Response doPOST(String url, String contentType, byte[] data, OpenIdContext context)
+    public Response doDELETE(String url, Map<?,?> headers, Map<?,?> parameters) 
     throws IOException;
+    
+    public Response doPOST(String url, Map<?,?> headers, Map<?,?> parameters, String charset) 
+    throws IOException;
+    
+    public Response doPOST(String url, Map<?,?> headers, String contentType, byte[] data) 
+    throws IOException;
+    
+    public Response doPOST(String url, Map<?,?> headers, String contentType, 
+            InputStreamReader reader) throws IOException;
+    
+    public Response doPUT(String url, Map<?,?> headers, Map<?,?> parameters, String charset) 
+    throws IOException;
+    
+    public Response doPUT(String url, Map<?,?> headers, String contentType, byte[] data) 
+    throws IOException;
+    
+    public Response doPUT(String url, Map<?,?> headers, String contentType, 
+            InputStreamReader reader) throws IOException;
+    
+    
+    
     
     public interface Response
     {
@@ -56,6 +78,8 @@ public interface HttpConnector
         public InputStream getInputStream() throws IOException;
         
         public String getHeader(String name);
+        
+        public int getStatus();
         
         public void close() throws IOException;
 
