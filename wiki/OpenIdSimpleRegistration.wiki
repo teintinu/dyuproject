@@ -4,8 +4,8 @@ Enabling openid simple registration extension
 ==dyuproject-1.1.1+ configuration==
 
 {{{
-RelyingParty _relyingParty = RelyingParty.getInstance();
-_relyingParty.addListener(new SregConfigListener());
+        RelyingParty _relyingParty = RelyingParty.getInstance();
+        _relyingParty.addListener(new SregConfigListener());
 
 }}}
 
