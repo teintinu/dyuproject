@@ -1,41 +1,96 @@
 #labels openid,relyingparty,consumer
 openid relying party howto
 
-For a working example, see [SampleOpenIdServlet].
+See [OpenIdServletFilter] and [SampleOpenIdServlet].
 To enable openid sreg extension, see [OpenIdSimpleRegistration].
 
-= Configuration =
-
-====maven2====
-{{{
-    <dependency>
-      <groupId>com.dyuproject</groupId>
-      <artifactId>dyuproject-openid</artifactId>
-      <version>1.1.0</version>
-    </dependency>
-}}}
-
-{{{
-
-  <repositories>
-    <repository>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <id>dyuproject-repo</id>
-      <name>dyuproject-repo</name>      
-      <url>http://dyuproject.googlecode.com/svn/repos/maven2</url>
-    </repository>
-  </repositories>
-
-}}}
-
+= dyuproject-1.1.1+ configuration =
 
 ====openid.properties====
-This will be used by {{{RelyingParty.getInstance();}}}
+This will be used by {{{RelyingParty.getInstance();}}} if its available in the classpath.
 
 If you're using maven2, you could put this in src/main/resources.
 
+{{{
+#optional
+#openid.parameter = some_parameter (default: openid_identifier)
+
+
+
+#if using cookie-based manager (default is httpsession-based)
+
+#required
+#openid.user.manager = com.dyuproject.openid.manager.CookieBasedUserManager
+#openid.user.manager.cookie.name = openidservlet1
+#openid.user.manager.cookie.security.secretKey = secret
+
+#optional
+#openid.user.manager.cookie.path = /
+#openid.user.manager.cookie.domain = http://www.example.com
+#openid.user.manager.cookie.security.type = md5Signed (default: encrypted)
+#openid.user.manager.cookie.maxAge = 900 (default: 600) 
+# - authenticated user's session expiry in seconds
+#openid.user.manager.cookie.loginTimeout = 90 (default: 60) 
+# - timeout in seconds for the discovered user to finish authentication on his openid provider
+
+}}}
+
+If you want custom configuration, you could do:
+{{{
+Properties props = new Properties();
+// set your custom properties...
+RelyingParty relyingParty = RelyingParty.newInstance(props);
+}}}
+
+The best way to use the api is through providing a custom RelyingParty.Listener
+and using the [OpenIdServletFilter] (can be easily subclassed if needed)
+
+{{{
+    RelyingParty _relyingParty = RelyingParty.getInstance();
+    
+    public void init()
+    {
+        // enable sreg
+        _relyingParty.addListener(new SregConfigListener());
+        // custom listener
+        _relyingParty.addListener(new RelyingParty.Listener()
+        {
+            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+            {
+                System.err.println("discovered user: " + user.getClaimedId());
+            }            
+            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
+                    UrlEncodedParameterMap params)
+            {
+                System.err.println("pre-authenticate user: " + user.getClaimedId());
+            }            
+            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+            {
+
+                System.err.print("newly authenticated user: " + user.getIdentity());
+                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                if(sreg!=null)
+                    System.err.print(" aka " + sreg.getNickname());
+                System.err.print("\n");            
+            }            
+            public void onAccess(OpenIdUser user, HttpServletRequest request)
+            {        
+                System.err.print("user access: " + user.getIdentity());
+                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                if(sreg!=null)
+                    System.err.print(" aka " + sreg.getNickname());
+                System.err.print("\n");
+            }            
+        });
+    }
+
+}}}
+
+----
+
+=dyuproject-1.0.x configuration=
+
+====openid.properties====
 {{{
 #required
 
@@ -58,13 +113,6 @@ openid.cookie.path=/
 
 #openid.coodie.maxAge=600
 #maxAge in seconds, default to 600(10 mins)
-}}}
-
-If you want custom configuration, you could do:
-{{{
-Properties props = new Properties();
-// set your custom properties...
-RelyingParty relyingParty = RelyingParty.newInstance(props);
 }}}
 
 
