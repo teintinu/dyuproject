@@ -1,4 +1,4 @@
-#labels REST,service,java,annotations,JRA
+#labels REST,service,java,annotations,JRA,Deprecated
 #A REST Service basically contains methods annotated with  [http://jra.codehaus.org Java REST Annotations]
 
 = Introduction =
