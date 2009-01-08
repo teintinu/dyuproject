@@ -4,7 +4,7 @@ Available for release 1.1.1
 
 = Configuration =
 
-{code}
+{{{
   <filter>
     <filter-name>openid-filter</filter-name>
     <filter-class>com.dyuproject.openid.OpenIdServletFilter</filter-class>
@@ -19,6 +19,6 @@ Available for release 1.1.1
     <filter-name>openid-filter</filter-name>
     <url-pattern>/account/*</url-pattern>
   </filter-mapping> 
-{code}
+}}}
 
 Thats it!
