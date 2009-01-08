@@ -6,6 +6,8 @@ A sample openid servlet using dyuproject-openid
 It is recommended that you use the [OpenIdServletFilter] instead and just add
 your custom *{{{RelyingParty.Listener}}}*
 
+*See the [QuickStartOpenid Quick Start Guide]*
+
 *{{{HomeServlet.java}}}*
 {{{
 package com.dyuproject.demos.openidservlet;
