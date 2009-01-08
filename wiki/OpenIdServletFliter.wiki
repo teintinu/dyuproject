@@ -1,6 +1,6 @@
 #labels openid,servlet,filter,out-of-the-box
 A servlet filter that works smoothly.
-Available for release 1.1.1
+Will be available for release 1.1.1. (currently in SNAPSHOT)
 
 = Configuration =
 
