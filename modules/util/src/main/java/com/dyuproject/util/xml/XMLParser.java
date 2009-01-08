@@ -303,7 +303,7 @@ public class XMLParser
                                     else
                                     {
                                         namespace = new String(cbuf, mark+1, nsMark-mark-1).trim();
-                                        name = new String(cbuf, nsMark+1, offset-mark-1).trim();
+                                        name = new String(cbuf, nsMark+1, offset-nsMark-1).trim();
                                     }
                                     if(searchRoot)
                                     {
