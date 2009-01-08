@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.openid.OpenIdSreg;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 
@@ -39,19 +40,30 @@ public class LogoutServlet extends HttpServlet
         RelyingParty.getInstance().setListener(new RelyingParty.Listener()
         {
 
-            public void onDiscovery(OpenIdUser user)
+            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
             {
                 System.err.println("new user: " + user.getClaimedId());                
             }
 
-            public void onAuthentication(OpenIdUser user)
+            public void onAuthentication(OpenIdUser user, HttpServletRequest request)
             {
-                System.err.println("just logged in: " + user.getIdentity());                
+                System.err.print("just logged in: " + user.getIdentity());
+                OpenIdSreg sreg = OpenIdSreg.get(request);
+                if(sreg!=null)
+                {
+                    System.err.print(" aka " + sreg.getNickname());
+                    user.setAttribute("sreg", sreg);
+                }
+                System.err.print("\n");
             }
             
-            public void onAccess(OpenIdUser user)
+            public void onAccess(OpenIdUser user, HttpServletRequest request)
             {
-                System.err.println("user access: " + user.getIdentity());
+                System.err.print("user access: " + user.getIdentity());
+                OpenIdSreg sreg = (OpenIdSreg)user.getAttribute("sreg");
+                if(sreg!=null)
+                    System.err.print(" aka " + sreg.getNickname());
+                System.err.print("\n");
             }
             
         });
