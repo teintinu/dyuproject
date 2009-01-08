@@ -31,6 +31,8 @@ import org.mortbay.util.ajax.JSON.Output;
 public class OpenIdUser implements Serializable, JSON.Convertible
 {
     
+    public static final String ATTR_NAME = "openid_user";
+    
     private String _claimedId;
     private String _openIdServer;
     private String _openIdDelegate;

@@ -269,7 +269,7 @@ public class RelyingParty
     public OpenIdUser discover(HttpServletRequest request) 
     throws Exception
     {
-        OpenIdUser user = (OpenIdUser)request.getAttribute(OpenIdUser.class.getName());
+        OpenIdUser user = (OpenIdUser)request.getAttribute(OpenIdUser.ATTR_NAME);
         if(user!=null)
             return user;
 
@@ -277,8 +277,8 @@ public class RelyingParty
         if(user!=null)
         {
             if(_listener!=null && user.isAuthenticated())
-                _listener.onAccess(user);
-            request.setAttribute(OpenIdUser.class.getName(), user);
+                _listener.onAccess(user, request);
+            request.setAttribute(OpenIdUser.ATTR_NAME, user);
             return user;
         }
         String claimedId = request.getParameter(_openIdParameter);
@@ -288,8 +288,8 @@ public class RelyingParty
         if(user!=null)
         {
             if(_listener!=null)
-                _listener.onDiscovery(user);
-            request.setAttribute(OpenIdUser.class.getName(), user);
+                _listener.onDiscovery(user, request);
+            request.setAttribute(OpenIdUser.ATTR_NAME, user);
         }
         
         return user;
@@ -301,7 +301,7 @@ public class RelyingParty
         if(_context.getAssociation().verifyAuth(user, getAuthParameters(request), _context))
         {
             if(_listener!=null)
-                _listener.onAuthentication(user);
+                _listener.onAuthentication(user, request);
             if(!response.isCommitted())
                 _manager.saveUser(user, request, response);
             return true;
@@ -338,9 +338,9 @@ public class RelyingParty
     public interface Listener
     {
         
-        public void onDiscovery(OpenIdUser user);
-        public void onAuthentication(OpenIdUser user);
-        public void onAccess(OpenIdUser user);
+        public void onDiscovery(OpenIdUser user, HttpServletRequest request);
+        public void onAuthentication(OpenIdUser user, HttpServletRequest request);
+        public void onAccess(OpenIdUser user, HttpServletRequest request);
         
     }
 

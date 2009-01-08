@@ -51,6 +51,8 @@ public abstract class Constants
     
     public static final String OPENID_NS_SREG = "openid.ns.sreg";
     
+    public static final String OPENID_SREG_OPTIONAL = "openid.sreg.optional";
+    
     public static final String OPENID_OP_ENDPOINT = "openid.op_endpoint";
     
     public static final String OPENID_SIGNED = "openid.signed";
@@ -66,6 +68,16 @@ public abstract class Constants
     public static final String OPENID_DH_GEN = "openid.dh_gen";
     
     public static final String OPENID_DH_CONSUMER_PUBLIC = "openid.dh_consumer_public";
+    
+    public static final String SREG_NICKNAME = "openid.sreg.nickname";
+    public static final String SREG_EMAIL = "openid.sreg.email";
+    public static final String SREG_FULLNAME = "openid.sreg.fullname";
+    public static final String SREG_DOB = "openid.sreg.dob";
+    public static final String SREG_GENDER = "openid.sreg.gender";
+    public static final String SREG_POSTCODE = "openid.sreg.postcode";
+    public static final String SREG_COUNTRY = "openid.sreg.country";
+    public static final String SREG_LANGUAGE = "openid.sreg.language";
+    public static final String SREG_TIMEZONE = "openid.sreg.timezone";
     
     
     public static class Mode
@@ -86,6 +98,13 @@ public abstract class Constants
         public static final String ENC_MAC_KEY = "enc_mac_key";
         public static final String DH_SERVER_PUBLIC = "dh_server_public";
         public static final String EXPIRES_IN = "expires_in";        
+    }
+    
+    public static class Sreg
+    {
+        public static final String VERSION = "http://openid.net/extensions/sreg/1.1";
+        public static final String OPTIONAL = "nickname,email,fullname,dob,gender,postcode,country,language,timezone";     
+
     }
     
     public static final BigInteger DIFFIE_HELLMAN_MODULUS = new BigInteger(
