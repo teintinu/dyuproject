@@ -61,10 +61,7 @@ public class HomeServlet extends HttpServlet
                 System.err.print("newly authenticated user: " + user.getIdentity());
                 OpenIdSreg sreg = OpenIdSreg.getSreg(user);
                 if(sreg!=null)
-                {
                     System.err.print(" aka " + sreg.getNickname());
-                    user.setAttribute("sreg", sreg);
-                }
                 System.err.print("\n");            
             }            
             public void onAccess(OpenIdUser user, HttpServletRequest request)
