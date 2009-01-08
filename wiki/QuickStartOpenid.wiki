@@ -3,7 +3,7 @@
 
 === dyuproject-1.1.1+ configuration===
 
-Let us learn by example.
+Let us learn by example ... this will help you create/deploy asap.
 
 *The web.xml configuration*
 
