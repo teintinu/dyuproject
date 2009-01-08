@@ -6,6 +6,11 @@ A sample openid servlet using dyuproject-openid
 It is recommended that you use the [OpenIdServletFilter] instead and just add
 your custom *{{{RelyingParty.Listener}}}*
 
+The source is available [http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/ here].
+
+Here's the [http://dp-openid.morphexchange.com/home/ live demo]
+
+*{{{HomeServlet.java}}}*
 {{{
 package com.dyuproject.demos.openidservlet;
 
@@ -26,7 +31,6 @@ import com.dyuproject.openid.ext.SregConfigListener;
  * Home Servlet. If authenticated, goes to the home page. If not, goes to the login page.
  * 
  * @author David Yu
- * @created Sep 22, 2008
  */
 @SuppressWarnings("serial")
 public class HomeServlet extends HttpServlet
@@ -147,54 +151,54 @@ public class HomeServlet extends HttpServlet
 
 }}}
 
+
+*{{{LogoutServlet.java}}}*
+
+{{{
+
+package com.dyuproject.demos.openidservlet;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.dyuproject.openid.RelyingParty;
+
+/**
+ * Logout Servlet
+ * 
+ * @author David Yu
+ */
+@SuppressWarnings("serial")
+public class LogoutServlet extends HttpServlet
+{
+    
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException
+    {
+        doPost(request, response);
+    }
+    
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException
+    {
+        RelyingParty.getInstance().invalidate(response);
+        response.sendRedirect("/home/");
+    }
+
+}
+
+
+}}}
+
 ----
 
 =dyuproject-1.0.x configuration=
 
-The source is available [http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/ here].
-
-Here's the [http://dp-openid.morphexchange.com/home/ live demo]
-
-{{{openid.properties}}}
-{{{
-openid.cookie.name=openidservlet
-openid.cookie.security.secretKey=secret
-openid.cookie.path=/
-}}}
-
-{{{web.xml}}}
-{{{
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app 
-   xmlns="http://java.sun.com/xml/ns/javaee" 
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-   version="2.5" metadata-complete="true">
-   
-  <servlet>
-    <servlet-name>home-servlet</servlet-name>
-    <servlet-class>com.dyuproject.demos.openidservlet.HomeServlet</servlet-class>	
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>home-servlet</servlet-name>
-    <url-pattern>/home/</url-pattern>
-  </servlet-mapping>  
-  
-  <servlet>
-    <servlet-name>logout-servlet</servlet-name>
-    <servlet-class>com.dyuproject.demos.openidservlet.LogoutServlet</servlet-class>	
-  </servlet>
-
-  <servlet-mapping>
-    <servlet-name>logout-servlet</servlet-name>
-    <url-pattern>/logout/</url-pattern>
-  </servlet-mapping>
-    
-</web-app>
-}}}
-
-{{{HomeServlet.java}}}
+*{{{HomeServlet.java}}}*
 {{{
 
 package com.dyuproject.demos.openidservlet;
@@ -296,51 +300,5 @@ public class HomeServlet extends HttpServlet
     }
 
 }
-
-
-}}}
-
-
-
-
-{{{LogoutServlet.java}}}
-
-{{{
-
-package com.dyuproject.demos.openidservlet;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.dyuproject.openid.RelyingParty;
-
-/**
- * Logout Servlet
- * 
- * @author David Yu
- */
-@SuppressWarnings("serial")
-public class LogoutServlet extends HttpServlet
-{
-    
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException
-    {
-        doPost(request, response);
-    }
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException
-    {
-        RelyingParty.getInstance().invalidate(response);
-        response.sendRedirect("/home/");
-    }
-
-}
-
 
 }}}
