@@ -27,6 +27,7 @@ import org.mortbay.util.ajax.JSON.Output;
  * @created Jan 8, 2009
  */
 
+@SuppressWarnings("serial")
 public class OpenIdSreg implements Serializable, JSON.Convertible
 {
     
@@ -56,7 +57,7 @@ public class OpenIdSreg implements Serializable, JSON.Convertible
     private String _language;
     private String _timezone;
     
-    OpenIdSreg()
+    public OpenIdSreg()
     {
         
     }    
