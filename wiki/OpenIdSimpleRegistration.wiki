@@ -10,21 +10,6 @@ _relyingParty.addListener(new SregConfigListener());
 }}}
 
 {{{
-
-// when the user is already authenticated.
-
-OpenIdUser user = _relyingParty.discover(request);
-OpenIdSreg sreg = null;
-if(user.isAuthenticated() && (sreg=OpenIdSreg.getSreg(user))!=null)
-{
-    System.err.println(sreg.getNickname());
-    System.err.println(sreg.getEmail());
-    ...
-}
-
-}}}
-
-{{{
         // finally, you could add a custom RelyingParty.Listener
 
         _relyingParty.addListener(new RelyingParty.Listener()
