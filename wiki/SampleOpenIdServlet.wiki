@@ -6,10 +6,6 @@ A sample openid servlet using dyuproject-openid
 It is recommended that you use the [OpenIdServletFilter] instead and just add
 your custom *{{{RelyingParty.Listener}}}*
 
-The source is available [http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/ here].
-
-Here's the [http://dp-openid.morphexchange.com/home/ live demo]
-
 *{{{HomeServlet.java}}}*
 {{{
 package com.dyuproject.demos.openidservlet;
