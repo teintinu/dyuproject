@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 
 /**
@@ -32,6 +33,29 @@ import com.dyuproject.openid.RelyingParty;
 @SuppressWarnings("serial")
 public class LogoutServlet extends HttpServlet
 {
+    
+    public LogoutServlet()
+    {
+        RelyingParty.getInstance().setListener(new RelyingParty.Listener()
+        {
+
+            public void onDiscovery(OpenIdUser user)
+            {
+                System.err.println("new user: " + user.getClaimedId());                
+            }
+
+            public void onAuthentication(OpenIdUser user)
+            {
+                System.err.println("just logged in: " + user.getIdentity());                
+            }
+            
+            public void onAccess(OpenIdUser user)
+            {
+                System.err.println("user access: " + user.getIdentity());
+            }
+            
+        });
+    }
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
