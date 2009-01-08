@@ -1,7 +1,7 @@
 #labels openid,relyingparty,quickstart,guide
 Quick start tutorial to easily get started.
 
-=Openid RelyingParty QuickStart Guide=
+={{{Openid RelyingParty QuickStart Guide}}}=
 
 === dyuproject-1.1.1+ configuration===
 
