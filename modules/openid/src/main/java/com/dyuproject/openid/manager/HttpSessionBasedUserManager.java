@@ -42,7 +42,7 @@ public class HttpSessionBasedUserManager implements OpenIdUserManager
     public OpenIdUser getUser(HttpServletRequest request) throws IOException
     {
         HttpSession session = request.getSession(false);
-        return session==null ? null: (OpenIdUser)session.getAttribute(OpenIdUser.class.getName());
+        return session==null ? null: (OpenIdUser)session.getAttribute(OpenIdUser.ATTR_NAME);
     }
 
     public boolean invalidate(HttpServletRequest request,
@@ -50,7 +50,7 @@ public class HttpSessionBasedUserManager implements OpenIdUserManager
     {
         HttpSession session = request.getSession(false);
         if(session!=null)
-            session.removeAttribute(OpenIdUser.class.getName());
+            session.removeAttribute(OpenIdUser.ATTR_NAME);
         return true;
     }
 
@@ -59,7 +59,7 @@ public class HttpSessionBasedUserManager implements OpenIdUserManager
     {
         if(user==null)
             return false;
-        request.getSession().setAttribute(OpenIdUser.class.getName(), user);
+        request.getSession().setAttribute(OpenIdUser.ATTR_NAME, user);
         return true;
     }
     
