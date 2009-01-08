@@ -42,7 +42,7 @@ Properties props = new Properties();
 RelyingParty relyingParty = RelyingParty.newInstance(props);
 }}}
 
-The best way to use the api is through providing a custom RelyingParty.Listener
+The best way to use the api is through providing a custom *{{{RelyingParty.Listener}}}*
 and using the [OpenIdServletFilter] (can be easily subclassed if needed)
 
 {{{
