@@ -22,7 +22,7 @@ A servlet filter that fits your needs out-of-the-box.
 
 ===Thats it!===
 
-To customize the RelyingParty used by the servlet filter, see [openid openid.properties configuration]. 
+To customize the {{{RelyingParty}}} used by the servlet filter, see [openid openid.properties configuration]. 
 Or you could implement a javax.servlet.ServletContextListener
 
 {{{
