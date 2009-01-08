@@ -17,11 +17,14 @@
 </head>
 <body>
 <div>
+  <div style="color:red;font-size:1.4em">&nbsp;${openid_servlet_filter_msg}</div>
   <p>Login with your openid</p>
   <form method="POST">
     <input id="openid_identifier" name="openid_identifier" type="text" size="40"/>
     <input type="submit" value="send"/>
   </form>
 </div>
+<p><a href="/home/">HomeServlet</a></p>
+<p><a href="/home.jsp">home.jsp (filtered by OpenIdServletFilter)</a></p>
 </body>
 </html>
