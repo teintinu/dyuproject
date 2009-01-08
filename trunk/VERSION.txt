@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ custom RelyingParty listener on OpenIdUser discovery, authentication and access
 + added handling when the user's authentication takes too long.
 + fix lack of OpenIdUser caching when parsed via OpenIdUserManager
 + OpenIdUserManager now has 2 impls: cookie-based and httpsession-based
