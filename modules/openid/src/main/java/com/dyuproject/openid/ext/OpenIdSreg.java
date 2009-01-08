@@ -35,7 +35,7 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 public class OpenIdSreg implements Serializable, JSON.Convertible
 {
     
-    public static final String ATTR_NAME = "openid_sreg";
+    public static final String ATTR_NAME = "sreg";
     
     static void put(UrlEncodedParameterMap params)
     {
@@ -45,7 +45,7 @@ public class OpenIdSreg implements Serializable, JSON.Convertible
     
     static void setSreg(OpenIdUser user, OpenIdSreg sreg)
     {
-        user.setAttribute(OpenIdSreg.ATTR_NAME, sreg);
+        user.setAttribute(ATTR_NAME, sreg);
     }
     
     public static OpenIdSreg getSreg(OpenIdUser user)
