@@ -227,7 +227,7 @@ public class RelyingParty
     private OpenIdContext _context;
     private String _openIdParameter = DEFAULT_PARAMETER;
     
-    private Listener _listener;
+    private ListenerCollection _listener = new ListenerCollection();
     
     public RelyingParty()
     {
@@ -276,7 +276,7 @@ public class RelyingParty
         user = _manager.getUser(request);
         if(user!=null)
         {
-            if(_listener!=null && user.isAuthenticated())
+            if(user.isAuthenticated())
                 _listener.onAccess(user, request);
             request.setAttribute(OpenIdUser.ATTR_NAME, user);
             return user;
@@ -287,8 +287,7 @@ public class RelyingParty
         user = _context.getDiscovery().discover(claimedId, _context);
         if(user!=null)
         {
-            if(_listener!=null)
-                _listener.onDiscovery(user, request);
+            _listener.onDiscovery(user, request);
             request.setAttribute(OpenIdUser.ATTR_NAME, user);
         }
         
@@ -300,8 +299,7 @@ public class RelyingParty
     {
         if(_context.getAssociation().verifyAuth(user, getAuthParameters(request), _context))
         {
-            if(_listener!=null)
-                _listener.onAuthentication(user, request);
+            _listener.onAuthenticate(user, request);
             if(!response.isCommitted())
                 _manager.saveUser(user, request, response);
             return true;
@@ -309,17 +307,27 @@ public class RelyingParty
         return false;
     }
     
-    public boolean associate(OpenIdUser user, HttpServletRequest request, 
-            HttpServletResponse response) throws Exception
+    public boolean associateAndAuthenticate(OpenIdUser user, HttpServletRequest request, 
+            HttpServletResponse response, String trustRoot, String realm, 
+            String returnTo) throws Exception
     {
-        if(_context.getAssociation().associate(user, _context))
-        {
-            if(!response.isCommitted())
-                _manager.saveUser(user, request, response);
-            return true;
-        }        
-        return false;
+        return _context.getAssociation().associate(user, _context) && authenticate(user, request, 
+                response, trustRoot, realm, returnTo);
     }
+    
+    boolean authenticate(OpenIdUser user, HttpServletRequest request, HttpServletResponse response,
+            String trustRoot, String realm, String returnTo) throws IOException
+    {
+        UrlEncodedParameterMap params = RelyingParty.getAuthUrlMap(user, trustRoot, realm, returnTo);
+        
+        _listener.onPreAuthenticate(user, request, params);      
+
+        if(!response.isCommitted())
+            _manager.saveUser(user, request, response);
+        
+        response.sendRedirect(params.toString());
+        return true;
+    }    
     
     public boolean invalidate(HttpServletRequest request, HttpServletResponse response) 
     throws IOException
@@ -327,20 +335,77 @@ public class RelyingParty
         return _manager.invalidate(request, response);
     }
     
-    public void setListener(Listener listener)
+    public void addListener(Listener listener)
     {
-        if(_listener!=null)
-            throw new IllegalStateException("listener already set.");
-        
-        _listener = listener;
+        _listener.addListener(listener);
     }
     
     public interface Listener
     {
-        
+        // the authentication process (in order)
         public void onDiscovery(OpenIdUser user, HttpServletRequest request);
-        public void onAuthentication(OpenIdUser user, HttpServletRequest request);
+        
+        public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request, 
+                UrlEncodedParameterMap params);        
+        
+        public void onAuthenticate(OpenIdUser user, HttpServletRequest request);
+        
         public void onAccess(OpenIdUser user, HttpServletRequest request);
+    }
+    
+    public static class ListenerCollection implements Listener
+    {      
+
+        private Listener[] _listeners = new Listener[]{};
+        
+        public void addListener(Listener listener)
+        {
+            if(listener==null)
+                return;
+            
+            Listener[] listeners = new Listener[_listeners.length+1];
+            listeners[_listeners.length] = listener;
+            System.arraycopy(_listeners, 0, listeners, 0, _listeners.length);
+            synchronized(_listeners)
+            {                
+                _listeners = listeners;
+            }
+        }
+        
+        private Listener[] getListeners()
+        {
+            Listener[] listeners = null;
+            synchronized(_listeners)
+            {
+                listeners = _listeners;
+            }
+            return listeners;
+        }
+
+        public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+        {
+            for(Listener l : getListeners())
+                l.onDiscovery(user, request);       
+        }
+        
+        public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request, 
+                UrlEncodedParameterMap params)
+        {
+            for(Listener l : getListeners())
+                l.onPreAuthenticate(user, request, params);
+        }
+        
+        public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+        {
+            for(Listener l : getListeners())
+                l.onAuthenticate(user, request);
+        }
+        
+        public void onAccess(OpenIdUser user, HttpServletRequest request)
+        {
+            for(Listener l : getListeners())
+                l.onAccess(user, request);
+        }
         
     }
 

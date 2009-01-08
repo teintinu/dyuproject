@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.openid;
+package com.dyuproject.openid.ext;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -21,6 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.mortbay.util.ajax.JSON;
 import org.mortbay.util.ajax.JSON.Output;
+
+import com.dyuproject.openid.Constants;
+import com.dyuproject.openid.OpenIdUser;
+import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
  * @author David Yu
@@ -31,8 +35,26 @@ import org.mortbay.util.ajax.JSON.Output;
 public class OpenIdSreg implements Serializable, JSON.Convertible
 {
     
-    public static OpenIdSreg get(HttpServletRequest request)
+    public static final String ATTR_NAME = "openid_sreg";
+    
+    static void put(UrlEncodedParameterMap params)
     {
+        params.put(Constants.OPENID_NS_SREG, Constants.Sreg.VERSION);                    
+        params.put(Constants.OPENID_SREG_OPTIONAL, Constants.Sreg.OPTIONAL);        
+    }
+    
+    static void setSreg(OpenIdUser user, OpenIdSreg sreg)
+    {
+        user.setAttribute(OpenIdSreg.ATTR_NAME, sreg);
+    }
+    
+    public static OpenIdSreg getSreg(OpenIdUser user)
+    {
+        return (OpenIdSreg)user.getAttribute(ATTR_NAME);
+    }
+    
+    static OpenIdSreg parse(HttpServletRequest request)
+    {        
         OpenIdSreg sreg = new OpenIdSreg();
         sreg.setNickname(request.getParameter(Constants.SREG_NICKNAME));
         sreg.setEmail(request.getParameter(Constants.SREG_EMAIL));
@@ -43,7 +65,10 @@ public class OpenIdSreg implements Serializable, JSON.Convertible
         sreg.setCountry(request.getParameter(Constants.SREG_COUNTRY));
         sreg.setLanguage(request.getParameter(Constants.SREG_LANGUAGE));
         sreg.setTimezone(request.getParameter(Constants.SREG_TIMEZONE));
-        return sreg._propertyCount==0 ? null : sreg;
+        if(sreg._propertyCount==0)
+            return null;
+        request.setAttribute(ATTR_NAME, sreg);
+        return sreg;
     }    
 
     private int _propertyCount = 0;

@@ -42,19 +42,14 @@ public class OpenIdServletFilter implements Filter
     static final String DEFAULT_ERROR_MSG = "The provided openid claimed id could not be resolved.";
     static final String CLAIMEDID_NOT_FOUND = "The provided openid claimed id does not exist.";
 
-    private boolean _sregEnabled = false;
-    private String _forwardUri;    
-    private RelyingParty _relyingParty;    
+    protected String _forwardUri;    
+    protected RelyingParty _relyingParty;    
     
     public void init(FilterConfig config) throws ServletException
     {
         _forwardUri = config.getInitParameter("forwardUri");
         if(_forwardUri==null)
             throw new ServletException("forwardUri must not be null.");
-        
-        String sregEnabled = config.getInitParameter("sregEnabled");
-        if(sregEnabled!=null)
-            _sregEnabled = Boolean.parseBoolean(sregEnabled);
         
         // resolve from ServletContext
         _relyingParty = (RelyingParty)config.getServletContext().getAttribute(
@@ -64,12 +59,32 @@ public class OpenIdServletFilter implements Filter
         if(_relyingParty==null)
             _relyingParty = RelyingParty.getInstance();
     }
+    
+    public String getForwardUri()
+    {
+        return _forwardUri;
+    }
+    
+    public RelyingParty getRelyingParty()
+    {
+        return _relyingParty;
+    }
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) 
     throws IOException, ServletException
     {
-        HttpServletRequest request = (HttpServletRequest)req;
-        HttpServletResponse response = (HttpServletResponse)res;
+        if(handle((HttpServletRequest)req, (HttpServletResponse)res))
+            chain.doFilter(req, res);
+    }
+
+    public void destroy()
+    {        
+        
+    }
+    
+    public boolean handle(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException
+    {
         String errorMsg = DEFAULT_ERROR_MSG;
         try
         {
@@ -86,15 +101,14 @@ public class OpenIdServletFilter implements Filter
                     // new user
                     request.getRequestDispatcher(_forwardUri).forward(request, response);
                 }
-                return;
+                return false;
             }
             
             if(user.isAuthenticated())
             {
                 // user already authenticated
-                request.setAttribute(OpenIdUser.ATTR_NAME, user);
-                chain.doFilter(request, response);                
-                return;
+                request.setAttribute(OpenIdUser.ATTR_NAME, user);                                
+                return true;
             }
             
             if(user.isAssociated() && RelyingParty.isAuthResponse(request))
@@ -109,35 +123,22 @@ public class OpenIdServletFilter implements Filter
                 }
                 else
                 {
-                    // failed verification ... re-authenticate
+                    // failed verification
                     request.getRequestDispatcher(_forwardUri).forward(request, response);
                 }
-                return;
+                return false;
             }
             
-            // associate user
-            if(_relyingParty.associate(user, request, response))
+            // associate and authenticate user
+            StringBuffer url = request.getRequestURL();
+            String trustRoot = url.substring(0, url.indexOf("/", 9));
+            String realm = url.substring(0, url.lastIndexOf("/"));
+            String returnTo = url.toString();            
+            if(_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
+                    returnTo))
             {
-                // authenticate user to his/her openid provider
-                StringBuffer url = request.getRequestURL();
-                String trustRoot = url.substring(0, url.indexOf("/", 9));
-                String realm = url.substring(0, url.lastIndexOf("/"));
-                String returnTo = url.toString();
-                
-                if(_sregEnabled)
-                {
-                    UrlEncodedParameterMap params = RelyingParty.getAuthUrlMap(user, trustRoot, 
-                            realm, returnTo);
-                    params.put(Constants.OPENID_NS_SREG, Constants.Sreg.VERSION);                    
-                    params.put(Constants.OPENID_SREG_OPTIONAL, Constants.Sreg.OPTIONAL);
-                    response.sendRedirect(params.toString());
-                }
-                else
-                {
-                    response.sendRedirect(RelyingParty.getAuthUrlString(user, trustRoot, realm, 
-                            returnTo)); 
-                }                
-                return;
+                // user is associated and then redirected to his openid provider for authentication                
+                return false;
             }        
         }
         catch(UnknownHostException uhe)
@@ -153,14 +154,9 @@ public class OpenIdServletFilter implements Filter
             e.printStackTrace();
             errorMsg = e.getMessage();
         }
-        // failed association
         request.setAttribute(ERROR_MSG_ATTR, errorMsg);
         request.getRequestDispatcher(_forwardUri).forward(request, response);
-    }
-
-    public void destroy()
-    {        
-        
+        return false;
     }
 
 }
