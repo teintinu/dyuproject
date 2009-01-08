@@ -40,6 +40,7 @@ public class OpenIdServletFilter implements Filter
     
     public static final String ERROR_MSG_ATTR = "openid_servlet_filter_msg";    
     static final String DEFAULT_ERROR_MSG = "The provided openid claimed id could not be resolved.";
+    static final String CLAIMEDID_NOT_FOUND = "The provided openid claimed id does not exist.";
 
     private boolean _sregEnabled = false;
     private String _forwardUri;    
@@ -90,7 +91,8 @@ public class OpenIdServletFilter implements Filter
             
             if(user.isAuthenticated())
             {
-                // user already authenticated                
+                // user already authenticated
+                request.setAttribute(OpenIdUser.ATTR_NAME, user);
                 chain.doFilter(request, response);                
                 return;
             }
@@ -126,9 +128,8 @@ public class OpenIdServletFilter implements Filter
                 {
                     UrlEncodedParameterMap params = RelyingParty.getAuthUrlMap(user, trustRoot, 
                             realm, returnTo);
-                    params.put("openid.ns.sreg", "http://openid.net/extensions/sreg/1.1");                    
-                    params.put("openid.sreg.optional", 
-                            "nickname,email,fullname,dob,gender,postcode,country,language,timezone");
+                    params.put(Constants.OPENID_NS_SREG, Constants.Sreg.VERSION);                    
+                    params.put(Constants.OPENID_SREG_OPTIONAL, Constants.Sreg.OPTIONAL);
                     response.sendRedirect(params.toString());
                 }
                 else
@@ -141,11 +142,11 @@ public class OpenIdServletFilter implements Filter
         }
         catch(UnknownHostException uhe)
         {
-            errorMsg = "The provided openid claimed id does not exist.";
+            errorMsg = CLAIMEDID_NOT_FOUND;
         }
         catch(FileNotFoundException fnfe)
         {
-            errorMsg = "The provided openid claimed id does not exist.";
+            errorMsg = CLAIMEDID_NOT_FOUND;
         }
         catch(Exception e)
         {
