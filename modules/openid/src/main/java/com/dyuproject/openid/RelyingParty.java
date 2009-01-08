@@ -276,7 +276,7 @@ public class RelyingParty
         user = _manager.getUser(request);
         if(user!=null)
         {
-            if(_listener!=null)
+            if(_listener!=null && user.isAuthenticated())
                 _listener.onAccess(user);
             request.setAttribute(OpenIdUser.class.getName(), user);
             return user;
