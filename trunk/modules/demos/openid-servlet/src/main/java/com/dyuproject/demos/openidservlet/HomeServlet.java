@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
+import com.dyuproject.openid.UrlEncodedParameterMap;
+import com.dyuproject.openid.ext.OpenIdSreg;
+import com.dyuproject.openid.ext.SregConfigListener;
 
 /**
  * Home Servlet. If authenticated, goes to the home page. If not, goes to the login page.
@@ -33,12 +36,46 @@ import com.dyuproject.openid.RelyingParty;
 @SuppressWarnings("serial")
 public class HomeServlet extends HttpServlet
 {
-    
-    RelyingParty _relyingParty;
+
+    RelyingParty _relyingParty = RelyingParty.getInstance();
     
     public void init()
     {
-        _relyingParty = RelyingParty.getInstance();
+        // enable sreg
+        _relyingParty.addListener(new SregConfigListener());
+        // custom listener
+        _relyingParty.addListener(new RelyingParty.Listener()
+        {
+            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+            {
+                System.err.println("discovered user: " + user.getClaimedId());
+            }            
+            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
+                    UrlEncodedParameterMap params)
+            {
+                System.err.println("pre-authenticate user: " + user.getClaimedId());
+            }            
+            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+            {
+
+                System.err.print("newly authenticated user: " + user.getIdentity());
+                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                if(sreg!=null)
+                {
+                    System.err.print(" aka " + sreg.getNickname());
+                    user.setAttribute("sreg", sreg);
+                }
+                System.err.print("\n");            
+            }            
+            public void onAccess(OpenIdUser user, HttpServletRequest request)
+            {        
+                System.err.print("user access: " + user.getIdentity());
+                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                if(sreg!=null)
+                    System.err.print(" aka " + sreg.getNickname());
+                System.err.print("\n");
+            }            
+        });
     }    
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -89,28 +126,23 @@ public class HomeServlet extends HttpServlet
                 }
                 else
                 {
-                    // failed verification ... re-authenticate
+                    // failed verification
                     request.getRequestDispatcher("/login.jsp").forward(request, response);
                 }
                 return;
             }
             
-            // associate user
-            if(_relyingParty.associate(user, request, response))
-            {
-                // authenticate user to his/her openid provider
-                StringBuffer url = request.getRequestURL();
-                String trustRoot = url.substring(0, url.indexOf("/", 9));
-                String realm = url.substring(0, url.lastIndexOf("/"));
-                String returnTo = url.toString();
-                response.sendRedirect(RelyingParty.getAuthUrlString(user, trustRoot, realm, 
-                        returnTo)); 
-            }
-            else
+            // associate and authenticate user
+            StringBuffer url = request.getRequestURL();
+            String trustRoot = url.substring(0, url.indexOf("/", 9));
+            String realm = url.substring(0, url.lastIndexOf("/"));
+            String returnTo = url.toString();            
+            if(!_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
+                    returnTo))
             {
                 // failed association
                 request.getRequestDispatcher("/login.jsp").forward(request, response);
-            }           
+            }          
         }
         catch(Exception e)
         {
