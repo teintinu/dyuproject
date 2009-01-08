@@ -99,7 +99,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
         
         String securityType = properties.getProperty("openid.user.manager.cookie.security.type", "encrypted");
         
-        setEncrypted("encrypted".equalsIgnoreCase(securityType));
+        setEncrypted(securityType==null || "encrypted".equalsIgnoreCase(securityType));
         
         if(_cookieName==null)
             throw new IllegalStateException("openid.user.manager.cookie.name must be set.");
