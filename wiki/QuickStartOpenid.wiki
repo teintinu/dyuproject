@@ -1,0 +1,121 @@
+#labels openid,relyingparty,quickstart,guide
+Quick start tutorial to easily get started.
+
+=Openid RelyingParty QuickStart Guide=
+
+=== dyuproject-1.1.1+ configuration===
+
+*The web.xml configuration*
+
+{{{
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+   xmlns="http://java.sun.com/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+   version="2.5" metadata-complete="true">
+   
+  <listener>
+    <listener-class>com.example.openid.MyContextListener</listener-class>
+  </listener>
+  
+  <filter>
+    <filter-name>openid-filter</filter-name>
+    <filter-class>com.dyuproject.openid.OpenIdServletFilter</filter-class>
+    <load-on-startup>1</load-on-startup>
+      <init-param>
+        <param-name>forwardUri</param-name>
+        <param-value>/WEB-INF/views/jsp/login.jsp</param-value> <!-- login page when user is not authenticated-->
+      </init-param>
+  </filter>
+
+
+  <filter-mapping>
+    <filter-name>openid-filter</filter-name>
+    <url-pattern>/account/*</url-pattern>
+  </filter-mapping>  
+    
+</web-app>
+}}}
+
+*The listener that would contain your application logic*
+
+{{{
+package com.example.openid;
+
+import java.util.Properties;
+
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.http.HttpServletRequest;
+
+import com.dyuproject.openid.OpenIdUser;
+import com.dyuproject.openid.RelyingParty;
+import com.dyuproject.openid.UrlEncodedParameterMap;
+import com.dyuproject.openid.ext.OpenIdSreg;
+import com.dyuproject.openid.ext.SregConfigListener;
+
+/**
+ * @author David Yu
+ * 
+ */
+
+public class MyContextListener implements ServletContextListener, RelyingParty.Listener
+{
+    
+    private RelyingParty _relyingParty;
+
+    public void contextDestroyed(ServletContextEvent event)
+    {        
+        
+    }
+
+    public void contextInitialized(ServletContextEvent event)
+    {
+        Properties props = new Properties();
+        // customize
+        // ...
+        try
+        {
+            _relyingParty = RelyingParty.newInstance(props);
+            // sreg
+            _relyingParty.addListener(new SregConfigListener());
+            
+            _relyingParty.addListener(this);
+            
+            event.getServletContext().setAttribute(RelyingParty.class.getName(), _relyingParty);
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }        
+    }
+    
+    public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+    {        
+        System.err.println("discovered user: " + user.getClaimedId());
+    }
+
+    public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
+            UrlEncodedParameterMap params)
+    {
+        System.err.println("pre-authenticate user: " + user.getClaimedId());      
+    }
+    
+    public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+    {
+        System.err.print("newly authenticated user: " + user.getIdentity());
+        OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+        if(sreg!=null)
+            System.err.print(" aka " + sreg.getNickname());
+        System.err.print("\n");       
+    }
+
+    public void onAccess(OpenIdUser user, HttpServletRequest request)
+    {
+        System.err.print("user access: " + user.getIdentity());
+    }
+}
+}}}
+
+==Thats it!==
