@@ -6,7 +6,7 @@
 </head>
 <body>
 <div>
-  Welcome <span style="color:green">${user.claimedId}</span>
+  Welcome <span style="color:green">${openid_user.claimedId}</span>
   <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout/">logout</a></span>
 </div>
 </body>
