@@ -1,6 +1,57 @@
 #labels sreg,openid,simple,registration,1.1
 Enabling openid simple registration extension
 
+==dyuproject-1.1.1+ configuration==
+
+{{{
+RelyingParty _relyingParty = RelyingParty.getInstance();
+_relyingParty.addListener(new SregConfigListener());
+
+}}}
+
+{{{
+
+// when the user is already authenticated.
+
+OpenIdUser user = _relyingParty.discover(request);
+OpenIdSreg sreg = null;
+if(user.isAuthenticated() && (sreg=OpenIdSreg.getSreg(user))!=null)
+{
+    System.err.println(sreg.getNickname());
+    System.err.println(sreg.getEmail());
+    ...
+}
+
+}}}
+
+{{{
+        //You could add a custom RelyingParty.Listener
+
+        // enable sreg
+        _relyingParty.addListener(new SregConfigListener());
+        // custom listener
+        _relyingParty.addListener(new RelyingParty.Listener()
+        {
+            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+            {                
+            }            
+            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
+                    UrlEncodedParameterMap params)
+            {                
+            }            
+            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+            {
+                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                if(sreg!=null)
+                    System.err.println("email: " + sreg.getEmail());             
+            }            
+            public void onAccess(OpenIdUser user, HttpServletRequest request)
+            {
+            }            
+        });
+}}}
+
+
 It is a matter of adding the extra parameters(encoded):
 {{{
 openid.ns.sreg = http://openid.net/extensions/sreg/1.1
