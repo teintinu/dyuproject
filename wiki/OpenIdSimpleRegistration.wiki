@@ -25,11 +25,8 @@ if(user.isAuthenticated() && (sreg=OpenIdSreg.getSreg(user))!=null)
 }}}
 
 {{{
-        //You could add a custom RelyingParty.Listener
+        // finally, you could add a custom RelyingParty.Listener
 
-        // enable sreg
-        _relyingParty.addListener(new SregConfigListener());
-        // custom listener
         _relyingParty.addListener(new RelyingParty.Listener()
         {
             public void onDiscovery(OpenIdUser user, HttpServletRequest request)
@@ -51,6 +48,8 @@ if(user.isAuthenticated() && (sreg=OpenIdSreg.getSreg(user))!=null)
         });
 }}}
 
+----
+==dyuproject-1.0.x configuration==
 
 It is a matter of adding the extra parameters(encoded):
 {{{
