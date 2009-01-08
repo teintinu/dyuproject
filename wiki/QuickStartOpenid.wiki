@@ -5,7 +5,7 @@
 
 Let us learn by example ... this will help you create/deploy asap.
 
-*The web.xml configuration*
+*The web.xml configuration:*
 
 {{{
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -38,7 +38,7 @@ Let us learn by example ... this will help you create/deploy asap.
 </web-app>
 }}}
 
-*The listener that would contain your application logic*
+*The listener that would contain your application logic:*
 
 {{{
 package com.example.openid;
