@@ -1,13 +1,24 @@
-#summary One-sentence summary of this page.
+#labels openid,servlet,filter,out-of-the-box
+A servlet filter that works smoothly.
+Available for release 1.1.1
 
-= Introduction =
+= Configuration =
 
-Add your content here.
+{code}
+  <filter>
+    <filter-name>openid-filter</filter-name>
+    <filter-class>com.dyuproject.openid.OpenIdServletFilter</filter-class>
+    <load-on-startup>1</load-on-startup>
+      <init-param>
+        <param-name>forwardUri</param-name>
+        <param-value>/login.jsp</param-value>
+      </init-param>
+  </filter>
 
+  <filter-mapping>
+    <filter-name>openid-filter</filter-name>
+    <url-pattern>/account/*</url-pattern>
+  </filter-mapping> 
+{code}
 
-= Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+Thats it!
