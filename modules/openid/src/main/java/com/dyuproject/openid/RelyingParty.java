@@ -26,6 +26,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.openid.manager.HttpSessionBasedUserManager;
+
 /**
  * Relying party which discovers, associates and verifies the authentication of a user. 
  * 
@@ -38,7 +40,6 @@ public class RelyingParty
     
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
     public static final String DEFAULT_PARAMETER = "openid_identifier";
-    public static final String DEFAULT_USER_MANAGER = "com.dyuproject.openid.manager.CookieBasedUserManager";
     
     private static final Pattern PREFIX = Pattern.compile("^https?://");
     
@@ -48,10 +49,21 @@ public class RelyingParty
     {
         if(__instance==null)
         {
-            synchronized(DEFAULT_RESOURCE_PATH)
+            synchronized(RelyingParty.class)
             {
                 if(__instance==null)
-                    __instance = newInstance(DEFAULT_RESOURCE_PATH);
+                {
+                    URL resource = getResource(DEFAULT_RESOURCE_PATH);
+                    try
+                    {
+                        __instance = resource==null ? newInstance(new Properties()) : 
+                            newInstance(resource);
+                    }
+                    catch(IOException e)
+                    {
+                        throw new RuntimeException(e);
+                    }    
+                }
             }
         }
         return __instance;
@@ -59,9 +71,7 @@ public class RelyingParty
     
     public static RelyingParty newInstance(String properties)
     {        
-        URL resource = RelyingParty.class.getClassLoader().getResource(properties);
-        if(resource==null)
-            resource = Thread.currentThread().getContextClassLoader().getResource(properties);
+        URL resource = getResource(properties);
         if(resource==null)
             throw new IllegalStateException(properties + " could not be resolved in classpath.");
         try
@@ -88,18 +98,24 @@ public class RelyingParty
     
     public static RelyingParty newInstance(Properties properties) throws IOException
     {        
-        String openIdParameter = properties.getProperty("openid.parameter");          
+        String openIdParameter = properties.getProperty("openid.parameter");
+        String managerParam = properties.getProperty("openid.user.manager");            
         OpenIdUserManager manager = null;
-        try
+        if(managerParam==null)
+            manager = new HttpSessionBasedUserManager();
+        else
         {
-            manager = (OpenIdUserManager)newObjectInstance(properties.getProperty("openid.user.manager", 
-                    DEFAULT_USER_MANAGER));
-            manager.init(properties);
+            try
+            {
+                manager = (OpenIdUserManager)newObjectInstance(managerParam);                
+            }
+            catch(Exception e)
+            {
+                throw new RuntimeException(e);
+            } 
         }
-        catch(Exception e)
-        {
-            throw new RuntimeException(e);
-        }  
+        manager.init(properties);
+ 
         OpenIdContext context = new OpenIdContext();
         context.setAssociation(new DiffieHellmanAssociation());
         context.setDiscovery(new DefaultDiscovery());
@@ -110,9 +126,16 @@ public class RelyingParty
             relyingParty._openIdParameter = openIdParameter;
         
         return relyingParty;
+    }    
+    
+    private static URL getResource(String path)
+    {
+        URL resource = RelyingParty.class.getClassLoader().getResource(path);
+        return resource==null ? Thread.currentThread().getContextClassLoader().getResource(path) :
+            resource;
     }
     
-    static Object newObjectInstance(String className) throws Exception
+    private static Object newObjectInstance(String className) throws Exception
     {
         return RelyingParty.class.getClassLoader().loadClass(className).newInstance();
     }
@@ -134,8 +157,8 @@ public class RelyingParty
         return Constants.Mode.ID_RES.equals(request.getParameter(Constants.OPENID_MODE));
     }
     
-    public static UrlEncodedParameterMap getAuthUrlMap(OpenIdUser user, String trustRoot, String realm, 
-            String returnTo)
+    public static UrlEncodedParameterMap getAuthUrlMap(OpenIdUser user, String trustRoot, 
+            String realm, String returnTo)
     {
         if(!user.isAssociated())
             throw new IllegalArgumentException("claimed_id of user has not been verified.");
@@ -204,6 +227,8 @@ public class RelyingParty
     private OpenIdContext _context;
     private String _openIdParameter = DEFAULT_PARAMETER;
     
+    private Listener _listener;
+    
     public RelyingParty()
     {
         
@@ -251,6 +276,8 @@ public class RelyingParty
         user = _manager.getUser(request);
         if(user!=null)
         {
+            if(_listener!=null)
+                _listener.onAccess(user);
             request.setAttribute(OpenIdUser.class.getName(), user);
             return user;
         }
@@ -259,7 +286,11 @@ public class RelyingParty
             return null;
         user = _context.getDiscovery().discover(claimedId, _context);
         if(user!=null)
+        {
+            if(_listener!=null)
+                _listener.onDiscovery(user);
             request.setAttribute(OpenIdUser.class.getName(), user);
+        }
         
         return user;
     }
@@ -269,6 +300,8 @@ public class RelyingParty
     {
         if(_context.getAssociation().verifyAuth(user, getAuthParameters(request), _context))
         {
+            if(_listener!=null)
+                _listener.onAuthentication(user);
             if(!response.isCommitted())
                 _manager.saveUser(user, request, response);
             return true;
@@ -292,6 +325,23 @@ public class RelyingParty
     throws IOException
     {
         return _manager.invalidate(request, response);
+    }
+    
+    public void setListener(Listener listener)
+    {
+        if(_listener!=null)
+            throw new IllegalStateException("listener already set.");
+        
+        _listener = listener;
+    }
+    
+    public interface Listener
+    {
+        
+        public void onDiscovery(OpenIdUser user);
+        public void onAuthentication(OpenIdUser user);
+        public void onAccess(OpenIdUser user);
+        
     }
 
 }
