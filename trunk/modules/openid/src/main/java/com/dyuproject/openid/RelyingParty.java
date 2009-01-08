@@ -115,10 +115,24 @@ public class RelyingParty
             } 
         }
         manager.init(properties);
- 
         OpenIdContext context = new OpenIdContext();
-        context.setAssociation(new DiffieHellmanAssociation());
-        context.setDiscovery(new DefaultDiscovery());
+        
+        String discoveryParam = properties.getProperty("openid.discovery");
+        if(discoveryParam==null)
+            context.setDiscovery(new DefaultDiscovery());
+        else
+        {
+            try
+            {
+                context.setDiscovery((Discovery)newObjectInstance(discoveryParam));
+            }
+            catch(Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        } 
+        
+        context.setAssociation(new DiffieHellmanAssociation());        
         context.setHttpConnector(new SimpleHttpConnector());
         
         RelyingParty relyingParty = new RelyingParty(context, manager);

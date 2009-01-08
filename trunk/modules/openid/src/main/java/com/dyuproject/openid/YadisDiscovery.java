@@ -30,7 +30,7 @@ import com.dyuproject.util.xml.XMLParser;
 
 public class YadisDiscovery implements Discovery
 {
-    
+    static final String XRDS_CONTENT_TYPE = "application/xrds+xml";
     static final String X_XRDS_LOCATION = "X-XRDS-Location";
     static final String NS_PREFIX = "http://specs.openid.net/auth/2.0/";
     static final String NS_SERVER = "http://specs.openid.net/auth/2.0/server";
@@ -55,9 +55,15 @@ public class YadisDiscovery implements Discovery
     {
         String location = response.getHeader(X_XRDS_LOCATION);
         if(location==null)
-        {            
-            try{response.close();}catch(IOException e){}
-            return null;
+        {
+            String contentType = response.getHeader(HttpConnector.CONTENT_TYPE_HEADER);
+            if(contentType!=null && contentType.startsWith(XRDS_CONTENT_TYPE))
+                location = claimedId;
+            else
+            {
+                try{response.close();}catch(IOException e){}
+                return null;
+            }            
         }
         response = context.getHttpConnector().doGET(location, null);
         InputStreamReader reader = null;
