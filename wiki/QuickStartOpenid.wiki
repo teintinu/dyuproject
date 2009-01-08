@@ -3,6 +3,8 @@
 
 === dyuproject-1.1.1+ configuration===
 
+Let us learn by example.
+
 *The web.xml configuration*
 
 {{{
