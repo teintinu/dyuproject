@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ fixed the lack of openid identifier normalization
 + fixed XMLParser bug on whitespace handling
 + more sreg support (constants and OpenIdSreg bean to parse from auth request)
 + added OpenIdServletFilter that runs out-of-the-box with just a single filter init-param "forwardUri" config
