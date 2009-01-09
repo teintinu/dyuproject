@@ -241,7 +241,10 @@ public class RelyingParty
         String url = claimedId;
         // openid normalization
         if(!url.startsWith(PREFIX))
-            url = ASSIGNED_PREFIX + '/';
+            url = ASSIGNED_PREFIX + url;
+        
+        if(url.length()<11)
+            return null;
         
         int lastSlash = url.indexOf('/', 9);
         if(lastSlash==-1)
