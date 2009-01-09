@@ -39,8 +39,6 @@ public class RelyingParty
     
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
     public static final String DEFAULT_PARAMETER = "openid_identifier";
-    public static final String PREFIX = "http";
-    public static final String ASSIGNED_PREFIX = "http://";
     
     private static RelyingParty __instance = null;
     
@@ -236,33 +234,6 @@ public class RelyingParty
         return getAuthUrlBuffer(user, trustRoot, realm, returnTo).toString();
     }
     
-    public static String normalize(String claimedId)
-    {
-        String url = claimedId;
-        // openid normalization
-        if(!url.startsWith(PREFIX))
-            url = ASSIGNED_PREFIX + url;
-        
-        if(url.length()<11)
-            return null;
-        
-        int lastSlash = url.indexOf('/', 9);
-        if(lastSlash==-1)
-        {
-            int dot = url.indexOf('.', 9);
-            if(dot==-1)
-                return null;
-            
-            // normalize http://example.com to http://example.com/
-            return url + '/';           
-        }
-        int dot = url.lastIndexOf('.', lastSlash);
-        if(dot==-1)
-            return null;
-        
-        return url;
-    }
-    
     private OpenIdUserManager _manager;
     private OpenIdContext _context;
     private String _openIdParameter = DEFAULT_PARAMETER;
@@ -329,7 +300,7 @@ public class RelyingParty
         if(rawClaimedId.length()==0)
             return null;
         
-        String claimedId = normalize(rawClaimedId);
+        String claimedId = Normalizer.normalize(rawClaimedId);
         String url = claimedId;
         if(claimedId==null)
         {
