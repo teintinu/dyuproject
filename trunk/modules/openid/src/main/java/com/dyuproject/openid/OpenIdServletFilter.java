@@ -39,17 +39,28 @@ public class OpenIdServletFilter implements Filter
 {
     
     public static final String ERROR_MSG_ATTR = "openid_servlet_filter_msg";    
-    static final String DEFAULT_ERROR_MSG = "The provided openid claimed id could not be resolved.";
-    static final String CLAIMEDID_NOT_FOUND = "The provided openid claimed id does not exist.";
+    public static final String DEFAULT_ERROR_MSG = "Your openid could not be resolved.";
+    public static final String ID_NOT_FOUND_MSG = "Your openid does not exist.";
 
     protected String _forwardUri;    
-    protected RelyingParty _relyingParty;    
+    protected RelyingParty _relyingParty;
+    
+    protected String _defaultErrorMsg = DEFAULT_ERROR_MSG;
+    protected String _idNotFoundMsg = ID_NOT_FOUND_MSG;
     
     public void init(FilterConfig config) throws ServletException
     {
         _forwardUri = config.getInitParameter("forwardUri");
         if(_forwardUri==null)
             throw new ServletException("forwardUri must not be null.");
+        
+        String defaultErrorMsg = config.getInitParameter("defaultErrorMsg");
+        if(defaultErrorMsg!=null)
+            _defaultErrorMsg = defaultErrorMsg;
+        
+        String idNotFoundMsg = config.getInitParameter("idNotFoundMsg");
+        if(idNotFoundMsg!=null)
+            _idNotFoundMsg = idNotFoundMsg;        
         
         // resolve from ServletContext
         _relyingParty = (RelyingParty)config.getServletContext().getAttribute(
@@ -143,16 +154,16 @@ public class OpenIdServletFilter implements Filter
         }
         catch(UnknownHostException uhe)
         {
-            errorMsg = CLAIMEDID_NOT_FOUND;
+            errorMsg = ID_NOT_FOUND_MSG;
         }
         catch(FileNotFoundException fnfe)
         {
-            errorMsg = CLAIMEDID_NOT_FOUND;
+            errorMsg = ID_NOT_FOUND_MSG;
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            errorMsg = e.getMessage();
+            errorMsg = DEFAULT_ERROR_MSG;
         }
         request.setAttribute(ERROR_MSG_ATTR, errorMsg);
         request.getRequestDispatcher(_forwardUri).forward(request, response);
