@@ -78,7 +78,7 @@ public abstract class Normalizer
             char c = ch[i];
             if(Character.isDigit(c))
                 digitCount++;
-            else if(!Character.isLetter(c) && c!='-')
+            else if(!Character.isLetter(c)/* && c!='-'*/)
                 return null;
         }        
         
