@@ -85,7 +85,7 @@ public abstract class Normalizer
         if(digitCount==domainExtLen && domainExtLen<4)
             return allowIP ? normalizeIP(url, start, addPrefix, appendSlash) : null;
         // invalid domain extension
-        if(digitCount>0)
+        if(digitCount>0 || domainExtLen<2)
             return null;
         
         /*if(lastSlash+1==len)
@@ -102,11 +102,7 @@ public abstract class Normalizer
                 //invalid
                 return null;
             }
-        }*/    
-
-        
-        if(domainExtLen<2)
-            return null;
+        }*/
         
         if(addPrefix)
             return appendSlash ? ASSIGNED_PREFIX + url + '/' : ASSIGNED_PREFIX + url;
