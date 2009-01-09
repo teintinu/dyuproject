@@ -44,8 +44,7 @@ public class YadisDiscovery implements Discovery
     static final String URI = "URI";
     static final String LOCAL_ID = "LocalID";
 
-    public OpenIdUser discover(String claimedId, OpenIdContext context)
-            throws Exception
+    public OpenIdUser discover(String claimedId, OpenIdContext context) throws Exception
     {        
         return discover(claimedId, context.getHttpConnector().doHEAD(claimedId, null), context);
     }
@@ -57,13 +56,12 @@ public class YadisDiscovery implements Discovery
         if(location==null)
         {
             String contentType = response.getHeader(HttpConnector.CONTENT_TYPE_HEADER);
-            if(contentType!=null && contentType.startsWith(XRDS_CONTENT_TYPE))
-                location = claimedId;
-            else
-            {
-                try{response.close();}catch(IOException e){}
+            try{response.close();}catch(IOException e){}
+            
+            if(contentType==null || !contentType.startsWith(XRDS_CONTENT_TYPE))
                 return null;
-            }            
+            
+            location = claimedId;
         }
         response = context.getHttpConnector().doGET(location, null);
         InputStreamReader reader = null;
