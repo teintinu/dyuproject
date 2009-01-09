@@ -82,8 +82,8 @@ public abstract class Normalizer
                 return null;
         }        
         
-        if(digitCount==domainExtLen && domainExtLen<4)
-            return allowIP ? normalizeIP(url, start, addPrefix, appendSlash) : null;
+        if(digitCount==domainExtLen)
+            return allowIP && domainExtLen<4 ? normalizeIP(url, start, addPrefix, appendSlash) : null;
         // invalid domain extension
         if(digitCount>0 || domainExtLen<2)
             return null;
