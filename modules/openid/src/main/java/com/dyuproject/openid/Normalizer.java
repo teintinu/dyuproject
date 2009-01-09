@@ -141,14 +141,14 @@ public abstract class Normalizer
             int idx = ip.indexOf('.', start);
             if(idx==-1)
             {
-                start = end + 1;
-                end = appendSlash ? ip.length() : ip.length()-1;                
-                loop = false;
+                //start = end + 1;
+                //end = appendSlash ? ip.length() : ip.length()-1;                
+                //loop = false;
                 
-                //// last token already checked prior to this call
-                //if(++tokens>4)
-                //    return null;                
-                //break;
+                // last token already checked prior to this call
+                if(++tokens>4)
+                    return null;                
+                break;
             }
             else
                 end = idx;
