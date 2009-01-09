@@ -29,6 +29,7 @@ public interface Discovery
     public static final String OPENID2_PROVIDER = "openid2.provider";
     public static final String OPENID2_LOCALID = "openid2.local_id";
     
-    public OpenIdUser discover(String claimedId, OpenIdContext context) throws Exception;
+    public OpenIdUser discover(String claimedId, String url, OpenIdContext context) 
+    throws Exception;
 
 }

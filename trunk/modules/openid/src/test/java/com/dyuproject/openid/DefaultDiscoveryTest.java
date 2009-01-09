@@ -29,7 +29,8 @@ public class DefaultDiscoveryTest extends TestCase
         OpenIdContext context = new OpenIdContext();
         context.setHttpConnector(new SimpleHttpConnector());
         context.setDiscovery(new DefaultDiscovery());
-        OpenIdUser user = context.getDiscovery().discover("http://yahoo.com", context);
+        String claimedId = "http://yahoo.com";
+        OpenIdUser user = context.getDiscovery().discover(claimedId, claimedId, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
         System.err.println(user.getOpenIdServer());
         System.err.println(user.getClaimedId());

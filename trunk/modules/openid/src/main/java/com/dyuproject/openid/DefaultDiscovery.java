@@ -25,12 +25,12 @@ package com.dyuproject.openid;
 public class DefaultDiscovery implements Discovery
 {
 
-    public OpenIdUser discover(String claimedId, OpenIdContext context) throws Exception
+    public OpenIdUser discover(String claimedId, String url, OpenIdContext context) throws Exception
     {
         OpenIdUser user = null;
         try
         {
-            user = YadisDiscovery.discover(claimedId, context.getHttpConnector().doHEAD(claimedId, 
+            user = YadisDiscovery.discover(claimedId, url, context.getHttpConnector().doHEAD(url, 
                     null), context);            
         }
         catch(Exception e)
@@ -38,7 +38,7 @@ public class DefaultDiscovery implements Discovery
             user = null;
         }
         return user!=null ? user : HtmlBasedDiscovery.discover(claimedId, 
-                context.getHttpConnector().doGET(claimedId, null));
+                context.getHttpConnector().doGET(url, null));
     }
 
 }

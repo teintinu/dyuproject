@@ -21,7 +21,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,8 +39,8 @@ public class RelyingParty
     
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
     public static final String DEFAULT_PARAMETER = "openid_identifier";
-    
-    private static final Pattern PREFIX = Pattern.compile("^https?://");
+    public static final String PREFIX = "http";
+    public static final String ASSIGNED_PREFIX = "http://";
     
     private static RelyingParty __instance = null;
     
@@ -237,11 +236,36 @@ public class RelyingParty
         return getAuthUrlBuffer(user, trustRoot, realm, returnTo).toString();
     }
     
+    public static String normalize(String claimedId)
+    {
+        String url = claimedId;
+        // openid normalization
+        if(!url.startsWith(PREFIX))
+            url = ASSIGNED_PREFIX + '/';
+        
+        int lastSlash = url.indexOf('/', 9);
+        if(lastSlash==-1)
+        {
+            int dot = url.indexOf('.', 9);
+            if(dot==-1)
+                return null;
+            
+            // normalize http://example.com to http://example.com/
+            return url + '/';           
+        }
+        int dot = url.lastIndexOf('.', lastSlash);
+        if(dot==-1)
+            return null;
+        
+        return url;
+    }
+    
     private OpenIdUserManager _manager;
     private OpenIdContext _context;
     private String _openIdParameter = DEFAULT_PARAMETER;
     
     private ListenerCollection _listener = new ListenerCollection();
+    private ResolverCollection _resolver = new ResolverCollection();
     
     public RelyingParty()
     {
@@ -295,10 +319,25 @@ public class RelyingParty
             request.setAttribute(OpenIdUser.ATTR_NAME, user);
             return user;
         }
-        String claimedId = request.getParameter(_openIdParameter);
-        if(claimedId==null || !PREFIX.matcher(claimedId).find())
+        String rawClaimedId = request.getParameter(_openIdParameter);
+        if(rawClaimedId==null)
+            return null;        
+        rawClaimedId = rawClaimedId.trim();
+        if(rawClaimedId.length()==0)
             return null;
-        user = _context.getDiscovery().discover(claimedId, _context);
+        
+        String claimedId = normalize(rawClaimedId);
+        String url = claimedId;
+        if(claimedId==null)
+        {
+            // claimedId not a url
+            claimedId = rawClaimedId;
+            url = _resolver.getUrl(claimedId);
+            if(url==null)
+                return null;
+        }
+        
+        user = _context.getDiscovery().discover(claimedId, url, _context);
         if(user!=null)
         {
             _listener.onDiscovery(user, request);
@@ -354,6 +393,11 @@ public class RelyingParty
         _listener.addListener(listener);
     }
     
+    public void addResolver(Resolver resolver)
+    {
+        _resolver.addResolver(resolver);
+    }
+    
     public interface Listener
     {
         // the authentication process (in order)
@@ -377,27 +421,20 @@ public class RelyingParty
             if(listener==null)
                 return;
             
-            Listener[] listeners = new Listener[_listeners.length+1];
-            listeners[_listeners.length] = listener;
-            System.arraycopy(_listeners, 0, listeners, 0, _listeners.length);
-            synchronized(_listeners)
-            {                
-                _listeners = listeners;
-            }
+            Listener[] oldListeners = _listeners;
+            Listener[] listeners = new Listener[oldListeners.length+1];
+            System.arraycopy(oldListeners, 0, listeners, 0, oldListeners.length);
+            listeners[oldListeners.length] = listener;
+            _listeners = listeners;
         }
         
         private Listener[] getListeners()
         {
-            Listener[] listeners = null;
-            synchronized(_listeners)
-            {
-                listeners = _listeners;
-            }
-            return listeners;
+            return _listeners;
         }
 
         public void onDiscovery(OpenIdUser user, HttpServletRequest request)
-        {
+        {            
             for(Listener l : getListeners())
                 l.onDiscovery(user, request);       
         }
@@ -419,6 +456,46 @@ public class RelyingParty
         {
             for(Listener l : getListeners())
                 l.onAccess(user, request);
+        }
+        
+    }
+    
+    public interface Resolver
+    {
+        public String getUrl(String claimedId);
+    }
+    
+    public static class ResolverCollection implements Resolver
+    {
+        
+        private Resolver[] _resolvers = new Resolver[]{};
+        
+        public void addResolver(Resolver resolver)
+        {
+            if(resolver==null)
+                return;
+            
+            Resolver[] oldResolvers = _resolvers;
+            Resolver[] resolvers = new Resolver[oldResolvers.length];
+            System.arraycopy(oldResolvers, 0, resolvers, 0, oldResolvers.length);
+            resolvers[oldResolvers.length] = resolver;
+            _resolvers = resolvers;
+        }
+        
+        public Resolver[] getResolvers()
+        {
+            return _resolvers;
+        }
+
+        public String getUrl(String claimedId)
+        {
+            String url = null;
+            for(Resolver r : getResolvers())
+            {
+                if((url=r.getUrl(claimedId))!=null)
+                    break;
+            }
+            return url; 
         }
         
     }

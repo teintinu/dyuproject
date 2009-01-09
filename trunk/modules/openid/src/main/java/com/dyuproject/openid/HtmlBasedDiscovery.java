@@ -36,10 +36,10 @@ public class HtmlBasedDiscovery implements Discovery
     static final String REL = "rel";
     static final String HREF = "href";    
     
-    public OpenIdUser discover(String claimedId, OpenIdContext context)
+    public OpenIdUser discover(String claimedId, String url, OpenIdContext context)
     throws Exception
     {
-        return discover(claimedId, context.getHttpConnector().doGET(claimedId, null));
+        return discover(claimedId, context.getHttpConnector().doGET(url, null));
     }
     
     static OpenIdUser discover(String claimedId, Response response) throws Exception

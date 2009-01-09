@@ -44,31 +44,35 @@ public class YadisDiscovery implements Discovery
     static final String URI = "URI";
     static final String LOCAL_ID = "LocalID";
 
-    public OpenIdUser discover(String claimedId, OpenIdContext context) throws Exception
+    public OpenIdUser discover(String claimedId, String url, OpenIdContext context) throws Exception
     {        
-        return discover(claimedId, context.getHttpConnector().doHEAD(claimedId, null), context);
+        return discover(claimedId, url, context.getHttpConnector().doHEAD(url, null), context);
     }
     
-    static OpenIdUser discover(String claimedId, Response response, OpenIdContext context) 
-    throws Exception
+    static OpenIdUser discover(String claimedId, String url, Response responseFromHead, 
+            OpenIdContext context) throws Exception
     {
-        String location = response.getHeader(X_XRDS_LOCATION);
+        String location = responseFromHead.getHeader(X_XRDS_LOCATION);
         if(location==null)
         {
-            String contentType = response.getHeader(HttpConnector.CONTENT_TYPE_HEADER);
-            try{response.close();}catch(IOException e){}
-            
+            String contentType = responseFromHead.getHeader(HttpConnector.CONTENT_TYPE_HEADER);            
             if(contentType==null || !contentType.startsWith(XRDS_CONTENT_TYPE))
+            {
+                try{responseFromHead.close();}catch(IOException e){}
                 return null;
+            }
             
-            location = claimedId;
+            location = url;
         }
-        response = context.getHttpConnector().doGET(location, null);
+        try{responseFromHead.close();}catch(IOException e){}
+        
+        Response responseFromGet = context.getHttpConnector().doGET(location, null);
         InputStreamReader reader = null;
         OpenIdUser user = null;
         try
         {            
-            reader = new InputStreamReader(response.getInputStream(), Constants.DEFAULT_ENCODING);            
+            reader = new InputStreamReader(responseFromGet.getInputStream(), 
+                    Constants.DEFAULT_ENCODING);            
             user = discover(claimedId, reader);
         }
         catch(Exception e)
@@ -80,7 +84,7 @@ public class YadisDiscovery implements Discovery
         {
             try{reader.close();}catch(IOException ioe){}
         }
-        try{response.close();}catch(IOException ioe){}
+        try{responseFromHead.close();}catch(IOException ioe){}
         
         return user;
     }

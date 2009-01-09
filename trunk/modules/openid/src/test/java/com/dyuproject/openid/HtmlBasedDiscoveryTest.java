@@ -29,7 +29,8 @@ public class HtmlBasedDiscoveryTest extends TestCase
         OpenIdContext context = new OpenIdContext();
         context.setHttpConnector(new SimpleHttpConnector());
         context.setDiscovery(new HtmlBasedDiscovery());
-        OpenIdUser user = context.getDiscovery().discover("http://davidyu.myopenid.com", context);
+        String claimedId = "http://davidyu.myopenid.com";
+        OpenIdUser user = context.getDiscovery().discover(claimedId, claimedId, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
     }
 
