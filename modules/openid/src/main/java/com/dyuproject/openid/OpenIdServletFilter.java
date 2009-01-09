@@ -41,6 +41,7 @@ public class OpenIdServletFilter implements Filter
     public static final String ERROR_MSG_ATTR = "openid_servlet_filter_msg";    
     public static final String DEFAULT_ERROR_MSG = "Your openid could not be resolved.";
     public static final String ID_NOT_FOUND_MSG = "Your openid does not exist.";
+    static final String SLASH = "/";
 
     protected String _forwardUri;    
     protected RelyingParty _relyingParty;
@@ -142,8 +143,8 @@ public class OpenIdServletFilter implements Filter
             
             // associate and authenticate user
             StringBuffer url = request.getRequestURL();
-            String trustRoot = url.substring(0, url.indexOf("/", 9));
-            String realm = url.substring(0, url.lastIndexOf("/"));
+            String trustRoot = url.substring(0, url.indexOf(SLASH, 9));
+            String realm = url.substring(0, url.lastIndexOf(SLASH));
             String returnTo = url.toString();            
             if(_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
                     returnTo))
