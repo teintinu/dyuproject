@@ -185,22 +185,22 @@ public abstract class IPDomainValidator
     
     public static boolean isValid(String domain)
     {
-        return validate(domain)!=0;
+        return validate(domain)!=INVALID;
     }
     
     public static boolean isValid(char[] domain)
     {
-        return validate(domain)!=0;
+        return validate(domain)!=INVALID;
     }
     
     public static boolean isValid(String domain, int start, int end)
     {
-        return validate(domain, start, end)!=0;
+        return validate(domain, start, end)!=INVALID;
     }
     
     public static boolean isValid(char[] domain, int start, int end)
     {
-        return validate(domain, start, end)!=0;
+        return validate(domain, start, end)!=INVALID;
     }
 
 }
