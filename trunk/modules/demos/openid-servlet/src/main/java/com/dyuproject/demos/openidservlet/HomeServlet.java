@@ -14,13 +14,16 @@
 
 package com.dyuproject.demos.openidservlet;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.openid.OpenIdServletFilter;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.openid.UrlEncodedParameterMap;
@@ -83,7 +86,8 @@ public class HomeServlet extends HttpServlet
     
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
-    {        
+    {
+        String errorMsg = OpenIdServletFilter.DEFAULT_ERROR_MSG;
         try
         {
             OpenIdUser user = _relyingParty.discover(request);
@@ -134,18 +138,30 @@ public class HomeServlet extends HttpServlet
             String trustRoot = url.substring(0, url.indexOf("/", 9));
             String realm = url.substring(0, url.lastIndexOf("/"));
             String returnTo = url.toString();            
-            if(!_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
+            if(_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
                     returnTo))
             {
-                // failed association
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
+                // successful association
+                return;
             }          
+        }
+        catch(UnknownHostException uhe)
+        {
+            System.err.println("not found");
+            errorMsg = OpenIdServletFilter.ID_NOT_FOUND_MSG;
+        }
+        catch(FileNotFoundException fnfe)
+        {
+            System.err.println("could not be resolved");
+            errorMsg = OpenIdServletFilter.DEFAULT_ERROR_MSG;
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            response.sendError(401);
+            errorMsg = OpenIdServletFilter.DEFAULT_ERROR_MSG;
         }
+        request.setAttribute(OpenIdServletFilter.ERROR_MSG_ATTR, errorMsg);
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
 }
