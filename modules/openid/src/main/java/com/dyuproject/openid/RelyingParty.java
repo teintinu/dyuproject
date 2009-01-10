@@ -25,8 +25,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.openid.Identifier.UrlResolver;
-import com.dyuproject.openid.Identifier.UrlResolverCollection;
+import com.dyuproject.openid.Identifier.Resolver;
+import com.dyuproject.openid.Identifier.ResolverCollection;
 import com.dyuproject.openid.manager.HttpSessionBasedUserManager;
 
 /**
@@ -241,7 +241,7 @@ public class RelyingParty
     private String _openIdParameter = DEFAULT_PARAMETER;
     
     private ListenerCollection _listener = new ListenerCollection();
-    private UrlResolverCollection _urlResolver = new UrlResolverCollection();
+    private ResolverCollection _resolver = new ResolverCollection();
     
     private boolean _destroyed = false;
     
@@ -304,17 +304,17 @@ public class RelyingParty
         }
         String id = request.getParameter(_openIdParameter);
         if(id==null)
-            return null;        
+            return null;
         id = id.trim();
         if(id.length()==0)
             return null;
         
-        Identifier identifier = Identifier.getIdentifier(id, _urlResolver);
-        if(!identifier.isUrlResolved())
-            return null;
+        Identifier identifier = Identifier.getIdentifier(id, _resolver);
+        if(!identifier.isResolved())
+            return null;        
         
-        String claimedId = identifier.getId();
         String url = identifier.getUrl();
+        String claimedId = identifier.getId();
         if(claimedId==null)
             claimedId = url;
         
@@ -375,9 +375,9 @@ public class RelyingParty
         return this;
     }
     
-    public RelyingParty addUrlResolver(UrlResolver urlResolver)
+    public RelyingParty addResolver(Resolver resolver)
     {
-        _urlResolver.addUrlResolver(urlResolver);
+        _resolver.addResolver(resolver);
         return this;
     }
     
