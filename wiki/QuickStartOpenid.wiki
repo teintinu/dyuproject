@@ -41,7 +41,7 @@ Let us learn by example ... this will help you create/deploy asap.
 *The listener that would contain your application logic:*
 
 {{{
-package com.dyuproject.demos.openidservlet;
+package com.example.openid;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
