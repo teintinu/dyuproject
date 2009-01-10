@@ -171,7 +171,7 @@ public abstract class IPDomainValidator
         if(tokens==digitTokens)
             return tokens>4 ? INVALID : IP;
             
-        if(extLen==0)
+        if(extLen==0 || tokens==1)
             return INVALID;
         
         if(mixed)
