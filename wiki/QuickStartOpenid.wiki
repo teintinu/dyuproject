@@ -82,7 +82,8 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
             _relyingParty.addListener(new SregConfigListener());
             
             _relyingParty.addListener(this);
-            
+
+            // for this relying party to used by the OpenIdServletFilter
             event.getServletContext().setAttribute(RelyingParty.class.getName(), _relyingParty);
         }
         catch(Exception e)
