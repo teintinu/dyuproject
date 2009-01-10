@@ -25,6 +25,9 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.openid.Normalizer.Config;
+import com.dyuproject.openid.Normalizer.UrlResolver;
+import com.dyuproject.openid.Normalizer.UrlResolverCollection;
 import com.dyuproject.openid.manager.HttpSessionBasedUserManager;
 
 /**
@@ -239,7 +242,7 @@ public class RelyingParty
     private String _openIdParameter = DEFAULT_PARAMETER;
     
     private ListenerCollection _listener = new ListenerCollection();
-    private ResolverCollection _resolver = new ResolverCollection();
+    private UrlResolverCollection _urlResolver = new UrlResolverCollection();
     
     public RelyingParty()
     {
@@ -293,23 +296,21 @@ public class RelyingParty
             request.setAttribute(OpenIdUser.ATTR_NAME, user);
             return user;
         }
-        String rawClaimedId = request.getParameter(_openIdParameter);
-        if(rawClaimedId==null)
+        String identifier = request.getParameter(_openIdParameter);
+        if(identifier==null)
             return null;        
-        rawClaimedId = rawClaimedId.trim();
-        if(rawClaimedId.length()==0)
+        identifier = identifier.trim();
+        if(identifier.length()==0)
             return null;
         
-        String claimedId = Normalizer.normalize(rawClaimedId);
-        String url = claimedId;
+        Config config = Normalizer.getConfig(identifier, _urlResolver);
+        if(!config.isResolved())
+            return null;
+        
+        String claimedId = config.getIdentifier();
+        String url = config.getUrl();
         if(claimedId==null)
-        {
-            // claimedId not a url
-            claimedId = rawClaimedId;
-            url = _resolver.getUrl(claimedId);
-            if(url==null)
-                return null;
-        }
+            claimedId = url;
         
         user = _context.getDiscovery().discover(claimedId, url, _context);
         if(user!=null)
@@ -362,14 +363,16 @@ public class RelyingParty
         return _manager.invalidate(request, response);
     }
     
-    public void addListener(Listener listener)
+    public RelyingParty addListener(Listener listener)
     {
         _listener.addListener(listener);
+        return this;
     }
     
-    public void addResolver(Resolver resolver)
+    public RelyingParty addUrlResolver(UrlResolver urlResolver)
     {
-        _resolver.addResolver(resolver);
+        _urlResolver.addUrlResolver(urlResolver);
+        return this;
     }
     
     public interface Listener
@@ -390,16 +393,18 @@ public class RelyingParty
 
         private Listener[] _listeners = new Listener[]{};
         
-        public void addListener(Listener listener)
+        public ListenerCollection addListener(Listener listener)
         {
             if(listener==null)
-                return;
+                return this;
             
             Listener[] oldListeners = _listeners;
             Listener[] listeners = new Listener[oldListeners.length+1];
             System.arraycopy(oldListeners, 0, listeners, 0, oldListeners.length);
             listeners[oldListeners.length] = listener;
             _listeners = listeners;
+            
+            return this;
         }
         
         private Listener[] getListeners()
@@ -430,46 +435,6 @@ public class RelyingParty
         {
             for(Listener l : getListeners())
                 l.onAccess(user, request);
-        }
-        
-    }
-    
-    public interface Resolver
-    {
-        public String getUrl(String claimedId);
-    }
-    
-    public static class ResolverCollection implements Resolver
-    {
-        
-        private Resolver[] _resolvers = new Resolver[]{};
-        
-        public void addResolver(Resolver resolver)
-        {
-            if(resolver==null)
-                return;
-            
-            Resolver[] oldResolvers = _resolvers;
-            Resolver[] resolvers = new Resolver[oldResolvers.length];
-            System.arraycopy(oldResolvers, 0, resolvers, 0, oldResolvers.length);
-            resolvers[oldResolvers.length] = resolver;
-            _resolvers = resolvers;
-        }
-        
-        public Resolver[] getResolvers()
-        {
-            return _resolvers;
-        }
-
-        public String getUrl(String claimedId)
-        {
-            String url = null;
-            for(Resolver r : getResolvers())
-            {
-                if((url=r.getUrl(claimedId))!=null)
-                    break;
-            }
-            return url; 
         }
         
     }
