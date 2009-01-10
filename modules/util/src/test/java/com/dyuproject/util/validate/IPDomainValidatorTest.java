@@ -25,10 +25,7 @@ public class IPDomainValidatorTest extends TestCase
 {
     
     public void test1()
-    {
-
-        
-        
+    {        
         assertTrue(IPDomainValidator.validate("c.org")==IPDomainValidator.PLAIN);
         assertTrue(IPDomainValidator.validate("c.ph")==IPDomainValidator.PLAIN);        
         assertTrue(IPDomainValidator.validate("123c.com")==IPDomainValidator.ALPHANUMERIC);
@@ -63,6 +60,8 @@ public class IPDomainValidatorTest extends TestCase
         assertTrue(IPDomainValidator.validate("255.255.255.255.1")==IPDomainValidator.INVALID);
         
         assertTrue(IPDomainValidator.validate(longDomain+"4")==IPDomainValidator.INVALID);
+        
+        assertTrue(IPDomainValidator.validate("localhost")==IPDomainValidator.INVALID);
         
     }
 
