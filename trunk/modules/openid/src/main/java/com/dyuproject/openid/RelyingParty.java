@@ -25,9 +25,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.openid.Normalizer.Config;
-import com.dyuproject.openid.Normalizer.UrlResolver;
-import com.dyuproject.openid.Normalizer.UrlResolverCollection;
+import com.dyuproject.openid.Identifier.UrlResolver;
+import com.dyuproject.openid.Identifier.UrlResolverCollection;
 import com.dyuproject.openid.manager.HttpSessionBasedUserManager;
 
 /**
@@ -244,11 +243,13 @@ public class RelyingParty
     private ListenerCollection _listener = new ListenerCollection();
     private UrlResolverCollection _urlResolver = new UrlResolverCollection();
     
+    private boolean _destroyed = false;
+    
     public RelyingParty()
     {
         
-    }
-    
+    }    
+
     public RelyingParty(OpenIdContext context, OpenIdUserManager manager)
     {
         _context = context;
@@ -281,6 +282,11 @@ public class RelyingParty
         return _context;
     }
     
+    public boolean isDestroyed()
+    {
+        return _destroyed;
+    }
+    
     public OpenIdUser discover(HttpServletRequest request) 
     throws Exception
     {
@@ -296,19 +302,19 @@ public class RelyingParty
             request.setAttribute(OpenIdUser.ATTR_NAME, user);
             return user;
         }
-        String identifier = request.getParameter(_openIdParameter);
-        if(identifier==null)
+        String id = request.getParameter(_openIdParameter);
+        if(id==null)
             return null;        
-        identifier = identifier.trim();
-        if(identifier.length()==0)
+        id = id.trim();
+        if(id.length()==0)
             return null;
         
-        Config config = Normalizer.getConfig(identifier, _urlResolver);
-        if(!config.isResolved())
+        Identifier identifier = Identifier.getIdentifier(id, _urlResolver);
+        if(!identifier.isUrlResolved())
             return null;
         
-        String claimedId = config.getIdentifier();
-        String url = config.getUrl();
+        String claimedId = identifier.getId();
+        String url = identifier.getUrl();
         if(claimedId==null)
             claimedId = url;
         
@@ -374,6 +380,16 @@ public class RelyingParty
         _urlResolver.addUrlResolver(urlResolver);
         return this;
     }
+    
+    public void destroy()
+    {
+        if(_destroyed)
+            return;
+        
+        _destroyed = true;
+        // TODO
+    }
+    
     
     public interface Listener
     {
