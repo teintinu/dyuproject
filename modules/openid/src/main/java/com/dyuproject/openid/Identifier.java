@@ -21,25 +21,66 @@ import com.dyuproject.util.validate.IPDomainValidator;
  * @created Jan 10, 2009
  */
 
-public abstract class Normalizer
+public class Identifier
 {
     
     public static final String CHECKED_PREFIX = "http";
     public static final String ASSIGNED_PREFIX = "http://";
     
-    public static Config getConfig(String identifier, UrlResolver resolver)
+    private String _url;
+    private String _id;
+    private int _reason = 0;
+    
+    public Identifier(String id)
     {
-        Config config = new Config(identifier);
-        normalize(config);
-        if(!config.isResolved() && resolver!=null)
-            resolver.resolveUrl(config);
-        
-        return config;
+        _id = id;
     }
     
-    public static void normalize(Config config)
+    public void setUrl(String url)
     {
-        String url = config.getIdentifier();
+        if(url!=null)
+            _url = url;
+    }
+    
+    public String getUrl()
+    {
+        return _url;
+    }
+    
+    public void setId(String id)
+    {
+        if(_url!=null)
+            _id = id;
+    }
+    
+    public String getId()
+    {
+        return _id;
+    }
+    
+    public boolean isUrlResolved()
+    {
+        return _url!=null;
+    }
+    
+    public int getReason()
+    {
+        return _reason;
+    }
+    
+    public static Identifier getIdentifier(String id, UrlResolver resolver)
+    {
+        Identifier identifier = new Identifier(id);
+        normalize(identifier);
+        if(!identifier.isUrlResolved() && resolver!=null)
+            resolver.resolveUrl(identifier);
+        
+        return identifier;
+    }
+    
+    public static void normalize(Identifier identifier)
+    {
+        String url = identifier.getId();
         int start = 0, end = 0;
         int len = url.length();
         boolean addPrefix = true;
@@ -96,10 +137,12 @@ public abstract class Normalizer
             return;
         
         if(addPrefix)
-            config.setUrl(appendSlash ? ASSIGNED_PREFIX + url + '/' : ASSIGNED_PREFIX + url);
+            identifier._url = appendSlash ? ASSIGNED_PREFIX + url + '/' : ASSIGNED_PREFIX + url;
         else
-            config.setUrl(appendSlash ? url + '/' : url);
-        config.setIdentifier(config.getUrl());
+            identifier._url = appendSlash ? url + '/' : url;
+        
+        // normalized
+        identifier._id = identifier.getUrl();
     }
     
     static boolean isDigit(char[] ch, int start, int len)
@@ -114,7 +157,7 @@ public abstract class Normalizer
     
     public interface UrlResolver
     {        
-        public void resolveUrl(Config config);        
+        public void resolveUrl(Identifier identifier);
     }
     
     public static class UrlResolverCollection implements UrlResolver
@@ -140,61 +183,15 @@ public abstract class Normalizer
             return _urlResolvers;
         }
         
-        public void resolveUrl(Config config)
+        public void resolveUrl(Identifier identifier)
         {            
             for(UrlResolver r : getUrlResolvers())
             {
-                r.resolveUrl(config);
-                if(config.isResolved())
+                r.resolveUrl(identifier);
+                if(identifier.isUrlResolved())
                     break;
             }
         }        
-    }
-    
-    public static class Config
-    {
-        
-        private String _url;
-        private String _identifier;
-        private int _reason = 0;
-        
-        public Config(String identifier)
-        {
-            _identifier = identifier;
-        }
-        
-        public void setUrl(String url)
-        {
-            if(url!=null)
-                _url = url;
-        }
-        
-        public String getUrl()
-        {
-            return _url;
-        }
-        
-        public void setIdentifier(String identifier)
-        {
-            if(_url!=null)
-                _identifier = identifier;
-        }
-        
-        public String getIdentifier()
-        {
-            return _identifier;
-        }
-        
-        public boolean isResolved()
-        {
-            return _url!=null;
-        }
-        
-        public int getReason()
-        {
-            return _reason;
-        }
-        
-    }
-    
+    }    
+
 }

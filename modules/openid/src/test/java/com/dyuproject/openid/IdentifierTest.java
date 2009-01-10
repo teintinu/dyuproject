@@ -21,18 +21,18 @@ import junit.framework.TestCase;
  * @created Jan 10, 2009
  */
 
-public class NormalizerTest extends TestCase
+public class IdentifierTest extends TestCase
 {
     
-    public void test1()
+    public void testNormalization()
     {
         
-        assertEquals(Normalizer.getConfig("example.com", null).getUrl(), "http://example.com/");
-        assertEquals(Normalizer.getConfig("http://example.com", null).getUrl(), "http://example.com/");
-        assertEquals(Normalizer.getConfig("http://example.com/user", null).getUrl(), "http://example.com/user");
-        assertEquals(Normalizer.getConfig("http://example.com/user/", null).getUrl(), "http://example.com/user/");
-        assertEquals(Normalizer.getConfig("http://example.com/user", null).getUrl(), "http://example.com/user");
-        assertEquals(Normalizer.getConfig("http://example.com/", null).getUrl(), "http://example.com/");       
+        assertEquals(Identifier.getIdentifier("example.com", null).getUrl(), "http://example.com/");
+        assertEquals(Identifier.getIdentifier("http://example.com", null).getUrl(), "http://example.com/");
+        assertEquals(Identifier.getIdentifier("http://example.com/user", null).getUrl(), "http://example.com/user");
+        assertEquals(Identifier.getIdentifier("http://example.com/user/", null).getUrl(), "http://example.com/user/");
+        assertEquals(Identifier.getIdentifier("http://example.com/user", null).getUrl(), "http://example.com/user");
+        assertEquals(Identifier.getIdentifier("http://example.com/", null).getUrl(), "http://example.com/");       
 
     }    
 
