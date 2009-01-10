@@ -43,6 +43,9 @@ public class IPDomainValidatorTest extends TestCase
         assertTrue(IPDomainValidator.validate(s, 1, s.length()-1)==IPDomainValidator.MIXED);
         assertTrue(IPDomainValidator.validate(s.toCharArray(), 1, s.length()-1)==IPDomainValidator.MIXED);
         
+        String longDomain = "123456789012345678901234567890123456789012345678901234567890123.com";
+        assertTrue(IPDomainValidator.validate(longDomain)==IPDomainValidator.ALPHANUMERIC);
+        
         assertTrue(IPDomainValidator.validate("c.o1")==IPDomainValidator.INVALID);        
         assertTrue(IPDomainValidator.validate("c.d")==IPDomainValidator.INVALID);        
         assertTrue(IPDomainValidator.validate("c.d-g")==IPDomainValidator.INVALID);
@@ -58,6 +61,9 @@ public class IPDomainValidatorTest extends TestCase
         assertTrue(IPDomainValidator.validate("192.168.1a.1")==IPDomainValidator.INVALID);
         assertTrue(IPDomainValidator.validate("192.1-9.12.1")==IPDomainValidator.INVALID);
         assertTrue(IPDomainValidator.validate("255.255.255.255.1")==IPDomainValidator.INVALID);
+        
+        assertTrue(IPDomainValidator.validate(longDomain+"4")==IPDomainValidator.INVALID);
+        
     }
 
 }

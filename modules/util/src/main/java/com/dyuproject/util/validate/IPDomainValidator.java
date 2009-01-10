@@ -108,8 +108,8 @@ public abstract class IPDomainValidator
     
     public static int validate(char[] domain, int start, int end)
     {        
-        boolean mixed = false, hyphenated = false, alphanumeric = false, digitLast = false;
-        int tokens = 0, digitTokens = 0;
+        boolean mixed = false, hyphenated = false, alphanumeric = false;
+        int tokens = 0, digitTokens = 0, extLen = 0;
         for(int i=end; i>0;)
         {
             int idx = lastIndexOf(domain, '.', i-1);
@@ -121,8 +121,13 @@ public abstract class IPDomainValidator
                 case INVALID:
                     return INVALID;
                 case PLAIN:
-                    if(tokens==0 && l==1)
-                        return INVALID;                    
+                    if(tokens==0)
+                    {
+                        if(l==1)
+                            return INVALID;
+                        
+                        extLen = l;
+                    }
                     break;
                 case ALPHANUMERIC:                    
                     if(tokens==0)
@@ -149,26 +154,24 @@ public abstract class IPDomainValidator
                     mixed = true;                    
                     break;
                 case IP:
-                    if(tokens==0)
+                    if(tokens==0 && l>3)
                     {
-                        if(l>3)
-                        {
-                            // invalid domain extension (max of 3)
-                            return INVALID;
-                        }
-
-                        digitLast = true;
+                        // invalid domain extension (max of 3)
+                        return INVALID;                    
                     }
                     alphanumeric = true;
                     digitTokens++;                    
                     break;            
             }
+            // if exceeds maximum chars for a domain
+            if(l>63)
+                return INVALID;
             tokens++;
         }
         if(tokens==digitTokens)
             return tokens>4 ? INVALID : IP;
             
-        if(digitLast)
+        if(extLen==0)
             return INVALID;
         
         if(mixed)
