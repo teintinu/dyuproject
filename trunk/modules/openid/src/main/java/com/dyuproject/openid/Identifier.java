@@ -25,21 +25,31 @@ public class Identifier
 {
     
     public static final String CHECKED_PREFIX = "http";
-    public static final String ASSIGNED_PREFIX = "http://";
+    public static final String ASSIGNED_PREFIX = "http://";    
     
-    private String _url;
     private String _id;
-    private int _reason = 0;
+    private String _url;
     
     public Identifier(String id)
     {
         _id = id;
     }
     
-    public void setUrl(String url)
+    public void resolve(String url)
     {
-        if(url!=null)
-            _url = url;
+        if(url==null)
+            return;
+        
+        _url = url;
+    }
+    
+    public void resolve(String url, String newId)
+    {
+        if(url==null)
+            return;
+        
+        _url = url;
+        _id = newId;
     }
     
     public String getUrl()
@@ -47,33 +57,22 @@ public class Identifier
         return _url;
     }
     
-    public void setId(String id)
-    {
-        if(_url!=null)
-            _id = id;
-    }
-    
     public String getId()
     {
         return _id;
     }
     
-    public boolean isUrlResolved()
+    public boolean isResolved()
     {
         return _url!=null;
     }
     
-    public int getReason()
-    {
-        return _reason;
-    }
-    
-    public static Identifier getIdentifier(String id, UrlResolver resolver)
+    public static Identifier getIdentifier(String id, Resolver resolver)
     {
         Identifier identifier = new Identifier(id);
         normalize(identifier);
-        if(!identifier.isUrlResolved() && resolver!=null)
-            resolver.resolveUrl(identifier);
+        if(!identifier.isResolved() && resolver!=null)
+            resolver.resolve(identifier);
         
         return identifier;
     }
@@ -142,7 +141,7 @@ public class Identifier
             identifier._url = appendSlash ? url + '/' : url;
         
         // normalized
-        identifier._id = identifier.getUrl();
+        identifier._id = identifier._url;
     }
     
     static boolean isDigit(char[] ch, int start, int len)
@@ -155,40 +154,40 @@ public class Identifier
         return true;
     }
     
-    public interface UrlResolver
+    public interface Resolver
     {        
-        public void resolveUrl(Identifier identifier);
+        public void resolve(Identifier identifier);
     }
     
-    public static class UrlResolverCollection implements UrlResolver
+    public static class ResolverCollection implements Resolver
     {
-        private UrlResolver[] _urlResolvers = new UrlResolver[]{};
+        private Resolver[] _resolvers = new Resolver[]{};
         
-        public UrlResolverCollection addUrlResolver(UrlResolver urlResolver)
+        public ResolverCollection addResolver(Resolver resolver)
         {
-            if(urlResolver==null)
+            if(resolver==null)
                 return this;
             
-            UrlResolver[] oldUrlResolvers = _urlResolvers;
-            UrlResolver[] urlResolvers = new UrlResolver[oldUrlResolvers.length];
-            System.arraycopy(oldUrlResolvers, 0, urlResolvers, 0, oldUrlResolvers.length);
-            urlResolvers[oldUrlResolvers.length] = urlResolver;
-            _urlResolvers = urlResolvers;
+            Resolver[] oldResolvers = _resolvers;
+            Resolver[] resolvers = new Resolver[oldResolvers.length];
+            System.arraycopy(oldResolvers, 0, resolvers, 0, oldResolvers.length);
+            resolvers[oldResolvers.length] = resolver;
+            _resolvers = resolvers;
             
             return this;
         }
         
-        public UrlResolver[] getUrlResolvers()
+        public Resolver[] getResolvers()
         {
-            return _urlResolvers;
+            return _resolvers;
         }
         
-        public void resolveUrl(Identifier identifier)
+        public void resolve(Identifier identifier)
         {            
-            for(UrlResolver r : getUrlResolvers())
+            for(Resolver r : getResolvers())
             {
-                r.resolveUrl(identifier);
-                if(identifier.isUrlResolved())
+                r.resolve(identifier);
+                if(identifier.isResolved())
                     break;
             }
         }        
