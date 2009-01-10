@@ -41,9 +41,7 @@ Let us learn by example ... this will help you create/deploy asap.
 *The listener that would contain your application logic:*
 
 {{{
-package com.example.openid;
-
-import java.util.Properties;
+package com.dyuproject.demos.openidservlet;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -57,7 +55,6 @@ import com.dyuproject.openid.ext.SregConfigListener;
 
 /**
  * @author David Yu
- * 
  */
 
 public class MyContextListener implements ServletContextListener, RelyingParty.Listener
@@ -72,24 +69,17 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
 
     public void contextInitialized(ServletContextEvent event)
     {
-        Properties props = new Properties();
-        // customize
-        // ...
-        try
-        {
-            _relyingParty = RelyingParty.newInstance(props);
-            // sreg
-            _relyingParty.addListener(new SregConfigListener());
-            
-            _relyingParty.addListener(this);
-
-            // this relying party will be used by OpenIdServletFilter
-            event.getServletContext().setAttribute(RelyingParty.class.getName(), _relyingParty);
-        }
-        catch(Exception e)
-        {
-            throw new RuntimeException(e);
-        }        
+        // use default. See the http://code.google.com/p/dyuproject/wiki/openid for more info.
+        _relyingParty = RelyingParty.getInstance();
+        
+        // enable sreg
+        _relyingParty.addListener(new SregConfigListener());
+        
+        // listen to the authentication events
+        _relyingParty.addListener(this);
+        
+        // this relying party will be used by OpenIdServletFilter
+        event.getServletContext().setAttribute(RelyingParty.class.getName(), _relyingParty);   
     }
     
     public void onDiscovery(OpenIdUser user, HttpServletRequest request)
@@ -116,6 +106,11 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
     {
         System.err.print("user access: " + user.getIdentity());
     }
+
+
+
+
+
 }
 }}}
 
