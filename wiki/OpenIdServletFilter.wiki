@@ -1,7 +1,7 @@
 #labels openid,servlet,filter,out-of-the-box
 A servlet filter that fits your needs out-of-the-box.
 
-= dyuproject-1.1.1+ configuration=
+=dyuproject-1.1.1(+)=
 
 {{{
   <filter>
@@ -19,8 +19,6 @@ A servlet filter that fits your needs out-of-the-box.
     <url-pattern>/account/*</url-pattern>
   </filter-mapping> 
 }}}
-
-===Thats it!===
 
 To customize the *{{{RelyingParty}}}* used by the servlet filter, see [openid openid.properties configuration].
 
