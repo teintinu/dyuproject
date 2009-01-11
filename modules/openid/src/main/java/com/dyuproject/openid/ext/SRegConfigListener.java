@@ -41,7 +41,7 @@ public class SRegConfigListener implements RelyingParty.Listener
     
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
-        SReg.setSreg(user, SReg.parse(request));
+        SReg.set(user, SReg.parse(request));
     }
 
     public void onAccess(OpenIdUser user, HttpServletRequest request)
