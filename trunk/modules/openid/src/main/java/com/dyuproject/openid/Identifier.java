@@ -57,6 +57,15 @@ public class Identifier implements Serializable
         _xrds = xrds;
     }
     
+    public void resolve(String url, String newId)
+    {
+        if(url==null)
+            return;
+        
+        _url = url;
+        _id = newId;
+    }
+    
     public void resolve(String url, boolean xrds, String newId)
     {
         if(url==null)
