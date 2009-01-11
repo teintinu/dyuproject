@@ -1,7 +1,8 @@
 #labels openid,relyingparty,consumer,configurate,usage,setup
 openid relying party howto
 
-See [OpenIdServletFilter] and [SampleOpenIdServlet].
+See the [QuickStartOpenid Quick Start Guide], [OpenIdServletFilter] and [SampleOpenIdServlet].
+
 To enable openid sreg extension, see [OpenIdSimpleRegistration].
 
 = dyuproject-1.1.1+ configuration =
