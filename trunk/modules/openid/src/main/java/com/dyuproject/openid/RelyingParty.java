@@ -72,11 +72,11 @@ public class RelyingParty
         return __instance;
     }
     
-    public static RelyingParty newInstance(String properties)
+    public static RelyingParty newInstance(String resourceLoc)
     {        
-        URL resource = getResource(properties);
+        URL resource = getResource(resourceLoc);
         if(resource==null)
-            throw new IllegalStateException(properties + " could not be resolved in classpath.");
+            throw new IllegalStateException(resourceLoc + " could not be resolved in classpath.");
         try
         {
             return newInstance(resource);
@@ -87,15 +87,15 @@ public class RelyingParty
         }        
     }
     
-    public static RelyingParty newInstance(URL properties) throws IOException
+    public static RelyingParty newInstance(URL resource) throws IOException
     {
-        return newInstance(properties.openStream());
+        return newInstance(resource.openStream());
     }
     
-    public static RelyingParty newInstance(InputStream properties) throws IOException
+    public static RelyingParty newInstance(InputStream in) throws IOException
     {
         Properties props = new Properties();
-        props.load(properties);
+        props.load(in);
         return newInstance(props);
     }
     
@@ -166,7 +166,14 @@ public class RelyingParty
         }
         catch(Exception e)
         {
-            throw new RuntimeException(e);
+            try
+            {
+                return Thread.currentThread().getContextClassLoader().loadClass(className).newInstance();
+            }
+            catch(Exception e2)
+            {
+                throw new RuntimeException(e2);
+            }
         }
     }
     
