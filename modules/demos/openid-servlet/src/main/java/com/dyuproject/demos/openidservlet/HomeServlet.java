@@ -62,7 +62,7 @@ public class HomeServlet extends HttpServlet
             {
 
                 System.err.print("newly authenticated user: " + user.getIdentity());
-                SReg sreg = SReg.getSreg(user);
+                SReg sreg = SReg.get(user);
                 if(sreg!=null)
                     System.err.print(" aka " + sreg.getNickname());
                 System.err.print("\n");            
@@ -70,7 +70,7 @@ public class HomeServlet extends HttpServlet
             public void onAccess(OpenIdUser user, HttpServletRequest request)
             {        
                 System.err.print("user access: " + user.getIdentity());
-                SReg sreg = SReg.getSreg(user);
+                SReg sreg = SReg.get(user);
                 if(sreg!=null)
                     System.err.print(" aka " + sreg.getNickname());
                 System.err.print("\n");
