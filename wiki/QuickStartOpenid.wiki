@@ -50,11 +50,12 @@ import javax.servlet.http.HttpServletRequest;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.openid.UrlEncodedParameterMap;
-import com.dyuproject.openid.ext.OpenIdSreg;
-import com.dyuproject.openid.ext.SregConfigListener;
+import com.dyuproject.openid.ext.SReg;
+import com.dyuproject.openid.ext.SRegConfigListener;
 
 /**
  * @author David Yu
+ * @created Jan 8, 2009
  */
 
 public class MyContextListener implements ServletContextListener, RelyingParty.Listener
@@ -72,8 +73,8 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
         // use default. See the http://code.google.com/p/dyuproject/wiki/openid for more info.
         _relyingParty = RelyingParty.getInstance();
         
-        // enable sreg
-        _relyingParty.addListener(new SregConfigListener());
+        // enable simple registration extension
+        _relyingParty.addListener(new SRegConfigListener());
         
         // listen to the authentication events
         _relyingParty.addListener(this);
@@ -96,7 +97,7 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
         System.err.print("newly authenticated user: " + user.getIdentity());
-        OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+        SReg sreg = SReg.getSreg(user);
         if(sreg!=null)
             System.err.print(" aka " + sreg.getNickname());
         System.err.print("\n");       
