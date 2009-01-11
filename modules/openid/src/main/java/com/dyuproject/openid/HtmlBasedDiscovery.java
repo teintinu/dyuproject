@@ -14,6 +14,7 @@
 
 package com.dyuproject.openid;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 
 import com.dyuproject.openid.HttpConnector.Response;
@@ -46,35 +47,45 @@ public class HtmlBasedDiscovery implements Discovery
     static final String REL = "rel";
     static final String HREF = "href";    
     
-    public OpenIdUser discover(String claimedId, String url, OpenIdContext context)
+    public OpenIdUser discover(Identifier identifier, OpenIdContext context)
     throws Exception
     {
-        return discover(claimedId, context.getHttpConnector().doGET(url, null));
+        return tryDiscover(identifier, context);
     }
     
-    static OpenIdUser discover(String claimedId, Response response) throws Exception
+    static OpenIdUser tryDiscover(Identifier identifier, OpenIdContext context)
+    throws Exception
+    {
+        return discoverHtmlHead(identifier, context.getHttpConnector().doGET(identifier.getUrl(), 
+                null));
+    }
+    
+    static OpenIdUser discoverHtmlHead(Identifier identifier, Response response) throws Exception
     {
         OpenIdUser user = null;
         InputStreamReader reader = null;
         try
         {
             reader = new InputStreamReader(response.getInputStream(), Constants.DEFAULT_ENCODING);
-            user = discover(claimedId, reader);
+            user = parse(identifier, reader);
         }
         finally
         {
             if(reader!=null)
-                reader.close();
-            response.close();
+            {
+                try{reader.close();}catch(IOException ioe){}
+            }
+            try{response.close();}catch(IOException ioe){}  
         }
+        
         return user;
     }
     
-    static OpenIdUser discover(String claimedId, InputStreamReader reader) throws Exception
+    static OpenIdUser parse(Identifier identifier, InputStreamReader reader) throws Exception
     {
         XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, false);
-        return handler._openIdServer==null ? null : new OpenIdUser(claimedId, 
+        return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
                 handler._openIdServer, handler._openIdDelegate);        
     }
     

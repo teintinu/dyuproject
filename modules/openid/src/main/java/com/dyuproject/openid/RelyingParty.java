@@ -335,14 +335,9 @@ public class RelyingParty
         
         Identifier identifier = Identifier.getIdentifier(id, _resolver, _context);
         if(!identifier.isResolved())
-            return null;        
+            return null;
         
-        String url = identifier.getUrl();
-        String claimedId = identifier.getId();
-        if(claimedId==null)
-            claimedId = url;
-        
-        user = _context.getDiscovery().discover(claimedId, url, _context);
+        user = _context.getDiscovery().discover(identifier, _context);
         if(user!=null)
         {
             _listener.onDiscovery(user, request);

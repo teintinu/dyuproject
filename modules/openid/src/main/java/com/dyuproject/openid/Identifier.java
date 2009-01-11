@@ -42,7 +42,7 @@ public class Identifier implements Serializable
     
     public void resolve(String url)
     {
-        if(url==null)
+        if(_url!=null || url==null)
             return;
         
         _url = url;
@@ -50,7 +50,7 @@ public class Identifier implements Serializable
     
     public void resolve(String url, boolean xrds)
     {
-        if(url==null)
+        if(_url!=null || url==null)
             return;
         
         _url = url;
@@ -59,21 +59,25 @@ public class Identifier implements Serializable
     
     public void resolve(String url, String newId)
     {
-        if(url==null)
+        if(_url!=null || url==null)
             return;
         
         _url = url;
-        _id = newId;
+        
+        if(newId!=null)
+            _id = newId;
     }
     
     public void resolve(String url, boolean xrds, String newId)
     {
-        if(url==null)
+        if(_url!=null || url==null)
             return;
         
         _url = url;
         _xrds = xrds;
-        _id = newId;
+
+        if(newId!=null)
+            _id = newId;
     }
     
     public String getUrl()
@@ -86,7 +90,7 @@ public class Identifier implements Serializable
         return _id;
     }
     
-    public boolean isXrds()
+    public boolean isUrlContentTypeXrds()
     {
         return _xrds;
     }
