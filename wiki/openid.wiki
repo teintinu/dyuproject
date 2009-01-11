@@ -5,7 +5,9 @@ See the [QuickStartOpenid Quick Start Guide], [OpenIdServletFilter] and [SampleO
 
 To enable openid sreg extension, see [OpenIdSimpleRegistration].
 
-= configuration for dyuproject-1.1.1 and above =
+----
+
+= dyuproject-1.1.1 configuration  =
 
 ===_openid.properties_===
 This will be used by {{{RelyingParty.getInstance();}}} if its available in the classpath.
@@ -96,7 +98,7 @@ and using the [OpenIdServletFilter] (can be easily subclassed if needed)
 
 ----
 
-=configuration for dyuproject-1.0.x=
+=dyuproject-1.0.x configuration=
 
 ===_openid.properties_===
 {{{
