@@ -31,7 +31,9 @@ import com.dyuproject.openid.Identifier.ResolverCollection;
 import com.dyuproject.openid.manager.HttpSessionBasedUserManager;
 
 /**
- * Relying party which discovers, associates and verifies the authentication of a user. 
+ * Relying party which discovers, associates and verifies the authentication of a user.
+ * An implementation of RelyingParty.Listener will enable you to listen to events 
+ * during a user's authentication lifecycle.
  * 
  * @author David Yu
  * @created Sep 21, 2008
@@ -109,7 +111,7 @@ public class RelyingParty
         Association association = associationParam==null ? new DiffieHellmanAssociation() : 
             (Association)newObjectInstance(associationParam);
         
-        // connector
+        // http connector
         String httpConnectorParam = properties.getProperty("openid.httpconnector");
         HttpConnector httpConnector = httpConnectorParam==null ? new SimpleHttpConnector() : 
             (HttpConnector)newObjectInstance(httpConnectorParam);       
