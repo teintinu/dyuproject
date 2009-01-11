@@ -97,7 +97,7 @@ public class RelyingParty
         return newInstance(props);
     }
     
-    public static RelyingParty newInstance(Properties properties) throws IOException
+    public static RelyingParty newInstance(Properties properties)
     {  
         // discovery
         String discoveryParam = properties.getProperty("openid.discovery");
