@@ -7,7 +7,7 @@ To enable openid sreg extension, see [OpenIdSimpleRegistration].
 
 ----
 
-= dyuproject-1.1.1 configuration  =
+= dyuproject-1.1.1(+) configuration  =
 
 ===_openid.properties_===
 This will be used by {{{RelyingParty.getInstance();}}} if its available in the classpath.
