@@ -1,7 +1,7 @@
 #labels openid,relyingparty,quickstart,guide
 ={{{Openid RelyingParty QuickStart Guide}}}=
 
-=== dyuproject-1.1.1(+) configuration===
+=== dyuproject-1.1.1(+)===
 
 Let us learn by example ... this will help you create/deploy asap.
 
@@ -97,7 +97,7 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
         System.err.print("newly authenticated user: " + user.getIdentity());
-        SReg sreg = SReg.getSreg(user);
+        SReg sreg = SReg.get(user);
         if(sreg!=null)
             System.err.print(" aka " + sreg.getNickname());
         System.err.print("\n");       
