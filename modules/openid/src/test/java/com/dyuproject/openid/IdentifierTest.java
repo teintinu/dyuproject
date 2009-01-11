@@ -26,13 +26,13 @@ public class IdentifierTest extends TestCase
     
     public void testNormalization()
     {
-        
-        assertEquals(Identifier.getIdentifier("example.com", null).getUrl(), "http://example.com/");
-        assertEquals(Identifier.getIdentifier("http://example.com", null).getUrl(), "http://example.com/");
-        assertEquals(Identifier.getIdentifier("http://example.com/user", null).getUrl(), "http://example.com/user");
-        assertEquals(Identifier.getIdentifier("http://example.com/user/", null).getUrl(), "http://example.com/user/");
-        assertEquals(Identifier.getIdentifier("http://example.com/user", null).getUrl(), "http://example.com/user");
-        assertEquals(Identifier.getIdentifier("http://example.com/", null).getUrl(), "http://example.com/");       
+        // from http://openid.net/specs/openid-authentication-2_0.html#normalization_example        
+        assertEquals(Identifier.getIdentifier("example.com", null, null).getUrl(), "http://example.com/");
+        assertEquals(Identifier.getIdentifier("http://example.com", null, null).getUrl(), "http://example.com/");
+        assertEquals(Identifier.getIdentifier("http://example.com/user", null, null).getUrl(), "http://example.com/user");
+        assertEquals(Identifier.getIdentifier("http://example.com/user/", null, null).getUrl(), "http://example.com/user/");
+        assertEquals(Identifier.getIdentifier("http://example.com/user", null, null).getUrl(), "http://example.com/user");
+        assertEquals(Identifier.getIdentifier("http://example.com/", null, null).getUrl(), "http://example.com/");       
 
     }    
 

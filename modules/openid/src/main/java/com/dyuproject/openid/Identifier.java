@@ -67,21 +67,20 @@ public class Identifier
         return _url!=null;
     }
     
-    public static Identifier getIdentifier(String id, Resolver resolver)
+    public static Identifier getIdentifier(String id, Resolver resolver, OpenIdContext context)
     {
         Identifier identifier = new Identifier(id);
         normalize(identifier);
         if(!identifier.isResolved() && resolver!=null)
-            resolver.resolve(identifier);
+            resolver.resolve(identifier, context);
         
         return identifier;
     }
     
-    public static void normalize(Identifier identifier)
+    static void normalize(Identifier identifier)
     {
         String url = identifier.getId();
-        int start = 0, end = 0;
-        int len = url.length();
+        int start = 0, end = 0, len = url.length();
         boolean addPrefix = true;
         if(url.startsWith(CHECKED_PREFIX))
         {
@@ -156,7 +155,7 @@ public class Identifier
     
     public interface Resolver
     {        
-        public void resolve(Identifier identifier);
+        public void resolve(Identifier identifier, OpenIdContext context);
     }
     
     public static class ResolverCollection implements Resolver
@@ -165,7 +164,7 @@ public class Identifier
         
         public ResolverCollection addResolver(Resolver resolver)
         {
-            if(resolver==null)
+            if(resolver==null || indexOf(resolver)!=-1)
                 return this;
             
             Resolver[] oldResolvers = _resolvers;
@@ -177,16 +176,30 @@ public class Identifier
             return this;
         }
         
+        public int indexOf(Resolver resolver)
+        {
+            if(resolver!=null)
+            {
+                Resolver[] resolvers = _resolvers;
+                for(int i=0; i<resolvers.length; i++)
+                {
+                    if(resolvers[i].equals(resolver))
+                        return i;
+                }
+            }
+            return -1;
+        }
+        
         public Resolver[] getResolvers()
         {
             return _resolvers;
         }
         
-        public void resolve(Identifier identifier)
+        public void resolve(Identifier identifier, OpenIdContext context)
         {            
             for(Resolver r : getResolvers())
             {
-                r.resolve(identifier);
+                r.resolve(identifier, context);
                 if(identifier.isResolved())
                     break;
             }

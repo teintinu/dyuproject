@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,7 +41,7 @@ public class RelyingParty
 {
     
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
-    public static final String DEFAULT_PARAMETER = "openid_identifier";
+    public static final String DEFAULT_IDENTIFIER_PARAMETER = "openid_identifier";
     
     private static RelyingParty __instance = null;
     
@@ -54,7 +55,8 @@ public class RelyingParty
                 {
                     URL resource = getResource(DEFAULT_RESOURCE_PATH);
                     try
-                    {
+                    {                        
+                        // configure defaults if openid.properties is not available
                         __instance = resource==null ? newInstance(new Properties()) : 
                             newInstance(resource);
                     }
@@ -96,47 +98,53 @@ public class RelyingParty
     }
     
     public static RelyingParty newInstance(Properties properties) throws IOException
-    {        
-        String openIdParameter = properties.getProperty("openid.parameter");
-        String managerParam = properties.getProperty("openid.user.manager");            
-        OpenIdUserManager manager = null;
-        if(managerParam==null)
-            manager = new HttpSessionBasedUserManager();
-        else
-        {
-            try
-            {
-                manager = (OpenIdUserManager)newObjectInstance(managerParam);                
-            }
-            catch(Exception e)
-            {
-                throw new RuntimeException(e);
-            } 
-        }
-        manager.init(properties);
-        OpenIdContext context = new OpenIdContext();
-        
+    {  
+        // discovery
         String discoveryParam = properties.getProperty("openid.discovery");
-        if(discoveryParam==null)
-            context.setDiscovery(new DefaultDiscovery());
-        else
-        {
-            try
-            {
-                context.setDiscovery((Discovery)newObjectInstance(discoveryParam));
-            }
-            catch(Exception e)
-            {
-                throw new RuntimeException(e);
-            }
-        } 
+        Discovery discovery = discoveryParam==null ? new DefaultDiscovery() : 
+            (Discovery)newObjectInstance(discoveryParam);            
+
+        // association
+        String associationParam = properties.getProperty("openid.association");
+        Association association = associationParam==null ? new DiffieHellmanAssociation() : 
+            (Association)newObjectInstance(associationParam);
         
-        context.setAssociation(new DiffieHellmanAssociation());        
-        context.setHttpConnector(new SimpleHttpConnector());
+        // connector
+        String httpConnectorParam = properties.getProperty("openid.httpconnector");
+        HttpConnector httpConnector = httpConnectorParam==null ? new SimpleHttpConnector() : 
+            (HttpConnector)newObjectInstance(httpConnectorParam);       
         
+        // user manager
+        String managerParam = properties.getProperty("openid.user.manager");            
+        OpenIdUserManager manager = managerParam == null ? new HttpSessionBasedUserManager() :
+            (OpenIdUserManager)newObjectInstance(managerParam);        
+        manager.init(properties);        
+        
+        OpenIdContext context = new OpenIdContext(discovery, association, httpConnector);        
         RelyingParty relyingParty = new RelyingParty(context, manager);
-        if(openIdParameter!=null)
-            relyingParty._openIdParameter = openIdParameter;
+        
+        // identifier parameter (default is openid_identifier)
+        String identifierParameter = properties.getProperty("openid.identifier.parameter");
+        if(identifierParameter!=null)
+            relyingParty._identifierParameter = identifierParameter;
+        
+        // relying party listeners
+        String listenersParam = properties.getProperty("openid.relyingparty.listeners");
+        if(listenersParam!=null)
+        {
+            StringTokenizer tokenizer = new StringTokenizer(listenersParam, ",;");
+            while(tokenizer.hasMoreTokens())
+                relyingParty.addListener((Listener)newObjectInstance(tokenizer.nextToken().trim()));
+        }
+        
+        // openid identifier resolvers
+        String resolversParam = properties.getProperty("openid.identifier.resolvers");
+        if(resolversParam!=null)
+        {
+            StringTokenizer tokenizer = new StringTokenizer(resolversParam, ",;");
+            while(tokenizer.hasMoreTokens())
+                relyingParty.addResolver((Resolver)newObjectInstance(tokenizer.nextToken().trim()));
+        }
         
         return relyingParty;
     }    
@@ -148,9 +156,16 @@ public class RelyingParty
             resource;
     }
     
-    private static Object newObjectInstance(String className) throws Exception
+    private static Object newObjectInstance(String className)
     {
-        return RelyingParty.class.getClassLoader().loadClass(className).newInstance();
+        try
+        {
+            return RelyingParty.class.getClassLoader().loadClass(className).newInstance();
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }
     }
     
     public static Map<String,String> getAuthParameters(HttpServletRequest request)
@@ -238,7 +253,7 @@ public class RelyingParty
     
     private OpenIdUserManager _manager;
     private OpenIdContext _context;
-    private String _openIdParameter = DEFAULT_PARAMETER;
+    private String _identifierParameter = DEFAULT_IDENTIFIER_PARAMETER;
     
     private ListenerCollection _listener = new ListenerCollection();
     private ResolverCollection _resolver = new ResolverCollection();
@@ -302,14 +317,14 @@ public class RelyingParty
             request.setAttribute(OpenIdUser.ATTR_NAME, user);
             return user;
         }
-        String id = request.getParameter(_openIdParameter);
+        String id = request.getParameter(_identifierParameter);
         if(id==null)
             return null;
         id = id.trim();
         if(id.length()==0)
             return null;
         
-        Identifier identifier = Identifier.getIdentifier(id, _resolver);
+        Identifier identifier = Identifier.getIdentifier(id, _resolver, _context);
         if(!identifier.isResolved())
             return null;        
         
@@ -411,7 +426,7 @@ public class RelyingParty
         
         public ListenerCollection addListener(Listener listener)
         {
-            if(listener==null)
+            if(listener==null || indexOf(listener)!=-1)
                 return this;
             
             Listener[] oldListeners = _listeners;
@@ -423,7 +438,21 @@ public class RelyingParty
             return this;
         }
         
-        private Listener[] getListeners()
+        public int indexOf(Listener listener)
+        {
+            if(listener!=null)
+            {
+                Listener[] listeners = _listeners;
+                for(int i=0; i<listeners.length; i++)
+                {
+                    if(listeners[i].equals(listener))
+                        return i;
+                }
+            }
+            return -1;
+        }
+        
+        public Listener[] getListeners()
         {
             return _listeners;
         }
