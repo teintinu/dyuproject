@@ -172,7 +172,7 @@ public class Identifier implements Serializable
                 return this;
             
             Resolver[] oldResolvers = _resolvers;
-            Resolver[] resolvers = new Resolver[oldResolvers.length];
+            Resolver[] resolvers = new Resolver[oldResolvers.length+1];
             System.arraycopy(oldResolvers, 0, resolvers, 0, oldResolvers.length);
             resolvers[oldResolvers.length] = resolver;
             _resolvers = resolvers;
