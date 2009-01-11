@@ -5,7 +5,7 @@ Enabling openid simple registration extension
 
 {{{
         RelyingParty _relyingParty = RelyingParty.getInstance();
-        _relyingParty.addListener(new SregConfigListener());
+        _relyingParty.addListener(new SRegConfigListener());
 
 }}}
 
@@ -23,7 +23,7 @@ Enabling openid simple registration extension
             }            
             public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
             {
-                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                SReg sreg = SReg.get(user);
                 if(sreg!=null)
                     System.err.println("email: " + sreg.getEmail());             
             }            
