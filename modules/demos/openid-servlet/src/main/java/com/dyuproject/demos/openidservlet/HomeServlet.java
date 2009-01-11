@@ -27,8 +27,8 @@ import com.dyuproject.openid.OpenIdServletFilter;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.openid.UrlEncodedParameterMap;
-import com.dyuproject.openid.ext.OpenIdSreg;
-import com.dyuproject.openid.ext.SregConfigListener;
+import com.dyuproject.openid.ext.SReg;
+import com.dyuproject.openid.ext.SRegConfigListener;
 
 /**
  * Home Servlet. If authenticated, goes to the home page. If not, goes to the login page.
@@ -45,7 +45,7 @@ public class HomeServlet extends HttpServlet
     public void init()
     {
         // enable sreg
-        _relyingParty.addListener(new SregConfigListener());
+        _relyingParty.addListener(new SRegConfigListener());
         // custom listener
         _relyingParty.addListener(new RelyingParty.Listener()
         {
@@ -62,7 +62,7 @@ public class HomeServlet extends HttpServlet
             {
 
                 System.err.print("newly authenticated user: " + user.getIdentity());
-                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                SReg sreg = SReg.getSreg(user);
                 if(sreg!=null)
                     System.err.print(" aka " + sreg.getNickname());
                 System.err.print("\n");            
@@ -70,7 +70,7 @@ public class HomeServlet extends HttpServlet
             public void onAccess(OpenIdUser user, HttpServletRequest request)
             {        
                 System.err.print("user access: " + user.getIdentity());
-                OpenIdSreg sreg = OpenIdSreg.getSreg(user);
+                SReg sreg = SReg.getSreg(user);
                 if(sreg!=null)
                     System.err.print(" aka " + sreg.getNickname());
                 System.err.print("\n");
