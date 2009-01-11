@@ -54,7 +54,7 @@ public class SimpleHttpConnector implements HttpConnector
     
     public Response doHEAD(String url, Map<?,?> headers) throws IOException
     {
-        return send(HEAD, headers, (HttpURLConnection)new URL(url).openConnection());
+        return send(HEAD, headers, (HttpURLConnection)new URL(url).openConnection(), false);
     }
 
     public Response doGET(String url, Map<?,?> headers)
@@ -97,8 +97,8 @@ public class SimpleHttpConnector implements HttpConnector
         return doDELETE(buffer.toString(), headers);
     }
     
-    static Response send(String method, Map<?,?> headers, HttpURLConnection connection)
-    throws IOException
+    static Response send(String method, Map<?,?> headers, HttpURLConnection connection, 
+            boolean doInput) throws IOException
     {
         connection.setRequestMethod(method);
         if(headers!=null)
@@ -109,10 +109,16 @@ public class SimpleHttpConnector implements HttpConnector
                         entry.getValue().toString());
             }
         }
-        connection.setDoInput(true);
+        connection.setDoInput(doInput);
         connection.setInstanceFollowRedirects(true);
         connection.connect();
         return new HttpURLConnectionWrapper(connection);
+    }
+    
+    static Response send(String method, Map<?,?> headers, HttpURLConnection connection)
+    throws IOException
+    {
+        return send(method, headers, connection, true);
     }
 
     public Response doPOST(String url, Map<?,?> headers, Map<?,?> parameters, String charset) 
