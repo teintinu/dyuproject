@@ -28,7 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.dyuproject.openid.Identifier.Resolver;
 import com.dyuproject.openid.Identifier.ResolverCollection;
-import com.dyuproject.openid.manager.HttpSessionBasedUserManager;
+import com.dyuproject.openid.manager.HttpSessionUserManager;
 
 /**
  * Relying party which discovers, associates and verifies the authentication of a user.
@@ -118,7 +118,7 @@ public class RelyingParty
         
         // user manager
         String managerParam = properties.getProperty("openid.user.manager");            
-        OpenIdUserManager manager = managerParam == null ? new HttpSessionBasedUserManager() :
+        OpenIdUserManager manager = managerParam == null ? new HttpSessionUserManager() :
             (OpenIdUserManager)newObjectInstance(managerParam);        
         manager.init(properties);        
         
