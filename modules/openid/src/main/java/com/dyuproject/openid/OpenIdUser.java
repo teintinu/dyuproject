@@ -129,6 +129,12 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         return _attributes;
     }
     
+    // shorthand (good for use with views/templates)
+    public Map<String,Object> getA()
+    {
+        return _attributes;
+    }
+    
     public Object getAttribute(String name)
     {
         return _attributes==null ? null : _attributes.get(name);
