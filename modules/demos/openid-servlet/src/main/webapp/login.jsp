@@ -4,18 +4,12 @@
 <head>
 <title>Login</title>
 <style type="text/css">
-    body {
-      font: 1.2em Verdana;
-      background: background:url(http://davidyu.googlecode.com/svn/images/bg.jpg) repeat;
-    }
-    input {
-      font-size: 1em;
-      padding: 0;
-      margin: 0;
-    }
-    
     #container {
       padding: 1em;      
+    }
+    
+    #container p {
+      font: 1.2em Verdana;
     }
     
     #openid_identifier {
@@ -30,10 +24,16 @@
 </style>
 </head>
 <body>
-<div style="float:right; padding: 1em;">
-  <span style="font-size:0.8em;font-family=Tahoma,Verdana">Powered by <a href="http://code.google.com/p/dyuproject/">dyuproject</a></span>
-</div>
 <div id="container">
+  <div style="float:right;width:50%;font-size:0.8em;text-align:right;">
+    <div>Powered by: <a class="simple" href="http://code.google.com/p/dyuproject/">dyuproject</a></div>
+    <div>
+      <span>Project <a href="http://dyuproject.googlecode.com/svn/trunk/modules/openid/">source</a></span>
+      <span>&nbsp;|&nbsp;</span>
+      <span>Demo <a href="http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/">source</a></span>
+    </div>
+  </div>
+  <div style="clear:both"></div>
   <div style="color:red;font-size:1.4em">&nbsp;${openid_servlet_filter_msg}</div>
   <p style="color:orange">Login with your openid</p>
   <form method="POST">
