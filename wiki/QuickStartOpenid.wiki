@@ -1,7 +1,7 @@
 #labels openid,relyingparty,quickstart,guide
 ={{{Openid RelyingParty QuickStart Guide}}}=
 
-=== dyuproject-1.1.1+ configuration===
+=== dyuproject-1.1.1(+) configuration===
 
 Let us learn by example ... this will help you create/deploy asap.
 
