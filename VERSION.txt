@@ -1,9 +1,14 @@
 dyuproject-1.1-SNAPSHOT
++ RelyingParty event listeners for the authentication lifecycle
++ more configurable components from the openid.properties
++ major refactors on the api (to simplify api usage)
++ minor openid.properties key/value changes
++ added identifier resolvers (e.g to map a google account to its xrds url)
++ fixed bug in http-based discovery
 + more openid identifier normalization
 + fixed XMLParser bug on whitespace handling
 + more sreg support (constants and OpenIdSreg bean to parse from auth request)
 + added OpenIdServletFilter that runs out-of-the-box with just a single filter init-param "forwardUri" config
-+ custom RelyingParty listener on OpenIdUser discovery, authentication and access
 + added handling when the user's authentication takes too long.
 + fix lack of OpenIdUser caching when parsed via OpenIdUserManager
 + OpenIdUserManager now has 2 impls: cookie-based and httpsession-based
