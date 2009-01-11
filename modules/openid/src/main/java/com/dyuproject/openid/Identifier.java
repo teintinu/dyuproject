@@ -33,6 +33,7 @@ public class Identifier implements Serializable
     
     private String _id;
     private String _url;
+    private boolean _xrds = false;
     
     public Identifier(String id)
     {
@@ -47,12 +48,22 @@ public class Identifier implements Serializable
         _url = url;
     }
     
-    public void resolve(String url, String newId)
+    public void resolve(String url, boolean xrds)
     {
         if(url==null)
             return;
         
         _url = url;
+        _xrds = xrds;
+    }
+    
+    public void resolve(String url, boolean xrds, String newId)
+    {
+        if(url==null)
+            return;
+        
+        _url = url;
+        _xrds = xrds;
         _id = newId;
     }
     
@@ -64,6 +75,11 @@ public class Identifier implements Serializable
     public String getId()
     {
         return _id;
+    }
+    
+    public boolean isXrds()
+    {
+        return _xrds;
     }
     
     public boolean isResolved()
