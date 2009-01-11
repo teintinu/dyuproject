@@ -1,4 +1,4 @@
-#labels openid,relyingparty,consumer
+#labels openid,relyingparty,consumer,configurate,usage,setup
 openid relying party howto
 
 See [OpenIdServletFilter] and [SampleOpenIdServlet].
@@ -6,40 +6,42 @@ To enable openid sreg extension, see [OpenIdSimpleRegistration].
 
 = dyuproject-1.1.1+ configuration =
 
-====openid.properties====
+===openid.properties===
 This will be used by {{{RelyingParty.getInstance();}}} if its available in the classpath.
 
 If you're using maven2, you could put this in src/main/resources.
-
 {{{
-#everything is optional/configurable
-
-#optional
-#openid.parameter = some_parameter (default: openid_identifier)
+#defaults (No extra configuration)
+#openid.identifier.parameter = openid_identifier
+#openid.discovery = com.dyuproject.openid.DefaultDiscovery
+#openid.assocation = com.dyuproject.openid.DiffieHellmanAssociation
+#openid.httpconnector = com.dyuproject.openid.SimpleHttpConnector
+#openid.user.manager = com.dyuproject.openid.manager.HttpSessionUserManager
 }}}
-
 {{{
-#if using cookie-based manager (default is httpsession-based)
-
-#required
+#optional (comma-or-semicolon-separated values)
+#openid.relyingparty.listeners = com.dyuproject.openid.ext.SRegConfigListener
+#openid.identifier.resolvers = com.dyuproject.openid.ext.EmailResolver
+}}}
+{{{
+#if this is used:
 #openid.user.manager = com.dyuproject.openid.manager.CookieBasedUserManager
-#openid.user.manager.cookie.name = openidservlet1
-#openid.user.manager.cookie.security.secretKey = secret
 }}}
-
 {{{
-#optional
+#then these are required:
+#openid.user.manager.cookie.name = openidservlet1
+#openid.user.manager.cookie.security.secret_key = secret
+}}}
+{{{
+#and these are optional:
 #openid.user.manager.cookie.path = /
 #openid.user.manager.cookie.domain = http://www.example.com
-#openid.user.manager.cookie.security.type = md5Signed (default: encrypted)
-#openid.user.manager.cookie.maxAge = 900 (default: 600)
-# - authenticated user's session expiry in seconds
-#openid.user.manager.cookie.loginTimeout = 90 (default: 60) 
-# - timeout in seconds for the discovered user to finish authentication on his openid provider
-
+#openid.user.manager.cookie.security_type = md5Signed (default: encrypted)
+#openid.user.manager.cookie.max_age = 900 (default: 600 seconds) 
+#openid.user.manager.cookie.login_timeout = 90 (default: 60 seconds)
+This could be done programmatically as well:
 }}}
 
-This could be done programmatically as well:
 {{{
 Properties props = new Properties();
 // set your custom properties...
