@@ -14,14 +14,18 @@
 
 package com.dyuproject.openid;
 
+import java.io.Serializable;
+
 import com.dyuproject.util.validate.IPDomainValidator;
 
 /**
+ * The openid identifier is the user-supplied openid. 
+ * 
  * @author David Yu
  * @created Jan 10, 2009
  */
-
-public class Identifier
+@SuppressWarnings("serial")
+public class Identifier implements Serializable
 {
     
     public static final String CHECKED_PREFIX = "http";
