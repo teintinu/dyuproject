@@ -43,12 +43,12 @@ public class SReg implements Serializable, JSON.Convertible
         params.put(Constants.OPENID_SREG_OPTIONAL, Constants.Sreg.OPTIONAL);        
     }
     
-    static void setSreg(OpenIdUser user, SReg sreg)
+    static void set(OpenIdUser user, SReg sreg)
     {
         user.setAttribute(ATTR_NAME, sreg);
     }
     
-    public static SReg getSreg(OpenIdUser user)
+    public static SReg get(OpenIdUser user)
     {
         return (SReg)user.getAttribute(ATTR_NAME);
     }
