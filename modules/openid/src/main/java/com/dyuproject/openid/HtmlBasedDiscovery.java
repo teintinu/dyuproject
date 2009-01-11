@@ -28,7 +28,17 @@ import com.dyuproject.util.xml.XMLParser;
  */
 
 public class HtmlBasedDiscovery implements Discovery
-{    
+{
+    
+    static final String CHECKED_PREFIX = "openid";
+    static final String SERVER = "server";
+    static final String DELEGATE = "delegate";    
+    static final String PROVIDER = ".provider";
+    static final String LOCAL_ID = ".local_id";
+
+    static final int TYPE_IGNORE = 0;
+    static final int TYPE_SERVER = 1;
+    static final int TYPE_DELEGATE = 2;    
     
     static final String HTML = "html";
     static final String HEAD = "head";
@@ -68,6 +78,48 @@ public class HtmlBasedDiscovery implements Discovery
                 handler._openIdServer, handler._openIdDelegate);        
     }
     
+    static int check(String rel)
+    {
+        if(!rel.startsWith(CHECKED_PREFIX))
+            return TYPE_IGNORE;
+        
+        char c = rel.charAt(6);
+        if(c=='2')
+        {
+            if(rel.startsWith(PROVIDER, 7))
+            {
+                if(rel.length()==16)
+                    return TYPE_SERVER;                
+                return Character.isWhitespace(rel.charAt(16)) ? TYPE_SERVER : TYPE_IGNORE;
+            }
+            if(rel.startsWith(LOCAL_ID, 7))
+            {
+                if(rel.length()==16)
+                    return TYPE_DELEGATE;
+                return Character.isWhitespace(rel.charAt(16)) ? TYPE_DELEGATE : TYPE_IGNORE;
+            }
+            return TYPE_IGNORE;
+        }
+        if(c=='.')
+        {
+            if(rel.startsWith(SERVER, 7))
+            {
+                if(rel.length()==13)
+                    return TYPE_SERVER;
+                return Character.isWhitespace(rel.charAt(13)) ? TYPE_SERVER : TYPE_IGNORE;
+            }
+            if(rel.startsWith(DELEGATE, 7))
+            {
+                if(rel.length()==15)
+                    return TYPE_DELEGATE;
+                return Character.isWhitespace(rel.charAt(15)) ? TYPE_DELEGATE : TYPE_IGNORE;
+            }
+            return TYPE_IGNORE;
+        }
+        
+        return TYPE_IGNORE;
+    }
+    
     static class XmlHandler implements LazyHandler
     {
         
@@ -86,14 +138,7 @@ public class HtmlBasedDiscovery implements Discovery
         }
 
         public boolean rootElement(String name, String namespace)
-        {            
-            /*_headFound = false;
-            _link = false;
-            _searching = true;
-            _openIdServer = null;
-            _openIdDelegate = null;
-            _lastHref = null;
-            _lastRel = null;*/
+        {
             _stack = 1;
             return HTML.equalsIgnoreCase(name);            
         }
@@ -126,34 +171,37 @@ public class HtmlBasedDiscovery implements Discovery
                     _lastRel = value;
                     if(_lastHref!=null)
                     {
-                        if(OPENID_SERVER.equals(value))
+                        switch(check(value))
                         {
-                            _openIdServer = _lastHref;
-                            _searching = _openIdDelegate==null;                                
-                        }
-                        else if(OPENID_DELEGATE.equals(value))
-                        {
-                            _openIdDelegate = _lastHref;
-                            _searching = _openIdServer==null;
-                        }
+                            case TYPE_SERVER:
+                                _openIdServer = _lastHref;
+                                _searching = _openIdDelegate==null;
+                                break;
+                            case TYPE_DELEGATE:
+                                _openIdDelegate = _lastHref;
+                                _searching = _openIdServer==null;
+                                break;
+                        }  
                         _lastRel = null;
                         _lastHref = null;
                     }
+
                 }
                 else if(_lastHref==null && HREF.equalsIgnoreCase(name))
                 {
                     _lastHref = value;
                     if(_lastRel!=null)
                     {
-                        if(OPENID_SERVER.equals(_lastRel))
+                        switch(check(_lastRel))
                         {
-                            _openIdServer = value;
-                            _searching = _openIdDelegate==null;   
-                        }
-                        else if(OPENID_DELEGATE.equals(_lastRel))
-                        {
-                            _openIdDelegate = value;
-                            _searching = _openIdServer==null;                            
+                            case TYPE_SERVER:
+                                _openIdServer = value;
+                                _searching = _openIdDelegate==null;   
+                                break;
+                            case TYPE_DELEGATE:
+                                _openIdDelegate = value;
+                                _searching = _openIdServer==null; 
+                                break;
                         }
                         _lastRel = null;
                         _lastHref = null;
@@ -168,5 +216,28 @@ public class HtmlBasedDiscovery implements Discovery
         }
         
     }
+    
+    /*public static void main(String[] args)
+    {
+        System.err.println(check("openid.server"));
+        System.err.println(check("openid.server "));
+        System.err.println(check("openid.served"));
+        System.err.println(check("openid.server2"));
+        System.err.println("");
+        System.err.println(check("openid.delegate"));
+        System.err.println(check("openid.delegate "));
+        System.err.println(check("openid.delegatd"));
+        System.err.println(check("openid.delegate2"));
+        System.err.println("");
+        System.err.println(check("openid2.provider"));
+        System.err.println(check("openid2.provider "));
+        System.err.println(check("openid2.provided"));
+        System.err.println(check("openid2.provider2"));
+        System.err.println("");
+        System.err.println(check("openid2.local_id"));
+        System.err.println(check("openid2.local_id "));
+        System.err.println(check("openid2.local_ip"));
+        System.err.println(check("openid2.local_id2"));
+    }*/
 
 }
