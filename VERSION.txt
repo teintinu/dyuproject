@@ -12,6 +12,7 @@ dyuproject-1.1-SNAPSHOT
 + added handling when the user's authentication takes too long.
 + fix lack of OpenIdUser caching when parsed via OpenIdUserManager
 + OpenIdUserManager now has 2 impls: cookie-based and httpsession-based
++ improved interceptor execution
 
 dyuproject-1.1.0 2008-12-08
 + Implementation for Java REST Annotations (jra.codehaus.org)
