@@ -1,7 +1,7 @@
 #labels sreg,openid,simple,registration,1.1
 Enabling openid simple registration extension
 
-==dyuproject-1.1.1+ configuration==
+==dyuproject-1.1.1(+)==
 
 {{{
         RelyingParty _relyingParty = RelyingParty.getInstance();
@@ -34,7 +34,7 @@ Enabling openid simple registration extension
 }}}
 
 ----
-==dyuproject-1.0.x configuration==
+==dyuproject-1.0.x==
 
 It is a matter of adding the extra parameters(encoded):
 {{{
