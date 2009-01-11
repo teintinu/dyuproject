@@ -34,9 +34,9 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     public static final String ATTR_NAME = "openid_user";
     
     private String _claimedId;
+    private String _identity;
     private String _openIdServer;
     private String _openIdDelegate;
-    private String _identity;
     private String _assocHandle;    
     
     private Map<String,Object> _associationData;
@@ -84,10 +84,14 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         if(identity!=null)
         {
             _identity = identity;
+            if(_openIdDelegate==null)
+                _claimedId = identity;            
+            
             _assocHandle = null;
             _associationData = null;
-            if(_openIdDelegate==null)
-                _claimedId = identity;
+            // TODO confirm that nobody needs this when user is already authenticated
+            _openIdServer = null;
+            _openIdDelegate = null;
         }
     }
     
@@ -147,24 +151,35 @@ public class OpenIdUser implements Serializable, JSON.Convertible
 
     public void fromJSON(Map map)
     {        
-        _claimedId = (String)map.get("ci");
-        _assocHandle = (String)map.get("ah");
-        _identity = (String)map.get("id");
-        _openIdServer = (String)map.get("os");
-        _openIdDelegate = (String)map.get("od");
-        _associationData = (Map<String,Object>)map.get("ad");
-        _attributes = (Map<String,Object>)map.get("at");
+        _claimedId = (String)map.get("a");
+        _identity = (String)map.get("b");
+        _assocHandle = (String)map.get("c");
+        _associationData = (Map<String,Object>)map.get("d");
+        _openIdServer = (String)map.get("e");
+        _openIdDelegate = (String)map.get("f");        
+        _attributes = (Map<String,Object>)map.get("g");
     }
 
     public void toJSON(Output out)
     {        
         out.addClass(getClass());
-        out.add("ci", _claimedId);
-        out.add("ah", _assocHandle);
-        out.add("id", _identity);
-        out.add("os" ,_openIdServer);
-        out.add("od" ,_openIdDelegate);
-        out.add("ad", _associationData);
-        out.add("at", _attributes);
+        out.add("a", _claimedId);
+        if(_identity!=null)
+        {
+            out.add("b", _identity);
+            // TODO confirm
+            //out.add("e" ,_openIdServer);
+            //out.add("f" ,_openIdDelegate);
+        }
+        else
+        {
+            out.add("c", _assocHandle);
+            out.add("d", _associationData);
+            out.add("e" ,_openIdServer);
+            out.add("f" ,_openIdDelegate);            
+        }
+        
+        if(_attributes!=null)
+            out.add("g", _attributes);
     }
 }
