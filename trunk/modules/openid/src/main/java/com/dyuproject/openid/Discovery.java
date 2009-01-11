@@ -24,7 +24,7 @@ package com.dyuproject.openid;
 public interface Discovery
 {
     
-    public OpenIdUser discover(String claimedId, String url, OpenIdContext context) 
+    public OpenIdUser discover(Identifier identifier, OpenIdContext context) 
     throws Exception;
 
 }

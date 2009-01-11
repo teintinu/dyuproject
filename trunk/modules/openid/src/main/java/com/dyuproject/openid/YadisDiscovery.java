@@ -44,57 +44,72 @@ public class YadisDiscovery implements Discovery
     static final String URI = "URI";
     static final String LOCAL_ID = "LocalID";
 
-    public OpenIdUser discover(String claimedId, String url, OpenIdContext context) throws Exception
+    public OpenIdUser discover(Identifier identifier, OpenIdContext context) throws Exception
     {        
-        return discover(claimedId, url, context.getHttpConnector().doHEAD(url, null), context);
+        return tryDiscover(identifier, context);
     }
     
-    static OpenIdUser discover(String claimedId, String url, Response responseFromHead, 
-            OpenIdContext context) throws Exception
+    static OpenIdUser tryDiscover(Identifier identifier, OpenIdContext context) 
+    throws Exception
     {
-        String location = responseFromHead.getHeader(X_XRDS_LOCATION);
+        if(identifier.isUrlContentTypeXrds())
+        {
+            // configured by the resolver
+            return discoverXRDS(identifier, identifier.getUrl(), context);
+        }
+        
+        Response response = context.getHttpConnector().doHEAD(identifier.getUrl(), null);
+        String location = response.getHeader(X_XRDS_LOCATION);
         if(location==null)
         {
-            String contentType = responseFromHead.getHeader(HttpConnector.CONTENT_TYPE_HEADER);            
+            String contentType = response.getHeader(HttpConnector.CONTENT_TYPE_HEADER);            
             if(contentType==null || !contentType.startsWith(XRDS_CONTENT_TYPE))
             {
-                try{responseFromHead.close();}catch(IOException e){}
+                try{response.close();}catch(IOException e){}
                 return null;
             }
             
-            location = url;
+            location = identifier.getUrl();
         }
-        try{responseFromHead.close();}catch(IOException e){}
+        try{response.close();}catch(IOException e){}
         
-        Response responseFromGet = context.getHttpConnector().doGET(location, null);
+        return discoverXRDS(identifier, location, context);
+    }
+    
+    static OpenIdUser discoverXRDS(Identifier identifier, String location, OpenIdContext context) 
+    throws Exception
+    {
+        Response response = context.getHttpConnector().doGET(location, null);
         InputStreamReader reader = null;
         OpenIdUser user = null;
         try
         {            
-            reader = new InputStreamReader(responseFromGet.getInputStream(), 
+            reader = new InputStreamReader(response.getInputStream(), 
                     Constants.DEFAULT_ENCODING);            
-            user = discover(claimedId, reader);
+            user = parse(identifier, reader);
         }
         catch(Exception e)
         {            
             user = null;
         }
-        
-        if(reader!=null)
+        finally
         {
-            try{reader.close();}catch(IOException ioe){}
+            if(reader!=null)
+            {
+                try{reader.close();}catch(IOException ioe){}
+            }
+            try{response.close();}catch(IOException ioe){} 
         }
-        try{responseFromHead.close();}catch(IOException ioe){}
-        
+       
         return user;
     }
     
-    static OpenIdUser discover(String claimedId, InputStreamReader reader) throws Exception
-    {
+    static OpenIdUser parse(Identifier identifier, InputStreamReader reader) throws Exception
+    {        
         XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, true);
-        return handler._openIdServer==null ? null : new OpenIdUser(claimedId, handler._openIdServer, 
-                handler._openIdDelegate);
+        return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
+                handler._openIdServer, handler._openIdDelegate);
     }    
     
     static class XmlHandler implements LazyHandler
