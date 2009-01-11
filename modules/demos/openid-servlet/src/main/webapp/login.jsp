@@ -9,7 +9,8 @@
     }
     
     #container p {
-      font: 1.2em Verdana;
+      font-size: 1.2em;
+      font-family: Tahoma,Verdana;
     }
     
     #openid_identifier {
@@ -35,13 +36,13 @@
   </div>
   <div style="clear:both"></div>
   <div style="color:red;font-size:1.4em">&nbsp;${openid_servlet_filter_msg}</div>
-  <p style="color:orange">Login with your openid</p>
+  <p>Login with your <span style="color:orange">openid</span></p>
   <form method="POST">
     <input id="openid_identifier" name="openid_identifier" type="text" size=80/>
     <input class="btn" type="submit" value="send"/>
   </form>
   <p><span style="color:green;font-size:1em">https://www.google.com/accounts/o8/id</span><span> for google accounts</span></p>
-  <p>or enter: <span style="color:green;font-size:1em">your_username@gmail.com</span></p>
+  <p>or enter <span style="color:green;font-size:1em">your_username@gmail.com</span></p>
   <p><a href="/home/">HomeServlet</a></p>
   <p><a href="/home.jsp">home.jsp</a> <span style="font-size:.8em">(filtered by OpenIdServletFilter)</span></p>
 </div>
