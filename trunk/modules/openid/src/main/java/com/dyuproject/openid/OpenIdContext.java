@@ -35,6 +35,13 @@ public class OpenIdContext
         
     }
     
+    public OpenIdContext(Discovery discovery, Association association, HttpConnector httpConnector)
+    {
+        _discovery = discovery;
+        _association = association;
+        _httpConnector = httpConnector;
+    }
+    
     public void setAssociation(Association association)
     {
         _association = association;
