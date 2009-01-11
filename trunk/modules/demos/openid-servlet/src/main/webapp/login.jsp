@@ -41,6 +41,7 @@
     <input class="btn" type="submit" value="send"/>
   </form>
   <p><span style="color:green;font-size:1em">https://www.google.com/accounts/o8/id</span><span> for google accounts</span></p>
+  <p>or enter: <span style="color:green;font-size:1em">your_username@gmail.com</span></p>
   <p><a href="/home/">HomeServlet</a></p>
   <p><a href="/home.jsp">home.jsp</a> <span style="font-size:.8em">(filtered by OpenIdServletFilter)</span></p>
 </div>
