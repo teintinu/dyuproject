@@ -4,19 +4,29 @@
 <head>
 <title>Home</title>
 <style type="text/css">
-    body {
-      font: 1.2em Verdana;      
-    }
     #container {
       padding: 1em;
-      
-    }    
+    }
+    #container p {
+      font-size: 1.2em;
+      font-family: Tahoma,Verdana;
+    }
 </style>
 </head>
 <body>
 <div id="container">
-  Welcome <span style="color:green">${openid_user.claimedId}</span>
-  <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout/">logout</a></span>
+  <div style="float:right;width:50%;font-size:0.8em;text-align:right;">
+    <div>Powered by: <a class="simple" href="http://code.google.com/p/dyuproject/">dyuproject</a></div>
+    <div>
+      <span>Project <a href="http://dyuproject.googlecode.com/svn/trunk/modules/openid/">source</a></span>
+      <span>&nbsp;|&nbsp;</span>
+      <span>Demo <a href="http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/">source</a></span>
+    </div>
+  </div>
+  <div style="clear:both"></div>
+  <p>
+    Welcome <span style="color:green">${openid_user.claimedId}</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout/">logout</a></span>
+  </p>
 </div>
 </body>
 </html>
