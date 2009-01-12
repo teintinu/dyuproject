@@ -291,6 +291,11 @@ public class JSONConverter extends FormatConverter
             return;
         }
         Iterator<Map.Entry<String, Object>> iter = m.entrySet().iterator();
+        if(!iter.hasNext())
+        {
+            builder._buffer.append('}');
+            return;
+        }
         Map.Entry<String, Object> first = iter.next();        
         addKey(builder._buffer, first.getKey().toString());
         processObject(builder, first.getValue());
