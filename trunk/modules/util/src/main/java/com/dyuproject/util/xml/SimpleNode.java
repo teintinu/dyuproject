@@ -29,6 +29,13 @@ import java.util.Map;
 public class SimpleNode implements Node
 {
     
+    private static int __defaultBufferSize = 16;
+    
+    public static void setDefaultBufferSize(int size)
+    {
+        __defaultBufferSize = 16;
+    }
+    
     private Node _parent;
     private String _name, _namespace;
     private List<Node> _nodes;
@@ -173,28 +180,28 @@ public class SimpleNode implements Node
     public void addText(char[] buf, int start, int length)
     {
         if(_text==null)
-            _text = new StringBuilder();
+            _text = new StringBuilder(__defaultBufferSize);
         _text.append(buf, start, length);
     }
     
     public void addText(String text)
     {
         if(_text==null)
-            _text = new StringBuilder();
+            _text = new StringBuilder(__defaultBufferSize);
         _text.append(text);
     }
     
     public void addText(StringBuilder text)
     {
         if(_text==null)
-            _text = new StringBuilder();
+            _text = new StringBuilder(__defaultBufferSize);
         _text.append(text);
     }
     
     public void addText(StringBuffer text)
     {
         if(_text==null)
-            _text = new StringBuilder();
+            _text = new StringBuilder(__defaultBufferSize);
         _text.append(text);
     }
     
@@ -205,7 +212,7 @@ public class SimpleNode implements Node
     
     public String toString()
     {
-        StringBuilder buffer = new StringBuilder().append('\n');
+        StringBuilder buffer = new StringBuilder(__defaultBufferSize).append('\n');
         buffer.append('<').append(_name);
         if(_attributes!=null)
         {                

@@ -25,9 +25,7 @@ import java.io.InputStreamReader;
  */
 
 public class XMLParser
-{
-    
-    public static final int DEFAULT_BUFFER_SIZE = 4096;
+{    
     
     private static final int STATE_EL_STARTING = 1;
     private static final int STATE_EL_STARTED = 2;
@@ -46,10 +44,17 @@ public class XMLParser
     private static final int STATE_COMMENT_ENDING = 13;
     private static final int STATE_IGNORE = 14;
     
+    private static int __defaultBufferSize = 4096;
+    
+    public static void setDefaultBufferSize(int size)
+    {
+        __defaultBufferSize = size;
+    }
+    
     public static void parse(InputStreamReader reader, LazyHandler handler, 
             boolean includeInnerText) throws IOException
     {
-        parse(reader, handler, includeInnerText, DEFAULT_BUFFER_SIZE);        
+        parse(reader, handler, includeInnerText, __defaultBufferSize);        
     }
     
     public static void parse(InputStreamReader reader, LazyHandler handler, 
