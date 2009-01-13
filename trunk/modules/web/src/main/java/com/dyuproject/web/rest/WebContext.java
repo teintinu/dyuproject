@@ -354,7 +354,7 @@ public abstract class WebContext
         }
         
         String uri = request.getPathInfo();
-        int last = uri.length()-1;
+        int last = uri==null ? 0 : uri.length()-1;
         // root context /
         if(last<1)
         {
