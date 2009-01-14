@@ -36,7 +36,6 @@ public interface Interceptor
     public boolean preHandle(RequestContext requestContext)
     throws ServletException, IOException; 
     
-    public void postHandle(boolean handled, RequestContext requestContext) 
-    throws ServletException, IOException;
+    public void postHandle(boolean handled, RequestContext requestContext);
 
 }
