@@ -153,7 +153,8 @@ public class HelloWorldService extends AbstractService
     {
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getResponse().setContentType("text/plain");
-        rc.getResponse().getOutputStream().print(" # foo #");
+        rc.getResponse().getOutputStream().print("foo intercepted? See println output.");
+        System.err.print("  foo\n");
     }
     
     @HttpResource(location="/foo/bar")
@@ -161,8 +162,9 @@ public class HelloWorldService extends AbstractService
     public void fooBar() throws IOException
     {
         RequestContext rc = WebContext.getCurrentRequestContext();
-        rc.getResponse().setContentType("text/plain");
-        rc.getResponse().getOutputStream().print(" # foo bar #");
+        rc.getResponse().setContentType("text/plain");        
+        rc.getResponse().getOutputStream().print("foo bar intercepted? See println output.");
+        System.err.print("  foo bar\n");
     }
     
     @HttpResource(location="/foo/bar/baz")
@@ -171,7 +173,8 @@ public class HelloWorldService extends AbstractService
     {
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getResponse().setContentType("text/plain");
-        rc.getResponse().getOutputStream().print(" # foo bar baz #");
+        rc.getResponse().getOutputStream().print("foo bar baz intercepted? See println output.");
+        System.err.print("  foo bar baz\n");
     }
     
     /* --------- PLAIN TEXT RESOURCES --------- */

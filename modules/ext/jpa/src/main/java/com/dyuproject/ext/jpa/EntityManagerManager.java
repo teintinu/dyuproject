@@ -106,8 +106,7 @@ public class EntityManagerManager extends AbstractInterceptor implements javax.s
         return true;
     }
 
-    public void postHandle(boolean handled, RequestContext requestContext) 
-    throws ServletException, IOException
+    public void postHandle(boolean handled, RequestContext requestContext)
     {
         EntityManager manager = getCurrentEntityManager();
         __entityManager.set(null);

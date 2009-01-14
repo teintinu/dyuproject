@@ -43,14 +43,14 @@ public class SimpleInterceptor implements Interceptor
     public boolean preHandle(RequestContext requestContext)
             throws ServletException, IOException
     {
-        requestContext.getResponse().getOutputStream().print("pre-intercept | ");
+        System.err.print(requestContext.getRequest().getPathInfo() + "    pre-intercept\n");
         return true;
     }
 
     public void postHandle(boolean handled, RequestContext requestContext)
-            throws ServletException, IOException
+
     {        
-        requestContext.getResponse().getOutputStream().print(" | post-intercept");
+        System.err.print(requestContext.getRequest().getPathInfo() + "    post-intercept\n");
     }
 
 }

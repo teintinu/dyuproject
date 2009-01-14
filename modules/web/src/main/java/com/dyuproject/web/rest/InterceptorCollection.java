@@ -75,8 +75,7 @@ public class InterceptorCollection extends AbstractInterceptor
             i.init(getWebContext());
     }
 
-    public void postHandle(boolean handled, RequestContext requestContext) 
-    throws ServletException, IOException
+    public void postHandle(boolean handled, RequestContext requestContext)
     {
         if(handled)
         {
@@ -110,10 +109,11 @@ public class InterceptorCollection extends AbstractInterceptor
     }
     
     static void doPostHandleChain(Interceptor[] interceptors, int i, boolean handled, 
-            RequestContext requestContext) throws ServletException, IOException
+            RequestContext requestContext)
     {
-        // minimize recursion
         while(i!=-1)
+            interceptors[i--].postHandle(handled, requestContext);
+        /*while(i!=-1)
         {
             try
             {
@@ -124,16 +124,6 @@ public class InterceptorCollection extends AbstractInterceptor
                 if(true)
                     continue;
             }
-        }
-        
-        /*try
-        {
-            interceptors[i].postHandle(handled, requestContext);
-        }
-        finally
-        {
-            if(i>0)
-                doPostHandleChain(interceptors, i-1, handled, requestContext);
         }*/
     }
 

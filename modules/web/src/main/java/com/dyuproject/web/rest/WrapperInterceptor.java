@@ -48,7 +48,6 @@ public class WrapperInterceptor extends AbstractInterceptor
     }
 
     public void postHandle(boolean handled, RequestContext requestContext)
-            throws ServletException, IOException
     {
         if(_interceptor!=null)
             _interceptor.postHandle(handled, requestContext);        
