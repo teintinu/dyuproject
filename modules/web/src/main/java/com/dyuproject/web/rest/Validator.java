@@ -1,5 +1,5 @@
 //========================================================================
-//Copyright 2007-2008 David Yu dyuproject@gmail.com
+//Copyright 2007-2009 David Yu dyuproject@gmail.com
 //------------------------------------------------------------------------
 //Licensed under the Apache License, Version 2.0 (the "License");
 //you may not use this file except in compliance with the License.
@@ -12,21 +12,20 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web;
+package com.dyuproject.web.rest;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 
 /**
- * Checks if the request is valid.
- * Useful for containing/decoupling the pre-requisites of a request.
- * 
  * @author David Yu
- * @created Jun 8, 2008
+ * @created Jan 14, 2009
  */
 
 public interface Validator
 {
     
-    public boolean validate(HttpServletRequest request);
+    public boolean validate(RequestContext requestContext) throws ServletException, IOException;
 
 }
