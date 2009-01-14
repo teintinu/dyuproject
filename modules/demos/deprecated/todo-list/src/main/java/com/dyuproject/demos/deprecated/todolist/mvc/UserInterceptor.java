@@ -39,7 +39,6 @@ public class UserInterceptor extends AbstractInterceptor
     }
 
     public void postHandle(boolean handled, RequestContext requestContext)
-            throws ServletException, IOException
     {
         
     }
