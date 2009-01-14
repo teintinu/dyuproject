@@ -1,4 +1,4 @@
-dyuproject-1.1.1
+dyuproject-1.1.1 2009-01-14
 + RelyingParty event listeners for the authentication lifecycle
 + more configurable components from the openid.properties
 + major refactors on the api (to simplify api usage)
