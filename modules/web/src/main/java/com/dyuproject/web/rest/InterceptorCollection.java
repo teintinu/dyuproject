@@ -86,26 +86,25 @@ public class InterceptorCollection extends AbstractInterceptor
     }
 
     public boolean preHandle(RequestContext requestContext) throws ServletException, IOException
-    {        
-        boolean success = false;
+    {
         int i = 0;
+        boolean success = true;
         Interceptor[] interceptors = _interceptors;
         try
         {
             for(; i<interceptors.length; i++)
             {
-                // protect in case of exceptions
-                success = false;
-                if(interceptors[i].preHandle(requestContext))                
-                    success = true;                
-                else                    
-                    break;                                   
+                if(!interceptors[i].preHandle(requestContext))                
+                    break;                              
             }
         }
         finally
         {
-            if(!success)            
-                doPostHandleChain(interceptors, i, false, requestContext);            
+            if(i!=interceptors.length)
+            {
+                success = false;
+                doPostHandleChain(interceptors, i, false, requestContext);
+            }                        
         }
         return success;
     }
