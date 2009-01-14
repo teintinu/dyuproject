@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @created Jun 8, 2008
  */
 
-public class RequiredParametersValidator implements Validator
+public class RequiredParametersValidator
 {
     
     private String[] _requiredParams;
