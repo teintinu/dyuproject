@@ -144,6 +144,7 @@
     <velocity-version>1.5</velocity-version>
     <servlet-api-version>3.0.pre4</servlet-api-version>
     <jra-version>1.0-alpha-4</jra-version>
+    <stringtemplate-version>3.2</stringtemplate-version>
   </properties>
   
 </project>
