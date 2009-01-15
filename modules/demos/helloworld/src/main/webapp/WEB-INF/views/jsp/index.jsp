@@ -29,7 +29,10 @@
       html | <a href="<c:url value="/helloworld/1"/>">helloworld/1</a>
     </p>
     <p>
-      html | <a href="<c:url value="/st/helloworld/2"/>">helloworld/2 from StringTemplate</a>
+      html | <a href="<c:url value="/velocity/helloworld/2"/>">helloworld/2 from Velocity</a>
+    </p>
+    <p>
+      html | <a href="<c:url value="/st/helloworld/3"/>">helloworld/3 from StringTemplate</a>
     </p>
 
   </div>
