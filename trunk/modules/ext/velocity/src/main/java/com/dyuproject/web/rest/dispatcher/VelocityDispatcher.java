@@ -49,11 +49,11 @@ public class VelocityDispatcher implements ViewDispatcher
     private static final String VELOCITY_FILE_RESOURCE_LOADER_CLASS = "file.resource.loader.class";
     private static final String VELOCITY_FILE_RESOURCE_LOADER_PATH = "file.resource.loader.path";
     
-    private static final Log log = LogFactory.getLog(VelocityDispatcher.class);
+    private static final Log _log = LogFactory.getLog(VelocityDispatcher.class);
     
     private VelocityEngine _engine;
-    private String _baseDir, _fileExtension;
     private boolean _initialized = false;
+    private String _baseDir, _fileExtension, _suffix;    
     private Properties _properties = new Properties();
     
     public VelocityDispatcher()
@@ -61,15 +61,28 @@ public class VelocityDispatcher implements ViewDispatcher
         
     }
     
+    public String getFileExtension()
+    {
+        return _fileExtension;
+    }
+    
     public void init(WebContext context)
-    {            
+    {
+        if(_initialized)
+            return;
+        
+        _initialized = true;
+        
         if(_baseDir==null)
             _baseDir = DEFAULT_BASE_DIR;
         else if(_baseDir.charAt(_baseDir.length()-1)!='/')
             _baseDir += "/";            
 
         if(_fileExtension==null)
-            _fileExtension = DEFAULT_FILE_EXTENSION;
+        {
+            String fileExtension = context.getProperty("velocity.file_extentsion");
+            _fileExtension = fileExtension==null ? DEFAULT_FILE_EXTENSION : fileExtension;
+        }
         else if(_fileExtension.charAt(0)=='.')
             _fileExtension = _fileExtension.substring(1);
         
@@ -95,17 +108,24 @@ public class VelocityDispatcher implements ViewDispatcher
         {
             throw new RuntimeException(e);
         }
-        _initialized = true;
-        log.info("baseDir: " + _baseDir);
-        log.info("fileExtension: " + _fileExtension);    
-        log.info("initialized.");
+
+        _log.info("baseDir: " + _baseDir);
+        _log.info("fileExtension: " + _fileExtension);    
+        _log.info("initialized.");
+        
+        _suffix = "." + _fileExtension;
     }
 
     public void dispatch(String uri, HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException
     {
         if(uri.charAt(0)=='/')
-            uri = uri.substring(_baseDir.length());
+        {
+            uri = uri.endsWith(_suffix) ? uri.substring(_baseDir.length()) : 
+                uri.substring(_baseDir.length()) + _suffix;
+        }
+        if(!uri.endsWith(_suffix))
+            uri += _suffix;
         
         Template template = null;
         try

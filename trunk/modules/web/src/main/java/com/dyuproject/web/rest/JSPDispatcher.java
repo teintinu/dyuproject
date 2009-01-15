@@ -35,38 +35,62 @@ import org.apache.commons.logging.LogFactory;
 public class JSPDispatcher implements ViewDispatcher
 {    
      
-    public static final String JSP = "jsp";
+    public static final String JSP = JSPDispatcher.class.getName();
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/jsp/";
+    public static final String DEFAULT_FILE_EXTENSION = "jsp";
     
     static final String INCLUDE_ATTR = "javax.servlet.include.servlet_path";
     
-    private static final Log log = LogFactory.getLog(JSPDispatcher.class);
+    private static final Log _log = LogFactory.getLog(JSPDispatcher.class);
     
     private boolean _initialized = false, _jetty = false;
-    private String _baseDir;
-    RequestDispatcher _jsp;    
+    private String _baseDir, _fileExtension, _suffix;
+    RequestDispatcher _jsp;
+    
+    public String getFileExtension()
+    {
+        return _fileExtension;
+    }
     
     public void init(WebContext context)
     {
-        if(_jsp==null)
-            _jsp = context.getServletContext().getNamedDispatcher(JSP);
+        if(_initialized)
+            return;
+        
+        _initialized = true;
         
         if(_baseDir==null)
             _baseDir = DEFAULT_BASE_DIR;
         else if(_baseDir.charAt(_baseDir.length()-1)!='/')
             _baseDir += "/";
         
+        if(_fileExtension==null)
+        {
+            String fileExtension = context.getProperty("jsp.file_extentsion");
+            _fileExtension = fileExtension==null ? DEFAULT_FILE_EXTENSION : fileExtension;
+        }
+        else if(_fileExtension.charAt(0)=='.')
+            _fileExtension = _fileExtension.substring(1);
+        
+        if(_jsp==null)
+            _jsp = context.getServletContext().getNamedDispatcher(_fileExtension);
+        
         _jetty = context.getServletContext().getClass().getName().startsWith("org.mortbay.jetty");
-        _initialized = true;
-        log.info("baseDir: " + _baseDir);        
-        log.info("initialized.");
+        
+        _log.info("baseDir: " + _baseDir);
+        _log.info("fileExtension: " + _fileExtension);    
+        _log.info("initialized.");
+        
+        _suffix = "." + _fileExtension;
     }
     
     public void dispatch(String uri, HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException
     {
         if(uri.charAt(0)!='/')
-            uri = _baseDir + uri;
+            uri = uri.endsWith(_suffix) ? _baseDir + uri : _baseDir + uri + _suffix;
+        else if(!uri.endsWith(_suffix))
+            uri += _suffix;
         
         request.setAttribute(WebContext.DISPATCH_ATTR, JSP);
         request.setAttribute(INCLUDE_ATTR, uri);
