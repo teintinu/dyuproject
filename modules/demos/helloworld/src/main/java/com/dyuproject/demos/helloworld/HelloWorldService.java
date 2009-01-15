@@ -50,7 +50,7 @@ public class HelloWorldService extends AbstractService
     public void root() throws IOException, ServletException
     {
         RequestContext rc = WebContext.getCurrentRequestContext();
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/helloworld")
@@ -60,7 +60,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "Hello world!");
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getJSPDispatcher().dispatch("helloworld/index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/helloworld")
@@ -70,7 +70,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "This is a POST request");
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getJSPDispatcher().dispatch("helloworld/index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/helloworld/$")
@@ -80,7 +80,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(1));
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getJSPDispatcher().dispatch("helloworld/index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     /* --------- Digest Authentication (See DigestAuthInterceptor) --------- */
@@ -92,7 +92,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "This resource needed authentication ... 30-second expiry. (see DigestAuthInterceptor)");
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getJSPDispatcher().dispatch("helloworld/index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     /* --------- VIEWS (VELOCITY) --------- */
@@ -104,7 +104,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "Hello world!");
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index.vm", rc.getRequest(), rc.getResponse());
+        getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/velocity/helloworld/$")
@@ -114,7 +114,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(2));
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index.vm", rc.getRequest(), rc.getResponse());
+        getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     /* --------- VIEWS (StringTemplate) --------- */
@@ -126,7 +126,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "Hello world!");
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getViewDispatcher("st").dispatch("helloworld/index.st", rc.getRequest(), rc.getResponse());
+        getWebContext().getViewDispatcher("st").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/st/helloworld/$")
@@ -136,7 +136,7 @@ public class HelloWorldService extends AbstractService
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(2));
         rc.getRequest().setAttribute("timestamp", new Date());
-        getWebContext().getViewDispatcher("st").dispatch("helloworld/index.st", rc.getRequest(), rc.getResponse());
+        getWebContext().getViewDispatcher("st").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
     }
     
     /* --------- BROWSER FORM VERBS --------- */
@@ -147,7 +147,7 @@ public class HelloWorldService extends AbstractService
     {
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "add new entity");
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/bean/$/edit")
@@ -156,7 +156,7 @@ public class HelloWorldService extends AbstractService
     {
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "edit bean: " + rc.getPathElement(1));
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/bean/$/delete")
@@ -165,7 +165,7 @@ public class HelloWorldService extends AbstractService
     {
         RequestContext rc = WebContext.getCurrentRequestContext();
         rc.getRequest().setAttribute("message", "delete bean: " + rc.getPathElement(1));
-        getWebContext().getJSPDispatcher().dispatch("index.jsp", rc.getRequest(), rc.getResponse());
+        getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }    
     
     /* --------- INTERCEPTED RESOURCES --------- */

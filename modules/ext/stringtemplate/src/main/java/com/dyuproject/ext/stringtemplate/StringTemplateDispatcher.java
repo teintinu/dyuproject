@@ -41,18 +41,32 @@ public class StringTemplateDispatcher implements ViewDispatcher, StringTemplateE
     
     private static final Log _log = LogFactory.getLog(StringTemplateDispatcher.class);
     
-    private String _baseDir, _fileExtension, _groupName = "root";
+    private boolean _initialized = false;
+    private String _baseDir, _fileExtension, _suffix, _groupName = "root";
     private CustomTemplateGroup _group;
+    
+    public String getFileExtension()
+    {
+        return _fileExtension;
+    }
 
     public void init(WebContext context)
     {
+        if(_initialized)
+            return;
+        
+        _initialized = true;
+        
         if(_baseDir==null)
             _baseDir = DEFAULT_BASE_DIR;
         else if(_baseDir.charAt(_baseDir.length()-1)!='/')
             _baseDir += "/";            
 
         if(_fileExtension==null)
-            _fileExtension = DEFAULT_FILE_EXTENSION;
+        {
+            String fileExtension = context.getProperty("stringtemplate.file_extentsion");
+            _fileExtension = fileExtension==null ? DEFAULT_FILE_EXTENSION : fileExtension;
+        }
         else if(_fileExtension.charAt(0)=='.')
             _fileExtension = _fileExtension.substring(1);
         
@@ -71,14 +85,20 @@ public class StringTemplateDispatcher implements ViewDispatcher, StringTemplateE
         _log.info("fileExtension: " + _fileExtension);    
         _log.info("initialized.");
         
-        _fileExtension = "." + _fileExtension;
+        _suffix = "." + _fileExtension;
     }
     
     public void dispatch(String uri, HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException
     {
-        if(uri.endsWith(_fileExtension))
-            uri = uri.substring(0, uri.length()-_fileExtension.length());
+        if(uri.charAt(0)=='/')
+        {
+            uri = uri.endsWith(_suffix) ? uri.substring(_baseDir.length(), 
+                    uri.length()-_suffix.length()) : uri.substring(_baseDir.length());
+        }
+        else if(uri.endsWith(_suffix))
+            uri = uri.substring(0, uri.length()-_suffix.length());
+        
         CustomTemplate  template = (CustomTemplate)_group.getInstanceOf(uri);
         if(template==null)
             throw new IOException("Template not found.");
