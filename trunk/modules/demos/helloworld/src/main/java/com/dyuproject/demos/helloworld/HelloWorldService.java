@@ -23,9 +23,10 @@ import org.codehaus.jra.Get;
 import org.codehaus.jra.HttpResource;
 import org.codehaus.jra.Post;
 
-import com.dyuproject.web.rest.dispatcher.VelocityDispatcher;
+import com.dyuproject.ext.stringtemplate.StringTemplateDispatcher;
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
+import com.dyuproject.web.rest.dispatcher.VelocityDispatcher;
 import com.dyuproject.web.rest.service.AbstractService;
 
 /**
@@ -39,6 +40,7 @@ public class HelloWorldService extends AbstractService
     protected void init()
     {        
         getWebContext().addViewDispatcher("velocity", new VelocityDispatcher());
+        getWebContext().addViewDispatcher("st", new StringTemplateDispatcher());
     }
     
     /* --------- VIEWS (JSP) --------- */
@@ -113,6 +115,28 @@ public class HelloWorldService extends AbstractService
         rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(2));
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index.vm", rc.getRequest(), rc.getResponse());
+    }
+    
+    /* --------- VIEWS (StringTemplate) --------- */
+    
+    @HttpResource(location="/st/helloworld")
+    @Get
+    public void stHelloworld() throws IOException, ServletException
+    {
+        RequestContext rc = WebContext.getCurrentRequestContext();
+        rc.getRequest().setAttribute("message", "Hello world!");
+        rc.getRequest().setAttribute("timestamp", new Date());
+        getWebContext().getViewDispatcher("st").dispatch("helloworld/index.st", rc.getRequest(), rc.getResponse());
+    }
+    
+    @HttpResource(location="/st/helloworld/$")
+    @Get
+    public void stHelloworldEntity() throws IOException, ServletException
+    {
+        RequestContext rc = WebContext.getCurrentRequestContext();
+        rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(2));
+        rc.getRequest().setAttribute("timestamp", new Date());
+        getWebContext().getViewDispatcher("st").dispatch("helloworld/index.st", rc.getRequest(), rc.getResponse());
     }
     
     /* --------- BROWSER FORM VERBS --------- */
