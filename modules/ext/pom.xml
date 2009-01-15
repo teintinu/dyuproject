@@ -49,8 +49,9 @@
   
   <modules>
     <module>spring-ioc</module>
-    <module>velocity</module>
     <module>jpa</module>
+    <module>velocity</module>
+    <module>stringtemplates</module>
   </modules>
   
 </project>
