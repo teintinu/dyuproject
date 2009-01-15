@@ -133,7 +133,7 @@
     <junit-version>3.8.2</junit-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <spring-version>2.5.4</spring-version>
-    <jetty-version>7.0.0pre3</jetty-version>
+    <jetty-version>7.0.0.pre5</jetty-version>
     <c3p0-version>0.9.1.2</c3p0-version>    
     <ehcache-version>1.5.0-beta1</ehcache-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
@@ -142,7 +142,7 @@
     <hibernate-entitymanager-version>3.3.1.ga</hibernate-entitymanager-version>
     <hibernate-annotations-version>3.3.1.GA</hibernate-annotations-version>
     <velocity-version>1.5</velocity-version>
-    <servlet-api-version>3.0.pre1</servlet-api-version>
+    <servlet-api-version>3.0.pre4</servlet-api-version>
     <jra-version>1.0-alpha-4</jra-version>
   </properties>
   
