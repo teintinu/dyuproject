@@ -66,12 +66,7 @@ public class AnnotatedMethodResource implements Resource
         _service = service;
         _serviceMethod = serviceMethod;
         _httpMethod = httpMethod;
-    }    
-    
-    public AnnotatedMethodResource(Service service, Method serviceMethod, String httpMethod, int len)
-    {
-        this(service, serviceMethod, httpMethod);
-        _len = len;
+        _len = serviceMethod.getParameterTypes().length;;
     }
     
     public void init(WebContext webContext)
