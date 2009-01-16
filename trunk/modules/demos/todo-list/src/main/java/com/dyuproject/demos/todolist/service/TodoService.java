@@ -56,18 +56,15 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos")
     @Get
-    public void get() throws IOException, ServletException
-    {
-        RequestContext rc = getWebContext().getRequestContext();
-        
+    public void get(RequestContext rc) throws IOException, ServletException
+    {        
         dispatchToView(_todoDao.get(), rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/todos/$")
     @Get
-    public void getById() throws IOException, ServletException
+    public void getById(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         
         String id = rc.getPathElement(1);
         Todo todo = _todoDao.get(Long.valueOf(id));
@@ -81,18 +78,16 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/users/$/todos")
     @Get
-    public void getByUserId() throws IOException, ServletException
+    public void getByUserId(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         String id = rc.getPathElement(1);
         dispatchToView(_todoDao.getByUser(Long.valueOf(id)), rc.getRequest(), rc.getResponse());
     }    
     
     @HttpResource(location="/todos/$")
     @Delete
-    public void deleteById() throws IOException, ServletException
+    public void deleteById(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -114,9 +109,8 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos/$")
     @Put
-    public void updateById() throws IOException, ServletException
+    public void updateById(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -159,9 +153,8 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/users/$/todos")
     @Post
-    public void createByUserId() throws IOException, ServletException
+    public void createByUserId(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -209,18 +202,16 @@ public class TodoService extends AbstractService
         
     @HttpResource(location="/todos/$/delete")
     @Get
-    public void verb_delete() throws IOException, ServletException
+    public void verb_delete(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_DELETE);
-        deleteById();
+        deleteById(rc);
     }
     
     @HttpResource(location="/todos/$/edit")
     @Get
-    public void verb_edit() throws IOException, ServletException
+    public void verb_edit(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -237,34 +228,31 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos/$/edit")
     @Post
-    public void form_edit() throws IOException, ServletException
+    public void form_edit(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_EDIT);
-        updateById();
+        updateById(rc);
     }
 
     @HttpResource(location="/users/$/todos/new")
     @Get
-    public void verb_new() throws IOException, ServletException
+    public void verb_new(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
         dispatchToFormView((Todo)null, rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/users/$/todos/new")
     @Post
-    public void form_new() throws IOException, ServletException
+    public void form_new(RequestContext rc) throws IOException, ServletException
     {
-        createByUserId();
+        createByUserId(rc);
     }
     
     @HttpResource(location="/todos/$/complete")
     @Get
-    public void verb_complete() throws IOException, ServletException
+    public void verb_complete(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -292,9 +280,8 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/users/$/todos/completed")
     @Get
-    public void filter_user_completed() throws IOException, ServletException
+    public void filter_user_completed(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         String userId = rc.getPathElement(1);
         dispatchToView(_todoDao.getByUserAndStatus(Long.valueOf(userId), true), rc.getRequest(), 
                 rc.getResponse());
@@ -302,9 +289,8 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/users/$/todos/current")
     @Get
-    public void filter_user_current() throws IOException, ServletException
+    public void filter_user_current(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         String userId = rc.getPathElement(1);
         dispatchToView(_todoDao.getByUserAndStatus(Long.valueOf(userId), false), rc.getRequest(), 
                 rc.getResponse());
@@ -312,17 +298,15 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos/current")
     @Get
-    public void filter_completed() throws IOException, ServletException
+    public void filter_completed(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         dispatchToView(_todoDao.getByStatus(true), rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/todos/current")
     @Get
-    public void filter_current() throws IOException, ServletException
+    public void filter_current(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         dispatchToView(_todoDao.getByStatus(false), rc.getRequest(), rc.getResponse());
     }
     

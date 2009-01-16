@@ -50,18 +50,16 @@ public class MainService extends AbstractService
     
     @HttpResource(location="/")
     @Get
-    public void root() throws IOException, ServletException
+    public void root(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         rc.getResponse().setContentType(Constants.TEXT_HTML);
         getWebContext().getJSPDispatcher().dispatch("index.jsp", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/auth")
     @Post
-    public void auth() throws IOException, ServletException
+    public void auth(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -94,9 +92,8 @@ public class MainService extends AbstractService
     
     @HttpResource(location="/login")
     @Get
-    public void login() throws IOException, ServletException
+    public void login(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -113,19 +110,16 @@ public class MainService extends AbstractService
     
     @HttpResource(location="/logout")
     @Get
-    public void logout() throws IOException
-    {
-        RequestContext rc = getWebContext().getRequestContext();
-        
+    public void logout(RequestContext rc) throws IOException
+    {        
         getWebContext().invalidateSession(rc.getResponse());
         rc.getResponse().sendRedirect(rc.getRequest().getContextPath() + "/overview");
     }
     
     @HttpResource(location="/overview")
     @Get
-    public void overview() throws IOException, ServletException
+    public void overview(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
