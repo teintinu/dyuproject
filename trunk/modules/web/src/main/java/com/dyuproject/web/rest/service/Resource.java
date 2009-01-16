@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
 
 /**
@@ -35,6 +36,6 @@ public interface Resource
     public void init(WebContext webContext);
     public void destroy(WebContext webContext);
     public String getHttpMethod();
-    public void handle() throws ServletException, IOException;    
+    public void handle(RequestContext rc) throws ServletException, IOException;    
 
 }

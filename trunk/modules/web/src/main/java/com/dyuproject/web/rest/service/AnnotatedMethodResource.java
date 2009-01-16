@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
 
 /**
@@ -58,12 +59,19 @@ public class AnnotatedMethodResource implements Resource
     private Service _service;
     private Method _serviceMethod;
     private String _httpMethod;
+    private int _len = 0;
     
     public AnnotatedMethodResource(Service service, Method serviceMethod, String httpMethod)
     {
         _service = service;
         _serviceMethod = serviceMethod;
         _httpMethod = httpMethod;
+    }    
+    
+    public AnnotatedMethodResource(Service service, Method serviceMethod, String httpMethod, int len)
+    {
+        this(service, serviceMethod, httpMethod);
+        _len = len;
     }
     
     public void init(WebContext webContext)
@@ -91,11 +99,11 @@ public class AnnotatedMethodResource implements Resource
         return _httpMethod;
     }
     
-    public void handle() throws ServletException, IOException
+    public void handle(RequestContext rc) throws ServletException, IOException
     {
         try
         {
-            _serviceMethod.invoke(_service, __arg);
+            _serviceMethod.invoke(_service, _len==0 ? __arg : new Object[]{rc});
         } 
         catch (IllegalArgumentException e)
         {            

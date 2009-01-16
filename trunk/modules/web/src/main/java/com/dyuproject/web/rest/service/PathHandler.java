@@ -180,26 +180,25 @@ public class PathHandler
             _log.warn("resource overridden: " + last.getHttpMethod() + " | " + last);
     }
     
-    void resourceHandle() throws ServletException, IOException
+    void resourceHandle(RequestContext rc) throws ServletException, IOException
     {
-        RequestContext requestContext = WebContext.getCurrentRequestContext();
-        Resource resource = _resources.get(requestContext.getRequest().getMethod());
+        Resource resource = _resources.get(rc.getRequest().getMethod());
         if(resource==null)
         {
-            requestContext.getResponse().sendError(405);
+            rc.getResponse().sendError(405);
             return;
         }        
         
         if(_interceptor==null)
         {
-            resource.handle();
+            resource.handle(rc);
             return;
         }
 
         boolean success = false;
         try
         {
-            success = _interceptor.preHandle(requestContext);
+            success = _interceptor.preHandle(rc);
         }
         finally
         {            
@@ -207,15 +206,15 @@ public class PathHandler
             {
                 try
                 {
-                    resource.handle();
+                    resource.handle(rc);
                 }
                 finally
                 {
-                    _interceptor.postHandle(true, requestContext);
+                    _interceptor.postHandle(true, rc);
                 }
             }
             else
-                _interceptor.postHandle(false, requestContext);
+                _interceptor.postHandle(false, rc);
         }      
     }    
     
@@ -356,9 +355,10 @@ public class PathHandler
         return map(0, Delim.SLASH.split(path), resource);
     }
     
-    public void handle(int index, String[] pathInfo) throws ServletException, IOException
+    public void handle(int index, String[] pathInfo, RequestContext rc) 
+    throws ServletException, IOException
     {
-        handle(this, 0, pathInfo);
+        handle(this, 0, pathInfo, rc);
 
         /*String id = pathInfo[index++];
         PathHandler pathHandler = _pathHandlers.get(id);
@@ -377,7 +377,7 @@ public class PathHandler
             pathHandler.handle(index, pathInfo);*/
     }
     
-    static void handle(PathHandler parentHandler, int index, String[] pathInfo) 
+    static void handle(PathHandler parentHandler, int index, String[] pathInfo, RequestContext rc) 
     throws ServletException, IOException
     {
         String id = pathInfo[index++];
@@ -387,14 +387,14 @@ public class PathHandler
             if(parentHandler._parameterHandler==null)
                 WebContext.getCurrentRequestContext().getResponse().sendError(404);
             else if(index==pathInfo.length)
-                parentHandler._parameterHandler.resourceHandle();
+                parentHandler._parameterHandler.resourceHandle(rc);
             else
-                handle(parentHandler._parameterHandler, index, pathInfo);            
+                handle(parentHandler._parameterHandler, index, pathInfo, rc);            
         }
         else if(index==pathInfo.length)
-            pathHandler.resourceHandle();
+            pathHandler.resourceHandle(rc);
         else
-            handle(pathHandler, index, pathInfo);
+            handle(pathHandler, index, pathInfo, rc);
     }
 
 }
