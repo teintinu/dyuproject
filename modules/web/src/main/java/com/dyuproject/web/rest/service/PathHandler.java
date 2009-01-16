@@ -133,14 +133,14 @@ public class PathHandler
         {
             if(ph._interceptor==null)
                 ph._interceptor = i;
-            else if(ph._interceptor instanceof ResourceInterceptor)
-                ((ResourceInterceptor)ph._interceptor).addInterceptor(i);
+            else if(ph._interceptor instanceof InterceptorCollection)
+                ((InterceptorCollection)ph._interceptor).addInterceptor(i);
             else
             {
-                ResourceInterceptor ci = new ResourceInterceptor();
-                ci.addInterceptor(ph._interceptor);
-                ci.addInterceptor(i);
-                ph._interceptor = ci;
+                InterceptorCollection ic = new InterceptorCollection();
+                ic.addInterceptor(ph._interceptor);
+                ic.addInterceptor(i);
+                ph._interceptor = ic;
             }
         }
     }
@@ -395,12 +395,6 @@ public class PathHandler
             pathHandler.resourceHandle();
         else
             handle(pathHandler, index, pathInfo);
-    }
-    
-    // for multiple interceptors mapped in PathHandler
-    private static class ResourceInterceptor extends InterceptorCollection
-    {
-        
     }
 
 }
