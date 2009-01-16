@@ -25,7 +25,6 @@ import org.codehaus.jra.Post;
 
 import com.dyuproject.ext.stringtemplate.StringTemplateDispatcher;
 import com.dyuproject.web.rest.RequestContext;
-import com.dyuproject.web.rest.WebContext;
 import com.dyuproject.web.rest.dispatcher.VelocityDispatcher;
 import com.dyuproject.web.rest.service.AbstractService;
 
@@ -47,17 +46,15 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/")
     @Get
-    public void root() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void root(RequestContext rc) throws IOException, ServletException
+    {        
         getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/helloworld")
     @Get
-    public void helloworld() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void helloworld(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "Hello world!");
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -65,9 +62,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/helloworld")
     @Post
-    public void helloworldPost() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void helloworldPost(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "This is a POST request");
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -75,9 +71,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/helloworld/$")
     @Get
-    public void helloworldEntity() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void helloworldEntity(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(1));
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -87,9 +82,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/helloworld/protected")
     @Get
-    public void helloworldProtected() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void helloworldProtected(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "This resource needed authentication ... 30-second expiry. (see DigestAuthInterceptor)");
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getJSPDispatcher().dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -99,9 +93,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/velocity/helloworld")
     @Get
-    public void velocityHelloworld() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void velocityHelloworld(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "Hello world!");
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -109,9 +102,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/velocity/helloworld/$")
     @Get
-    public void velocityHelloworldEntity() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void velocityHelloworldEntity(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(2));
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getViewDispatcher("velocity").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -121,9 +113,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/st/helloworld")
     @Get
-    public void stHelloworld() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void stHelloworld(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "Hello world!");
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getViewDispatcher("st").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -131,9 +122,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/st/helloworld/$")
     @Get
-    public void stHelloworldEntity() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void stHelloworldEntity(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "get entity: " + rc.getPathElement(2));
         rc.getRequest().setAttribute("timestamp", new Date());
         getWebContext().getViewDispatcher("st").dispatch("helloworld/index", rc.getRequest(), rc.getResponse());
@@ -143,27 +133,24 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/bean/new")
     @Get
-    public void beanCreate() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void beanCreate(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "add new entity");
         getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/bean/$/edit")
     @Get
-    public void beanUpdate() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void beanUpdate(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "edit bean: " + rc.getPathElement(1));
         getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/bean/$/delete")
     @Get
-    public void beanDelete() throws IOException, ServletException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void beanDelete(RequestContext rc) throws IOException, ServletException
+    {        
         rc.getRequest().setAttribute("message", "delete bean: " + rc.getPathElement(1));
         getWebContext().getJSPDispatcher().dispatch("index", rc.getRequest(), rc.getResponse());
     }    
@@ -173,9 +160,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/foo")
     @Get
-    public void foo() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void foo(RequestContext rc) throws IOException
+    {        
         rc.getResponse().setContentType("text/plain");
         rc.getResponse().getOutputStream().print("foo intercepted? See println output.");
         System.err.print("  foo\n");
@@ -183,9 +169,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/foo/bar")
     @Get
-    public void fooBar() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void fooBar(RequestContext rc) throws IOException
+    {        
         rc.getResponse().setContentType("text/plain");        
         rc.getResponse().getOutputStream().print("foo bar intercepted? See println output.");
         System.err.print("  foo bar\n");
@@ -193,9 +178,8 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/foo/bar/baz")
     @Get
-    public void fooBarBaz() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void fooBarBaz(RequestContext rc) throws IOException
+    {        
         rc.getResponse().setContentType("text/plain");
         rc.getResponse().getOutputStream().print("foo bar baz intercepted? See println output.");
         System.err.print("  foo bar baz\n");
@@ -205,36 +189,32 @@ public class HelloWorldService extends AbstractService
     
     @HttpResource(location="/hello")
     @Get
-    public void hello() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void hello(RequestContext rc) throws IOException
+    {        
         rc.getResponse().setContentType("text/plain");
         rc.getResponse().getOutputStream().print("hello!");
     }
     
     @HttpResource(location="/hello/$")
     @Get
-    public void helloStranger() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void helloStranger(RequestContext rc) throws IOException
+    {        
         rc.getResponse().setContentType("text/plain");
         rc.getResponse().getOutputStream().print("hello " + rc.getPathElement(1) + "!");
     }
     
     @HttpResource(location="/hello/$/world")
     @Get
-    public void helloStrangerWorld() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void helloStrangerWorld(RequestContext rc) throws IOException
+    {        
         rc.getResponse().setContentType("text/plain");
         rc.getResponse().getOutputStream().print("hello " + rc.getPathElement(1) + " world!");
     }
     
     @HttpResource(location="/hello/sexy/$")
     @Get
-    public void helloSexyStranger() throws IOException
-    {
-        RequestContext rc = WebContext.getCurrentRequestContext();
+    public void helloSexyStranger(RequestContext rc) throws IOException
+    {        
         rc.getResponse().setContentType("text/plain");
         rc.getResponse().getOutputStream().print("hello sexy " + rc.getPathElement(2) + "!");
     }
