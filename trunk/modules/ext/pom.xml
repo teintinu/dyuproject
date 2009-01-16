@@ -51,7 +51,7 @@
     <module>spring-ioc</module>
     <module>jpa</module>
     <module>velocity</module>
-    <module>stringtemplates</module>
+    <module>stringtemplate</module>
   </modules>
   
 </project>
