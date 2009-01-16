@@ -172,7 +172,7 @@ public class RESTServiceContext extends WebContext
     {        
         for(Method m : service.getClass().getMethods())
         {
-            if(Modifier.isStatic(m.getModifiers()))
+            if(Modifier.isStatic(m.getModifiers()) || m.getDeclaringClass()==Object.class)
                 continue;
             String location = null;
             String httpMethod = null;
