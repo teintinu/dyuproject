@@ -17,6 +17,7 @@ package com.dyuproject.web.rest.service;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -169,8 +170,10 @@ public class RESTServiceContext extends WebContext
     
     private void initService(Service service)
     {        
-        for(Method m : service.getClass().getDeclaredMethods())
+        for(Method m : service.getClass().getMethods())
         {
+            if(Modifier.isStatic(m.getModifiers()))
+                continue;
             String location = null;
             String httpMethod = null;
             Annotation[] annotations = m.getDeclaredAnnotations();
@@ -202,14 +205,15 @@ public class RESTServiceContext extends WebContext
                 continue;
             }
             
-            if(m.getParameterTypes().length!=0)
+            int len = m.getParameterTypes().length;
+            if(len==0 || (len==1 && RequestContext.class.isAssignableFrom(m.getParameterTypes()[0])))
             {
-                _log.warn(location + " not mapped.  Annotated method must have no args.");
+                m.setAccessible(true);            
+                mapResource(location, new AnnotatedMethodResource(service, m, httpMethod));
                 continue;
             }
-            
-            m.setAccessible(true);            
-            mapResource(location, new AnnotatedMethodResource(service, m, httpMethod));
+
+            _log.warn(location + " not mapped.  THe annotated method's only argument must be RequestContext or can also have no args.");
         }
         service.init(this);
     }
@@ -266,13 +270,13 @@ public class RESTServiceContext extends WebContext
     protected void handleRoot(RequestContext requestContext)
             throws ServletException, IOException
     {
-        _pathHandler.resourceHandle();
+        _pathHandler.resourceHandle(requestContext);
     }
 
     protected void handlePath(RequestContext requestContext)
             throws ServletException, IOException
     {
-        _pathHandler.handle(0, requestContext.getPathInfo());        
+        _pathHandler.handle(0, requestContext.getPathInfo(), requestContext);        
     }
 
 }
