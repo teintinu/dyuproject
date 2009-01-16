@@ -1,5 +1,6 @@
 dyuproject-1.1-SNAPSHOT
-+
++ add StringTemplate as alternative view
++ support common uri for all view dispatchers
 
 dyuproject-1.1.1 2009-01-14
 + RelyingParty event listeners for the authentication lifecycle
