@@ -355,26 +355,10 @@ public class PathHandler
         return map(0, Delim.SLASH.split(path), resource);
     }
     
-    public void handle(int index, String[] pathInfo, RequestContext rc) 
+    public void handle(String[] pathInfo, RequestContext rc) 
     throws ServletException, IOException
     {
         handle(this, 0, pathInfo, rc);
-
-        /*String id = pathInfo[index++];
-        PathHandler pathHandler = _pathHandlers.get(id);
-        if(pathHandler==null)
-        {
-            if(_parameterHandler==null)
-                WebContext.getCurrentRequestContext().getResponse().sendError(404);
-            else if(index==pathInfo.length)
-                _parameterHandler.resourceHandle();
-            else
-                _parameterHandler.handle(index, pathInfo);            
-        }
-        else if(index==pathInfo.length)
-            pathHandler.resourceHandle();
-        else
-            pathHandler.handle(index, pathInfo);*/
     }
     
     static void handle(PathHandler parentHandler, int index, String[] pathInfo, RequestContext rc) 
