@@ -18,6 +18,8 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import com.dyuproject.util.ArrayUtil;
+
 
 /**
  * Wraps an arry of interceptors and does the handle chain.
@@ -36,11 +38,16 @@ public class InterceptorCollection extends AbstractInterceptor
         if(interceptor==null || indexOf(interceptor)!=-1)
             return this;
         
-        Interceptor[] oldInterceptors = _interceptors;
-        Interceptor[] interceptors = new Interceptor[oldInterceptors.length+1];
-        System.arraycopy(oldInterceptors, 0, interceptors, 0, oldInterceptors.length);
-        interceptors[oldInterceptors.length] = interceptor;
-        _interceptors = interceptors;
+        synchronized(this)
+        {
+            if(interceptor instanceof InterceptorCollection)
+            {
+                _interceptors = (Interceptor[])ArrayUtil.append(_interceptors, 
+                        ((InterceptorCollection)interceptor).getInterceptors());
+            }
+            else
+                _interceptors = (Interceptor[])ArrayUtil.append(_interceptors, interceptor);
+        }
         
         return this;
     }

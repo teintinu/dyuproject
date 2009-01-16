@@ -48,7 +48,7 @@ public class PathHandler
     public static boolean isPathParameter(String id)
     {
         char first = id.charAt(0);
-        return first=='{' || first=='$';
+        return first=='$' || first=='{';
     }
     
     private String _id;
@@ -133,11 +133,11 @@ public class PathHandler
         {
             if(ph._interceptor==null)
                 ph._interceptor = i;
-            else if(ph._interceptor instanceof ConfiguredInterceptor)
-                ((ConfiguredInterceptor)ph._interceptor).addInterceptor(i);
+            else if(ph._interceptor instanceof ResourceInterceptor)
+                ((ResourceInterceptor)ph._interceptor).addInterceptor(i);
             else
             {
-                ConfiguredInterceptor ci = new ConfiguredInterceptor();
+                ResourceInterceptor ci = new ResourceInterceptor();
                 ci.addInterceptor(ph._interceptor);
                 ci.addInterceptor(i);
                 ph._interceptor = ci;
@@ -152,10 +152,18 @@ public class PathHandler
     
     void addMappedInterceptor(Interceptor interceptor, int wildcard)
     {
-        if(_mappedInterceptors[wildcard]!=null)
-            _log.warn("interceptor overriden: " + _mappedInterceptors[wildcard]);
-                
-        _mappedInterceptors[wildcard] = interceptor;        
+        Interceptor existing = _mappedInterceptors[wildcard];
+        if(existing==null)
+            _mappedInterceptors[wildcard] = interceptor;
+        else if(existing instanceof InterceptorCollection)
+            ((InterceptorCollection)existing).addInterceptor(interceptor);
+        else
+        {
+            InterceptorCollection ic = new InterceptorCollection();
+            ic.addInterceptor(existing);
+            ic.addInterceptor(interceptor);
+            _mappedInterceptors[wildcard] = ic;
+        }        
     }
     
     void addPathHandler(PathHandler child)
@@ -390,7 +398,7 @@ public class PathHandler
     }
     
     // for multiple interceptors mapped in PathHandler
-    private static class ConfiguredInterceptor extends InterceptorCollection
+    private static class ResourceInterceptor extends InterceptorCollection
     {
         
     }
