@@ -1,0 +1,7 @@
+
+StringTemplate - licensed under BSD license and is Copyright (c) 2003-2008 Terence Parr (http://stringtemplate.org)
+
+Spring IOC - licensed under Apache License Version 2.0 (http://springframework.org)
+
+Velocity - licensed under Apache License Version 2.0 (http://velocity.apache.org)
+
