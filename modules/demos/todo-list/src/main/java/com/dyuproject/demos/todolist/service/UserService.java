@@ -61,17 +61,15 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users")
     @Get
-    public void get() throws IOException, ServletException
+    public void get(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         dispatchToView(_userDao.get(), rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/users/$")
     @Get
-    public void getById() throws IOException, ServletException
+    public void getById(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         String id = rc.getPathElement(1);
         User user = _userDao.get(Long.valueOf(id));
         if(user==null)
@@ -84,9 +82,8 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users/$")
     @Delete
-    public void deleteById() throws IOException, ServletException
+    public void deleteById(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -108,9 +105,8 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users/$")
     @Put
-    public void updateById() throws IOException, ServletException
+    public void updateById(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -165,9 +161,8 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users")
     @Post
-    public void create() throws IOException, ServletException
+    public void create(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -226,18 +221,16 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users/$/delete")
     @Get
-    public void verb_delete() throws IOException, ServletException
+    public void verb_delete(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_DELETE);
-        deleteById();
+        deleteById(rc);
     }
     
     @HttpResource(location="/users/$/edit")
     @Get
-    public void verb_edit() throws IOException, ServletException
+    public void verb_edit(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
@@ -253,34 +246,31 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users/$/edit")
     @Post
-    public void form_edit() throws IOException, ServletException
+    public void form_edit(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_EDIT);
-        updateById();  
+        updateById(rc);  
     }
     
     @HttpResource(location="/users/new")
     @Get
-    public void verb_create() throws IOException, ServletException
+    public void verb_create(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
         dispatchToFormView((User)null, rc.getRequest(), rc.getResponse());
     }
     
     @HttpResource(location="/users/new")
     @Post
-    public void form_create() throws IOException, ServletException
+    public void form_create(RequestContext rc) throws IOException, ServletException
     {
-        create();
+        create(rc);
     }
     
     @HttpResource(location="/users/$/change_password")
     @Post
-    public void verb_change_password() throws IOException, ServletException
+    public void verb_change_password(RequestContext rc) throws IOException, ServletException
     {
-        RequestContext rc = getWebContext().getRequestContext();
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
