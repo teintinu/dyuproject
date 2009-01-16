@@ -200,11 +200,14 @@ public class Identifier implements Serializable
             if(resolver==null || indexOf(resolver)!=-1)
                 return this;
             
-            Resolver[] oldResolvers = _resolvers;
-            Resolver[] resolvers = new Resolver[oldResolvers.length+1];
-            System.arraycopy(oldResolvers, 0, resolvers, 0, oldResolvers.length);
-            resolvers[oldResolvers.length] = resolver;
-            _resolvers = resolvers;
+            synchronized(this)
+            {
+                Resolver[] oldResolvers = _resolvers;
+                Resolver[] resolvers = new Resolver[oldResolvers.length+1];
+                System.arraycopy(oldResolvers, 0, resolvers, 0, oldResolvers.length);
+                resolvers[oldResolvers.length] = resolver;
+                _resolvers = resolvers;
+            }
             
             return this;
         }

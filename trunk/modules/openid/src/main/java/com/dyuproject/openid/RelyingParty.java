@@ -433,11 +433,14 @@ public class RelyingParty
             if(listener==null || indexOf(listener)!=-1)
                 return this;
             
-            Listener[] oldListeners = _listeners;
-            Listener[] listeners = new Listener[oldListeners.length+1];
-            System.arraycopy(oldListeners, 0, listeners, 0, oldListeners.length);
-            listeners[oldListeners.length] = listener;
-            _listeners = listeners;
+            synchronized(this)
+            {
+                Listener[] oldListeners = _listeners;
+                Listener[] listeners = new Listener[oldListeners.length+1];
+                System.arraycopy(oldListeners, 0, listeners, 0, oldListeners.length);
+                listeners[oldListeners.length] = listener;
+                _listeners = listeners;
+            }
             
             return this;
         }
