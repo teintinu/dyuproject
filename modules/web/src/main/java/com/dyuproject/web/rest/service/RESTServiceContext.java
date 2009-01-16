@@ -276,7 +276,7 @@ public class RESTServiceContext extends WebContext
     protected void handlePath(RequestContext requestContext)
             throws ServletException, IOException
     {
-        _pathHandler.handle(0, requestContext.getPathInfo(), requestContext);        
+        _pathHandler.handle(requestContext.getPathInfo(), requestContext);        
     }
 
 }
