@@ -1,6 +1,7 @@
 dyuproject-1.1-SNAPSHOT
 + REST Service annotated methods can now have an optional argument(RequestContext)
 + refactor REST handlers to have RequestContext as argument
++ fixed the issue where the annotated methods that are inherited are not invoked.
 + add StringTemplate as alternative view
 + support common uri for all view dispatchers
 
