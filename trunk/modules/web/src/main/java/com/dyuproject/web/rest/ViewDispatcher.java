@@ -28,10 +28,8 @@ import javax.servlet.http.HttpServletResponse;
  * @created May 16, 2008
  */
 
-public interface ViewDispatcher
+public interface ViewDispatcher extends LifeCycle
 {
-    
-    public void init(WebContext context);
     
     public void dispatch(String uri, HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException;

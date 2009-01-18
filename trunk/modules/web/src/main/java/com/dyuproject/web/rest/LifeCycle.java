@@ -1,5 +1,5 @@
 //========================================================================
-//Copyright 2007-2008 David Yu dyuproject@gmail.com
+//Copyright 2007-2009 David Yu dyuproject@gmail.com
 //------------------------------------------------------------------------
 //Licensed under the Apache License, Version 2.0 (the "License");
 //you may not use this file except in compliance with the License.
@@ -12,19 +12,17 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.rest.service;
-
-import com.dyuproject.web.rest.AbstractLifeCycle;
+package com.dyuproject.web.rest;
 
 /**
- * Base service to handle requests. A helper class.
- * 
  * @author David Yu
- * @created Dec 4, 2008
+ * @created Jan 18, 2009
  */
 
-public abstract class AbstractService extends AbstractLifeCycle implements Service
+public interface LifeCycle
 {
-
+    
+    public void init(WebContext webContext);
+    public void destroy(WebContext webContext);
 
 }

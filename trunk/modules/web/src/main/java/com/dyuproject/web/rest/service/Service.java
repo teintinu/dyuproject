@@ -14,7 +14,7 @@
 
 package com.dyuproject.web.rest.service;
 
-import com.dyuproject.web.rest.WebContext;
+import com.dyuproject.web.rest.LifeCycle;
 
 /**
  * A bean which contain annotated methods w/c will be a REST resource.
@@ -23,10 +23,7 @@ import com.dyuproject.web.rest.WebContext;
  * @created Dec 4, 2008
  */
 
-public interface Service
+public interface Service extends LifeCycle
 {
-    
-    public void init(WebContext context);
-    public void destroy(WebContext context);
 
 }
