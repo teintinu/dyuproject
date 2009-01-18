@@ -26,7 +26,7 @@ import javax.servlet.ServletException;
  * @created Dec 4, 2008
  */
 
-public class WrapperInterceptor extends AbstractInterceptor
+public class WrapperInterceptor extends AbstractLifeCycle implements Interceptor
 {
     
     private Interceptor _interceptor;

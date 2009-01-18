@@ -27,11 +27,8 @@ import javax.servlet.ServletException;
  * @created May 18, 2008
  */
 
-public interface Interceptor
+public interface Interceptor extends LifeCycle
 {
-    
-    public void init(WebContext webContext);
-    public void destroy(WebContext webContext);
     
     public boolean preHandle(RequestContext requestContext)
     throws ServletException, IOException; 

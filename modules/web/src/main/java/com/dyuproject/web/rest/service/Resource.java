@@ -18,8 +18,8 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import com.dyuproject.web.rest.LifeCycle;
 import com.dyuproject.web.rest.RequestContext;
-import com.dyuproject.web.rest.WebContext;
 
 /**
  * The REST resource.
@@ -28,13 +28,11 @@ import com.dyuproject.web.rest.WebContext;
  * @created Dec 6, 2008
  */
 
-public interface Resource
+public interface Resource extends LifeCycle
 {
     
     public static final String GET = "GET", POST = "POST", PUT = "PUT", DELETE = "DELETE";
-    
-    public void init(WebContext webContext);
-    public void destroy(WebContext webContext);
+
     public String getHttpMethod();
     public void handle(RequestContext rc) throws ServletException, IOException;    
 

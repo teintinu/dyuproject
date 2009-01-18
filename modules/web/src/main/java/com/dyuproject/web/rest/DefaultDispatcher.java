@@ -32,20 +32,17 @@ import org.apache.commons.logging.LogFactory;
  * @created May 16, 2008
  */
 
-public class DefaultDispatcher implements ViewDispatcher
+public class DefaultDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {
     
-    private static final Log log = LogFactory.getLog(DefaultDispatcher.class);
+    private static final Log _log = LogFactory.getLog(DefaultDispatcher.class);
     
     RequestDispatcher _default;
     
-    public void init(WebContext context)
+    protected void init()
     {
-        if(_default==null)
-        {
-            _default = context.getServletContext().getNamedDispatcher("default");
-            log.info("initialized.");
-        }        
+        _default = getWebContext().getServletContext().getNamedDispatcher("default");
+        _log.info("initialized.");   
     }
 
     public void dispatch(String uri, HttpServletRequest request,

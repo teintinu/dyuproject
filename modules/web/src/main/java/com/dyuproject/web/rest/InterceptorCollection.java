@@ -28,7 +28,7 @@ import com.dyuproject.util.ArrayUtil;
  * @created May 18, 2008
  */
 
-public class InterceptorCollection extends AbstractInterceptor
+public class InterceptorCollection extends AbstractLifeCycle implements Interceptor
 {
     
     private Interceptor[] _interceptors = new Interceptor[]{};

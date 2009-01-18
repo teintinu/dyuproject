@@ -1,5 +1,5 @@
 //========================================================================
-//Copyright 2007-2008 David Yu dyuproject@gmail.com
+//Copyright 2007-2009 David Yu dyuproject@gmail.com
 //------------------------------------------------------------------------
 //Licensed under the Apache License, Version 2.0 (the "License");
 //you may not use this file except in compliance with the License.
@@ -12,20 +12,16 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.rest.service;
-
-import com.dyuproject.web.rest.WebContext;
+package com.dyuproject.web.rest;
 
 /**
- * Base resource to handle requests
- * 
  * @author David Yu
- * @created Dec 6, 2008
+ * @created Jan 18, 2009
  */
 
-public abstract class AbstractResource implements Resource
+public abstract class AbstractLifeCycle implements LifeCycle
 {
-    
+
     private boolean _initialized = false, _destroyed = false;
     private WebContext _webContext;    
     
@@ -39,7 +35,15 @@ public abstract class AbstractResource implements Resource
         init();
     }
     
+    public boolean isInitialized()
+    {
+        return _initialized;
+    }
     
+    public boolean isDestroyed()
+    {
+        return _destroyed;
+    }
     
     public final void destroy(WebContext webContext)
     {
@@ -57,6 +61,6 @@ public abstract class AbstractResource implements Resource
     public WebContext getWebContext()
     {
         return _webContext;
-    }  
+    }
 
 }

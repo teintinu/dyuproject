@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @created May 16, 2008
  */
 
-public class JSPDispatcher implements ViewDispatcher
+public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {    
      
     public static final String JSP = JSPDispatcher.class.getName();
@@ -52,7 +52,7 @@ public class JSPDispatcher implements ViewDispatcher
         return _fileExtension;
     }
     
-    public void init(WebContext context)
+    protected void init()
     {
         if(_initialized)
             return;
@@ -66,16 +66,16 @@ public class JSPDispatcher implements ViewDispatcher
         
         if(_fileExtension==null)
         {
-            String fileExtension = context.getProperty("jsp.file_extentsion");
+            String fileExtension = getWebContext().getProperty("jsp.file_extentsion");
             _fileExtension = fileExtension==null ? DEFAULT_FILE_EXTENSION : fileExtension;
         }
         else if(_fileExtension.charAt(0)=='.')
             _fileExtension = _fileExtension.substring(1);
         
         if(_jsp==null)
-            _jsp = context.getServletContext().getNamedDispatcher(_fileExtension);
+            _jsp = getWebContext().getServletContext().getNamedDispatcher(_fileExtension);
         
-        _jetty = context.getServletContext().getClass().getName().startsWith("org.mortbay.jetty");
+        _jetty = getWebContext().getServletContext().getClass().getName().startsWith("org.mortbay.jetty");
         
         _log.info("baseDir: " + _baseDir);
         _log.info("fileExtension: " + _fileExtension);    
