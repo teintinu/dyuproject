@@ -15,17 +15,35 @@
 package com.dyuproject.web.rest;
 
 import java.io.IOException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
+
 
 /**
  * @author David Yu
  * @created Jan 14, 2009
  */
 
-public interface Validator
-{
+public interface ValidatingConsumer extends LifeCycle
+{    
+
+    public static final String ERROR_MSG_KEY = "errorMsg";
+    public static final String OUTPUT_KEY = "output";
     
-    public boolean validate(RequestContext requestContext) throws ServletException, IOException;
+    public static final String CONSUMER_OUTPUT_TYPE = "consumer.output.type";
+    public static final String CONSUMER_VALIDATION_DISPATCHER_NAME = "consumer.validation.dispatcher_name";
+    public static final String CONSUMER_VALIDATION_DISPATCH_URI = "consumer.validation.dispatch_uri";
+    
+    public void init(Class<?> pojoClass, Map<?,?> initParams);
+    public String getRequestContentType();
+    public boolean consume(RequestContext requestContext) throws ServletException, IOException;
+    
+    public interface FieldValidator
+    {
+        
+        public String getErrorMsg(Object value);
+        
+    }
 
 }
