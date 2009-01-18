@@ -38,7 +38,10 @@ public abstract class AbstractInterceptor implements Interceptor
         init();
     }
     
-    
+    public boolean isInitialized()
+    {
+        return _initialized;
+    }
     
     public final void destroy(WebContext webContext)
     {
