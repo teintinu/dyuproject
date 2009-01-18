@@ -43,7 +43,7 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
     
     private static final Log _log = LogFactory.getLog(JSPDispatcher.class);
     
-    private boolean _initialized = false, _jetty = false;
+    private boolean _jetty = false;
     private String _baseDir, _fileExtension, _suffix;
     RequestDispatcher _jsp;
     
@@ -53,12 +53,7 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
     }
     
     protected void init()
-    {
-        if(_initialized)
-            return;
-        
-        _initialized = true;
-        
+    {        
         if(_baseDir==null)
             _baseDir = DEFAULT_BASE_DIR;
         else if(_baseDir.charAt(_baseDir.length()-1)!='/')
@@ -109,7 +104,7 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
     
     public void setBaseDir(String baseDir)
     {
-        if(_initialized)
+        if(isInitialized())
             throw new IllegalStateException("already initialized");
         
         _baseDir = baseDir;
