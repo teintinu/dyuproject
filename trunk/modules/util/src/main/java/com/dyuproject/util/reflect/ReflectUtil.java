@@ -29,26 +29,28 @@ import java.util.Map;
 
 public abstract class ReflectUtil
 {    
-    private static final String GET = "get";
-    private static final String IS = "is";
-    private static final String SET = "set";
-    private static final int ROOT_OBJECT = "java.lang.Object".hashCode();
+    static final String GET = "get";
+    static final String IS = "is";
+    static final String SET = "set";
 
-    public static Map<String,Method> getGetterMethods(Class<?> beanClass) 
+    public static Map<String,Method> getGetterMethods(Class<?> pojoClass) 
     {
         HashMap<String,Method> methods = new HashMap<String,Method>();
-        fillGetterMethods(beanClass, methods);
+        fillGetterMethods(pojoClass, methods);
         return methods;
     }
     
-    private static void fillGetterMethods(Class<?> beanClass, Map<String,Method> baseMap) 
+    private static void fillGetterMethods(Class<?> pojoClass, Map<String,Method> baseMap) 
     {
-        Method[] methods = beanClass.getMethods();
+        if(pojoClass.getSuperclass()!=Object.class)
+            fillGetterMethods(pojoClass.getSuperclass(), baseMap);
+
+        Method[] methods = pojoClass.getDeclaredMethods();
         for (int i=0;i<methods.length;i++)
         {
             Method m=methods[i];
-            if (!Modifier.isStatic(m.getModifiers()) && m.getDeclaringClass()!=Object.class 
-                    && m.getParameterTypes().length==0 && m.getReturnType()!=null)
+            if (!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==0 && 
+                    m.getReturnType()!=null)
             {
                 String name=m.getName();
                 if (name.startsWith(IS))
@@ -61,32 +63,34 @@ public abstract class ReflectUtil
 
 
 
-    public static Map<String,Method> getSetterMethods(Class<?> beanClass) 
+    public static Map<String,Method> getSetterMethods(Class<?> pojoClass) 
     {
         HashMap<String,Method> methods = new HashMap<String,Method>();
-        fillSetterMethods(beanClass, methods);
+        fillSetterMethods(pojoClass, methods);
         return methods;
     }
     
-    private static void fillSetterMethods(Class<?> beanClass, Map<String,Method> baseMap) 
+    private static void fillSetterMethods(Class<?> pojoClass, Map<String,Method> baseMap) 
     {
-        Method[] methods = beanClass.getMethods();
+        if(pojoClass.getSuperclass()!=Object.class)
+            fillSetterMethods(pojoClass.getSuperclass(), baseMap);
+        
+        Method[] methods = pojoClass.getDeclaredMethods();
         for(int i=0; i<methods.length; i++)
         {
             Method m = methods[i];
-            if(!Modifier.isStatic(m.getModifiers()) && m.getDeclaringClass()!=Object.class 
-                    && m.getParameterTypes().length==1 && m.getName().startsWith(SET))
+            if(!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==1 && 
+                    m.getName().startsWith(SET))
             {
                 baseMap.put(toProperty(SET.length(), m.getName()), m);
             }
         }
-    }    
-
+    }
     
-    public static String toProperty(int start, String name)
+    public static String toProperty(int start, String methodName)
     {
-        char[] prop = new char[name.length()-start];
-        name.getChars(start, name.length(), prop, 0);
+        char[] prop = new char[methodName.length()-start];
+        methodName.getChars(start, methodName.length(), prop, 0);
         int firstLetter = prop[0];
         prop[0] = (char)(firstLetter<91 ? firstLetter + 32 : firstLetter);
         return new String(prop);

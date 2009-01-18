@@ -14,6 +14,8 @@
 
 package com.dyuproject.util.reflect;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +32,7 @@ public abstract class ParameterType
     private static final Map<Class<?>, ParameterType> __simpleTypes = new HashMap<Class<?>, ParameterType>();
     
     public static final ParameterType STRING = new ParameterType(){
-        public Object create(String value)
+        public Object getActualValue(String value)
         {
             return value;
         }
@@ -41,7 +43,7 @@ public abstract class ParameterType
     };
     
     public static final ParameterType BOOLEAN = new ParameterType(){
-        public Object create(String value)
+        public Object getActualValue(String value)
         {
             return new Boolean(value);
         }
@@ -52,7 +54,7 @@ public abstract class ParameterType
     };    
     
     public static final ParameterType SHORT = new ParameterType(){
-        public Object create(String value)
+        public Object getActualValue(String value)
         {
             return new Short(value);
         }
@@ -63,7 +65,7 @@ public abstract class ParameterType
     };
     
     public static final ParameterType INTEGER = new ParameterType(){
-        public Object create(String value)
+        public Object getActualValue(String value)
         {
             return new Integer(value);
         }
@@ -71,14 +73,10 @@ public abstract class ParameterType
         {
             return Integer.class;
         }
-        public Object create(Object value)
-        {
-            return value instanceof Integer ? value : new Integer(((Number)value).intValue());
-        }
     };
     
     public static final ParameterType LONG = new ParameterType(){
-        public Object create(String value)
+        public Object getActualValue(String value)
         {
             return new Long(value);
         }
@@ -86,14 +84,10 @@ public abstract class ParameterType
         {
             return Long.class;
         }
-        public Object create(Object value)
-        {
-            return value instanceof Long ? value : new Long(((Number)value).longValue());
-        }
     };
     
     public static final ParameterType FLOAT = new ParameterType(){
-        public Object create(String value)
+        public Object getActualValue(String value)
         {
             return new Float(value);
         }
@@ -104,7 +98,7 @@ public abstract class ParameterType
     };
     
     public static final ParameterType DOUBLE = new ParameterType(){
-        public Object create(String value)
+        public Object getActualValue(String value)
         {
             return new Double(value);
         }
@@ -116,27 +110,58 @@ public abstract class ParameterType
     
     static
     {
-        __simpleTypes.put(String.class, STRING);
-        __simpleTypes.put(Boolean.class, BOOLEAN);
-        __simpleTypes.put(Boolean.TYPE, BOOLEAN);
-        __simpleTypes.put(Short.class, SHORT);
-        __simpleTypes.put(Short.TYPE, SHORT);
-        __simpleTypes.put(Integer.class, INTEGER);
-        __simpleTypes.put(Integer.TYPE, INTEGER);
-        __simpleTypes.put(Long.class, LONG);
-        __simpleTypes.put(Long.TYPE, LONG);
-        __simpleTypes.put(Float.class, FLOAT);
-        __simpleTypes.put(Float.TYPE, FLOAT);
-        __simpleTypes.put(Double.class, DOUBLE);
-        __simpleTypes.put(Double.TYPE, DOUBLE);
-    }   
+        fillWithSimpleType(__simpleTypes);
+    }
+    
+    public static void fillWithSimpleType(Map<Class<?>, ParameterType> map)
+    {
+        map.put(String.class, STRING);
+        map.put(Boolean.class, BOOLEAN);
+        map.put(Boolean.TYPE, BOOLEAN);
+        map.put(Short.class, SHORT);
+        map.put(Short.TYPE, SHORT);
+        map.put(Integer.class, INTEGER);
+        map.put(Integer.TYPE, INTEGER);
+        map.put(Long.class, LONG);
+        map.put(Long.TYPE, LONG);
+        map.put(Float.class, FLOAT);
+        map.put(Float.TYPE, FLOAT);
+        map.put(Double.class, DOUBLE);
+        map.put(Double.TYPE, DOUBLE);
+    }
     
     public static ParameterType getSimpleType(Class<?> clazz)
     {
         return __simpleTypes.get(clazz);
     }
     
-    public abstract Object create(String value);
+    public static Map<String,ParameterType> getSimpleFields(Class<?> pojoClass) 
+    {
+        HashMap<String,ParameterType> baseMap = new HashMap<String,ParameterType>();
+        fillSimpleFields(pojoClass, baseMap);
+        return baseMap;
+    }
+    
+    private static void fillSimpleFields(Class<?> pojoClass, Map<String,ParameterType> baseMap) 
+    {
+        if(pojoClass.getSuperclass()!=Object.class)
+            fillSimpleFields(pojoClass.getSuperclass(), baseMap);
+        
+        Method[] methods = pojoClass.getDeclaredMethods();
+        for(int i=0; i<methods.length; i++)
+        {
+            Method m = methods[i];
+            if(!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==1 && 
+                    m.getName().startsWith(ReflectUtil.SET))
+            {
+                ParameterType pt = getSimpleType(m.getParameterTypes()[0]);
+                if(pt!=null)
+                    baseMap.put(ReflectUtil.toProperty(ReflectUtil.SET.length(), m.getName()), pt);
+            }
+        }
+    }
+    
+    public abstract Object getActualValue(String value);
     public abstract Class<?> getTypeClass();
     
     public int hashCode()
