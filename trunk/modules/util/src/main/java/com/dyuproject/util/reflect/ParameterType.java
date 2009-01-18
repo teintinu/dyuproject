@@ -135,17 +135,17 @@ public abstract class ParameterType
         return __simpleTypes.get(clazz);
     }
     
-    public static Map<String,ParameterType> getSimpleFields(Class<?> pojoClass) 
+    public static Map<String,SimpleField> getSimpleFieldSetters(Class<?> pojoClass) 
     {
-        HashMap<String,ParameterType> baseMap = new HashMap<String,ParameterType>();
-        fillSimpleFields(pojoClass, baseMap);
+        HashMap<String,SimpleField> baseMap = new HashMap<String,SimpleField>();
+        fillSimpleFieldSetters(pojoClass, baseMap);
         return baseMap;
     }
     
-    private static void fillSimpleFields(Class<?> pojoClass, Map<String,ParameterType> baseMap) 
+    private static void fillSimpleFieldSetters(Class<?> pojoClass, Map<String,SimpleField> baseMap) 
     {
         if(pojoClass.getSuperclass()!=Object.class)
-            fillSimpleFields(pojoClass.getSuperclass(), baseMap);
+            fillSimpleFieldSetters(pojoClass.getSuperclass(), baseMap);
         
         Method[] methods = pojoClass.getDeclaredMethods();
         for(int i=0; i<methods.length; i++)
@@ -156,7 +156,52 @@ public abstract class ParameterType
             {
                 ParameterType pt = getSimpleType(m.getParameterTypes()[0]);
                 if(pt!=null)
-                    baseMap.put(ReflectUtil.toProperty(ReflectUtil.SET.length(), m.getName()), pt);
+                {
+                    String name = ReflectUtil.toProperty(ReflectUtil.SET.length(), m.getName());
+                    baseMap.put(name, new SimpleField(name, m, pt));
+                }
+            }
+        }
+    }
+    
+    public static Map<String,SimpleField> getSimpleFieldGetters(Class<?> pojoClass) 
+    {
+        HashMap<String,SimpleField> baseMap = new HashMap<String,SimpleField>();
+        fillSimpleFieldGetters(pojoClass, baseMap);
+        return baseMap;
+    }
+    
+    private static void fillSimpleFieldGetters(Class<?> pojoClass, Map<String,SimpleField> baseMap) 
+    {
+        if(pojoClass.getSuperclass()!=Object.class)
+            fillSimpleFieldGetters(pojoClass.getSuperclass(), baseMap);
+        
+        Method[] methods = pojoClass.getDeclaredMethods();
+        for(int i=0; i<methods.length; i++)
+        {
+            Method m = methods[i];
+            if (!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==0 && 
+                    m.getReturnType()!=null)
+            {
+                String methodName = m.getName();
+                if(methodName.startsWith(ReflectUtil.IS))
+                {
+                    ParameterType pt = getSimpleType(m.getReturnType());
+                    if(pt!=null)
+                    {
+                        String name = ReflectUtil.toProperty(ReflectUtil.IS.length(), methodName);
+                        baseMap.put(name, new SimpleField(name, m, pt));
+                    }
+                }
+                else if(methodName.startsWith(ReflectUtil.GET))
+                {
+                    ParameterType pt = getSimpleType(m.getReturnType());
+                    if(pt!=null)
+                    {
+                        String name = ReflectUtil.toProperty(ReflectUtil.GET.length(), methodName);
+                        baseMap.put(name, new SimpleField(name, m, pt));
+                    }
+                }
             }
         }
     }
@@ -167,6 +212,36 @@ public abstract class ParameterType
     public int hashCode()
     {
         return getTypeClass().hashCode();
+    }
+    
+    public static class SimpleField
+    {
+        private String _name;
+        private Method _method;
+        private ParameterType _type;
+        
+        SimpleField(String name, Method method, ParameterType type)
+        {
+            _name = name;
+            _method = method;
+            _type = type;
+        }
+        
+        public String getName()
+        {
+            return _name;
+        }
+        
+        public Method getMethod()
+        {
+            return _method;
+        }
+        
+        public ParameterType getType()
+        {
+            return _type;
+        }
+        
     }
     
 }
