@@ -221,12 +221,12 @@ public abstract class WebContext
         _viewDispatchers.putAll(dispatchers);
     }
     
-    public void addViewDispatcher(String mime, ViewDispatcher dispatcher)
+    public void addViewDispatcher(String name, ViewDispatcher dispatcher)
     {
         if(_initialized)
             throw new IllegalStateException("already initialized");
         
-        _viewDispatchers.put(mime, dispatcher);
+        _viewDispatchers.put(name, dispatcher);
     }    
     
     public ViewDispatcher getViewDispatcher(String name)
