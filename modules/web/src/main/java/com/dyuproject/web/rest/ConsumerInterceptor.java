@@ -12,48 +12,52 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.rest.consumer;
+package com.dyuproject.web.rest;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
-
-import com.dyuproject.web.rest.RequestContext;
 
 /**
  * @author David Yu
  * @created Jan 18, 2009
  */
 
-public class JSONConsumer extends AbstractConsumer
+public class ConsumerInterceptor extends AbstractLifeCycle implements Interceptor
 {
     
-    public static final String CONTENT_TYPE = "text/json";
+    private Map<String,ValidatingConsumer> _consumers = new HashMap<String,ValidatingConsumer>(3);
     
     protected void init()
-    {
-                
-    }
-    
-    protected void configure()
-    {
-                
-    }
-
-    public boolean consume(RequestContext requestContext) throws ServletException, IOException
-    {
-
-        
-        return false;
-    }
-
-    public String getRequestContentType()
     {        
-        return CONTENT_TYPE;
+
+    }
+    
+    public void addConsumer(ValidatingConsumer consumer)
+    {
+        if(consumer==null || isInitialized())
+            return;
+        
+        _consumers.put(consumer.getRequestContentType(), consumer);
     }
 
-    
+    public void postHandle(boolean handled, RequestContext requestContext)
+    {        
+        
+    }
 
-
+    public boolean preHandle(RequestContext requestContext)
+            throws ServletException, IOException
+    {
+        ValidatingConsumer consumer = _consumers.get(requestContext.getRequest().getContentType());
+        if(consumer==null)
+        {
+            requestContext.getResponse().sendError(404);
+            return false;
+        }        
+        return consumer.consume(requestContext);
+    }
 
 }
