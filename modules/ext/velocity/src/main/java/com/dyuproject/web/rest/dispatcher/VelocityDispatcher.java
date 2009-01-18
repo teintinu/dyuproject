@@ -30,15 +30,15 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.dyuproject.web.rest.AbstractLifeCycle;
 import com.dyuproject.web.rest.ViewDispatcher;
-import com.dyuproject.web.rest.WebContext;
 
 /**
  * @author David Yu
  * @created Jun 15, 2008
  */
 
-public class VelocityDispatcher implements ViewDispatcher
+public class VelocityDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {
 
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/velocity/";
@@ -52,7 +52,6 @@ public class VelocityDispatcher implements ViewDispatcher
     private static final Log _log = LogFactory.getLog(VelocityDispatcher.class);
     
     private VelocityEngine _engine;
-    private boolean _initialized = false;
     private String _baseDir, _fileExtension, _suffix;    
     private Properties _properties = new Properties();
     
@@ -66,13 +65,8 @@ public class VelocityDispatcher implements ViewDispatcher
         return _fileExtension;
     }
     
-    public void init(WebContext context)
-    {
-        if(_initialized)
-            return;
-        
-        _initialized = true;
-        
+    protected void init()
+    {        
         if(_baseDir==null)
             _baseDir = DEFAULT_BASE_DIR;
         else if(_baseDir.charAt(_baseDir.length()-1)!='/')
@@ -80,13 +74,13 @@ public class VelocityDispatcher implements ViewDispatcher
 
         if(_fileExtension==null)
         {
-            String fileExtension = context.getProperty("velocity.file_extentsion");
+            String fileExtension = getWebContext().getProperty("velocity.file_extentsion");
             _fileExtension = fileExtension==null ? DEFAULT_FILE_EXTENSION : fileExtension;
         }
         else if(_fileExtension.charAt(0)=='.')
             _fileExtension = _fileExtension.substring(1);
         
-        File dir = new File(context.getServletContext().getRealPath(_baseDir));
+        File dir = new File(getWebContext().getServletContext().getRealPath(_baseDir));
         if(!dir.isDirectory() || !dir.exists())
             throw new IllegalStateException("baseDir must be an existing directory");        
         
@@ -142,7 +136,7 @@ public class VelocityDispatcher implements ViewDispatcher
     
     public void setBaseDir(String baseDir)
     {
-        if(_initialized)
+        if(isInitialized())
             throw new IllegalStateException("already initialized");
         
         _baseDir = baseDir;
@@ -150,7 +144,7 @@ public class VelocityDispatcher implements ViewDispatcher
     
     public void setFileExtension(String fileExtension)
     {
-        if(_initialized)
+        if(isInitialized())
             throw new IllegalStateException("already initialized");
         
         _fileExtension = fileExtension;
@@ -158,7 +152,7 @@ public class VelocityDispatcher implements ViewDispatcher
     
     public void setProperties(Properties props)
     {
-        if(_initialized)
+        if(isInitialized())
             throw new IllegalStateException("already initialized");
         
         _properties.putAll(props);        
@@ -166,7 +160,7 @@ public class VelocityDispatcher implements ViewDispatcher
     
     public void setProperties(InputStream stream)
     {
-        if(_initialized)
+        if(isInitialized())
             throw new IllegalStateException("already initialized");
         
         Properties props = new Properties();

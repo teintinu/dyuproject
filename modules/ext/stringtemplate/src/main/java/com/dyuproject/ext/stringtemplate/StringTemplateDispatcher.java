@@ -25,23 +25,22 @@ import org.antlr.stringtemplate.StringTemplateErrorListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.dyuproject.web.rest.AbstractLifeCycle;
 import com.dyuproject.web.rest.ViewDispatcher;
-import com.dyuproject.web.rest.WebContext;
 
 /**
  * @author David Yu
  * @created Jan 15, 2009
  */
 
-public class StringTemplateDispatcher implements ViewDispatcher, StringTemplateErrorListener
+public class StringTemplateDispatcher extends AbstractLifeCycle implements ViewDispatcher, StringTemplateErrorListener
 {
     
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/stringtemplate/";
     public static final String DEFAULT_FILE_EXTENSION = "st";
     
     private static final Log _log = LogFactory.getLog(StringTemplateDispatcher.class);
-    
-    private boolean _initialized = false;
+
     private String _baseDir, _fileExtension, _suffix, _groupName = "root";
     private CustomTemplateGroup _group;
     
@@ -50,12 +49,8 @@ public class StringTemplateDispatcher implements ViewDispatcher, StringTemplateE
         return _fileExtension;
     }
 
-    public void init(WebContext context)
+    protected void init()
     {
-        if(_initialized)
-            return;
-        
-        _initialized = true;
         
         if(_baseDir==null)
             _baseDir = DEFAULT_BASE_DIR;
@@ -64,22 +59,22 @@ public class StringTemplateDispatcher implements ViewDispatcher, StringTemplateE
 
         if(_fileExtension==null)
         {
-            String fileExtension = context.getProperty("stringtemplate.file_extentsion");
+            String fileExtension = getWebContext().getProperty("stringtemplate.file_extentsion");
             _fileExtension = fileExtension==null ? DEFAULT_FILE_EXTENSION : fileExtension;
         }
         else if(_fileExtension.charAt(0)=='.')
             _fileExtension = _fileExtension.substring(1);
         
-        String groupName = context.getProperty("stringtemplate.group.name");
+        String groupName = getWebContext().getProperty("stringtemplate.group.name");
         if(groupName!=null)
             _groupName = groupName;
         
-        File dir = new File(context.getServletContext().getRealPath(_baseDir));
+        File dir = new File(getWebContext().getServletContext().getRealPath(_baseDir));
         if(!dir.isDirectory() || !dir.exists())
             throw new IllegalStateException("baseDir must be an existing directory");
         
         _group = new CustomTemplateGroup(_groupName, 
-                context.getServletContext().getRealPath(_baseDir), this);
+                getWebContext().getServletContext().getRealPath(_baseDir), this);
         
         _log.info("baseDir: " + _baseDir);
         _log.info("fileExtension: " + _fileExtension);    

@@ -19,13 +19,15 @@ import java.io.IOException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import com.dyuproject.web.rest.AbstractInterceptor;
+import com.dyuproject.web.rest.AbstractLifeCycle;
+import com.dyuproject.web.rest.Interceptor;
 import com.dyuproject.web.rest.RequestContext;
 
 /**
@@ -33,7 +35,7 @@ import com.dyuproject.web.rest.RequestContext;
  * @created Aug 30, 2008
  */
 
-public class EntityManagerManager extends AbstractInterceptor implements javax.servlet.Filter
+public class EntityManagerManager extends AbstractLifeCycle implements Interceptor, Filter
 {
     
     private static final ThreadLocal<EntityManager> __entityManager = new ThreadLocal<EntityManager>();
