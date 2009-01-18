@@ -14,7 +14,7 @@
 
 package com.dyuproject.web.rest.annotation;
 
-import com.dyuproject.web.rest.Consumer;
+import com.dyuproject.web.rest.ValidatingConsumer;
 
 
 /**
@@ -25,7 +25,7 @@ import com.dyuproject.web.rest.Consumer;
 public @interface Consume
 {
 
-    String contentType();
-    Class<Consumer<?>> consumer();
+    Class<?> pojoClass();
+    Class<ValidatingConsumer>[] consumers();
 
 }
