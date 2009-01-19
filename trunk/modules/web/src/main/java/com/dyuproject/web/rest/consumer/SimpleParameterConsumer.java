@@ -72,7 +72,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
         if(_dispatchUri==null)
             throw new IllegalStateException(CONSUMER_VALIDATION_DISPATCH_URI + " must be provided.");
         
-        Map<String,SimpleField> simpleFields = ParameterType.getSetterSimpleFields(_pojoClass);
+        Map<String,SimpleField> simpleFields = ParameterType.getSimpleFieldSetters(_pojoClass);
         _initialSize = 1 + new Double(_includedFields.size()/.75).intValue();
         _includedFields = new HashMap<String,Included>(_initialSize);
         for(Map.Entry<String, SimpleField> entry : simpleFields.entrySet())
