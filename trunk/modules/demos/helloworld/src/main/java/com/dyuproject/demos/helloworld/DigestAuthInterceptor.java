@@ -22,8 +22,7 @@ import javax.servlet.ServletException;
 import com.dyuproject.web.auth.Authentication;
 import com.dyuproject.web.auth.SimpleCredentialSource;
 import com.dyuproject.web.auth.SmartDigestAuthentication;
-import com.dyuproject.web.rest.AbstractLifeCycle;
-import com.dyuproject.web.rest.Interceptor;
+import com.dyuproject.web.rest.AbstractInterceptor;
 import com.dyuproject.web.rest.RequestContext;
 
 /**
@@ -31,7 +30,7 @@ import com.dyuproject.web.rest.RequestContext;
  * @created Jun 29, 2008
  */
 
-public class DigestAuthInterceptor extends AbstractLifeCycle implements Interceptor
+public class DigestAuthInterceptor extends AbstractInterceptor
 {
     
     private Authentication _authentication;
