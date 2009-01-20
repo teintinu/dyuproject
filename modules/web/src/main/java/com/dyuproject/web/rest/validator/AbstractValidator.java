@@ -12,21 +12,28 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.rest.annotation;
+package com.dyuproject.web.rest.validator;
 
-import com.dyuproject.web.rest.ValidatingConsumer;
-
+import com.dyuproject.web.rest.ValidatingConsumer.FieldValidator;
 
 /**
  * @author David Yu
- * @created Jan 14, 2009
+ * @created Jan 20, 2009
  */
 
-public @interface Consume
+public abstract class AbstractValidator implements FieldValidator
 {
-
-    Class<?> pojoClass();
-    Class<ValidatingConsumer>[] consumers();
-    String outputType() default "pojo";
+    
+    private String _errorMsg;
+    
+    public void setErrorMsg(String errorMsg)
+    {
+        _errorMsg = errorMsg;
+    }
+    
+    public String getErrorMsg()
+    {
+        return _errorMsg;
+    }
 
 }

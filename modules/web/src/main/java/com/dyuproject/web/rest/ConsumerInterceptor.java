@@ -32,7 +32,8 @@ public class ConsumerInterceptor extends AbstractLifeCycle implements Intercepto
     
     protected void init()
     {        
-
+        for(ValidatingConsumer vc : _consumers.values())
+            vc.init(getWebContext());
     }
     
     public void addConsumer(ValidatingConsumer consumer)

@@ -28,14 +28,10 @@ import javax.servlet.ServletException;
 public interface ValidatingConsumer extends LifeCycle
 {    
 
-    public static final String ERROR_MSG_KEY = "errorMsg";
-    public static final String OUTPUT_KEY = "output";
+    public static final String ERROR_MSG_KEY = "consumer_error_msg";
+    public static final String OUTPUT_KEY = "consumer_output";    
     
-    public static final String CONSUMER_OUTPUT_TYPE = "consumer.output.type";
-    public static final String CONSUMER_VALIDATION_DISPATCHER_NAME = "consumer.validation.dispatcher_name";
-    public static final String CONSUMER_VALIDATION_DISPATCH_URI = "consumer.validation.dispatch_uri";
-    
-    public void init(Class<?> pojoClass, Map<?,?> initParams);
+    public void preConfigure(Class<?> pojoClass, String outputType, Map<?,?> initParams);
     public String getRequestContentType();
     public boolean consume(RequestContext requestContext) throws ServletException, IOException;
     

@@ -42,6 +42,12 @@ public class SimpleParameterConsumer extends AbstractConsumer
     public static final String RESPONSE_CONTENT_TYPE = "text/html";
     public static final String DEFAULT_DISPATCHER = "jsp";
     
+    
+    public static final String DISPATCHER_NAME = "spc.dispatcher_name";
+    public static final String DISPATCH_URI = "spc.dispatch_uri";
+    
+    static final String CACHE_KEY = SimpleParameterConsumer.class + ".cache";
+    
     private static final Log _log = LogFactory.getLog(SimpleParameterConsumer.class);
     
     private Map<String,Included> _includedFields;
@@ -50,35 +56,49 @@ public class SimpleParameterConsumer extends AbstractConsumer
     private int _initialSize;
     private boolean _pojo;
     
-    protected void init()
+    public SimpleParameterConsumer()
     {
+        
+    }
+
+    protected void init()
+    {        
         _dispatcher = getWebContext().getViewDispatcher(_dispatcherName);
         if(_dispatcher==null)
             throw new IllegalStateException("dispatcher *" + _dispatcherName + "* not found.");
-    }
-    
-    protected void configure()
-    {
-        if(_initParams==null)
-            throw new IllegalStateException("initParams must be provided.");
         
-        _dispatcherName = (String)_initParams.get(CONSUMER_VALIDATION_DISPATCHER_NAME);
+        _dispatcherName = (String)_initParams.get(DISPATCHER_NAME);
         if(_dispatcherName==null)
             _dispatcherName = DEFAULT_DISPATCHER;
 
-        _pojo = !"map".equals(_initParams.get(CONSUMER_OUTPUT_TYPE));
+        _pojo = !"map".equals(_outputType);
         
-        _dispatchUri = (String)_initParams.get(CONSUMER_VALIDATION_DISPATCH_URI);
+        _dispatchUri = (String)_initParams.get(DISPATCH_URI);
         if(_dispatchUri==null)
-            throw new IllegalStateException(CONSUMER_VALIDATION_DISPATCH_URI + " must be provided.");
+            throw new IllegalStateException(DISPATCH_URI + " must be provided.");
+        
+        Map<Class<?>,Map<String,Included>> cache = 
+            (Map<Class<?>,Map<String,Included>>)getWebContext().getAttribute(CACHE_KEY);
+        if(cache==null)
+        {
+            cache = new HashMap<Class<?>,Map<String,Included>>();
+            getWebContext().addAttribute(CACHE_KEY, cache);
+        }
+        
+        _includedFields = cache.get(_pojoClass);
+        if(_includedFields!=null)
+        {
+            _initialSize = 1 + new Double(_includedFields.size()/.75).intValue();
+            return;
+        }
         
         Map<String,SimpleField> simpleFields = ParameterType.getSimpleFieldSetters(_pojoClass);
-        _initialSize = 1 + new Double(_includedFields.size()/.75).intValue();
+        
         _includedFields = new HashMap<String,Included>(_initialSize);
         for(Map.Entry<String, SimpleField> entry : simpleFields.entrySet())
         {
             String field = entry.getKey();
-            String errorMsg = _includedFields.get(field).toString();
+            String errorMsg = (String)_initParams.get(field);
             boolean required = true;
             if(errorMsg!=null)
             {
@@ -90,10 +110,20 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 String validator = (String)_initParams.get(field + ".validator");
                 FieldValidator fv = null;
                 if(validator!=null)
-                    fv = (FieldValidator)newObjectInstance(validator);
+                {
+                    try
+                    {
+                        fv = (FieldValidator)newObjectInstance(validator);
+                    }
+                    catch(Exception e)
+                    {
+                        throw new RuntimeException(e);
+                    }
+                }
                 _includedFields.put(field, new Included(entry.getValue(), required, fv, errorMsg));
             }
         }
+        cache.put(_pojoClass, _includedFields);
         simpleFields.clear();
         simpleFields = null;
     }
