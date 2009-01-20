@@ -102,10 +102,10 @@ public class SimpleParameterConsumer extends AbstractConsumer
             boolean required = true;
             if(errorMsg!=null)
             {
-                if(errorMsg.length()==0)
+                if(errorMsg.length()<2)
                 {
-                    errorMsg = getDefaultErrorMsg(field);
-                    required = false;
+                    required = errorMsg.length()==1;
+                    errorMsg = getDefaultErrorMsg(field);                    
                 }
                 String validator = (String)_initParams.get(field + ".validator");
                 FieldValidator fv = null;
@@ -151,6 +151,15 @@ public class SimpleParameterConsumer extends AbstractConsumer
                         requestContext);
                 return false;
             }
+            value = value.trim();
+            if(value.length()==0)
+            {
+                if(!included.isRequired())
+                    continue;
+                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, included.getErrorMsg(), 
+                        requestContext);
+                return false;
+            }
             Object actualValue = included.getSimpleField().getType().getActualValue(value);
             String validationErrorMsg = included.getErrorMsg(actualValue);
             if(validationErrorMsg!=null)
@@ -189,7 +198,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 _log.warn(field + " not set.", e);
             }            
         }
-        System.err.println("OUTPUT: " + output);
+        
         request.setAttribute(OUTPUT_KEY, output);
         return true;
     }
@@ -205,6 +214,15 @@ public class SimpleParameterConsumer extends AbstractConsumer
             Included included = entry.getValue();
             String value = request.getParameter(field);
             if(value==null)
+            {
+                if(!included.isRequired())
+                    continue;
+                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, included.getErrorMsg(), 
+                        requestContext);
+                return false;
+            }
+            value = value.trim();
+            if(value.length()==0)
             {
                 if(!included.isRequired())
                     continue;
