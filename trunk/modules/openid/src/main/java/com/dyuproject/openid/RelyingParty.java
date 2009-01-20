@@ -158,14 +158,10 @@ public class RelyingParty
     }
     
     static Object newObjectInstance(String className)
-    {
-        Class<?> clazz = ClassLoaderUtil.loadClass(className, RelyingParty.class);
-        if(clazz==null)
-            throw new RuntimeException(className + " not found in the classpath.");
-        
+    {        
         try
         {
-            return clazz.newInstance();
+            return ClassLoaderUtil.newInstance(className, RelyingParty.class);
         }
         catch(Exception e)
         {

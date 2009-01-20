@@ -61,6 +61,21 @@ public abstract class ClassLoaderUtil
         return clazz;
     }
     
+    public static Object newInstance(String className, Class<?> context) throws Exception
+    {
+        return newInstance(className, context, false);
+    }
+    
+    public static Object newInstance(String className, Class<?> context, boolean checkParent) 
+    throws Exception
+    {
+        Class<?> clazz = loadClass(className, context, checkParent);
+        if(clazz==null)
+            throw new Exception(className + " not found in the classpath.");
+        
+        return clazz.newInstance();
+    }
+    
     public static URL getResource(String resource, Class<?> context)
     {
         return getResource(resource, context, false);
