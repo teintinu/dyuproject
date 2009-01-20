@@ -40,6 +40,11 @@ public abstract class Manifest
         return uri.charAt(0)=='/' ? PREFIX + uri.substring(1) : PREFIX + uri;
     }
     
+    public static URL getResource(String uri)
+    {
+        return ClassLoaderUtil.getResource(getPath(uri), Manifest.class);
+    }
+    
     public static Properties getProperties(String uri)
     {
         try
