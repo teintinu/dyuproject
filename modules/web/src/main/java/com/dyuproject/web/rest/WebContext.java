@@ -222,6 +222,11 @@ public abstract class WebContext
         _viewDispatchers.putAll(dispatchers);
     }
     
+    public void setViewDispatcher(String name, ViewDispatcher dispatcher)
+    {
+        addViewDispatcher(name, dispatcher);
+    }
+    
     public void addViewDispatcher(String name, ViewDispatcher dispatcher)
     {
         if(_initialized)
@@ -315,6 +320,11 @@ public abstract class WebContext
             throw new IllegalStateException("already started");
         
         _attributes.putAll(attributes);
+    }
+    
+    public void setAttribute(String name, Object value)
+    {
+        addAttribute(name, value);
     }
     
     public void addAttribute(String name, Object value)
