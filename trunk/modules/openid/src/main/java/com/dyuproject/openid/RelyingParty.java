@@ -77,7 +77,7 @@ public class RelyingParty
     {        
         URL resource = getResource(resourceLoc);
         if(resource==null)
-            throw new IllegalStateException(resourceLoc + " could not be resolved in classpath.");
+            throw new RuntimeException(resourceLoc + " not found in the classpath.");
         try
         {
             return newInstance(resource);
@@ -374,7 +374,7 @@ public class RelyingParty
     boolean authenticate(OpenIdUser user, HttpServletRequest request, HttpServletResponse response,
             String trustRoot, String realm, String returnTo) throws IOException
     {
-        UrlEncodedParameterMap params = RelyingParty.getAuthUrlMap(user, trustRoot, realm, returnTo);
+        UrlEncodedParameterMap params = getAuthUrlMap(user, trustRoot, realm, returnTo);
         
         _listener.onPreAuthenticate(user, request, params);
         
