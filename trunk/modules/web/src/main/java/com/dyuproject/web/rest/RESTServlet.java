@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.util.ClassLoaderUtil;
+
 
 /**
  * The REST servlet to handle all the requests dispatched to the webapp.
@@ -45,7 +47,7 @@ public class RESTServlet extends HttpServlet
                 throw new ServletException("*webContext* is missing from the servlet context's attributes/init-parameter");
             try
             {
-                _webContext = (WebContext)newObjectInstance(webContextClass);                
+                _webContext = (WebContext)ClassLoaderUtil.newInstance(webContextClass, RESTServlet.class);                
             }
             catch(Exception e)
             {
@@ -68,12 +70,6 @@ public class RESTServlet extends HttpServlet
     {
         _webContext.service(request, response);
     }
-    
-    protected Object newObjectInstance(String className) throws Exception
-    {
-        return getClass().getClassLoader().loadClass(className).newInstance();        
-    }
-
     
     public void destroy()
     {

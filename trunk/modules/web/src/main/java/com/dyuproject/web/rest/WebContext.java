@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.dyuproject.util.ClassLoaderUtil;
 import com.dyuproject.util.Delim;
 import com.dyuproject.web.CookieSession;
 import com.dyuproject.web.CookieSessionManager;
@@ -332,12 +333,11 @@ public abstract class WebContext
     public String getProperty(String name)
     {
         return _env.getProperty(name);
-    }
+    }    
     
-    
-    protected Object newObjectInstance(String className) throws Exception
+    public static Object newObjectInstance(String className) throws Exception
     {
-        return getClass().getClassLoader().loadClass(className).newInstance();        
+        return ClassLoaderUtil.newInstance(className, WebContext.class);
     }
     
     public void service(HttpServletRequest request, HttpServletResponse response)
