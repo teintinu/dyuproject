@@ -38,7 +38,7 @@ import com.dyuproject.web.rest.ViewDispatcher;
 public class SimpleParameterConsumer extends AbstractConsumer
 {
     
-    public static final String REQUEST_CONTENT_TYPE = "application/x-www-url-form-encoded";
+    public static final String REQUEST_CONTENT_TYPE = "application/x-www-form-urlencoded";
     public static final String RESPONSE_CONTENT_TYPE = "text/html";
     public static final String DEFAULT_DISPATCHER = "jsp";
     
@@ -62,14 +62,14 @@ public class SimpleParameterConsumer extends AbstractConsumer
     }
 
     protected void init()
-    {        
-        _dispatcher = getWebContext().getViewDispatcher(_dispatcherName);
-        if(_dispatcher==null)
-            throw new IllegalStateException("dispatcher *" + _dispatcherName + "* not found.");
-        
+    {
         _dispatcherName = (String)_initParams.get(DISPATCHER_NAME);
         if(_dispatcherName==null)
             _dispatcherName = DEFAULT_DISPATCHER;
+        
+        _dispatcher = getWebContext().getViewDispatcher(_dispatcherName);
+        if(_dispatcher==null)
+            throw new IllegalStateException("dispatcher *" + _dispatcherName + "* not found.");
 
         _pojo = !"map".equals(_outputType);
         
@@ -189,6 +189,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 _log.warn(field + " not set.", e);
             }            
         }
+        System.err.println("OUTPUT: " + output);
         request.setAttribute(OUTPUT_KEY, output);
         return true;
     }
@@ -228,7 +229,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
         return true;
     }
 
-    public String getRequestContentType()
+    public String getContentType()
     {        
         return REQUEST_CONTENT_TYPE;
     }

@@ -24,6 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.dyuproject.util.Delim;
+import com.dyuproject.web.rest.AbstractLifeCycle;
 import com.dyuproject.web.rest.Interceptor;
 import com.dyuproject.web.rest.InterceptorCollection;
 import com.dyuproject.web.rest.RequestContext;
@@ -38,7 +39,7 @@ import com.dyuproject.web.rest.WebContext;
  * @created Dec 3, 2008
  */
 
-public class PathHandler
+public class PathHandler extends AbstractLifeCycle
 {
     
     public static final String ROOT = "/", PARAM = "$";
@@ -84,13 +85,13 @@ public class PathHandler
         return this;
     }
     
-    public void init()
-    {
-        if(_mappedInterceptors==null)
-            return;
-        
+    protected void init()
+    {        
         for(PathHandler ph : _pathHandlers.values())
-            ph.init();
+            ph.init(getWebContext());
+        
+        if(_parameterHandler!=null)
+            _parameterHandler.init(getWebContext());
         
         if(_parent!=null)
         {
@@ -101,13 +102,22 @@ public class PathHandler
         appendInterceptor(this, _mappedInterceptors[1]);
         appendInterceptor(this, _mappedInterceptors[0]);
         
-        _mappedInterceptors = null;
+        if(_interceptor!=null)
+            _interceptor.init(getWebContext());
+        
+        
     }
     
-    public void destroy()
+    protected void destroy()
     {
-        if(_resources==null)
-            return;
+        for(PathHandler ph : _pathHandlers.values())
+            ph.destroy(getWebContext());
+        
+        if(_parameterHandler!=null)
+            _parameterHandler.destroy(getWebContext());
+        
+        if(_interceptor!=null)
+            _interceptor.destroy(getWebContext());
         
         _resources.clear();        
         _pathHandlers.clear();
@@ -116,6 +126,8 @@ public class PathHandler
         _parent = null;
         _parameterHandler = null;
         _id = null;
+        _mappedInterceptors = null;
+        _interceptor = null;
     }
     
     static void loadInterceptors(PathHandler toConfigure, PathHandler pathHandler)

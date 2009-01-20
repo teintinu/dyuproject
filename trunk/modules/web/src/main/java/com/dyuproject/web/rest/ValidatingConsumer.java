@@ -29,11 +29,16 @@ public interface ValidatingConsumer extends LifeCycle
 {    
 
     public static final String ERROR_MSG_KEY = "consumer_error_msg";
-    public static final String OUTPUT_KEY = "consumer_output";    
+    public static final String OUTPUT_KEY = "consumer_output";
     
-    public void preConfigure(Class<?> pojoClass, String outputType, Map<?,?> initParams);
-    public String getRequestContentType();
+    public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, 
+            Map<?,?> initParams);
+    public String getContentType();
+    
+    public String getHttpMethod();
+    
     public boolean consume(RequestContext requestContext) throws ServletException, IOException;
+    
     
     public interface FieldValidator
     {

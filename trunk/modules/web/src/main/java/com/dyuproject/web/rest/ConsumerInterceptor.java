@@ -41,7 +41,7 @@ public class ConsumerInterceptor extends AbstractLifeCycle implements Intercepto
         if(consumer==null || isInitialized())
             return;
         
-        _consumers.put(consumer.getRequestContentType(), consumer);
+        _consumers.put(consumer.getHttpMethod(), consumer);
     }
 
     public void postHandle(boolean handled, RequestContext requestContext)
@@ -52,13 +52,17 @@ public class ConsumerInterceptor extends AbstractLifeCycle implements Intercepto
     public boolean preHandle(RequestContext requestContext)
             throws ServletException, IOException
     {
-        ValidatingConsumer consumer = _consumers.get(requestContext.getRequest().getContentType());
-        if(consumer==null)
+        ValidatingConsumer consumer = _consumers.get(requestContext.getRequest().getMethod());
+        if(consumer!=null)
         {
+            String contentType = requestContext.getRequest().getContentType();
+            if(contentType.startsWith(consumer.getContentType()))
+                return consumer.consume(requestContext);            
+
             requestContext.getResponse().sendError(404);
-            return false;
+            return false;            
         }        
-        return consumer.consume(requestContext);
+        return true;
     }
 
 }

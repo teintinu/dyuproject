@@ -32,6 +32,7 @@ import com.dyuproject.web.rest.ViewDispatcher;
 public abstract class AbstractConsumer extends AbstractLifeCycle implements ValidatingConsumer
 {
     
+    protected String _httpMethod;
     protected Class<?> _pojoClass;
     protected Map<?,?> _initParams;
     protected String _outputType;
@@ -44,15 +45,23 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     public Map<?,?> getInitParams()
     {
         return _initParams;
-    } 
+    }
+    
+    public String getHttpMethod()
+    {
+        return _httpMethod;
+    }
 
-    public void preConfigure(Class<?> pojoClass, String outputType, Map<?,?> initParams)
+    public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, Map<?,?> initParams)
     {
         if(_pojoClass!=null)
             throw new IllegalStateException("pojoClass already set.");
+        if(httpMethod==null)
+            throw new IllegalStateException("httpMethod is required.");
         if(pojoClass==null)
             throw new IllegalStateException("pojoClass must be provided.");
         
+        _httpMethod = httpMethod;
         _pojoClass = pojoClass;
         _outputType = outputType;
         _initParams = initParams;
