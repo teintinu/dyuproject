@@ -62,5 +62,10 @@ public abstract class AbstractLifeCycle implements LifeCycle
     {
         return _webContext;
     }
+    
+    public static Object newObjectInstance(String className) throws Exception
+    {
+        return WebContext.newObjectInstance(className);
+    }
 
 }

@@ -12,21 +12,45 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.rest.annotation;
+package com.dyuproject.web.rest.validator;
 
-import com.dyuproject.web.rest.ValidatingConsumer;
+import com.dyuproject.util.validate.IPDomainValidator;
 
 
 /**
  * @author David Yu
- * @created Jan 14, 2009
+ * @created Jan 20, 2009
  */
 
-public @interface Consume
+public class EmailValidator extends AbstractValidator
 {
+    
+    public EmailValidator()
+    {
+        this("Email invalid.");
+    }
+    
+    public EmailValidator(String errorMsg)
+    {
+        setErrorMsg(errorMsg);
+    }
 
-    Class<?> pojoClass();
-    Class<ValidatingConsumer>[] consumers();
-    String outputType() default "pojo";
+    public String getErrorMsg(Object value)
+    {
+        if(value==null)
+            return null;
+        
+        String email = value.toString();
+        int idx = email.indexOf('@');
+        if(idx>0)
+        {
+            int start = idx+1;
+            char[] domain = new char[email.length()-start];
+            email.getChars(start, email.length(), domain, 0);
+            if(IPDomainValidator.isValid(domain))
+                return null;
+        }
+        return getErrorMsg();
+    }
 
 }

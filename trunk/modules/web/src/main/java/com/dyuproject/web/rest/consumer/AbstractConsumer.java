@@ -33,7 +33,8 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
 {
     
     protected Class<?> _pojoClass;
-    protected Map<?,?> _initParams; 
+    protected Map<?,?> _initParams;
+    protected String _outputType;
     
     public Class<?> getPojoClass()
     {
@@ -45,7 +46,7 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         return _initParams;
     } 
 
-    public void init(Class<?> pojoClass, Map<?,?> initParams)
+    public void preConfigure(Class<?> pojoClass, String outputType, Map<?,?> initParams)
     {
         if(_pojoClass!=null)
             throw new IllegalStateException("pojoClass already set.");
@@ -53,15 +54,16 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
             throw new IllegalStateException("pojoClass must be provided.");
         
         _pojoClass = pojoClass;
+        _outputType = outputType;
         _initParams = initParams;
     }
     
-    protected String getDefaultErrorMsg(String field)
+    public static String getDefaultErrorMsg(String field)
     {
         return getDisplayField(field).append(" must be correctly provided.").toString();
     }
     
-    protected StringBuilder getDisplayField(String field)
+    public static StringBuilder getDisplayField(String field)
     {
         StringBuilder buffer = new StringBuilder();
         char[] ch = field.toCharArray();
@@ -78,25 +80,6 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         return buffer;
     }
     
-    public static Object newObjectInstance(String className)
-    {
-        try
-        {
-            return AbstractConsumer.class.getClassLoader().loadClass(className).newInstance();
-        }
-        catch(Exception e)
-        {
-            try
-            {
-                return Thread.currentThread().getContextClassLoader().loadClass(className).newInstance();
-            }
-            catch(Exception e1)
-            {
-                throw new RuntimeException(e1);
-            }
-        }
-    }
-    
     static void dispatch(ViewDispatcher dispatcher, String uri, String contentType, String errorMsg, 
             RequestContext rc) throws ServletException, IOException
     {
@@ -104,7 +87,6 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         rc.getResponse().setContentType(contentType);
         dispatcher.dispatch(uri, rc.getRequest(), rc.getResponse());
     }
-    
-    protected abstract void configure();
+
     
 }
