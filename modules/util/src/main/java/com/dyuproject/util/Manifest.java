@@ -14,7 +14,6 @@
 
 package com.dyuproject.util;
 
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Properties;
@@ -41,18 +40,11 @@ public abstract class Manifest
         return uri.charAt(0)=='/' ? PREFIX + uri.substring(1) : PREFIX + uri;
     }
     
-    static URL getResource(String path) throws Exception
-    {        
-        URL resource = Manifest.class.getClassLoader().getResource(path);
-        return resource==null ? resource = Thread.currentThread().getContextClassLoader()
-                .getResource(path) : resource;
-    }
-    
     public static Properties getProperties(String uri)
     {
         try
         {
-            URL resource = getResource(getPath(uri));
+            URL resource = ClassLoaderUtil.getResource(getPath(uri), Manifest.class);
             if(resource==null)
                 return null;            
                 
@@ -71,7 +63,7 @@ public abstract class Manifest
     {
         try
         {
-            URL resource = getResource(getPath(uri));
+            URL resource = ClassLoaderUtil.getResource(getPath(uri), Manifest.class);
             if(resource==null)
                 return null;               
             
@@ -84,12 +76,6 @@ public abstract class Manifest
             e.printStackTrace();
             return null;
         }
-    }
-    
-    public static void main(String[] args)
-    {
-        InputStream is = null;
-        
     }
 
 }
