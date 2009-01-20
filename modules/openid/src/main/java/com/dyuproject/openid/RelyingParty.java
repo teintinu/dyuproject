@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.openid.Identifier.Resolver;
 import com.dyuproject.openid.Identifier.ResolverCollection;
 import com.dyuproject.openid.manager.HttpSessionUserManager;
+import com.dyuproject.util.ClassLoaderUtil;
 
 /**
  * Relying party which discovers, associates and verifies the authentication of a user.
@@ -151,29 +152,24 @@ public class RelyingParty
         return relyingParty;
     }    
     
-    private static URL getResource(String path)
+    static URL getResource(String resource)
     {
-        URL resource = RelyingParty.class.getClassLoader().getResource(path);
-        return resource==null ? Thread.currentThread().getContextClassLoader().getResource(path) :
-            resource;
+        return ClassLoaderUtil.getResource(resource, RelyingParty.class);
     }
     
-    private static Object newObjectInstance(String className)
+    static Object newObjectInstance(String className)
     {
+        Class<?> clazz = ClassLoaderUtil.loadClass(className, RelyingParty.class);
+        if(clazz==null)
+            throw new RuntimeException(className + " not found in the classpath.");
+        
         try
         {
-            return RelyingParty.class.getClassLoader().loadClass(className).newInstance();
+            return clazz.newInstance();
         }
         catch(Exception e)
         {
-            try
-            {
-                return Thread.currentThread().getContextClassLoader().loadClass(className).newInstance();
-            }
-            catch(Exception e2)
-            {
-                throw new RuntimeException(e2);
-            }
+            throw new RuntimeException(e);
         }
     }
     
