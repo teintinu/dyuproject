@@ -67,6 +67,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
         __defaultErrorMsg = errorMsg;
     }
     
+    private String _httpMethod;
     private Class<?> _pojoClass;
     private String _outputType;
     private Map<?,?> _initParams;
@@ -84,9 +85,14 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
         
     }
     
-    public String getRequestContentType()
+    public String getContentType()
     {
         return CONTENT_TYPE;
+    }
+    
+    public String getHttpMethod()
+    {
+        return _httpMethod;
     }
     
     public String getDefaultErrorMsg()
@@ -94,13 +100,15 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
         return _defaultErrorMsg;
     }
     
-    public void preConfigure(Class<?> pojoClass, String outputType, Map<?, ?> initParams)
+    public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, 
+            Map<?, ?> initParams)
     {
         if(_pojoClass!=null)
             throw new IllegalStateException("pojoClass already set.");
         if(pojoClass==null)
             throw new IllegalStateException("pojoClass must be provided.");
         
+        _httpMethod = httpMethod;
         _pojoClass = pojoClass;
         _outputType = outputType;
         _initParams = initParams;
@@ -229,7 +237,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
     {
         HashMap<String,String> map = new HashMap<String,String>(2);
         map.put(ERROR_MSG_KEY, message);
-        rc.getResponse().setContentType(getRequestContentType());
+        rc.getResponse().setContentType(getContentType());
         rc.getResponse().getWriter().write(toJSON(map));
     }
     
@@ -454,39 +462,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
                     _log.warn(_pojoClass.getName() + " property '"+setter.getPropertyName() + 
                             "' not set.", e);
                 }
-            }
-            
-            for(Iterator<Map.Entry<?, ?>> iterator = map.entrySet().iterator(); iterator.hasNext();)
-            {
-                Map.Entry<?, ?> entry = iterator.next();
-                Setter setter = _setters.get(entry.getKey());
-                if(setter!=null)
-                {
-                    if(obj==null)
-                    {
-                        try
-                        {
-                            obj = _pojoClass.newInstance();
-                        }
-                        catch(Exception e)
-                        {
-                            // TODO return Map instead?
-                            throw new RuntimeException(e);
-                        }
-                    }
-                    try
-                    {
-                        setter.invoke(obj, entry.getValue());                    
-                    }
-                    catch(Exception e)
-                    {
-                        // TODO throw exception?
-                        _log.warn(_pojoClass.getName() + " property '"+setter.getPropertyName() + 
-                                "' not set.", e);
-                    }
-                }
-            }
-            
+            }            
             return obj;
         }
         

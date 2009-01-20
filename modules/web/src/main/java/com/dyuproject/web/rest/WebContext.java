@@ -55,7 +55,9 @@ public abstract class WebContext
     public static final String SESSION_ENABLED = "session.enabled";
     
     public static final String PATHINFO_ARRAY_ATTR = "rest.pathInfo.array";
-    public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";    
+    public static final String PATHINFO_INDEX_ATTR = "rest.pathInfo.index";
+    
+    protected static final String CONSUMER_PROPERTIES_CACHE = "consumer.properties.cache";
     
     private static final Log _log = LogFactory.getLog(WebContext.class);   
     
@@ -184,15 +186,14 @@ public abstract class WebContext
             _cookieSessionManager = new CookieSessionManager();
             _cookieSessionManager.init(_env);
         }
+        
+        _viewDispatchers.put("default", _defaultDispatcher);
+        _viewDispatchers.put("jsp", _jspDispatcher);
+        
         init();
         
         for(ViewDispatcher vd : _viewDispatchers.values())
-            vd.init(this);
-        
-        if(_viewDispatchers.get("default")==null)
-            _viewDispatchers.put("default", _defaultDispatcher);
-        if(_viewDispatchers.get("jsp")==null)
-            _viewDispatchers.put("jsp", _jspDispatcher);        
+            vd.init(this);                    
         
         _initialized = true;        
         
@@ -348,6 +349,11 @@ public abstract class WebContext
     public static Object newObjectInstance(String className) throws Exception
     {
         return ClassLoaderUtil.newInstance(className, WebContext.class);
+    }
+    
+    public static URL getResource(String resource)
+    {
+        return ClassLoaderUtil.getResource(resource, WebContext.class);
     }
     
     public void service(HttpServletRequest request, HttpServletResponse response)

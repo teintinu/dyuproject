@@ -81,6 +81,12 @@ public class InterceptorCollection extends AbstractLifeCycle implements Intercep
         for(Interceptor i : getInterceptors())
             i.init(getWebContext());
     }
+    
+    protected void destroy()
+    {
+        for(Interceptor i : getInterceptors())
+            i.destroy(getWebContext());
+    }
 
     public void postHandle(boolean handled, RequestContext requestContext)
     {

@@ -14,7 +14,10 @@
 
 package com.dyuproject.web.rest.annotation;
 
-import com.dyuproject.web.rest.ValidatingConsumer;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 
 /**
@@ -22,11 +25,14 @@ import com.dyuproject.web.rest.ValidatingConsumer;
  * @created Jan 14, 2009
  */
 
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
 public @interface Consume
 {
 
     Class<?> pojoClass();
-    Class<ValidatingConsumer>[] consumers();
+    Class<?>[] consumers();
     String outputType() default "pojo";
+    String initParams();
 
 }

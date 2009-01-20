@@ -18,10 +18,13 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.StringTokenizer;
 
 import javax.servlet.ServletConfig;
@@ -31,9 +34,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jra.HttpResource;
 
+import com.dyuproject.util.Delim;
+import com.dyuproject.web.rest.ConsumerInterceptor;
 import com.dyuproject.web.rest.Interceptor;
 import com.dyuproject.web.rest.RequestContext;
+import com.dyuproject.web.rest.ValidatingConsumer;
 import com.dyuproject.web.rest.WebContext;
+import com.dyuproject.web.rest.annotation.Consume;
 
 /**
  * The application context using REST services and resources
@@ -119,14 +126,19 @@ public class RESTServiceContext extends WebContext
         for(Resource r : _resources)
             initResource(r);
         
-        for(Map.Entry<String, Interceptor> entry : _interceptors.entrySet())
-            initInterceptor(entry.getKey(), entry.getValue());
+        for(Iterator<Map.Entry<String,Interceptor>> iter = 
+            _interceptors.entrySet().iterator(); iter.hasNext();)
+        {
+            Map.Entry<String,Interceptor> entry = iter.next();
+            if(!_pathHandler.map(entry.getKey(), entry.getValue()))
+                iter.remove();
+        }
         
-        _pathHandler.init();
+        _pathHandler.init(this);
         
         _log.info(_services.size() + " services initialized.");
         _log.info(_resources.size() + " resources initialized.");
-        _log.info(_interceptors.size() + " interceptors initialized.");
+        _log.info(_interceptors.size() + " configured interceptors initialized.");
     }    
     
     protected void destroy()
@@ -137,35 +149,29 @@ public class RESTServiceContext extends WebContext
         for(Resource r : _resources)
             r.destroy(this);
         
-        for(Interceptor i : _interceptors.values())
-            i.destroy(this);
-        
-        _pathHandler.destroy();
+        _pathHandler.destroy(this);
         
         _log.info(_services.size() + " services destroyed.");
         _log.info(_resources.size() + " resources destroyed.");
-        _log.info(_interceptors.size() + " interceptors destroyed.");
+        _log.info(_interceptors.size() + " configured interceptors destroyed.");
         
         _services.clear();
         _resources.clear();
         _interceptors.clear();
     }    
     
-    private void mapResource(String path, Resource resource)
+    private PathHandler mapResource(String path, Resource resource)
     {
-        if(_pathHandler.map(path, resource)!=null)
+        PathHandler ph = _pathHandler.map(path, resource);
+        if(ph!=null)
             _resources.add(resource);
+        
+        return ph;
     }
     
     private void initResource(Resource resource)
     {        
         resource.init(this);
-    }
-    
-    private void initInterceptor(String path, Interceptor interceptor)
-    {
-        _pathHandler.map(path, interceptor);
-        interceptor.init(this);
     }
     
     private void initService(Service service)
@@ -177,13 +183,25 @@ public class RESTServiceContext extends WebContext
             String location = null;
             String httpMethod = null;
             Annotation[] annotations = m.getDeclaredAnnotations();
+            Consume c = null;
             if(annotations!=null)
             {                
                 for(Annotation a : annotations)
                 {
-                    if(location==null && a instanceof HttpResource)
+                    if(a instanceof HttpResource)
                     {
+                        if(location!=null)
+                            throw new IllegalStateException("multiple declared HttpResource annotations");
+                        
                         location = ((HttpResource)a).location();                        
+                        continue;
+                    }
+                    if(a instanceof Consume)
+                    {
+                        if(c!=null)
+                            throw new IllegalStateException("multiple declared Consume annotations");
+                        
+                        c = (Consume)a;
                         continue;
                     }
                     String method = AnnotatedMethodResource.getHttpMethod(a.annotationType());
@@ -209,13 +227,103 @@ public class RESTServiceContext extends WebContext
             if(len==0 || (len==1 && RequestContext.class.isAssignableFrom(m.getParameterTypes()[0])))
             {
                 m.setAccessible(true);            
-                mapResource(location, new AnnotatedMethodResource(service, m, httpMethod));
+                PathHandler ph = mapResource(location, new AnnotatedMethodResource(service, m, httpMethod));
+                if(c!=null && ph!=null)
+                    mapConsumer(location, httpMethod, ph, c);
                 continue;
             }
 
             _log.warn(location + " not mapped.  THe annotated method's only argument must be RequestContext or can also have no args.");
         }
         service.init(this);
+    }
+    
+    protected void mapConsumer(String location, String httpMethod, PathHandler ph, Consume c)
+    {
+        Class<?> pojoClass = c.pojoClass();
+        Class<?>[] consumers = c.consumers();
+        if(pojoClass==null)
+        {
+            _log.warn("consumer @ " + location + " excluded. Param pojoClass is required.");
+            return;
+        }
+        if(consumers==null || consumers.length==0)
+        {
+            _log.warn("consumer @ " + location + " excluded. Param consumers is required.");
+            return;
+        }
+        
+        ConsumerInterceptor ci = new ConsumerInterceptor();
+        String outputType = c.outputType();
+        Properties props = loadPropertiesFromClass(pojoClass, c.initParams());        
+        for(int i=0; i<consumers.length; i++)
+        {
+            try
+            {
+                ValidatingConsumer vc = (ValidatingConsumer)consumers[i].newInstance();
+                vc.preConfigure(httpMethod, pojoClass, outputType, props);
+                ci.addConsumer(vc);
+            }
+            catch(Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        ph.addMappedInterceptor(ci, 0);
+    }
+    
+    public Properties loadPropertiesFromClass(Class<?> clazz, String initParams)
+    {
+        Map<Class<?>,Properties> cache = 
+            (Map<Class<?>,Properties>)getAttribute(CONSUMER_PROPERTIES_CACHE);
+        if(cache==null)
+        {
+            cache = new HashMap<Class<?>,Properties>(7);
+            setAttribute(CONSUMER_PROPERTIES_CACHE, cache);
+        }
+        Properties props = cache.get(clazz);
+        if(props!=null)
+            return props;
+        
+        props = new Properties();
+        cache.put(clazz, props);
+        addParamsToProperties(props, initParams);
+        
+        String resource = clazz.getName().replace('.', '/') + ".properties";
+        URL url = getResource(resource);
+        if(url!=null)
+        {
+            try
+            {
+                props.load(url.openStream());
+            }
+            catch(IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        
+        return props;
+    }    
+    
+    static void addParamsToProperties(Properties properties, String params)
+    {
+        if(params==null || params.length()==0)
+            return;
+        
+        String[] tokens = Delim.AMPER.split(params);
+        for(int i=0; i<tokens.length; i++)
+        {
+            String token = tokens[i];
+            int idx = token.indexOf('=');
+            if(idx==-1)
+            {
+                if(token.length()>0)
+                    properties.put(token, "");
+            }
+            else if(idx!=0)
+                properties.setProperty(token.substring(0, idx), token.substring(idx+1));
+        }
     }
     
     protected void preConfigure(ServletConfig config) throws Exception

@@ -27,11 +27,11 @@ public abstract class AbstractLifeCycle implements LifeCycle
     
     public final void init(WebContext webContext)
     {
-        if(_initialized)
+        if(_initialized || webContext==null)
             return;
         
-        _webContext = webContext;
         _initialized = true;
+        _webContext = webContext;        
         init();
     }
     
@@ -50,8 +50,9 @@ public abstract class AbstractLifeCycle implements LifeCycle
         if(_destroyed || !_initialized)
             return;
         
-        _destroyed = true;
         destroy();
+        _webContext = null;
+        _destroyed = true;
     }
     
     protected abstract void init();
