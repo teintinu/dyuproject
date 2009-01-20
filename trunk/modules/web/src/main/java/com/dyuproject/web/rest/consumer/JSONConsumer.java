@@ -174,10 +174,10 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
             boolean required = true;
             if(errorMsg!=null)
             {
-                if(errorMsg.length()==0)
+                if(errorMsg.length()<2)
                 {
-                    errorMsg = AbstractConsumer.getDefaultErrorMsg(field);
-                    required = false;
+                    required = errorMsg.length()==1;
+                    errorMsg = AbstractConsumer.getDefaultErrorMsg(field);                    
                 }
                 String validator = (String)_initParams.get(field + ".validator");
                 FieldValidator fv = null;
