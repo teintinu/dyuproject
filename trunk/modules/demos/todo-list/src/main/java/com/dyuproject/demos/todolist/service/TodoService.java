@@ -296,7 +296,7 @@ public class TodoService extends AbstractService
                 rc.getResponse());
     }
     
-    @HttpResource(location="/todos/current")
+    @HttpResource(location="/todos/completed")
     @Get
     public void filter_completed(RequestContext rc) throws IOException, ServletException
     {
