@@ -353,12 +353,23 @@ public class RelyingParty
         if(_context.getAssociation().verifyAuth(user, getAuthParameters(request), _context))
         {
             _listener.onAuthenticate(user, request);
-            if(!response.isCommitted())
-                _manager.saveUser(user, request, response);
+            _manager.saveUser(user, request, response);
             return true;
         }        
         return false;
     }
+    
+    public boolean associate(OpenIdUser user, HttpServletRequest request, 
+            HttpServletResponse response) throws Exception
+    {
+        if(_context.getAssociation().associate(user, _context))
+        {
+            _manager.saveUser(user, request, response);
+            return true;
+        }        
+        return false;
+    }
+
     
     public boolean associateAndAuthenticate(OpenIdUser user, HttpServletRequest request, 
             HttpServletResponse response, String trustRoot, String realm, 
@@ -373,12 +384,12 @@ public class RelyingParty
     {
         UrlEncodedParameterMap params = RelyingParty.getAuthUrlMap(user, trustRoot, realm, returnTo);
         
-        _listener.onPreAuthenticate(user, request, params);      
-
-        if(!response.isCommitted())
-            _manager.saveUser(user, request, response);
+        _listener.onPreAuthenticate(user, request, params);
+        
+        _manager.saveUser(user, request, response);        
         
         response.sendRedirect(params.toString());
+        
         return true;
     }    
     
