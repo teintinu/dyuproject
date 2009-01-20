@@ -227,10 +227,10 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
     protected void generateResponse(String message, RequestContext rc)
     throws IOException, ServletException
     {
-        HashMap<String,String> map = new HashMap<String,String>(3);
+        HashMap<String,String> map = new HashMap<String,String>(2);
         map.put(ERROR_MSG_KEY, message);
-        rc.getResponse().setContentType(CONTENT_TYPE);
-        rc.getResponse().getWriter().print(toJSON(map));
+        rc.getResponse().setContentType(getRequestContentType());
+        rc.getResponse().getWriter().write(toJSON(map));
     }
     
     protected Convertor getConvertor(Class clazz)
