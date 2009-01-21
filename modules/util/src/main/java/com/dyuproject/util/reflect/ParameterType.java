@@ -51,7 +51,22 @@ public abstract class ParameterType
         {
             return Boolean.class;
         }
-    };    
+    };
+    
+    public static final ParameterType BOOLEAN_P = new ParameterType(){
+        public Object getActualValue(String value)
+        {
+            return new Boolean(value);
+        }
+        public Class<? extends Object> getTypeClass()
+        {
+            return Boolean.TYPE;
+        }
+        public boolean isPrimitive()
+        {
+            return true;
+        }
+    };
     
     public static final ParameterType SHORT = new ParameterType(){
         public Object getActualValue(String value)
@@ -60,7 +75,22 @@ public abstract class ParameterType
         }
         public Class<? extends Object> getTypeClass()
         {
+            return Short.class;
+        }
+    };
+    
+    public static final ParameterType SHORT_P = new ParameterType(){
+        public Object getActualValue(String value)
+        {
+            return new Short(value);
+        }
+        public Class<? extends Object> getTypeClass()
+        {
             return Short.TYPE;
+        }
+        public boolean isPrimitive()
+        {
+            return true;
         }
     };
     
@@ -75,6 +105,21 @@ public abstract class ParameterType
         }
     };
     
+    public static final ParameterType INTEGER_P = new ParameterType(){
+        public Object getActualValue(String value)
+        {
+            return new Integer(value);
+        }
+        public Class<? extends Object> getTypeClass()
+        {
+            return Integer.TYPE;
+        }
+        public boolean isPrimitive()
+        {
+            return true;
+        }
+    };
+    
     public static final ParameterType LONG = new ParameterType(){
         public Object getActualValue(String value)
         {
@@ -83,6 +128,21 @@ public abstract class ParameterType
         public Class<? extends Object> getTypeClass()
         {
             return Long.class;
+        }
+    };
+    
+    public static final ParameterType LONG_P = new ParameterType(){
+        public Object getActualValue(String value)
+        {
+            return new Long(value);
+        }
+        public Class<? extends Object> getTypeClass()
+        {
+            return Long.TYPE;
+        }
+        public boolean isPrimitive()
+        {
+            return true;
         }
     };
     
@@ -97,6 +157,21 @@ public abstract class ParameterType
         }
     };
     
+    public static final ParameterType FLOAT_P = new ParameterType(){
+        public Object getActualValue(String value)
+        {
+            return new Float(value);
+        }
+        public Class<? extends Object> getTypeClass()
+        {
+            return Float.TYPE;
+        }
+        public boolean isPrimitive()
+        {
+            return true;
+        }
+    };
+    
     public static final ParameterType DOUBLE = new ParameterType(){
         public Object getActualValue(String value)
         {
@@ -108,6 +183,21 @@ public abstract class ParameterType
         }
     };
     
+    public static final ParameterType DOUBLE_P = new ParameterType(){
+        public Object getActualValue(String value)
+        {
+            return new Double(value);
+        }
+        public Class<? extends Object> getTypeClass()
+        {
+            return Double.TYPE;
+        }
+        public boolean isPrimitive()
+        {
+            return true;
+        }
+    };
+    
     static
     {
         fillWithSimpleType(__simpleTypes);
@@ -115,19 +205,19 @@ public abstract class ParameterType
     
     public static void fillWithSimpleType(Map<Class<?>, ParameterType> map)
     {
-        map.put(String.class, STRING);
-        map.put(Boolean.class, BOOLEAN);
-        map.put(Boolean.TYPE, BOOLEAN);
-        map.put(Short.class, SHORT);
-        map.put(Short.TYPE, SHORT);
-        map.put(Integer.class, INTEGER);
-        map.put(Integer.TYPE, INTEGER);
-        map.put(Long.class, LONG);
-        map.put(Long.TYPE, LONG);
-        map.put(Float.class, FLOAT);
-        map.put(Float.TYPE, FLOAT);
-        map.put(Double.class, DOUBLE);
-        map.put(Double.TYPE, DOUBLE);
+        map.put(STRING.getTypeClass(), STRING);
+        map.put(BOOLEAN.getTypeClass(), BOOLEAN);
+        map.put(BOOLEAN_P.getTypeClass(), BOOLEAN_P);
+        map.put(SHORT.getTypeClass(), SHORT);
+        map.put(SHORT_P.getTypeClass(), SHORT_P);
+        map.put(INTEGER.getTypeClass(), INTEGER);
+        map.put(INTEGER_P.getTypeClass(), INTEGER_P);
+        map.put(LONG.getTypeClass(), LONG);
+        map.put(LONG_P.getTypeClass(), LONG_P);
+        map.put(FLOAT.getTypeClass(), FLOAT);
+        map.put(FLOAT_P.getTypeClass(), FLOAT_P);
+        map.put(DOUBLE.getTypeClass(), DOUBLE);
+        map.put(DOUBLE_P.getTypeClass(), DOUBLE_P);
     }
     
     public static ParameterType getSimpleType(Class<?> clazz)
@@ -212,6 +302,11 @@ public abstract class ParameterType
     public int hashCode()
     {
         return getTypeClass().hashCode();
+    }
+    
+    public boolean isPrimitive()
+    {
+        return false;
     }
     
     public static class SimpleField
