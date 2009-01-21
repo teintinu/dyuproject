@@ -49,7 +49,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
     
     static final String CACHE_KEY = SimpleParameterConsumer.class + ".cache";
 
-    private static final Object[] __getterArg = new Object[]{};
+    private static final Object[] __getterArg = new Object[]{}, __nullArg = new Object[]{null};
     
     private static final Map<Class<?>, NumberType> __numberTypes = new HashMap<Class<?>, NumberType>();
     
@@ -470,9 +470,9 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
     
     public static class Setter
     {
-        private String _propertyName;
-        private Method _method;
-        private NumberType _numberType;
+        protected String _propertyName;
+        protected Method _method;
+        protected NumberType _numberType;
         
         public Setter(String propertyName, Method method)
         {
@@ -513,9 +513,9 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
     
     public static class ValidatingSetter extends Setter
     {
-        private boolean _required;
-        private FieldValidator _validator;
-        private String _errorMsg;
+        protected boolean _required;
+        protected FieldValidator _validator;
+        protected String _errorMsg;
 
         public ValidatingSetter(String propertyName, Method method, boolean required, 
                 FieldValidator validator, String errorMsg)
@@ -544,23 +544,32 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
         public void invoke(Object obj, Object value) throws IllegalArgumentException, 
         IllegalAccessException, InvocationTargetException
         {
+            String errorMsg = null;
             try
-            {
-                if(_validator==null)
-                    super.invoke(obj, value);
-                else
+            {                
+                if(value==null)
                 {
-                    String errorMsg = _validator.validate(value);
-                    if(errorMsg==null)
-                        super.invoke(obj, value);
-                    else
-                        throw new ValidationException(errorMsg, this);
-                }                    
+                    _method.invoke(obj, __nullArg);
+                    return;
+                }
+                if(_validator==null)
+                {
+                    super.invoke(obj, value);
+                    return;
+                }
+                errorMsg = _validator.validate(value);
+                if(errorMsg==null)
+                {
+                    super.invoke(obj, value);
+                    return;
+                }
             }
             catch(Exception e)
             {
                 throw new ValidationException(getErrorMsg(), this);
             }
+            
+            throw new ValidationException(errorMsg, this);
         }
     }
     
