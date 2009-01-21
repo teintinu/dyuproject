@@ -550,7 +550,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
                     super.invoke(obj, value);
                 else
                 {
-                    String errorMsg = _validator.getErrorMsg(value);
+                    String errorMsg = _validator.validate(value);
                     if(errorMsg==null)
                         super.invoke(obj, value);
                     else

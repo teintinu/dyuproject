@@ -43,7 +43,7 @@ public interface ValidatingConsumer extends LifeCycle
     public interface FieldValidator
     {
         
-        public String getErrorMsg(Object value);
+        public String validate(Object value);
         
     }
 

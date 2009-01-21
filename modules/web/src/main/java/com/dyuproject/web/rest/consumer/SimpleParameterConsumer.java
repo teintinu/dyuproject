@@ -161,6 +161,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 return false;
             }
             Object actualValue = included.getSimpleField().getType().getActualValue(value);
+            
             String validationErrorMsg = included.getErrorMsg(actualValue);
             if(validationErrorMsg!=null)
             {
@@ -286,7 +287,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
         
         String getErrorMsg(Object value)
         {
-            return _validator==null ? null : _validator.getErrorMsg(value);
+            return value==null || _validator==null ? null : _validator.validate(value);
         }
         
     }
