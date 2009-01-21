@@ -45,7 +45,7 @@ public abstract class ParameterType
     public static final ParameterType BOOLEAN = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Boolean(value);
+            return Boolean.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -56,7 +56,7 @@ public abstract class ParameterType
     public static final ParameterType BOOLEAN_P = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Boolean(value);
+            return Boolean.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -71,7 +71,7 @@ public abstract class ParameterType
     public static final ParameterType SHORT = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Short(value);
+            return Short.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -82,7 +82,7 @@ public abstract class ParameterType
     public static final ParameterType SHORT_P = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Short(value);
+            return Short.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -97,7 +97,7 @@ public abstract class ParameterType
     public static final ParameterType INTEGER = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Integer(value);
+            return Integer.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -108,7 +108,7 @@ public abstract class ParameterType
     public static final ParameterType INTEGER_P = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Integer(value);
+            return Integer.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -123,7 +123,7 @@ public abstract class ParameterType
     public static final ParameterType LONG = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Long(value);
+            return Long.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -134,7 +134,7 @@ public abstract class ParameterType
     public static final ParameterType LONG_P = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Long(value);
+            return Long.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -149,7 +149,7 @@ public abstract class ParameterType
     public static final ParameterType FLOAT = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Float(value);
+            return Float.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -160,7 +160,7 @@ public abstract class ParameterType
     public static final ParameterType FLOAT_P = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Float(value);
+            return Float.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -175,7 +175,7 @@ public abstract class ParameterType
     public static final ParameterType DOUBLE = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Double(value);
+            return Double.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
@@ -186,7 +186,7 @@ public abstract class ParameterType
     public static final ParameterType DOUBLE_P = new ParameterType(){
         public Object getActualValue(String value)
         {
-            return new Double(value);
+            return Double.valueOf(value);
         }
         public Class<? extends Object> getTypeClass()
         {
