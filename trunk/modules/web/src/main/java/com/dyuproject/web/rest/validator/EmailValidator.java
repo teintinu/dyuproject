@@ -35,11 +35,8 @@ public class EmailValidator extends AbstractValidator
         setErrorMsg(errorMsg);
     }
 
-    public String getErrorMsg(Object value)
-    {
-        if(value==null)
-            return null;
-        
+    public String validate(Object value)
+    {        
         String email = value.toString();
         int idx = email.indexOf('@');
         if(idx>0)
