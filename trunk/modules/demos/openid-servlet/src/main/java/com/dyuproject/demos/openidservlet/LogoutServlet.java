@@ -48,7 +48,7 @@ public class LogoutServlet extends HttpServlet
     throws IOException, ServletException
     {
         RelyingParty.getInstance().invalidate(request, response);
-        response.sendRedirect("/home/");
+        response.sendRedirect(request.getContextPath() + "/home/");
     }
 
 }

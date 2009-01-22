@@ -1,4 +1,5 @@
 <%@ page session="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -25,7 +26,7 @@
   </div>
   <div style="clear:both"></div>
   <p>
-    Welcome <span style="color:green">${openid_user.claimedId}</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="/logout/">logout</a></span>
+    Welcome <span style="color:green">${openid_user.claimedId}</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/logout/"/>">logout</a></span>
   </p>
 </div>
 </body>
