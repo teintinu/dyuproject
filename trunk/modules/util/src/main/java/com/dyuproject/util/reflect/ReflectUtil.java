@@ -14,7 +14,6 @@
 
 package com.dyuproject.util.reflect;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -36,7 +35,7 @@ public abstract class ReflectUtil
     static final String IS = "is";
     static final String SET = "set";
     static final String GET_INSTANCE = "getInstance";
-    private static final Class[] __emptyArg = new Class[]{};
+    private static final Class<?>[] __emptyArg = new Class<?>[]{};
     private static final Object[] __getterArg = new Object[]{};
 
     public static Map<String,Method> getGetterMethods(Class<?> pojoClass) 
