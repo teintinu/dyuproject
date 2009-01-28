@@ -101,6 +101,11 @@ public abstract class ReflectUtil
         return new String(prop);
     }
     
+    public static String toField(int start, String methodName)
+    {
+        return toProperty(start, methodName);
+    }
+    
     public static Object getSingleton(Class<?> clazz)
     {
         return Singleton.class.isAssignableFrom(clazz) ? getInstance(clazz) : null;
