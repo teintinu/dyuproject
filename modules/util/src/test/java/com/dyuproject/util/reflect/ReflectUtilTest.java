@@ -19,6 +19,8 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
+import com.dyuproject.util.Singleton;
+
 /**
  * @author David Yu
  * @created Jan 13, 2009
@@ -38,6 +40,36 @@ public class ReflectUtilTest extends TestCase
         assertTrue(setters.get("name")!=null);
         assertTrue(setters.get("bar")!=null);
         assertTrue(setters.get("baz")!=null);
+    }
+    
+    public void testSingleton() throws Exception
+    {
+        assertTrue(Bar.getInstance()==ReflectUtil.getSingleton(Bar.class));
+        assertTrue(Baz.getBaz()!=ReflectUtil.getSingleton(Baz.class));
+        assertTrue(Baz.getBaz()==ReflectUtil.getInstance(Baz.class));
+        assertTrue(Baz.getBaz()==ReflectUtil.newInstance(Baz.class));   
+    }
+    
+    public static class Bar implements Singleton
+    {
+        
+        private static final Bar __instance = new Bar();
+        
+        public static Bar getInstance()
+        {
+            return __instance;
+        }
+    }
+    
+    public static class Baz
+    {
+        
+        private static final Baz __instance = new Baz();
+        
+        public static Baz getBaz()
+        {
+            return __instance;
+        }
     }
     
     public static class Foo

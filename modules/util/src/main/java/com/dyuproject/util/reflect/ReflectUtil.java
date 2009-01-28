@@ -14,10 +14,13 @@
 
 package com.dyuproject.util.reflect;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.dyuproject.util.Singleton;
 
 
 /**
@@ -32,6 +35,9 @@ public abstract class ReflectUtil
     static final String GET = "get";
     static final String IS = "is";
     static final String SET = "set";
+    static final String GET_INSTANCE = "getInstance";
+    private static final Class[] __emptyArg = new Class[]{};
+    private static final Object[] __getterArg = new Object[]{};
 
     public static Map<String,Method> getGetterMethods(Class<?> pojoClass) 
     {
@@ -50,7 +56,7 @@ public abstract class ReflectUtil
         {
             Method m=methods[i];
             if (!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==0 && 
-                    m.getReturnType()!=null)
+                    m.getReturnType()!=null && Modifier.isPublic(m.getModifiers()))
             {
                 String name=m.getName();
                 if (name.startsWith(IS))
@@ -80,7 +86,7 @@ public abstract class ReflectUtil
         {
             Method m = methods[i];
             if(!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==1 && 
-                    m.getName().startsWith(SET))
+                    m.getName().startsWith(SET) && Modifier.isPublic(m.getModifiers()))
             {
                 baseMap.put(toProperty(SET.length(), m.getName()), m);
             }
@@ -94,6 +100,50 @@ public abstract class ReflectUtil
         int firstLetter = prop[0];
         prop[0] = (char)(firstLetter<91 ? firstLetter + 32 : firstLetter);
         return new String(prop);
+    }
+    
+    public static Object getSingleton(Class<?> clazz)
+    {
+        return Singleton.class.isAssignableFrom(clazz) ? getInstance(clazz) : null;
+    }
+    
+    public static Object getInstance(Class<?> clazz)
+    {
+        Method m = null;
+        try
+        {
+            m = clazz.getDeclaredMethod(GET_INSTANCE, __emptyArg);
+        }
+        catch (Exception e)
+        {
+            try
+            {
+                m = clazz.getDeclaredMethod("get" + clazz.getSimpleName(), __emptyArg);
+            }
+            catch(Exception e1)
+            {
+                return null;
+            }
+        }
+        if(m!=null && Modifier.isStatic(m.getModifiers()) && Modifier.isPublic(m.getModifiers()))
+        {
+            try
+            {
+                return m.invoke(null, __getterArg);
+            } 
+            catch (Exception e)
+            {
+                return null;
+            }
+        }
+        return null;
+    }
+    
+    public static Object newInstance(Class<?> clazz) 
+    throws InstantiationException, IllegalAccessException
+    {
+        Object o = getInstance(clazz);
+        return o==null ? clazz.newInstance() : o;
     }
 
 }

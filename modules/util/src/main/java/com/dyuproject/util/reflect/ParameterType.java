@@ -242,7 +242,7 @@ public abstract class ParameterType
         {
             Method m = methods[i];
             if(!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==1 && 
-                    m.getName().startsWith(ReflectUtil.SET))
+                    m.getName().startsWith(ReflectUtil.SET) && Modifier.isPublic(m.getModifiers()))
             {
                 ParameterType pt = getSimpleType(m.getParameterTypes()[0]);
                 if(pt!=null)
@@ -271,7 +271,7 @@ public abstract class ParameterType
         {
             Method m = methods[i];
             if (!Modifier.isStatic(m.getModifiers()) && m.getParameterTypes().length==0 && 
-                    m.getReturnType()!=null)
+                    m.getReturnType()!=null && Modifier.isPublic(m.getModifiers()))
             {
                 String methodName = m.getName();
                 if(methodName.startsWith(ReflectUtil.IS))
