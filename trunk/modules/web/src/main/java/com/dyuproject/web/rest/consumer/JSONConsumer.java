@@ -110,10 +110,9 @@ public class JSONConsumer extends AbstractConsumer
     }
     
     protected void init()
-    {
-        initDefaults();
-        
-        ConcurrentMap<String,Convertor> cache = (ConcurrentMap<String,Convertor>)getWebContext().getAttribute(CACHE_KEY);
+    {        
+        ConcurrentMap<String,Convertor> cache = 
+            (ConcurrentMap<String,Convertor>)getWebContext().getAttribute(CACHE_KEY);
         if(cache==null)
         {
             cache = new ConcurrentHashMap<String,Convertor>();
@@ -124,6 +123,8 @@ public class JSONConsumer extends AbstractConsumer
                         new JSONDispatcher(cache));
             }
         }
+        
+        initDefaults();
         
         _json = new CachedJSON(cache)
         {
