@@ -21,6 +21,7 @@ import java.util.Properties;
 
 import com.dyuproject.openid.Identifier;
 import com.dyuproject.openid.OpenIdContext;
+import com.dyuproject.util.ClassLoaderUtil;
 import com.dyuproject.util.validate.IPDomainValidator;
 
 /**
@@ -44,28 +45,28 @@ public class EmailResolver implements Identifier.Resolver
     
     public EmailResolver(String resourceLoc)
     {
-        URL resource = getResource(resourceLoc);
-        if(resource!=null)
+        URL resource = ClassLoaderUtil.getResource(resourceLoc, getClass());
+        if(resource==null)
+            throw new IllegalStateException("resource: " + resourceLoc + " not found");
+
+        try
         {
-            try
-            {
-                load(resource.openStream());
-            }
-            catch(IOException e)
-            {
-                throw new RuntimeException(e);
-            }
+            _urls.load(resource.openStream());
+        }
+        catch(IOException e)
+        {
+            throw new RuntimeException(e);
         }
     }
     
     public EmailResolver(URL resource) throws IOException
     {
-        load(resource.openStream());
+        _urls.load(resource.openStream());
     }
     
     public EmailResolver(InputStream resource) throws IOException
     {
-        load(resource);
+        _urls.load(resource);
     }
     
     public EmailResolver(Properties urls)
@@ -96,18 +97,6 @@ public class EmailResolver implements Identifier.Resolver
                 identifier.resolve(_urls.getProperty(new String(domain)));
             }
         }        
-    }
-    
-    private void load(InputStream in) throws IOException
-    {
-        _urls.load(in);
-    }
-    
-    private static URL getResource(String path)
-    {
-        URL resource = EmailResolver.class.getClassLoader().getResource(path);
-        return resource==null ? Thread.currentThread().getContextClassLoader().getResource(path) :
-            resource;
     }
 
 }
