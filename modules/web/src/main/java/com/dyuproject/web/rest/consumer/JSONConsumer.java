@@ -50,13 +50,13 @@ import com.dyuproject.web.rest.WebContext;
 public class JSONConsumer extends AbstractConsumer
 {
     
-    public static final String JSON_DATA_KEY = "json_data";
+    public static final String JSON_DATA = "json_data";
     
     public static final String DEFAULT_REQUEST_CONTENT_TYPE = "text/json";
     
     public static final String DEFAULT_DISPATCHER_NAME = "json";
     
-    static final String CACHE_KEY = SimpleParameterConsumer.class + ".cache";
+    static final String CACHE_ATTR = SimpleParameterConsumer.class + ".cache";
 
     private static final Object[] __getterArg = new Object[]{}, __nullArg = new Object[]{null};
     
@@ -112,11 +112,11 @@ public class JSONConsumer extends AbstractConsumer
     protected void init()
     {        
         ConcurrentMap<String,Convertor> cache = 
-            (ConcurrentMap<String,Convertor>)getWebContext().getAttribute(CACHE_KEY);
+            (ConcurrentMap<String,Convertor>)getWebContext().getAttribute(CACHE_ATTR);
         if(cache==null)
         {
             cache = new ConcurrentHashMap<String,Convertor>();
-            getWebContext().setAttribute(CACHE_KEY, cache);
+            getWebContext().setAttribute(CACHE_ATTR, cache);
             if(getWebContext().getViewDispatcher(getDefaultDispatcherName())==null)
             {
                 getWebContext().setViewDispatcher(getDefaultDispatcherName(), 
@@ -226,7 +226,7 @@ public class JSONConsumer extends AbstractConsumer
         if(result==null)
             return false;
         
-        requestContext.getRequest().setAttribute(OUTPUT_KEY, result);
+        requestContext.getRequest().setAttribute(CONSUMER_OUTPUT, result);
         return true;
     }
     
@@ -272,7 +272,7 @@ public class JSONConsumer extends AbstractConsumer
                 HttpServletResponse response) throws ServletException,
                 IOException
         {
-            Object data = request.getAttribute(JSON_DATA_KEY);
+            Object data = request.getAttribute(JSON_DATA);
             if(data==null)
                 data = message==null ? Collections.EMPTY_MAP : EMPTY_RESPONSE_MAP;
             response.getWriter().write(toJSON(data));
@@ -300,7 +300,7 @@ public class JSONConsumer extends AbstractConsumer
         
         public void addJSON(StringBuffer buffer)
         {            
-            buffer.append('{').append(ERROR_MSG_KEY).append(':').append(_msg).append('}');
+            buffer.append('{').append(ERROR_MSG).append(':').append(_msg).append('}');
         }        
     }
 
