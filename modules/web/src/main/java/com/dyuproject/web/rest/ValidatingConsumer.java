@@ -26,14 +26,19 @@ import javax.servlet.ServletException;
  */
 
 public interface ValidatingConsumer extends LifeCycle
-{    
-
-    public static final String ERROR_MSG_KEY = "consumer_error_msg";
+{
+    
     public static final String OUTPUT_KEY = "consumer_output";
+    public static final String ERROR_MSG_KEY = "error_msg";
+    public static final String DISPATCHER_NAME_KEY = "consumer_dispatcher_name";
+    public static final String DISPATCH_URI_KEY = "consumer_dispatch_uri";
+    public static final String RESPONSE_CONTENT_TYPE_KEY = "response_content_type";
+    public static final String REQUEST_CONTENT_TYPE_KEY = "request_content_type";
+    public static final String REQUEST_ATTRIBUTES_KEY = "request_attributes";
     
     public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, 
             Map<?,?> initParams);
-    public String getContentType();
+    public String getRequestContentType();
     
     public String getHttpMethod();
     

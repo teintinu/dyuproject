@@ -281,29 +281,31 @@ public class RESTServiceContext extends WebContext
             cache = new HashMap<Class<?>,Properties>(7);
             setAttribute(CONSUMER_PROPERTIES_CACHE, cache);
         }
-        Properties props = cache.get(clazz);
-        if(props!=null)
-            return props;
-        
-        props = new Properties();
-        cache.put(clazz, props);
-        addParamsToProperties(props, initParams);
-        
-        String resource = clazz.getName().replace('.', '/') + ".properties";
-        URL url = getResource(resource);
-        if(url!=null)
+        Properties params = new Properties();        
+        Properties defaultProps = cache.get(clazz);
+        if(defaultProps==null)
         {
-            try
+            defaultProps = new Properties();
+            cache.put(clazz, defaultProps);
+            String resource = clazz.getName().replace('.', '/') + ".properties";
+            URL url = getResource(resource);
+            if(url!=null)
             {
-                props.load(url.openStream());
-            }
-            catch(IOException e)
-            {
-                throw new RuntimeException(e);
+                try
+                {
+                    defaultProps.load(url.openStream());
+                }
+                catch(IOException e)
+                {
+                    throw new RuntimeException(e);
+                }
             }
         }
+        if(defaultProps.size()!=0)
+            params.putAll(defaultProps);
         
-        return props;
+        addParamsToProperties(params, initParams);
+        return params;
     }    
     
     static void addParamsToProperties(Properties properties, String params)
