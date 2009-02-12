@@ -78,6 +78,9 @@ public class SimpleParameterConsumer extends AbstractConsumer
     protected void init()
     {
         initDefaults();
+        if(_dispatchUri==null)
+            throw new IllegalStateException(DISPATCH_URI + " must be provided.");
+        
         _pojo = !"map".equals(_outputType);
 
         Map<Class<?>,Map<String,SimpleField>> cache = 
@@ -194,7 +197,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             }            
         }
         
-        request.setAttribute(OUTPUT_KEY, output);
+        request.setAttribute(CONSUMER_OUTPUT, output);
         return true;
     }
     
@@ -235,7 +238,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             
             output.put(field, actualValue);
         }
-        request.setAttribute(OUTPUT_KEY, output);
+        request.setAttribute(CONSUMER_OUTPUT, output);
         return true;
     }
     

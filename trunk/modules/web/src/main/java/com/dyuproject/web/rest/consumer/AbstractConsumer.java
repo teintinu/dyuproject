@@ -92,7 +92,7 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     
     protected void initDefaults()
     {
-        _dispatcherName = (String)_initParams.get(DISPATCHER_NAME_KEY);
+        _dispatcherName = (String)_initParams.get(DISPATCHER_NAME);
         if(_dispatcherName==null)
             _dispatcherName = getDefaultDispatcherName();
         
@@ -100,22 +100,20 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         if(_dispatcher==null)
             throw new IllegalStateException("dispatcher *" + _dispatcherName + "* not found.");
         
-        _dispatchUri = (String)_initParams.get(DISPATCH_URI_KEY);
-        if(_dispatchUri==null)
-            throw new IllegalStateException(DISPATCH_URI_KEY + " must be provided.");
+        _dispatchUri = (String)_initParams.get(DISPATCH_URI);
         
-        _responseContentType = (String)_initParams.get(RESPONSE_CONTENT_TYPE_KEY);
+        _responseContentType = (String)_initParams.get(RESPONSE_CONTENT_TYPE);
         if(_responseContentType==null)
             _responseContentType = getDefaultResponseContentType();
         
-        _requestContentType = (String)_initParams.get(REQUEST_CONTENT_TYPE_KEY);
+        _requestContentType = (String)_initParams.get(REQUEST_CONTENT_TYPE);
         if(_requestContentType==null)
             _requestContentType = getDefaultRequestContentType();
         
-        String validationMsgsParam = (String)_initParams.get(REQUEST_ATTRIBUTES_KEY);
-        if(validationMsgsParam!=null)
+        String requestAttrsParam = (String)_initParams.get(REQUEST_ATTRIBUTES);
+        if(requestAttrsParam!=null)
         {
-            String[] msgs = Delim.SEMI_COLON.split(validationMsgsParam);
+            String[] msgs = Delim.SEMI_COLON.split(requestAttrsParam);
             if(msgs.length!=0)
             {
                 for(String m : msgs)
@@ -140,7 +138,6 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     protected abstract String getDefaultDispatcherName();
     protected abstract String getDefaultResponseContentType();
     protected abstract String getDefaultRequestContentType();
-
     
     public static String getDefaultErrorMsg(String field)
     {
@@ -172,7 +169,7 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
             for(Map.Entry<String, String> entry : _requestAttrs.entrySet())
                 rc.getRequest().setAttribute(entry.getKey(), entry.getKey());
         }
-        rc.getRequest().setAttribute(ERROR_MSG_KEY, errorMsg);
+        rc.getRequest().setAttribute(ERROR_MSG, errorMsg);
         rc.getResponse().setContentType(_responseContentType);
         _dispatcher.dispatch(uri, rc.getRequest(), rc.getResponse());
     }

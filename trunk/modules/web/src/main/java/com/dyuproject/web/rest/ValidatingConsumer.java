@@ -28,13 +28,13 @@ import javax.servlet.ServletException;
 public interface ValidatingConsumer extends LifeCycle
 {
     
-    public static final String OUTPUT_KEY = "consumer_output";
-    public static final String ERROR_MSG_KEY = "error_msg";
-    public static final String DISPATCHER_NAME_KEY = "consumer_dispatcher_name";
-    public static final String DISPATCH_URI_KEY = "consumer_dispatch_uri";
-    public static final String RESPONSE_CONTENT_TYPE_KEY = "response_content_type";
-    public static final String REQUEST_CONTENT_TYPE_KEY = "request_content_type";
-    public static final String REQUEST_ATTRIBUTES_KEY = "request_attributes";
+    public static final String CONSUMER_OUTPUT = "consumer_output";
+    public static final String ERROR_MSG = "error_msg";
+    public static final String DISPATCHER_NAME = "dispatcher_name";
+    public static final String DISPATCH_URI = "dispatch_uri";
+    public static final String RESPONSE_CONTENT_TYPE = "response_content_type";
+    public static final String REQUEST_CONTENT_TYPE = "request_content_type";
+    public static final String REQUEST_ATTRIBUTES = "request_attributes";
     
     public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, 
             Map<?,?> initParams);
