@@ -195,7 +195,7 @@ public class JSONConsumer extends AbstractConsumer
         }
         
         _pojoConvertor = new ValidatingPojoConvertor(_pojoClass, vSetters, _mapConvertor==null);
-        cache.put(_pojoClass.getName(), _pojoConvertor);
+        cache.putIfAbsent(_pojoClass.getName(), _pojoConvertor);
         //methods.clear();
         //methods = null;        
     }
