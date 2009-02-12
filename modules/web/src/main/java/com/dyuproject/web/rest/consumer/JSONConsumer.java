@@ -71,15 +71,12 @@ public class JSONConsumer extends AbstractConsumer
     {
         if(errorMsg!=null && errorMsg.length()!=0)
             __defaultErrorMsg = errorMsg;
-    }
-    
-  
+    }  
     
     public static NumberType getNumberType(Class<?> clazz)
     {
         return __numberTypes.get(clazz);
-    }
-    
+    }    
 
     private Convertor _pojoConvertor, _mapConvertor;
     private CachedJSON _json;
@@ -234,7 +231,13 @@ public class JSONConsumer extends AbstractConsumer
     protected void generateResponse(String message, RequestContext rc)
     throws IOException, ServletException
     {
-        dispatch(message, rc, message);
+        if(_dispatcher instanceof JSONDispatcher)
+        {
+            rc.getResponse().setContentType(_responseContentType);
+            ((JSONDispatcher)_dispatcher).writeErrorMsg(message, rc.getRequest(), rc.getResponse());
+        }
+        else
+            dispatch(message, rc, message);
     }
     
     public static class CachedJSON extends JSON
