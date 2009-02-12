@@ -37,7 +37,7 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     protected String _httpMethod;
     protected Class<?> _pojoClass;
     protected Map<?,?> _initParams;
-    protected String _outputType;
+    protected String _consumeType;
     protected String _dispatcherName;
     protected String _dispatchUri;
     protected String _responseContentType;
@@ -73,9 +73,14 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     public Map<String,String> getRequestAttrs()
     {
         return _requestAttrs;
-    }    
-
-    public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, Map<?,?> initParams)
+    }
+    
+    public String getConsumeType()
+    {
+        return _consumeType;
+    }
+    
+    public void preConfigure(String httpMethod, Class<?> pojoClass, Map<?,?> initParams)
     {
         if(_pojoClass!=null)
             throw new IllegalStateException("pojoClass already set.");
@@ -83,11 +88,13 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
             throw new IllegalStateException("httpMethod is required.");
         if(pojoClass==null)
             throw new IllegalStateException("pojoClass must be provided.");
+        if(initParams==null)
+            throw new IllegalStateException("initParams must be provided.");
         
         _httpMethod = httpMethod;
         _pojoClass = pojoClass;
-        _outputType = outputType;
         _initParams = initParams;
+        _consumeType = (String)_initParams.get(CONSUME_TYPE);
     }
     
     protected void initDefaults()

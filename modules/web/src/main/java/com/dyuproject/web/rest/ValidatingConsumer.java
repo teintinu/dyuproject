@@ -28,7 +28,8 @@ import javax.servlet.ServletException;
 public interface ValidatingConsumer extends LifeCycle
 {
     
-    public static final String CONSUMER_OUTPUT = "consumer_output";
+    public static final String CONSUMED_DATA = "consumed_data";
+    public static final String CONSUME_TYPE = "consume_type";
     public static final String ERROR_MSG = "error_msg";
     public static final String DISPATCHER_NAME = "dispatcher_name";
     public static final String DISPATCH_URI = "dispatch_uri";
@@ -36,8 +37,7 @@ public interface ValidatingConsumer extends LifeCycle
     public static final String REQUEST_CONTENT_TYPE = "request_content_type";
     public static final String REQUEST_ATTRIBUTES = "request_attributes";
     
-    public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, 
-            Map<?,?> initParams);
+    public void preConfigure(String httpMethod, Class<?> pojoClass, Map<?,?> initParams);
     public String getRequestContentType();
     
     public String getHttpMethod();
