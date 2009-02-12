@@ -34,6 +34,7 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
 {
     
     public static final String JSON_DATA = "json_data";
+    public static final String ERROR_MSG = "error_msg";
     
     public static final Generator EMPTY_RESPONSE_MAP = new Generator()
     {
@@ -53,14 +54,28 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
         super(cache);
     }
 
-    public void dispatch(String message, HttpServletRequest request,
-            HttpServletResponse response) throws ServletException,
+    public void dispatch(String errorMsg, HttpServletRequest request, HttpServletResponse response) 
+    throws ServletException,
             IOException
     {
         Object data = request.getAttribute(JSON_DATA);
         if(data==null)
-            data = message==null ? EMPTY_RESPONSE_MAP : new ErrorResponse(message);
-        response.getWriter().write(toJSON(data));
+            writeErrorMsg(errorMsg, request, response);
+        else
+            writeData(data, request, response);
+    }
+    
+    public void writeErrorMsg(String errorMsg, HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException
+    {
+        response.getWriter().write(toJSON(errorMsg==null ? EMPTY_RESPONSE_MAP : 
+            new ErrorResponse(errorMsg)));
+    }
+    
+    public void writeData(Object data, HttpServletRequest request, 
+            HttpServletResponse response) throws ServletException, IOException
+    {
+        response.getWriter().write(toJSON(data==null ? EMPTY_RESPONSE_MAP : data));
     }
     
     protected Convertor getConvertor(Class clazz)
@@ -95,8 +110,7 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
         
         public void addJSON(StringBuffer buffer)
         {            
-            buffer.append('{').append(ValidatingConsumer.ERROR_MSG)
-                .append(':').append(_msg).append('}');
+            buffer.append('{').append(ERROR_MSG).append(':').append(_msg).append('}');
         }        
     }
 }
