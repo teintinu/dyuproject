@@ -61,7 +61,7 @@ public class JSONConsumer extends AbstractConsumer
     
     private static String __defaultErrorMsg = "Please enter the fields correctly.";
     
-    public static void setDeaultContentType(String defaultContentType)
+    public static void setDefaultContentType(String defaultContentType)
     {
         if(defaultContentType!=null && defaultContentType.length()!=0)
             __defaultContentType = defaultContentType;
