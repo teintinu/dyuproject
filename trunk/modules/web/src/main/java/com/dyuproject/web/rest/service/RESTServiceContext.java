@@ -254,14 +254,13 @@ public class RESTServiceContext extends WebContext
         }
         
         ConsumerInterceptor ci = new ConsumerInterceptor();
-        String outputType = c.outputType();
         Properties props = loadPropertiesFromClass(pojoClass, c.initParams());        
         for(int i=0; i<consumers.length; i++)
         {
             try
             {
                 ValidatingConsumer vc = (ValidatingConsumer)consumers[i].newInstance();
-                vc.preConfigure(httpMethod, pojoClass, outputType, props);
+                vc.preConfigure(httpMethod, pojoClass, props);
                 ci.addConsumer(vc);
             }
             catch(Exception e)

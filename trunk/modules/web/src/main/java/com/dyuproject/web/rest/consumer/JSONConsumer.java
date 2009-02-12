@@ -18,28 +18,25 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.util.ajax.JSON;
 import org.mortbay.util.ajax.JSON.Convertor;
-import org.mortbay.util.ajax.JSON.Generator;
 import org.mortbay.util.ajax.JSON.Output;
 
 import com.dyuproject.util.reflect.ReflectUtil;
+import com.dyuproject.web.rest.JSONDispatcher;
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.ViewDispatcher;
-import com.dyuproject.web.rest.WebContext;
 
 /**
  * @author David Yu
@@ -48,37 +45,35 @@ import com.dyuproject.web.rest.WebContext;
 
 @SuppressWarnings("serial")
 public class JSONConsumer extends AbstractConsumer
-{
+{   
     
-    public static final String JSON_DATA = "json_data";
-    
-    public static final String DEFAULT_REQUEST_CONTENT_TYPE = "text/json";
-    
-    public static final String DEFAULT_DISPATCHER_NAME = "json";
+    public static final String DEFAULT_DISPATCHER_NAME = "json";    
+
+    public static final Object[] GETTER_ARG = new Object[]{}, NULL_ARG = new Object[]{null};
     
     static final String CACHE_ATTR = SimpleParameterConsumer.class + ".cache";
-
-    private static final Object[] __getterArg = new Object[]{}, __nullArg = new Object[]{null};
     
     private static final Map<Class<?>, NumberType> __numberTypes = new HashMap<Class<?>, NumberType>();
     
     private static final Log _log = LogFactory.getLog(JSONConsumer.class);
     
+    private static String __defaultContentType = "text/json";
+    
     private static String __defaultErrorMsg = "Please enter the fields correctly.";
     
+    public static void setDeaultContentType(String defaultContentType)
+    {
+        if(defaultContentType!=null && defaultContentType.length()!=0)
+            __defaultContentType = defaultContentType;
+    }
+        
     public static void setDefaultErrorMsg(String errorMsg)
     {
         if(errorMsg!=null && errorMsg.length()!=0)
             __defaultErrorMsg = errorMsg;
     }
     
-    public static final Generator EMPTY_RESPONSE_MAP = new Generator()
-    {
-        public void addJSON(StringBuffer buffer)
-        {            
-            buffer.append('{').append('}');
-        }        
-    };    
+  
     
     public static NumberType getNumberType(Class<?> clazz)
     {
@@ -101,12 +96,12 @@ public class JSONConsumer extends AbstractConsumer
 
     protected String getDefaultRequestContentType()
     {        
-        return DEFAULT_REQUEST_CONTENT_TYPE;
+        return __defaultContentType;
     }
 
     protected String getDefaultResponseContentType()
     {        
-        return DEFAULT_REQUEST_CONTENT_TYPE;
+        return __defaultContentType;
     }
     
     protected void init()
@@ -115,13 +110,19 @@ public class JSONConsumer extends AbstractConsumer
             (ConcurrentMap<String,Convertor>)getWebContext().getAttribute(CACHE_ATTR);
         if(cache==null)
         {
-            cache = new ConcurrentHashMap<String,Convertor>();
-            getWebContext().setAttribute(CACHE_ATTR, cache);
-            if(getWebContext().getViewDispatcher(getDefaultDispatcherName())==null)
+            ViewDispatcher vd = getWebContext().getViewDispatcher(getDefaultDispatcherName());
+            if(vd==null)
             {
+                cache = new ConcurrentHashMap<String,Convertor>();
                 getWebContext().setViewDispatcher(getDefaultDispatcherName(), 
                         new JSONDispatcher(cache));
             }
+            else if(vd instanceof JSONDispatcher)
+                cache = ((JSONDispatcher)vd)._cache;
+            else
+                cache = new ConcurrentHashMap<String,Convertor>();
+            
+            getWebContext().setAttribute(CACHE_ATTR, cache);
         }
         
         initDefaults();
@@ -136,7 +137,7 @@ public class JSONConsumer extends AbstractConsumer
             }
         };
         
-        if("map".equals(_outputType))
+        if("map".equals(getConsumeType()))
         {
             _mapConvertor = new Convertor()
             {
@@ -226,7 +227,7 @@ public class JSONConsumer extends AbstractConsumer
         if(result==null)
             return false;
         
-        requestContext.getRequest().setAttribute(CONSUMER_OUTPUT, result);
+        requestContext.getRequest().setAttribute(CONSUMED_DATA, result);
         return true;
     }
     
@@ -258,50 +259,6 @@ public class JSONConsumer extends AbstractConsumer
             
             return convertor;
         }
-    }
-    
-    public static class JSONDispatcher extends CachedJSON implements ViewDispatcher
-    {
-        
-        public JSONDispatcher(ConcurrentMap<String,Convertor> cache)
-        {
-            super(cache);
-        }
-
-        public void dispatch(String message, HttpServletRequest request,
-                HttpServletResponse response) throws ServletException,
-                IOException
-        {
-            Object data = request.getAttribute(JSON_DATA);
-            if(data==null)
-                data = message==null ? Collections.EMPTY_MAP : EMPTY_RESPONSE_MAP;
-            response.getWriter().write(toJSON(data));
-        }
-
-        public void destroy(WebContext webContext)
-        {            
-            
-        }
-
-        public void init(WebContext webContext)
-        {            
-            
-        }
-    }
-    
-    public static class ErrorResponse implements Generator
-    {
-        private String _msg;
-        
-        public ErrorResponse(String msg)
-        {
-            _msg = msg;
-        }
-        
-        public void addJSON(StringBuffer buffer)
-        {            
-            buffer.append('{').append(ERROR_MSG).append(':').append(_msg).append('}');
-        }        
     }
 
     public static class ValidationException extends RuntimeException
@@ -417,9 +374,15 @@ public class JSONConsumer extends AbstractConsumer
                 throw new RuntimeException(e);
             }
             
-            for(Iterator<Map.Entry<?, ?>> iterator = map.entrySet().iterator(); iterator.hasNext();)
+            setProps(obj, map);            
+            return obj;
+        }
+        
+        protected void setProps(Object obj, Map<?,?> props)
+        {
+            for(Iterator<?> iterator = props.entrySet().iterator(); iterator.hasNext();)
             {
-                Map.Entry<?, ?> entry = iterator.next();
+                Map.Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
                 Setter setter = getSetter((String)entry.getKey());
                 if(setter!=null)
                 {
@@ -435,8 +398,6 @@ public class JSONConsumer extends AbstractConsumer
                     }
                 }
             }
-            
-            return obj;
         }
 
         public void toJSON(Object obj, Output out)
@@ -447,7 +408,7 @@ public class JSONConsumer extends AbstractConsumer
             {            
                 try
                 {
-                    out.add(entry.getKey(), entry.getValue().invoke(obj, __getterArg));                    
+                    out.add(entry.getKey(), entry.getValue().invoke(obj, GETTER_ARG));                    
                 }
                 catch(Exception e)
                 {
@@ -598,7 +559,7 @@ public class JSONConsumer extends AbstractConsumer
             {                
                 if(value==null)
                 {
-                    _method.invoke(obj, __nullArg);
+                    _method.invoke(obj, NULL_ARG);
                     return;
                 }
                 if(_validator==null)
