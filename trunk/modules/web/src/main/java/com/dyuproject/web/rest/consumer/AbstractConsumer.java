@@ -15,10 +15,12 @@
 package com.dyuproject.web.rest.consumer;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 
+import com.dyuproject.util.Delim;
 import com.dyuproject.web.rest.AbstractLifeCycle;
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.ValidatingConsumer;
@@ -36,6 +38,12 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     protected Class<?> _pojoClass;
     protected Map<?,?> _initParams;
     protected String _outputType;
+    protected String _dispatcherName;
+    protected String _dispatchUri;
+    protected String _responseContentType;
+    protected String _requestContentType;
+    protected Map<String,String> _requestAttrs;
+    protected ViewDispatcher _dispatcher;
     
     public Class<?> getPojoClass()
     {
@@ -51,6 +59,21 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     {
         return _httpMethod;
     }
+    
+    public String getResponseContentType()
+    {
+        return _responseContentType;
+    }
+    
+    public String getRequestContentType()
+    {
+        return _requestContentType;
+    }
+    
+    public Map<String,String> getRequestAttrs()
+    {
+        return _requestAttrs;
+    }    
 
     public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, Map<?,?> initParams)
     {
@@ -66,6 +89,58 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         _outputType = outputType;
         _initParams = initParams;
     }
+    
+    protected void initDefaults()
+    {
+        _dispatcherName = (String)_initParams.get(DISPATCHER_NAME_KEY);
+        if(_dispatcherName==null)
+            _dispatcherName = getDefaultDispatcherName();
+        
+        _dispatcher = getWebContext().getViewDispatcher(_dispatcherName);
+        if(_dispatcher==null)
+            throw new IllegalStateException("dispatcher *" + _dispatcherName + "* not found.");
+        
+        _dispatchUri = (String)_initParams.get(DISPATCH_URI_KEY);
+        if(_dispatchUri==null)
+            throw new IllegalStateException(DISPATCH_URI_KEY + " must be provided.");
+        
+        _responseContentType = (String)_initParams.get(RESPONSE_CONTENT_TYPE_KEY);
+        if(_responseContentType==null)
+            _responseContentType = getDefaultResponseContentType();
+        
+        _requestContentType = (String)_initParams.get(REQUEST_CONTENT_TYPE_KEY);
+        if(_requestContentType==null)
+            _requestContentType = getDefaultRequestContentType();
+        
+        String validationMsgsParam = (String)_initParams.get(REQUEST_ATTRIBUTES_KEY);
+        if(validationMsgsParam!=null)
+        {
+            String[] msgs = Delim.SEMI_COLON.split(validationMsgsParam);
+            if(msgs.length!=0)
+            {
+                for(String m : msgs)
+                {
+                    int colon = m.indexOf(':');
+                    if(colon>0 && colon<m.length()-1)
+                    {
+                        String key = m.substring(0, colon).trim();
+                        String val = m.substring(colon+1).trim();
+                        if(_requestAttrs==null)
+                        {
+                            int size = (int)(1+(msgs.length/.75));
+                            _requestAttrs = new HashMap<String,String>(size);
+                        }
+                        _requestAttrs.put(key, val);
+                    }
+                }
+            }
+        }
+    }
+    
+    protected abstract String getDefaultDispatcherName();
+    protected abstract String getDefaultResponseContentType();
+    protected abstract String getDefaultRequestContentType();
+
     
     public static String getDefaultErrorMsg(String field)
     {
@@ -89,12 +164,23 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         return buffer;
     }
     
-    static void dispatch(ViewDispatcher dispatcher, String uri, String contentType, String errorMsg, 
-            RequestContext rc) throws ServletException, IOException
+    protected void dispatch(String errorMsg, RequestContext rc, String uri) 
+    throws ServletException, IOException
     {
+        if(_requestAttrs!=null)
+        {
+            for(Map.Entry<String, String> entry : _requestAttrs.entrySet())
+                rc.getRequest().setAttribute(entry.getKey(), entry.getKey());
+        }
         rc.getRequest().setAttribute(ERROR_MSG_KEY, errorMsg);
-        rc.getResponse().setContentType(contentType);
-        dispatcher.dispatch(uri, rc.getRequest(), rc.getResponse());
+        rc.getResponse().setContentType(_responseContentType);
+        _dispatcher.dispatch(uri, rc.getRequest(), rc.getResponse());
+    }
+    
+    protected void dispatch(String errorMsg, RequestContext rc) 
+    throws ServletException, IOException
+    {
+        dispatch(errorMsg, rc, _dispatchUri);
     }
 
     

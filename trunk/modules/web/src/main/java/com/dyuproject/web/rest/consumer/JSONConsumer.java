@@ -18,19 +18,27 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.Convertor;
+import org.mortbay.util.ajax.JSON.Generator;
+import org.mortbay.util.ajax.JSON.Output;
 
 import com.dyuproject.util.reflect.ReflectUtil;
 import com.dyuproject.web.rest.RequestContext;
-import com.dyuproject.web.rest.ValidatingConsumer;
+import com.dyuproject.web.rest.ViewDispatcher;
 import com.dyuproject.web.rest.WebContext;
 
 /**
@@ -38,14 +46,15 @@ import com.dyuproject.web.rest.WebContext;
  * @created Jan 18, 2009
  */
 
-public class JSONConsumer extends JSON implements ValidatingConsumer
+@SuppressWarnings("serial")
+public class JSONConsumer extends AbstractConsumer
 {
     
-    public static final String CONTENT_TYPE = "text/json";
+    public static final String JSON_DATA_KEY = "json_data";
     
-    public static final String STRIP_OUTER_COMMENT_KEY = "jsonc.strip_outer_comment";
+    public static final String DEFAULT_REQUEST_CONTENT_TYPE = "text/json";
     
-    public static final String DEFAULT_ERROR_MSG_KEY = "jsonc.default_error_msg";
+    public static final String DEFAULT_DISPATCHER_NAME = "json";
     
     static final String CACHE_KEY = SimpleParameterConsumer.class + ".cache";
 
@@ -55,100 +64,93 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
     
     private static final Log _log = LogFactory.getLog(JSONConsumer.class);
     
+    private static String __defaultErrorMsg = "Please enter the fields correctly.";
+    
+    public static void setDefaultErrorMsg(String errorMsg)
+    {
+        if(errorMsg!=null && errorMsg.length()!=0)
+            __defaultErrorMsg = errorMsg;
+    }
+    
+    public static final Generator EMPTY_RESPONSE_MAP = new Generator()
+    {
+        public void addJSON(StringBuffer buffer)
+        {            
+            buffer.append('{').append('}');
+        }        
+    };    
+    
     public static NumberType getNumberType(Class<?> clazz)
     {
         return __numberTypes.get(clazz);
     }
     
-    private static String __defaultErrorMsg = "Please enter the fields correctly.";
-    
-    public static void setDefaultErrorMsg(String errorMsg)
-    {
-        __defaultErrorMsg = errorMsg;
-    }
-    
-    private String _httpMethod;
-    private Class<?> _pojoClass;
-    private String _outputType;
-    private Map<?,?> _initParams;
-    
-    private WebContext _webContext;
-    
-    private Map<Class<?>,Convertor> _cache;
+
     private Convertor _pojoConvertor, _mapConvertor;
-    
-    private boolean _stripOuterComment;
-    private String _defaultErrorMsg;
+    private CachedJSON _json;
     
     public JSONConsumer()
     {
         
     }
-    
-    public String getContentType()
-    {
-        return CONTENT_TYPE;
-    }
-    
-    public String getHttpMethod()
-    {
-        return _httpMethod;
-    }
-    
-    public String getDefaultErrorMsg()
-    {
-        return _defaultErrorMsg;
-    }
-    
-    public void preConfigure(String httpMethod, Class<?> pojoClass, String outputType, 
-            Map<?, ?> initParams)
-    {
-        if(_pojoClass!=null)
-            throw new IllegalStateException("pojoClass already set.");
-        if(pojoClass==null)
-            throw new IllegalStateException("pojoClass must be provided.");
-        
-        _httpMethod = httpMethod;
-        _pojoClass = pojoClass;
-        _outputType = outputType;
-        _initParams = initParams;
-    }
-    
-    public void destroy(WebContext webContext)
+
+    protected String getDefaultDispatcherName()
     {        
-        
+        return DEFAULT_DISPATCHER_NAME;
+    }
+
+    protected String getDefaultRequestContentType()
+    {        
+        return DEFAULT_REQUEST_CONTENT_TYPE;
+    }
+
+    protected String getDefaultResponseContentType()
+    {        
+        return DEFAULT_REQUEST_CONTENT_TYPE;
     }
     
-    public void init(WebContext webContext)
+    protected void init()
     {
-        if(_webContext!=null || webContext==null)
-            return;
+        initDefaults();
         
-        _webContext = webContext;
-        
-        _cache = (Map<Class<?>,Convertor>)_webContext.getAttribute(CACHE_KEY);
-        if(_cache==null)
+        ConcurrentMap<String,Convertor> cache = (ConcurrentMap<String,Convertor>)getWebContext().getAttribute(CACHE_KEY);
+        if(cache==null)
         {
-            _cache = new HashMap<Class<?>,Convertor>();
-            webContext.setAttribute(CACHE_KEY, _cache);
+            cache = new ConcurrentHashMap<String,Convertor>();
+            getWebContext().setAttribute(CACHE_KEY, cache);
+            if(getWebContext().getViewDispatcher(getDefaultDispatcherName())==null)
+            {
+                getWebContext().setViewDispatcher(getDefaultDispatcherName(), 
+                        new JSONDispatcher(cache));
+            }
         }
+        
+        _json = new CachedJSON(cache)
+        {
+            protected Convertor getConvertor(Class clazz)
+            {
+                if(_pojoClass==clazz)
+                    return _mapConvertor==null ? _pojoConvertor : _mapConvertor;
+                return super.getConvertor(clazz);
+            }
+        };
         
         if("map".equals(_outputType))
         {
-            _mapConvertor = new JSON.Convertor()
+            _mapConvertor = new Convertor()
             {
                 public Object fromJSON(Map map)
                 {                    
                     return map;
                 }
                 public void toJSON(Object obj, Output out)
-                {                    
-                    _pojoConvertor.toJSON(obj, out);
-                }                
+                {
+                    _pojoConvertor.toJSON(obj, out);                    
+                }
             };
         }
         
-        _pojoConvertor = _cache.get(_pojoClass);
+        _pojoConvertor = cache.get(_pojoClass.getName());
         if(_pojoConvertor!=null)
             return;
         
@@ -157,11 +159,6 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
             _pojoConvertor = new PojoConvertor(_pojoClass);
             return;
         }
-        
-        _stripOuterComment = "true".equals(_initParams.get(STRIP_OUTER_COMMENT_KEY));
-        _defaultErrorMsg = (String)_initParams.get(DEFAULT_ERROR_MSG_KEY);
-        if(_defaultErrorMsg==null)
-            _defaultErrorMsg = __defaultErrorMsg;
         
         Map<String,Method> methods = ReflectUtil.getSetterMethods(_pojoClass);
         Map<String,ValidatingSetter> vSetters = new HashMap<String,ValidatingSetter>(1 + 
@@ -194,12 +191,13 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
                 }
                 vSetters.put(field, new ValidatingSetter(field, entry.getValue(), required, fv, 
                         errorMsg));
-            }            
+            }
         }
         
         _pojoConvertor = new ValidatingPojoConvertor(_pojoClass, vSetters, _mapConvertor==null);
-        methods.clear();
-        methods = null;        
+        cache.put(_pojoClass.getName(), _pojoConvertor);
+        //methods.clear();
+        //methods = null;        
     }
     
     public boolean consume(RequestContext requestContext) throws ServletException, IOException
@@ -207,8 +205,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
         Object result = null;
         try
         {
-            result = parse(new ReaderSource(requestContext.getRequest().getReader()), 
-                    _stripOuterComment);
+            result = _json.parse(new JSON.ReaderSource(requestContext.getRequest().getReader()));
             if(result instanceof Map && _mapConvertor==null)
                 result = _pojoConvertor.fromJSON((Map)result);
         }
@@ -222,7 +219,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
         }
         catch(Exception e)
         {
-            generateResponse(_defaultErrorMsg, requestContext);
+            generateResponse(__defaultErrorMsg, requestContext);
             _log.warn("Consume error.", e);
         }
         if(result==null)
@@ -235,26 +232,78 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
     protected void generateResponse(String message, RequestContext rc)
     throws IOException, ServletException
     {
-        HashMap<String,String> map = new HashMap<String,String>(2);
-        map.put(ERROR_MSG_KEY, message);
-        rc.getResponse().setContentType(getContentType());
-        rc.getResponse().getWriter().write(toJSON(map));
+        dispatch(message, rc, message);
     }
     
-    protected Convertor getConvertor(Class clazz)
+    public static class CachedJSON extends JSON
     {
-        if(_pojoClass==clazz)
-            return _mapConvertor==null ? _pojoConvertor : _mapConvertor;
+        protected ConcurrentMap<String,Convertor> _cache;
         
-        Convertor convertor = _cache.get(clazz);
-        if(convertor==null)
-            throw new IllegalArgumentException("unregistered pojo: " + clazz.getName());
+        public CachedJSON(ConcurrentMap<String,Convertor> cache)
+        {
+            _cache = cache;
+        }
         
-        return convertor;
+        public void addConvertor(Class clazz, Convertor convertor)
+        {
+            _cache.putIfAbsent(clazz.getName(), convertor);
+        }
+        
+        protected Convertor getConvertor(Class clazz)
+        {
+            Convertor convertor = _cache.get(clazz.getName());
+            if(convertor==null)
+                throw new IllegalArgumentException("unregistered pojo: " + clazz.getName());
+            
+            return convertor;
+        }
     }
     
-    @SuppressWarnings("serial")
-    static class ValidationException extends RuntimeException
+    public static class JSONDispatcher extends CachedJSON implements ViewDispatcher
+    {
+        
+        public JSONDispatcher(ConcurrentMap<String,Convertor> cache)
+        {
+            super(cache);
+        }
+
+        public void dispatch(String message, HttpServletRequest request,
+                HttpServletResponse response) throws ServletException,
+                IOException
+        {
+            Object data = request.getAttribute(JSON_DATA_KEY);
+            if(data==null)
+                data = message==null ? Collections.EMPTY_MAP : EMPTY_RESPONSE_MAP;
+            response.getWriter().write(toJSON(data));
+        }
+
+        public void destroy(WebContext webContext)
+        {            
+            
+        }
+
+        public void init(WebContext webContext)
+        {            
+            
+        }
+    }
+    
+    public static class ErrorResponse implements Generator
+    {
+        private String _msg;
+        
+        public ErrorResponse(String msg)
+        {
+            _msg = msg;
+        }
+        
+        public void addJSON(StringBuffer buffer)
+        {            
+            buffer.append('{').append(ERROR_MSG_KEY).append(':').append(_msg).append('}');
+        }        
+    }
+
+    public static class ValidationException extends RuntimeException
     {        
         ValidatingSetter _setter;
         
@@ -269,8 +318,7 @@ public class JSONConsumer extends JSON implements ValidatingConsumer
             return _setter;
         }
     }
-    
-    @SuppressWarnings("serial")
+
     static class RequiredFieldException extends ValidationException
     {
         RequiredFieldException(String msg, ValidatingSetter setter)

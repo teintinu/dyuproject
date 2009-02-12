@@ -28,7 +28,6 @@ import org.apache.commons.logging.LogFactory;
 import com.dyuproject.util.reflect.ParameterType;
 import com.dyuproject.util.reflect.ParameterType.SimpleField;
 import com.dyuproject.web.rest.RequestContext;
-import com.dyuproject.web.rest.ViewDispatcher;
 
 /**
  * @author David Yu
@@ -38,10 +37,11 @@ import com.dyuproject.web.rest.ViewDispatcher;
 public class SimpleParameterConsumer extends AbstractConsumer
 {
     
-    public static final String REQUEST_CONTENT_TYPE = "application/x-www-form-urlencoded";
-    public static final String RESPONSE_CONTENT_TYPE = "text/html";
-    public static final String DEFAULT_DISPATCHER = "jsp";
+    public static final String DEFAULT_REQUEST_CONTENT_TYPE = "application/x-www-form-urlencoded";
+    public static final String DEFAULT_RESPONSE_CONTENT_TYPE = "text/html";
+    public static final String DEFAULT_DISPATCHER_NAME = "jsp";
     
+    public static final String STRING_ATTRIBUTES = "spc.string_attributes";
     
     public static final String DISPATCHER_NAME = "spc.dispatcher_name";
     public static final String DISPATCH_URI = "spc.dispatch_uri";
@@ -51,8 +51,6 @@ public class SimpleParameterConsumer extends AbstractConsumer
     private static final Log _log = LogFactory.getLog(SimpleParameterConsumer.class);
     
     private Map<String,Included> _includedFields;
-    private String _dispatcherName, _dispatchUri;
-    private ViewDispatcher _dispatcher;
     private int _initialSize;
     private boolean _pojo;
     
@@ -61,38 +59,41 @@ public class SimpleParameterConsumer extends AbstractConsumer
         
     }
 
+    protected String getDefaultDispatcherName()
+    {        
+        return DEFAULT_DISPATCHER_NAME;
+    }
+
+    protected String getDefaultRequestContentType()
+    {        
+        return DEFAULT_REQUEST_CONTENT_TYPE;
+    }
+
+    protected String getDefaultResponseContentType()
+    {
+        return DEFAULT_RESPONSE_CONTENT_TYPE;
+    }
+
+
     protected void init()
     {
-        _dispatcherName = (String)_initParams.get(DISPATCHER_NAME);
-        if(_dispatcherName==null)
-            _dispatcherName = DEFAULT_DISPATCHER;
-        
-        _dispatcher = getWebContext().getViewDispatcher(_dispatcherName);
-        if(_dispatcher==null)
-            throw new IllegalStateException("dispatcher *" + _dispatcherName + "* not found.");
-
+        initDefaults();
         _pojo = !"map".equals(_outputType);
-        
-        _dispatchUri = (String)_initParams.get(DISPATCH_URI);
-        if(_dispatchUri==null)
-            throw new IllegalStateException(DISPATCH_URI + " must be provided.");
-        
-        Map<Class<?>,Map<String,Included>> cache = 
-            (Map<Class<?>,Map<String,Included>>)getWebContext().getAttribute(CACHE_KEY);
+
+        Map<Class<?>,Map<String,SimpleField>> cache = 
+            (Map<Class<?>,Map<String,SimpleField>>)getWebContext().getAttribute(CACHE_KEY);
         if(cache==null)
         {
-            cache = new HashMap<Class<?>,Map<String,Included>>();
+            cache = new HashMap<Class<?>,Map<String,SimpleField>>();
             getWebContext().addAttribute(CACHE_KEY, cache);
         }
         
-        _includedFields = cache.get(_pojoClass);
-        if(_includedFields!=null)
+        Map<String,SimpleField> simpleFields = cache.get(_pojoClass);
+        if(simpleFields==null)
         {
-            _initialSize = 1 + new Double(_includedFields.size()/.75).intValue();
-            return;
+            simpleFields = ParameterType.getSimpleFieldSetters(_pojoClass);
+            cache.put(_pojoClass, simpleFields);
         }
-        
-        Map<String,SimpleField> simpleFields = ParameterType.getSimpleFieldSetters(_pojoClass);
         
         _includedFields = new HashMap<String,Included>(_initialSize);
         for(Map.Entry<String, SimpleField> entry : simpleFields.entrySet())
@@ -123,9 +124,6 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 _includedFields.put(field, new Included(entry.getValue(), required, fv, errorMsg));
             }
         }
-        cache.put(_pojoClass, _includedFields);
-        simpleFields.clear();
-        simpleFields = null;
     }
 
     public boolean consume(RequestContext requestContext) throws ServletException, IOException
@@ -147,8 +145,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, included.getErrorMsg(), 
-                        requestContext);
+                dispatch(included.getErrorMsg(), requestContext);
                 return false;
             }
             value = value.trim();
@@ -156,8 +153,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, included.getErrorMsg(), 
-                        requestContext);
+                dispatch(included.getErrorMsg(), requestContext);
                 return false;
             }
             Object actualValue = included.getSimpleField().getType().getActualValue(value);
@@ -165,8 +161,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             String validationErrorMsg = included.getErrorMsg(actualValue);
             if(validationErrorMsg!=null)
             {
-                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, validationErrorMsg, 
-                        requestContext);
+                dispatch(validationErrorMsg, requestContext);
                 return false;
             }
             if(output==null)
@@ -186,8 +181,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             }
             catch(IllegalArgumentException e)
             {
-                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, included.getErrorMsg(), 
-                        requestContext);
+                dispatch(included.getErrorMsg(), requestContext);
                 return false;
             }
             catch (IllegalAccessException e)
@@ -218,8 +212,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, included.getErrorMsg(), 
-                        requestContext);
+                dispatch(included.getErrorMsg(), requestContext);
                 return false;
             }
             value = value.trim();
@@ -227,16 +220,14 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, included.getErrorMsg(), 
-                        requestContext);
+                dispatch(included.getErrorMsg(), requestContext);
                 return false;
             }
             Object actualValue = included.getSimpleField().getType().getActualValue(value);
             String validationErrorMsg = included.getErrorMsg(actualValue);
             if(validationErrorMsg!=null)
             {
-                dispatch(_dispatcher, _dispatchUri, RESPONSE_CONTENT_TYPE, validationErrorMsg, 
-                        requestContext);
+                dispatch(validationErrorMsg, requestContext);
                 return false;
             }
             if(output==null)
@@ -246,11 +237,6 @@ public class SimpleParameterConsumer extends AbstractConsumer
         }
         request.setAttribute(OUTPUT_KEY, output);
         return true;
-    }
-
-    public String getContentType()
-    {        
-        return REQUEST_CONTENT_TYPE;
     }
     
     static class Included
