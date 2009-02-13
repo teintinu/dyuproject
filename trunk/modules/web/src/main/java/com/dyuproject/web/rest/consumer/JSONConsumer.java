@@ -153,50 +153,45 @@ public class JSONConsumer extends AbstractConsumer
         if(_pojoConvertor!=null)
             return;
         
-        if(_initParams==null || _initParams.isEmpty())
+        /*if(_initParams.isEmpty())
         {
             _pojoConvertor = new PojoConvertor(_pojoClass);
             return;
-        }
+        }*/
         
         Map<String,Method> methods = ReflectUtil.getSetterMethods(_pojoClass);
         Map<String,ValidatingSetter> vSetters = new HashMap<String,ValidatingSetter>(1 + 
                 new Double(methods.size()/.75).intValue());
         
-        for(Map.Entry<String, Method> entry : methods.entrySet())
+        for(Map.Entry<String,Method> entry : methods.entrySet())
         {
             String field = entry.getKey();
-            String errorMsg = (String)_initParams.get(field);
-            boolean required = true;
-            if(errorMsg!=null)
+            if(!"false".equals(_initParams.get(field+".excluded")))
+                continue;
+            
+            boolean optional = !"false".equals(_initParams.get(field+".optional"));
+            String errorMsg = (String)_initParams.get(field + "." + ERROR_MSG);
+            String validator = (String)_initParams.get(field + ".validator");
+            FieldValidator fv = null;
+            if(validator!=null)
             {
-                if(errorMsg.length()<2)
+                try
                 {
-                    required = errorMsg.length()==1;
-                    errorMsg = AbstractConsumer.getDefaultErrorMsg(field);                    
+                    fv = (FieldValidator)AbstractConsumer.newObjectInstance(validator);
                 }
-                String validator = (String)_initParams.get(field + ".validator");
-                FieldValidator fv = null;
-                if(validator!=null)
+                catch(Exception e)
                 {
-                    try
-                    {
-                        fv = (FieldValidator)AbstractConsumer.newObjectInstance(validator);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new RuntimeException(e);
-                    }
+                    throw new RuntimeException(e);
                 }
-                vSetters.put(field, new ValidatingSetter(field, entry.getValue(), required, fv, 
-                        errorMsg));
             }
-        }
-        
+            if(errorMsg==null)
+                errorMsg = AbstractConsumer.getDefaultErrorMsg(field);
+            
+            vSetters.put(field, new ValidatingSetter(field, entry.getValue(), !optional, fv, 
+                    errorMsg));
+        }        
         _pojoConvertor = new ValidatingPojoConvertor(_pojoClass, vSetters, _mapConvertor==null);
-        cache.putIfAbsent(_pojoClass.getName(), _pojoConvertor);
-        //methods.clear();
-        //methods = null;        
+        cache.putIfAbsent(_pojoClass.getName(), _pojoConvertor);    
     }
     
     public boolean consume(RequestContext requestContext) throws ServletException, IOException
