@@ -99,33 +99,31 @@ public class SimpleParameterConsumer extends AbstractConsumer
         }
         
         _includedFields = new HashMap<String,Included>(_initialSize);
-        for(Map.Entry<String, SimpleField> entry : simpleFields.entrySet())
+        for(Map.Entry<String,SimpleField> entry : simpleFields.entrySet())
         {
             String field = entry.getKey();
-            String errorMsg = (String)_initParams.get(field);
-            boolean required = true;
-            if(errorMsg!=null)
+            if(!"false".equals(_initParams.get(field+".excluded")))
+                continue;
+            
+            boolean optional = !"false".equals(_initParams.get(field+".optional"));            
+            String errorMsg = (String)_initParams.get(field + "." + ERROR_MSG);
+            String validator = (String)_initParams.get(field + ".validator");
+            FieldValidator fv = null;
+            if(validator!=null)
             {
-                if(errorMsg.length()<2)
+                try
                 {
-                    required = errorMsg.length()==1;
-                    errorMsg = getDefaultErrorMsg(field);                    
+                    fv = (FieldValidator)newObjectInstance(validator);
                 }
-                String validator = (String)_initParams.get(field + ".validator");
-                FieldValidator fv = null;
-                if(validator!=null)
+                catch(Exception e)
                 {
-                    try
-                    {
-                        fv = (FieldValidator)newObjectInstance(validator);
-                    }
-                    catch(Exception e)
-                    {
-                        throw new RuntimeException(e);
-                    }
+                    throw new RuntimeException(e);
                 }
-                _includedFields.put(field, new Included(entry.getValue(), required, fv, errorMsg));
             }
+            if(errorMsg==null)
+                errorMsg = AbstractConsumer.getDefaultErrorMsg(field);
+            
+            _includedFields.put(field, new Included(entry.getValue(), !optional, fv, errorMsg));
         }
     }
 
