@@ -15,6 +15,7 @@
 package com.dyuproject.openid;
 
 
+
 /**
  * Discovery initially through yadis.  If that fails, delegates to HtmlBasedDiscovery
  * 
@@ -27,15 +28,7 @@ public class DefaultDiscovery implements Discovery
 
     public OpenIdUser discover(Identifier identifier, OpenIdContext context) throws Exception
     {
-        OpenIdUser user = null;
-        try
-        {
-            user = YadisDiscovery.tryDiscover(identifier, context);
-        }
-        catch(Exception e)
-        {
-            user = null;
-        }
+        OpenIdUser user = YadisDiscovery.tryDiscover(identifier, context);
         return user==null ? HtmlBasedDiscovery.tryDiscover(identifier, context) : user;
     }
 
