@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ added support for GoogleAccount attribute exchange (axschema - email only)
 + restored RelyingParty.associate(user, request, response)
 + REST Service annotated methods can now have an optional argument(RequestContext)
 + refactor REST handlers to have RequestContext as argument
