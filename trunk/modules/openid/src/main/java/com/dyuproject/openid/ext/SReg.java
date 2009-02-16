@@ -92,11 +92,21 @@ public class SReg implements Serializable, JSON.Convertible
         return _propertyCount;
     }
     
+    /**
+     * AxSchema compatibility
+     * 
+     * @return username
+     */
     public String getUsername()
     {
         return getNickname();
     }
     
+    /**
+     * AxSchema compatibility
+     * 
+     * @return alias
+     */
     public String getAlias()
     {
         return getNickname();
