@@ -27,6 +27,8 @@ import com.dyuproject.openid.OpenIdServletFilter;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.openid.UrlEncodedParameterMap;
+import com.dyuproject.openid.ext.GoogleAccount;
+import com.dyuproject.openid.ext.GoogleAccountConfigListener;
 import com.dyuproject.openid.ext.SReg;
 import com.dyuproject.openid.ext.SRegConfigListener;
 
@@ -44,8 +46,12 @@ public class HomeServlet extends HttpServlet
     
     public void init()
     {
-        // enable sreg
+        // enable sreg attribute exchange
         _relyingParty.addListener(new SRegConfigListener());
+        
+        // enable google account attribute exchange
+        _relyingParty.addListener(new GoogleAccountConfigListener());
+        
         // custom listener
         _relyingParty.addListener(new RelyingParty.Listener()
         {
@@ -65,6 +71,12 @@ public class HomeServlet extends HttpServlet
                 SReg sreg = SReg.get(user);
                 if(sreg!=null)
                     System.err.print(" aka " + sreg.getNickname());
+                else
+                {
+                    GoogleAccount ga = GoogleAccount.get(user);
+                    if(ga!=null)
+                        System.err.print(" aka " + ga.getEmail());
+                }
                 System.err.print("\n");            
             }            
             public void onAccess(OpenIdUser user, HttpServletRequest request)
