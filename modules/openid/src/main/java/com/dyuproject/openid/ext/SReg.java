@@ -167,7 +167,7 @@ public class SReg implements Serializable, JSON.Convertible
         }
     }
 
-    public String gePostcode()
+    public String getPostcode()
     {
         return _postcode;
     }
