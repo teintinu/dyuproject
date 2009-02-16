@@ -91,6 +91,16 @@ public class SReg implements Serializable, JSON.Convertible
     {
         return _propertyCount;
     }
+    
+    public String getUsername()
+    {
+        return getNickname();
+    }
+    
+    public String getAlias()
+    {
+        return getNickname();
+    }
 
     public String getNickname()
     {
