@@ -15,6 +15,7 @@
 package com.dyuproject.web.rest;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -34,7 +35,6 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
 {
     
     public static final String JSON_DATA = "json_data";
-    public static final String ERROR_MSG = "error_msg";
     
     public static final Generator EMPTY_RESPONSE_MAP = new Generator()
     {
@@ -60,22 +60,21 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
     {
         Object data = request.getAttribute(JSON_DATA);
         if(data==null)
-            writeErrorMsg(errorMsg, request, response);
+            writeSimpleResponse(errorMsg, true, request, response);
         else
-            writeData(data, request, response);
+            write(data, request, response);
     }
     
-    public void writeErrorMsg(String errorMsg, HttpServletRequest request, 
+    public void write(Object data, HttpServletRequest request, 
             HttpServletResponse response) throws ServletException, IOException
     {
-        response.getWriter().write(toJSON(errorMsg==null ? EMPTY_RESPONSE_MAP : 
-            new ErrorResponse(errorMsg)));
+        response.getWriter().write(toJSON(data));
     }
     
-    public void writeData(Object data, HttpServletRequest request, 
+    public void writeSimpleResponse(String msg, boolean error, HttpServletRequest request, 
             HttpServletResponse response) throws ServletException, IOException
     {
-        response.getWriter().write(toJSON(data==null ? EMPTY_RESPONSE_MAP : data));
+        write(new SimpleResponse(msg, error), request, response);
     }
     
     protected Convertor getConvertor(Class clazz)
@@ -99,18 +98,46 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
         
     }
     
-    public static class ErrorResponse implements Generator
+    public static class SimpleResponse implements Generator
     {
-        private String _msg;
+        public static final String MSG = "msg";
+        public static final String ERROR = "error";
         
-        public ErrorResponse(String msg)
+        protected String _msg;
+        protected boolean _error;
+        
+        public SimpleResponse(String msg)
         {
             _msg = msg;
         }
         
+        public SimpleResponse(String msg, boolean error)
+        {
+            _msg = msg;
+            _error = error;
+        }
+        
+        public String getMsg()
+        {
+            return _msg;
+        }
+        
+        public boolean isError()
+        {
+            return _error;
+        }
+        
         public void addJSON(StringBuffer buffer)
         {            
-            buffer.append('{').append(ERROR_MSG).append(':').append(_msg).append('}');
-        }        
+            buffer.append('{').append(MSG).append(':').append(_msg);
+            if(_error)
+                buffer.append(',').append(ERROR).append(':').append(_error);
+            buffer.append('}');
+        }
+        
+        public String toString()
+        {
+            return _msg;
+        }
     }
 }

@@ -97,6 +97,11 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         _consumeType = (String)_initParams.get(CONSUME_TYPE);
     }
     
+    protected String getParam(String name)
+    {
+        return (String)_initParams.get(name);
+    }
+    
     protected void initDefaults()
     {
         _dispatcherName = (String)_initParams.get(DISPATCHER_NAME);
@@ -148,7 +153,7 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     
     public static String getDefaultErrorMsg(String field)
     {
-        return getDisplayField(field).append(" must be correctly provided.").toString();
+        return getDisplayField(field).insert(0, "Required field: ").toString();
     }
     
     public static StringBuilder getDisplayField(String field)
@@ -174,9 +179,9 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         if(_requestAttrs!=null)
         {
             for(Map.Entry<String, String> entry : _requestAttrs.entrySet())
-                rc.getRequest().setAttribute(entry.getKey(), entry.getKey());
+                rc.getRequest().setAttribute(entry.getKey(), entry.getValue());
         }
-        rc.getRequest().setAttribute(ERROR_MSG, errorMsg);
+        rc.getRequest().setAttribute(MSG, errorMsg);
         rc.getResponse().setContentType(_responseContentType);
         _dispatcher.dispatch(uri, rc.getRequest(), rc.getResponse());
     }
