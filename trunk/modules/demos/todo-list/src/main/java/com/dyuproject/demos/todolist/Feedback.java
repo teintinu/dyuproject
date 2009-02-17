@@ -14,15 +14,14 @@
 
 package com.dyuproject.demos.todolist;
 
-import com.dyuproject.util.format.FormatConverter;
-import com.dyuproject.util.format.FormatConverter.Builder;
+import com.dyuproject.web.rest.JSONDispatcher.SimpleResponse;
 
 /**
  * @author David Yu
  * @created May 22, 2008
  */
 
-public class Feedback implements FormatConverter.Bean
+public class Feedback extends SimpleResponse
 {
     
     public static final Feedback USER_NOT_FOUND = new Feedback("User not found.", false);  
@@ -77,42 +76,24 @@ public class Feedback implements FormatConverter.Bean
     public static final Feedback USER_DELETED = new Feedback("User deleted.", true);    
     
     /* ---------------------------------------------------------------------------- */
-    
-    
-    private String _msg;
-    private boolean _positive;
+
     
     public Feedback(String msg, boolean positive)
     {
-        _msg = msg;
-        _positive = positive;
-    }
-
-    public void convert(Builder builder, String format)
-    {
-        builder.put("msg", _msg);
-        builder.put("positive", _positive);
-        builder.put("error", !_positive);
+        super(msg, !positive);
     }
     
-    public String getMsg()
-    {
-        return _msg;
+    public void addJSON(StringBuffer buffer)
+    {            
+        buffer.append('{').append(MSG).append(':').append(_msg);
+        buffer.append(',').append(ERROR).append(':').append(_error);
+        buffer.append(',').append("positive").append(':').append(!_error);
+        buffer.append('}');
     }
     
     public boolean isPositive()
     {
-        return _positive;
-    }
-    
-    public boolean isError()
-    {
-        return !_positive;
-    }
-    
-    public String toString()
-    {
-        return _msg;
+        return !isError();
     }
 
 }

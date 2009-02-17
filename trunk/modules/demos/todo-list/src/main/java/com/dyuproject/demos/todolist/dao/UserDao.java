@@ -17,6 +17,7 @@ package com.dyuproject.demos.todolist.dao;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
+import javax.persistence.EntityManager;
 
 import com.dyuproject.demos.todolist.Feedback;
 import com.dyuproject.demos.todolist.model.User;
@@ -57,70 +58,22 @@ public class UserDao extends AbstractDao
         return find(User.class, id);
     }
     
-    public User find(Long id)
+    public boolean commitUpdates()
     {
-        return find(User.class, id);
-    }
-    
-    public boolean create(User user)
-    {
-        boolean created = false;
         try
         {
-            created = persist(user);
-        } 
-        catch(EntityExistsException e)
-        {            
-            setCurrentFeedback(USERNAME_ALREADY_EXISTS);
-            created = false;
+            EntityManager em = getCurrentEntityManager();
+            if(!em.getTransaction().isActive())
+                em.getTransaction().begin();
+
+            em.getTransaction().commit();                
+            return true;
         }
-        catch (Exception e)
-        {
-            if(e.getCause()!=null && 
-                    e.getCause().getClass().getSimpleName().equals(CONSTRAINT_VIOLATION))
-            {                
-                setCurrentFeedback(USERNAME_ALREADY_EXISTS);
-            }
-            else
-                e.printStackTrace();
-            created = false;
-        }
-        return created;
-    }
-    
-    public boolean update(User user)
-    {
-        boolean updated = false;
-        try
-        {
-            updated = persist(user);
-        } 
         catch(Exception e)
-        {            
-            setCurrentFeedback(USERNAME_ALREADY_EXISTS);
-            updated = false;
-        }
-        return updated;
-    }
-    
-    public boolean delete(User user)
-    {
-        boolean deleted = false;
-        try
         {
-            deleted = remove(user);
-        } 
-        catch (Exception e)
-        {            
             e.printStackTrace();
-            deleted = false;
+            return false;
         }
-        return deleted;
-    }
-    
-    public boolean saveOrUpdate(User user)
-    {
-        return user.getId()==null ? create(user) : update(user);
     }
 
 }
