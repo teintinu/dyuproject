@@ -117,4 +117,13 @@ public class DefaultDao
     {
         return _entityManagerManager.getEntityManager().find(clazz, id);
     }
+    
+    public <T> T findAndBegin(Class<T> clazz, Object id)
+    {
+        EntityManager em = _entityManagerManager.getEntityManager();
+        T t = _entityManagerManager.getEntityManager().find(clazz, id);
+        if(t!=null)
+            em.getTransaction().begin();
+        return t;
+    }
 }
