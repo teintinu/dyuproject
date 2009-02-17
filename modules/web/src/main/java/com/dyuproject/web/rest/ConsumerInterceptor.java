@@ -46,7 +46,7 @@ public class ConsumerInterceptor extends AbstractLifeCycle implements Intercepto
 
     public void postHandle(boolean handled, RequestContext requestContext)
     {        
-        
+        //requestContext.setConsumer(null);
     }
 
     public boolean preHandle(RequestContext requestContext)
@@ -57,7 +57,10 @@ public class ConsumerInterceptor extends AbstractLifeCycle implements Intercepto
         {
             String contentType = requestContext.getRequest().getContentType();
             if(contentType.startsWith(consumer.getRequestContentType()))
-                return consumer.consume(requestContext);            
+            {
+                requestContext.setConsumer(consumer);
+                return consumer.consume(requestContext);
+            }
 
             requestContext.getResponse().sendError(404);
             return false;            

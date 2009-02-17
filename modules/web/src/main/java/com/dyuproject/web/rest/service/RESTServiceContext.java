@@ -254,13 +254,17 @@ public class RESTServiceContext extends WebContext
         }
         
         ConsumerInterceptor ci = new ConsumerInterceptor();
-        Properties props = loadPropertiesFromClass(pojoClass, c.initParams());        
+        Properties fieldParams = new Properties();
+        loadPropertiesFromClass(fieldParams, pojoClass);
+        addParamsToProperties(fieldParams, c.fieldParams());
+        Properties initParams = new Properties();
+        addParamsToProperties(initParams, c.initParams());
         for(int i=0; i<consumers.length; i++)
         {
             try
             {
                 ValidatingConsumer vc = (ValidatingConsumer)consumers[i].newInstance();
-                vc.preConfigure(httpMethod, pojoClass, props);
+                vc.preConfigure(httpMethod, pojoClass, fieldParams, initParams);
                 ci.addConsumer(vc);
             }
             catch(Exception e)
@@ -271,7 +275,7 @@ public class RESTServiceContext extends WebContext
         ph.addMappedInterceptor(ci, 0);
     }
     
-    public Properties loadPropertiesFromClass(Class<?> clazz, String initParams)
+    public void loadPropertiesFromClass(Properties props, Class<?> clazz)
     {
         Map<Class<?>,Properties> cache = 
             (Map<Class<?>,Properties>)getAttribute(CONSUMER_PROPERTIES_CACHE);
@@ -280,7 +284,7 @@ public class RESTServiceContext extends WebContext
             cache = new HashMap<Class<?>,Properties>(7);
             setAttribute(CONSUMER_PROPERTIES_CACHE, cache);
         }
-        Properties params = new Properties();        
+        Properties params = new Properties();
         Properties defaultProps = cache.get(clazz);
         if(defaultProps==null)
         {
@@ -301,13 +305,10 @@ public class RESTServiceContext extends WebContext
             }
         }
         if(defaultProps.size()!=0)
-            params.putAll(defaultProps);
-        
-        addParamsToProperties(params, initParams);
-        return params;
+            params.putAll(defaultProps);        
     }    
     
-    static void addParamsToProperties(Properties properties, String params)
+    static void addParamsToProperties(Properties props, String params)
     {
         if(params==null || params.length()==0)
             return;
@@ -320,10 +321,10 @@ public class RESTServiceContext extends WebContext
             if(idx==-1)
             {
                 if(token.length()>0)
-                    properties.put(token, "");
+                    props.put(token, "");
             }
             else if(idx!=0)
-                properties.setProperty(token.substring(0, idx), token.substring(idx+1));
+                props.setProperty(token.substring(0, idx), token.substring(idx+1));
         }
     }
     

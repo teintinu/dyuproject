@@ -30,6 +30,7 @@ public class RequestContext
     private HttpServletResponse _response;
     private String _mime;
     private String[] _pathInfo;
+    private ValidatingConsumer _consumer;
     
     RequestContext init(HttpServletRequest request, HttpServletResponse response, String[] pathInfo, 
             String mime)
@@ -66,11 +67,23 @@ public class RequestContext
         return _pathInfo[idx];
     }
     
+    public ValidatingConsumer getConsumer()
+    {
+        return _consumer;
+    }
+    
+    public void setConsumer(ValidatingConsumer consumer)
+    {
+        _consumer = consumer;
+    }
+    
     void clear()
     {
         _request = null;
         _response = null;
         _pathInfo = null;
+        _consumer = null;
+        _mime = null;
     }
     
     public static class Local extends ThreadLocal<RequestContext>

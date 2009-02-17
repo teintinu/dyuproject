@@ -17,7 +17,9 @@ package com.dyuproject.web.rest.consumer;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.dyuproject.util.reflect.ParameterType;
+import com.dyuproject.util.reflect.ReflectUtil;
 import com.dyuproject.util.reflect.ParameterType.SimpleField;
 import com.dyuproject.web.rest.RequestContext;
 
@@ -43,6 +46,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
     
     public static final String STRING_ATTRIBUTES = "spc.string_attributes";
     
+    public static final String POJO_ATTR_NAME = "spc.pojo_attr_name";
     public static final String DISPATCHER_NAME = "spc.dispatcher_name";
     public static final String DISPATCH_URI = "spc.dispatch_uri";
     
@@ -51,6 +55,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
     private static final Log _log = LogFactory.getLog(SimpleParameterConsumer.class);
     
     private Map<String,Included> _includedFields;
+    private String _pojoAttrName;
     private int _initialSize;
     private boolean _pojo;
     
@@ -74,15 +79,23 @@ public class SimpleParameterConsumer extends AbstractConsumer
         return DEFAULT_RESPONSE_CONTENT_TYPE;
     }
 
+    public static String generateDefaultPojoAttrName(Class<?> clazz)
+    {
+        return ReflectUtil.toProperty(0, clazz.getSimpleName());
+    }
 
     protected void init()
     {
         initDefaults();
-        _dispatchUri = getParam(DISPATCH_URI);
+        _dispatchUri = getInitParam(DISPATCH_URI);
         if(_dispatchUri==null)
             throw new IllegalStateException(DISPATCH_URI + " must be provided.");
         
         _pojo = !"map".equalsIgnoreCase(getConsumeType());
+        
+        _pojoAttrName = getInitParam(POJO_ATTR_NAME);
+        if(_pojoAttrName==null)
+            _pojoAttrName = generateDefaultPojoAttrName(_pojoClass);
 
         Map<Class<?>,Map<String,SimpleField>> cache = 
             (Map<Class<?>,Map<String,SimpleField>>)getWebContext().getAttribute(CACHE_KEY);
@@ -103,13 +116,13 @@ public class SimpleParameterConsumer extends AbstractConsumer
         for(Map.Entry<String,SimpleField> entry : simpleFields.entrySet())
         {
             String field = entry.getKey();
-            boolean included = !"false".equalsIgnoreCase(getParam(field+".included"));
+            boolean included = !"false".equalsIgnoreCase(getFieldParam(field+".included"));
             if(!included)
                 continue;
             
-            boolean required = !"false".equalsIgnoreCase(getParam(field+".required"));            
-            String errorMsg = getParam(field + "." + MSG);
-            String validator = getParam(field + ".validator");
+            boolean required = !"false".equalsIgnoreCase(getFieldParam(field+".required"));            
+            String errorMsg = getFieldParam(field + "." + MSG);
+            String validator = getFieldParam(field + ".validator");
             FieldValidator fv = null;
             if(validator!=null)
             {
@@ -128,7 +141,49 @@ public class SimpleParameterConsumer extends AbstractConsumer
             _includedFields.put(field, new Included(entry.getValue(), required, fv, errorMsg));
         }
     }
+    
+    public boolean merge(Object pojo, RequestContext rc)
+    {
+        if(_pojo)
+            throw new IllegalStateException("Cannot merge. init-param '" + CONSUME_TYPE + "' must be 'map'.");
+        
+        if(pojo==null || pojo.getClass()!=_pojoClass)
+            throw new IllegalArgumentException("The pojo must be of type: " + _pojoClass.getName());
+        
+        return merge(pojo, (Map<?,?>)rc.getRequest().getAttribute(CONSUMED_OBJECT));
+    }
+    
+    public boolean merge(Object pojo, Map<?,?> props)
+    {
+        int mergeCount = 0;
+        for(Iterator<?> iterator = props.entrySet().iterator(); iterator.hasNext();)
+        {
+            Map.Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
+            Included included = _includedFields.get(entry.getKey());
+            if(included!=null)
+            {
+                try
+                {
+                    included.getSimpleField().getMethod().invoke(pojo, new Object[]{entry.getValue()});
+                    mergeCount++;
+                }
+                catch(Exception e)
+                {
+                    _log.warn(e);
+                }
+            }
+        }        
+        return mergeCount!=0;
+    }
 
+    protected void dispatch(String errorMsg, RequestContext rc, Object pojo) 
+    throws ServletException, IOException
+    {
+        if(pojo!=null)
+            rc.getRequest().setAttribute(_pojoAttrName, pojo);
+        dispatch(errorMsg, rc, _dispatchUri);
+    }
+    
     public boolean consume(RequestContext requestContext) throws ServletException, IOException
     {        
         return _pojo ? consumeToPojo(requestContext) : consumeToMap(requestContext);
@@ -138,7 +193,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
     throws ServletException, IOException
     {
         HttpServletRequest request = requestContext.getRequest();
-        Object output = null;
+        Object pojo = null;
         for(Map.Entry<String, Included> entry : _includedFields.entrySet())
         {
             String field = entry.getKey();
@@ -148,7 +203,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(included.getErrorMsg(), requestContext);
+                dispatch(included.getErrorMsg(), requestContext, pojo);
                 return false;
             }
             value = value.trim();
@@ -156,7 +211,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(included.getErrorMsg(), requestContext);
+                dispatch(included.getErrorMsg(), requestContext, pojo);
                 return false;
             }
             Object actualValue = included.getSimpleField().getType().getActualValue(value);
@@ -164,14 +219,15 @@ public class SimpleParameterConsumer extends AbstractConsumer
             String validationErrorMsg = included.getErrorMsg(actualValue);
             if(validationErrorMsg!=null)
             {
-                dispatch(validationErrorMsg, requestContext);
+                dispatch(validationErrorMsg, requestContext, pojo);
                 return false;
             }
-            if(output==null)
+            // lazy
+            if(pojo==null)
             {
                 try
                 {
-                    output = _pojoClass.newInstance();
+                    pojo = _pojoClass.newInstance();
                 }
                 catch(Exception e)
                 {
@@ -180,11 +236,11 @@ public class SimpleParameterConsumer extends AbstractConsumer
             }
             try
             {                
-                included.getSimpleField().getMethod().invoke(output, new Object[]{actualValue});
+                included.getSimpleField().getMethod().invoke(pojo, new Object[]{actualValue});
             }
             catch(IllegalArgumentException e)
             {
-                dispatch(included.getErrorMsg(), requestContext);
+                dispatch(included.getErrorMsg(), requestContext, pojo);
                 return false;
             }
             catch (IllegalAccessException e)
@@ -197,7 +253,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             }            
         }
         
-        request.setAttribute(CONSUMED_OBJECT, output);
+        request.setAttribute(CONSUMED_OBJECT, pojo);
         return true;
     }
     
@@ -215,7 +271,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(included.getErrorMsg(), requestContext);
+                dispatch(included.getErrorMsg(), requestContext, output);
                 return false;
             }
             value = value.trim();
@@ -223,14 +279,14 @@ public class SimpleParameterConsumer extends AbstractConsumer
             {
                 if(!included.isRequired())
                     continue;
-                dispatch(included.getErrorMsg(), requestContext);
+                dispatch(included.getErrorMsg(), requestContext, output);
                 return false;
             }
             Object actualValue = included.getSimpleField().getType().getActualValue(value);
             String validationErrorMsg = included.getErrorMsg(actualValue);
             if(validationErrorMsg!=null)
             {
-                dispatch(validationErrorMsg, requestContext);
+                dispatch(validationErrorMsg, requestContext, output);
                 return false;
             }
             if(output==null)

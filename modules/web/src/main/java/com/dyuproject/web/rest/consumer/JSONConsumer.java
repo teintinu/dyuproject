@@ -78,7 +78,8 @@ public class JSONConsumer extends AbstractConsumer
         return __numberTypes.get(clazz);
     }    
 
-    private Convertor _pojoConvertor, _mapConvertor;
+    private Convertor _mapConvertor;
+    private PojoConvertor _pojoConvertor;
     private CachedJSON _json;
     
     public JSONConsumer()
@@ -149,7 +150,7 @@ public class JSONConsumer extends AbstractConsumer
             };
         }
         
-        _pojoConvertor = cache.get(_pojoClass.getName());
+        _pojoConvertor = (PojoConvertor)cache.get(_pojoClass.getName());
         if(_pojoConvertor!=null)
             return;
         
@@ -166,16 +167,16 @@ public class JSONConsumer extends AbstractConsumer
         for(Map.Entry<String,Method> entry : methods.entrySet())
         {
             String field = entry.getKey();
-            boolean included = !"false".equalsIgnoreCase(getParam(field+".included"));
+            boolean included = !"false".equalsIgnoreCase(getFieldParam(field+".included"));
             if(!included)
             {
                 _log.info(field + " excluded");
                 continue;
             }
             
-            boolean required = !"false".equalsIgnoreCase(getParam(field+".required"));   
-            String errorMsg = getParam(field + "." + MSG);
-            String validator = getParam(field + ".validator");
+            boolean required = !"false".equalsIgnoreCase(getFieldParam(field+".required"));   
+            String errorMsg = getFieldParam(field + "." + MSG);
+            String validator = getFieldParam(field + ".validator");
             FieldValidator fv = null;
             if(validator!=null)
             {
@@ -196,6 +197,22 @@ public class JSONConsumer extends AbstractConsumer
         }        
         _pojoConvertor = new ValidatingPojoConvertor(_pojoClass, vSetters, _mapConvertor==null);
         cache.putIfAbsent(_pojoClass.getName(), _pojoConvertor);    
+    }
+    
+    public boolean merge(Object pojo, RequestContext rc)
+    {
+        if(_mapConvertor==null)
+            throw new IllegalStateException("Cannot merge. init-param '" + CONSUME_TYPE + "' must be 'map'.");
+        
+        if(pojo==null || pojo.getClass()!=_pojoClass)
+            throw new IllegalArgumentException("The pojo must be of type: " + _pojoClass.getName());
+        
+        return merge(pojo, (Map<?,?>)rc.getRequest().getAttribute(CONSUMED_OBJECT));
+    }
+    
+    public boolean merge(Object pojo, Map<?,?> props)
+    {        
+        return _pojoConvertor.setProps(pojo, props)!=0;
     }
     
     public boolean consume(RequestContext requestContext) throws ServletException, IOException
@@ -284,7 +301,7 @@ public class JSONConsumer extends AbstractConsumer
     {
         RequiredFieldException(String msg, ValidatingSetter setter)
         {
-            super(msg, setter);            
+            super(msg, setter);
         }        
     }
     
@@ -381,8 +398,9 @@ public class JSONConsumer extends AbstractConsumer
             return obj;
         }
         
-        protected void setProps(Object obj, Map<?,?> props)
+        protected int setProps(Object obj, Map<?,?> props)
         {
+            int count = 0;
             for(Iterator<?> iterator = props.entrySet().iterator(); iterator.hasNext();)
             {
                 Map.Entry<?, ?> entry = (Entry<?, ?>) iterator.next();
@@ -391,7 +409,8 @@ public class JSONConsumer extends AbstractConsumer
                 {
                     try
                     {
-                        setter.invoke(obj, entry.getValue());                    
+                        setter.invoke(obj, entry.getValue());
+                        count++;
                     }
                     catch(Exception e)
                     {
@@ -401,6 +420,7 @@ public class JSONConsumer extends AbstractConsumer
                     }
                 }
             }
+            return count;
         }
 
         public void toJSON(Object obj, Output out)
