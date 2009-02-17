@@ -48,13 +48,14 @@ public class DefaultDao
         return true;
     }
     
-    public boolean merge(Object obj)
+    public Object merge(Object obj)
     {
+        Object managed = null;
         EntityManager em = _entityManagerManager.getEntityManager();
         em.getTransaction().begin();
-        em.merge(obj);
+        managed = em.merge(obj);
         em.getTransaction().commit();
-        return true;
+        return managed;
     }
     
     public boolean remove(Object obj)
