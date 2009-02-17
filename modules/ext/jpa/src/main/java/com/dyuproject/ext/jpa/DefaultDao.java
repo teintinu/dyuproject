@@ -27,6 +27,11 @@ import javax.persistence.Query;
 public class DefaultDao
 {
     
+    public static EntityManager getCurrentEntityManager()
+    {
+        return EntityManagerManager.getCurrentEntityManager();
+    }
+    
     protected EntityManagerManager _entityManagerManager;
     
     public void setEntityManagerManager(EntityManagerManager entityManagerManager)
@@ -37,6 +42,11 @@ public class DefaultDao
     public EntityManagerManager setEntityManagerManager()
     {
         return _entityManagerManager;
+    }
+    
+    public void begin()
+    {
+        EntityManagerManager.getCurrentEntityManager().getTransaction().begin();
     }
     
     public void commit()
