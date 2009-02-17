@@ -36,18 +36,23 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     
     protected String _httpMethod;
     protected Class<?> _pojoClass;
-    protected Map<?,?> _initParams;
+    protected Map<?,?> _fieldParams, _initParams;
+    protected Map<String,Object> _requestAttrs;
     protected String _consumeType;
     protected String _dispatcherName;
     protected String _dispatchUri;
     protected String _responseContentType;
     protected String _requestContentType;
-    protected Map<String,String> _requestAttrs;
     protected ViewDispatcher _dispatcher;
     
     public Class<?> getPojoClass()
     {
         return _pojoClass;
+    }
+    
+    public Map<?,?> getFieldParams()
+    {
+        return _fieldParams;
     }
     
     public Map<?,?> getInitParams()
@@ -70,17 +75,13 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         return _requestContentType;
     }
     
-    public Map<String,String> getRequestAttrs()
-    {
-        return _requestAttrs;
-    }
-    
     public String getConsumeType()
     {
         return _consumeType;
     }
     
-    public void preConfigure(String httpMethod, Class<?> pojoClass, Map<?,?> initParams)
+    public void preConfigure(String httpMethod, Class<?> pojoClass, Map<?,?> fieldParams, 
+            Map<?,?> initParams)
     {
         if(_pojoClass!=null)
             throw new IllegalStateException("pojoClass already set.");
@@ -88,23 +89,31 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
             throw new IllegalStateException("httpMethod is required.");
         if(pojoClass==null)
             throw new IllegalStateException("pojoClass must be provided.");
+        if(fieldParams==null)
+            throw new IllegalStateException("fieldParams must be provided.");
         if(initParams==null)
             throw new IllegalStateException("initParams must be provided.");
         
         _httpMethod = httpMethod;
         _pojoClass = pojoClass;
+        _fieldParams = fieldParams;
         _initParams = initParams;
-        _consumeType = (String)_initParams.get(CONSUME_TYPE);
+        _consumeType = getInitParam(CONSUME_TYPE);
     }
     
-    protected String getParam(String name)
+    protected String getFieldParam(String name)
+    {
+        return (String)_fieldParams.get(name);
+    }
+    
+    protected String getInitParam(String name)
     {
         return (String)_initParams.get(name);
     }
     
     protected void initDefaults()
     {
-        _dispatcherName = (String)_initParams.get(DISPATCHER_NAME);
+        _dispatcherName = getInitParam(DISPATCHER_NAME);
         if(_dispatcherName==null)
             _dispatcherName = getDefaultDispatcherName();
         
@@ -112,23 +121,23 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
         if(_dispatcher==null)
             throw new IllegalStateException("dispatcher *" + _dispatcherName + "* not found.");
         
-        _dispatchUri = (String)_initParams.get(DISPATCH_URI);
+        _dispatchUri = getInitParam(DISPATCH_URI);
         
-        _responseContentType = (String)_initParams.get(RESPONSE_CONTENT_TYPE);
+        _responseContentType = getInitParam(RESPONSE_CONTENT_TYPE);
         if(_responseContentType==null)
             _responseContentType = getDefaultResponseContentType();
         
-        _requestContentType = (String)_initParams.get(REQUEST_CONTENT_TYPE);
+        _requestContentType = getInitParam(REQUEST_CONTENT_TYPE);
         if(_requestContentType==null)
             _requestContentType = getDefaultRequestContentType();
         
         String requestAttrsParam = (String)_initParams.get(REQUEST_ATTRIBUTES);
         if(requestAttrsParam!=null)
         {
-            String[] msgs = Delim.SEMI_COLON.split(requestAttrsParam);
-            if(msgs.length!=0)
+            String[] pairs = Delim.COMMA.split(requestAttrsParam);
+            if(pairs.length!=0)
             {
-                for(String m : msgs)
+                for(String m : pairs)
                 {
                     int colon = m.indexOf(':');
                     if(colon>0 && colon<m.length()-1)
@@ -137,14 +146,15 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
                         String val = m.substring(colon+1).trim();
                         if(_requestAttrs==null)
                         {
-                            int size = (int)(1+(msgs.length/.75));
-                            _requestAttrs = new HashMap<String,String>(size);
+                            int size = (int)(1+(pairs.length/.75));
+                            _requestAttrs = new HashMap<String,Object>(size);
                         }
                         _requestAttrs.put(key, val);
                     }
                 }
             }
         }
+
     }
     
     protected abstract String getDefaultDispatcherName();
@@ -178,19 +188,24 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     {
         if(_requestAttrs!=null)
         {
-            for(Map.Entry<String, String> entry : _requestAttrs.entrySet())
+            for(Map.Entry<String,Object> entry : _requestAttrs.entrySet())
                 rc.getRequest().setAttribute(entry.getKey(), entry.getValue());
         }
+        
         rc.getRequest().setAttribute(MSG, errorMsg);
         rc.getResponse().setContentType(_responseContentType);
         _dispatcher.dispatch(uri, rc.getRequest(), rc.getResponse());
     }
     
-    protected void dispatch(String errorMsg, RequestContext rc) 
+    protected void dispatchd(String errorMsg, RequestContext rc) 
     throws ServletException, IOException
     {
         dispatch(errorMsg, rc, _dispatchUri);
     }
-
+    
+    public Object getConsumedObject(RequestContext rc)
+    {
+        return rc.getRequest().getAttribute(CONSUMED_OBJECT);
+    }
     
 }

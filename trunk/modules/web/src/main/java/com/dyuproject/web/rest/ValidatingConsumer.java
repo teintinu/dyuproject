@@ -37,13 +37,18 @@ public interface ValidatingConsumer extends LifeCycle
     public static final String REQUEST_CONTENT_TYPE = "request_content_type";
     public static final String REQUEST_ATTRIBUTES = "request_attributes";
     
-    public void preConfigure(String httpMethod, Class<?> pojoClass, Map<?,?> initParams);
+    public void preConfigure(String httpMethod, Class<?> pojoClass, Map<?,?> fieldParams, 
+            Map<?,?> initParams);
+    
     public String getRequestContentType();
     
     public String getHttpMethod();
     
     public boolean consume(RequestContext requestContext) throws ServletException, IOException;
     
+    public Object getConsumedObject(RequestContext rc);
+    
+    public boolean merge(Object pojo, RequestContext rc);
     
     public interface FieldValidator
     {

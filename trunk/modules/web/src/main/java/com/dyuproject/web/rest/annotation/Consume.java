@@ -32,6 +32,7 @@ public @interface Consume
 
     Class<?> pojoClass();
     Class<?>[] consumers();
-    String initParams();
+    String fieldParams() default "";
+    String initParams() default "";
 
 }
