@@ -39,6 +39,11 @@ public class DefaultDao
         return _entityManagerManager;
     }
     
+    public void commit()
+    {
+        EntityManagerManager.getCurrentEntityManager().getTransaction().commit();        
+    }
+    
     public boolean persist(Object obj)
     {
         EntityManager em = _entityManagerManager.getEntityManager();
