@@ -78,10 +78,11 @@ public class SimpleParameterConsumer extends AbstractConsumer
     protected void init()
     {
         initDefaults();
+        _dispatchUri = getParam(DISPATCH_URI);
         if(_dispatchUri==null)
             throw new IllegalStateException(DISPATCH_URI + " must be provided.");
         
-        _pojo = !"map".equals(getConsumeType());
+        _pojo = !"map".equalsIgnoreCase(getConsumeType());
 
         Map<Class<?>,Map<String,SimpleField>> cache = 
             (Map<Class<?>,Map<String,SimpleField>>)getWebContext().getAttribute(CACHE_KEY);
@@ -102,12 +103,13 @@ public class SimpleParameterConsumer extends AbstractConsumer
         for(Map.Entry<String,SimpleField> entry : simpleFields.entrySet())
         {
             String field = entry.getKey();
-            if(!"false".equals(_initParams.get(field+".excluded")))
+            boolean included = !"false".equalsIgnoreCase(getParam(field+".included"));
+            if(!included)
                 continue;
             
-            boolean optional = !"false".equals(_initParams.get(field+".optional"));            
-            String errorMsg = (String)_initParams.get(field + "." + ERROR_MSG);
-            String validator = (String)_initParams.get(field + ".validator");
+            boolean required = !"false".equalsIgnoreCase(getParam(field+".required"));            
+            String errorMsg = getParam(field + "." + MSG);
+            String validator = getParam(field + ".validator");
             FieldValidator fv = null;
             if(validator!=null)
             {
@@ -120,10 +122,10 @@ public class SimpleParameterConsumer extends AbstractConsumer
                     throw new RuntimeException(e);
                 }
             }
-            if(errorMsg==null)
+            if(errorMsg==null || errorMsg.length()==0)
                 errorMsg = AbstractConsumer.getDefaultErrorMsg(field);
             
-            _includedFields.put(field, new Included(entry.getValue(), !optional, fv, errorMsg));
+            _includedFields.put(field, new Included(entry.getValue(), required, fv, errorMsg));
         }
     }
 
@@ -195,7 +197,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             }            
         }
         
-        request.setAttribute(CONSUMED_DATA, output);
+        request.setAttribute(CONSUMED_OBJECT, output);
         return true;
     }
     
@@ -236,7 +238,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             
             output.put(field, actualValue);
         }
-        request.setAttribute(CONSUMED_DATA, output);
+        request.setAttribute(CONSUMED_OBJECT, output);
         return true;
     }
     

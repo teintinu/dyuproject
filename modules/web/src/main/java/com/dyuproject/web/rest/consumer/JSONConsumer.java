@@ -134,7 +134,7 @@ public class JSONConsumer extends AbstractConsumer
             }
         };
         
-        if("map".equals(getConsumeType()))
+        if("map".equalsIgnoreCase(getConsumeType()))
         {
             _mapConvertor = new Convertor()
             {
@@ -166,12 +166,16 @@ public class JSONConsumer extends AbstractConsumer
         for(Map.Entry<String,Method> entry : methods.entrySet())
         {
             String field = entry.getKey();
-            if(!"false".equals(_initParams.get(field+".excluded")))
+            boolean included = !"false".equalsIgnoreCase(getParam(field+".included"));
+            if(!included)
+            {
+                _log.info(field + " excluded");
                 continue;
+            }
             
-            boolean optional = !"false".equals(_initParams.get(field+".optional"));
-            String errorMsg = (String)_initParams.get(field + "." + ERROR_MSG);
-            String validator = (String)_initParams.get(field + ".validator");
+            boolean required = !"false".equalsIgnoreCase(getParam(field+".required"));   
+            String errorMsg = getParam(field + "." + MSG);
+            String validator = getParam(field + ".validator");
             FieldValidator fv = null;
             if(validator!=null)
             {
@@ -184,10 +188,10 @@ public class JSONConsumer extends AbstractConsumer
                     throw new RuntimeException(e);
                 }
             }
-            if(errorMsg==null)
+            if(errorMsg==null || errorMsg.length()==0)
                 errorMsg = AbstractConsumer.getDefaultErrorMsg(field);
             
-            vSetters.put(field, new ValidatingSetter(field, entry.getValue(), !optional, fv, 
+            vSetters.put(field, new ValidatingSetter(field, entry.getValue(), required, fv, 
                     errorMsg));
         }        
         _pojoConvertor = new ValidatingPojoConvertor(_pojoClass, vSetters, _mapConvertor==null);
@@ -219,7 +223,7 @@ public class JSONConsumer extends AbstractConsumer
         if(result==null)
             return false;
         
-        requestContext.getRequest().setAttribute(CONSUMED_DATA, result);
+        requestContext.getRequest().setAttribute(CONSUMED_OBJECT, result);
         return true;
     }
     
@@ -229,7 +233,8 @@ public class JSONConsumer extends AbstractConsumer
         if(_dispatcher instanceof JSONDispatcher)
         {
             rc.getResponse().setContentType(_responseContentType);
-            ((JSONDispatcher)_dispatcher).writeErrorMsg(message, rc.getRequest(), rc.getResponse());
+            ((JSONDispatcher)_dispatcher).writeSimpleResponse(message, true, rc.getRequest(), 
+                    rc.getResponse());
         }
         else
             dispatch(message, rc, message);

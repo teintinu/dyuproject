@@ -28,9 +28,9 @@ import javax.servlet.ServletException;
 public interface ValidatingConsumer extends LifeCycle
 {
     
-    public static final String CONSUMED_DATA = "consumed_data";
+    public static final String CONSUMED_OBJECT = "consumed_object";
     public static final String CONSUME_TYPE = "consume_type";
-    public static final String ERROR_MSG = "error_msg";
+    public static final String MSG = "msg";
     public static final String DISPATCHER_NAME = "dispatcher_name";
     public static final String DISPATCH_URI = "dispatch_uri";
     public static final String RESPONSE_CONTENT_TYPE = "response_content_type";
