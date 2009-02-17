@@ -16,6 +16,8 @@ package com.dyuproject.demos.todolist.dao;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import com.dyuproject.demos.todolist.model.Todo;
 
 /**
@@ -51,59 +53,27 @@ public class TodoDao extends AbstractDao
         return createQuery(GET_BY_USER_AND_STATUS, new Object[]{userId, completed});
     }
     
+    public boolean commitUpdates()
+    {
+        try
+        {
+            EntityManager em = getCurrentEntityManager();
+            if(!em.getTransaction().isActive())
+                em.getTransaction().begin();
+
+            em.getTransaction().commit();                
+            return true;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
     public Todo get(Long id)
     {
         return find(Todo.class, id);
-    }
-    
-    public Todo find(Long id)
-    {
-        return find(Todo.class, id);
-    }
-    
-    public boolean create(Todo todo)
-    {
-        boolean created = false;
-        try
-        {
-            created = persist(todo);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            created = false;
-        }
-        return created;
-    }
-    
-    public boolean update(Todo todo)
-    {
-        boolean updated = false;
-        try
-        {
-            updated = merge(todo);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            updated = false;
-        }
-        return updated;
-    }
-    
-    public boolean delete(Todo todo)
-    {
-        boolean deleted = false;
-        try
-        {
-            deleted = remove(todo);
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            deleted = false;
-        }
-        return deleted;
     }
 
 }

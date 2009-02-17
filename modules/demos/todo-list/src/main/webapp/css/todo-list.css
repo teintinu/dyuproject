@@ -51,8 +51,9 @@ ul.simple {
 }
 p.msg {
   color: red;
-  font-style: italic;
+  font-weight: bold;
   font-family: Arial;
+  font-size: 12px;
 }
 table.bean_table {
  

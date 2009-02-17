@@ -34,6 +34,8 @@ import com.dyuproject.demos.todolist.dao.UserDao;
 import com.dyuproject.demos.todolist.model.Todo;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.rest.RequestContext;
+import com.dyuproject.web.rest.annotation.Consume;
+import com.dyuproject.web.rest.consumer.SimpleParameterConsumer;
 import com.dyuproject.web.rest.service.AbstractService;
 
 /**
@@ -99,7 +101,7 @@ public class TodoService extends AbstractService
             return;
         }
         
-        boolean deleted = _todoDao.delete(todo);
+        boolean deleted = _todoDao.remove(todo);
         
         request.setAttribute(Constants.MSG, deleted ? Feedback.TODO_DELETED.getMsg() : 
             Feedback.COULD_NOT_DELETE_TODO.getMsg());
@@ -112,39 +114,17 @@ public class TodoService extends AbstractService
     public void updateById(RequestContext rc) throws IOException, ServletException
     {
         HttpServletRequest request = rc.getRequest();
-        HttpServletResponse response = rc.getResponse();
+        HttpServletResponse response = rc.getResponse();  
         
-        String id = rc.getPathElement(1);        
-        boolean completed = false;
-        
-        String title = request.getParameter(Constants.TITLE);
-        String content = request.getParameter(Constants.CONTENT);
-        String completedParam = request.getParameter(Constants.COMPLETED);
-        
-        if(completedParam!=null)
-            completed = Boolean.parseBoolean(completedParam);
-        
-        boolean updated = false;
-        Todo todo = _todoDao.get(Long.valueOf(id));
-        if(todo!=null)
+        Todo todo = _todoDao.get(Long.valueOf(rc.getPathElement(1)));
+        if(todo==null)
         {
-            if(title!=null)
-            {
-                updated = true;
-                todo.setTitle(title);
-            }
-            if(content!=null)
-            {
-                updated = true;
-                todo.setContent(content);
-            }
-            if(completed!=todo.isCompleted() && completedParam!=null)
-            {
-                updated = true;
-                todo.setCompleted(completed);
-            }
-            updated =  updated ? _todoDao.update(todo) : false;
+            response.sendError(404);
+            return;
         }
+        boolean updated = rc.getConsumer().merge(todo, rc);
+        if(updated)
+            updated = _todoDao.commitUpdates();
         
         request.setAttribute(Constants.MSG, updated ? Feedback.TODO_UPDATED.getMsg() : 
             Feedback.COULD_NOT_UPDATE_TODO.getMsg());            
@@ -165,21 +145,10 @@ public class TodoService extends AbstractService
             response.sendError(404);
             return;
         }
-        
-        String title = request.getParameter(Constants.TITLE);        
-        String content = request.getParameter(Constants.CONTENT);
-        
-        boolean created = false;        
-        Todo todo = null;
-        
-        if(title!=null && title.length()>0)
-        {
-            todo = new Todo();
-            todo.setTitle(title);
-            todo.setContent(content);
-            todo.setUser(user);            
-            created = _todoDao.create(todo);
-        }
+          
+        Todo todo = (Todo)rc.getConsumer().getConsumedObject(rc);
+        todo.setUser(user);
+        boolean created = _todoDao.persist(todo);
         
         if(created)
         {
@@ -228,6 +197,11 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos/$/edit")
     @Post
+    @Consume(
+            consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class,
+            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false",
+            initParams="spc.dispatch_uri=todos/form&consume_type=map&request_attributes=action:Edit"
+    )
     public void form_edit(RequestContext rc) throws IOException, ServletException
     {
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_EDIT);
@@ -244,6 +218,11 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/users/$/todos/new")
     @Post
+    @Consume(
+            consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class, 
+            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false",
+            initParams="spc.dispatch_uri=todos/form&request_attributes=action:New"
+    )
     public void form_new(RequestContext rc) throws IOException, ServletException
     {
         createByUserId(rc);
@@ -263,8 +242,9 @@ public class TodoService extends AbstractService
         Todo todo = _todoDao.get(Long.valueOf(id));
         if(todo!=null && !todo.isCompleted())
         {
+            _todoDao.begin();
             todo.setCompleted(true);
-            updated = _todoDao.update(todo);
+            updated = _todoDao.commitUpdates();
         }
         
         if(!updated)
