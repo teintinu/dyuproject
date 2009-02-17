@@ -27,7 +27,7 @@ public class EmailValidator extends AbstractValidator
     
     public EmailValidator()
     {
-        this("Email invalid.");
+        this("Invalid email.");
     }
     
     public EmailValidator(String errorMsg)
