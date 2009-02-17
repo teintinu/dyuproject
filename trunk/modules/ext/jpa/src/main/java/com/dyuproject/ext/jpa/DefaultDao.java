@@ -39,7 +39,7 @@ public class DefaultDao
         return _entityManagerManager;
     }
     
-    protected boolean persist(Object obj) throws Exception
+    public boolean persist(Object obj) throws Exception
     {
         EntityManager em = _entityManagerManager.getEntityManager();
         em.getTransaction().begin();
@@ -48,7 +48,7 @@ public class DefaultDao
         return true;
     }
     
-    protected boolean merge(Object obj) throws Exception
+    public boolean merge(Object obj) throws Exception
     {
         EntityManager em = _entityManagerManager.getEntityManager();
         em.getTransaction().begin();
@@ -57,7 +57,7 @@ public class DefaultDao
         return true;
     }
     
-    protected boolean remove(Object obj) throws Exception
+    public boolean remove(Object obj) throws Exception
     {
         EntityManager em = _entityManagerManager.getEntityManager();        
         em.getTransaction().begin();
@@ -92,7 +92,7 @@ public class DefaultDao
         return q.getResultList();
     }    
     
-    protected <T> T find(Class<T> clazz, Object id)
+    public <T> T find(Class<T> clazz, Object id)
     {
         return _entityManagerManager.getEntityManager().find(clazz, id);
     }
