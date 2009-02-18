@@ -88,7 +88,7 @@ public class UserService extends AbstractService
             return;
         }
         
-        boolean deleted = _userDao.remove(user);
+        boolean deleted = _userDao.delete(user);
         
         request.setAttribute(Constants.MSG, deleted ? Feedback.USER_DELETED.getMsg() : 
             Feedback.COULD_NOT_DELETE_USER.getMsg());
@@ -112,7 +112,7 @@ public class UserService extends AbstractService
         
         boolean updated = rc.getConsumer().merge(user, rc);
         if(updated)
-            updated = _userDao.commitUpdates();
+            updated = UserDao.executeUpdate();
         
         request.setAttribute(Constants.MSG, updated ? Feedback.USER_UPDATED : 
             UserDao.getCurrentFeedback()!=null ? UserDao.getCurrentFeedback().getMsg() : 
@@ -137,7 +137,7 @@ public class UserService extends AbstractService
             return;
         }
         
-        boolean created = _userDao.persist(user);
+        boolean created = _userDao.create(user);
         
         if(created)
         {       
@@ -244,11 +244,8 @@ public class UserService extends AbstractService
             feedback = Feedback.PASSWORD_DID_NOT_MATCH;
         }
         
-        if(feedback==null)
-        {
-            _userDao.commitUpdates();
+        if(feedback==null && UserDao.executeUpdate())
             feedback = Feedback.PASSWORD_CHANGED;
-        }
         
         request.setAttribute(Constants.MSG, feedback.getMsg());
         dispatchToView(user, request, response);

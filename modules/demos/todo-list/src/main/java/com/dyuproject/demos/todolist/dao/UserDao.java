@@ -17,7 +17,6 @@ package com.dyuproject.demos.todolist.dao;
 import java.util.List;
 
 import javax.persistence.EntityExistsException;
-import javax.persistence.EntityManager;
 
 import com.dyuproject.demos.todolist.Feedback;
 import com.dyuproject.demos.todolist.model.User;
@@ -58,20 +57,26 @@ public class UserDao extends AbstractDao
         return find(User.class, id);
     }
     
-    public boolean commitUpdates()
+    public boolean create(User user)
     {
         try
         {
-            EntityManager em = getCurrentEntityManager();
-            if(!em.getTransaction().isActive())
-                em.getTransaction().begin();
-
-            em.getTransaction().commit();                
-            return true;
+            return persist(user);
+        } 
+        catch(EntityExistsException e)
+        {            
+            setCurrentFeedback(USERNAME_ALREADY_EXISTS);
+            return false;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            e.printStackTrace();
+            if(e.getCause()!=null && 
+                    e.getCause().getClass().getSimpleName().equals(CONSTRAINT_VIOLATION))
+            {                
+                setCurrentFeedback(USERNAME_ALREADY_EXISTS);
+            }
+            else
+                e.printStackTrace();
             return false;
         }
     }

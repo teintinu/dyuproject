@@ -27,16 +27,56 @@ public abstract class AbstractDao extends DefaultDao
     
     protected static final String CONSTRAINT_VIOLATION = "ConstraintViolationException";
     
-    private static final ThreadLocal<Feedback> __feedback = new ThreadLocal<Feedback>();
+    protected static final String FEEDBACK_ATTR = "feedback";
     
     public static void setCurrentFeedback(Feedback feedback)
     {
-        __feedback.set(feedback);
+        setAttribute(FEEDBACK_ATTR, feedback);
     }
     
     public static Feedback getCurrentFeedback()
     {
-        return __feedback.get();
+        return (Feedback)getAttribute(FEEDBACK_ATTR);
+    }
+    
+    public static boolean executeUpdate()
+    {
+        try
+        {
+            beginAndCommit();
+            return true;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean create(Object pojo)
+    {
+        try
+        {
+            return persist(pojo);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    public boolean delete(Object pojo)
+    {
+        try
+        {
+            return remove(pojo);
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
 
 }

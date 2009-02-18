@@ -101,7 +101,7 @@ public class TodoService extends AbstractService
             return;
         }
         
-        boolean deleted = _todoDao.remove(todo);
+        boolean deleted = _todoDao.delete(todo);
         
         request.setAttribute(Constants.MSG, deleted ? Feedback.TODO_DELETED.getMsg() : 
             Feedback.COULD_NOT_DELETE_TODO.getMsg());
@@ -124,7 +124,7 @@ public class TodoService extends AbstractService
         }
         boolean updated = rc.getConsumer().merge(todo, rc);
         if(updated)
-            updated = _todoDao.commitUpdates();
+            updated = TodoDao.executeUpdate();
         
         request.setAttribute(Constants.MSG, updated ? Feedback.TODO_UPDATED.getMsg() : 
             Feedback.COULD_NOT_UPDATE_TODO.getMsg());            
@@ -148,7 +148,7 @@ public class TodoService extends AbstractService
           
         Todo todo = (Todo)rc.getConsumer().getConsumedObject(rc);
         todo.setUser(user);
-        boolean created = _todoDao.persist(todo);
+        boolean created = _todoDao.create(todo);
         
         if(created)
         {
@@ -173,8 +173,31 @@ public class TodoService extends AbstractService
     @Get
     public void verb_delete(RequestContext rc) throws IOException, ServletException
     {
-        rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_DELETE);
-        deleteById(rc);
+        HttpServletRequest request = rc.getRequest();
+        HttpServletResponse response = rc.getResponse();
+        
+        String id = rc.getPathElement(1);
+        Todo todo = _todoDao.get(Long.valueOf(id));
+        if(todo==null)
+        {
+            rc.getResponse().sendError(404);
+            return;
+        }
+
+        boolean deleted = _todoDao.delete(todo);
+        if(deleted)
+        {            
+            String referer = request.getHeader("Referer");
+            if(referer==null)
+                response.sendRedirect("/todos");
+            else
+                response.sendRedirect(referer);
+        }
+        else
+        {
+            request.setAttribute(Constants.MSG, Feedback.COULD_NOT_DELETE_TODO.getMsg());        
+            dispatchToView(todo, request, response);
+        }
     }
     
     @HttpResource(location="/todos/$/edit")
@@ -242,9 +265,8 @@ public class TodoService extends AbstractService
         Todo todo = _todoDao.get(Long.valueOf(id));
         if(todo!=null && !todo.isCompleted())
         {
-            _todoDao.begin();
             todo.setCompleted(true);
-            updated = _todoDao.commitUpdates();
+            updated = TodoDao.executeUpdate();
         }
         
         if(!updated)
