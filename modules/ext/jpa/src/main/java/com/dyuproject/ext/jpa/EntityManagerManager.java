@@ -15,6 +15,8 @@
 package com.dyuproject.ext.jpa;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -38,12 +40,22 @@ import com.dyuproject.web.rest.RequestContext;
 public class EntityManagerManager extends AbstractLifeCycle implements Interceptor, Filter
 {
     
-    private static final ThreadLocal<EntityManager> __entityManager = new ThreadLocal<EntityManager>();
+    private static final ContextLocal __context = new ContextLocal();
     
     public static EntityManager getCurrentEntityManager()
     {
-        return __entityManager.get();
-    }  
+        return __context.get().getEntityManager();
+    }
+    
+    public static Object getAttribute(String key)
+    {
+        return __context.get().getAttribute(key);
+    }
+    
+    public static void setAttribute(String key, Object value)
+    {
+        __context.get().setAttribute(key, value);
+    }
     
     private String _persistenceUnitName;
     private EntityManagerFactory _entityManagerFactory;  
@@ -81,7 +93,7 @@ public class EntityManagerManager extends AbstractLifeCycle implements Intercept
         if(manager==null)
         {
             manager = _entityManagerFactory.createEntityManager();
-            __entityManager.set(manager);
+            __context.get().setEntityManager(manager);
         }
         return manager;
     }
@@ -109,11 +121,8 @@ public class EntityManagerManager extends AbstractLifeCycle implements Intercept
     }
 
     public void postHandle(boolean handled, RequestContext requestContext)
-    {
-        EntityManager manager = getCurrentEntityManager();
-        __entityManager.set(null);
-        if(manager!=null)
-            manager.close();
+    {        
+        __context.get().clear();
     }
 
     public void doFilter(ServletRequest sreq, ServletResponse sresp,
@@ -124,11 +133,8 @@ public class EntityManagerManager extends AbstractLifeCycle implements Intercept
             chain.doFilter(sreq, sresp);
         }
         finally
-        {
-            EntityManager manager = getCurrentEntityManager();
-            __entityManager.set(null);
-            if(manager!=null)
-                manager.close();
+        {            
+            __context.get().clear();
         }        
     }
 
@@ -142,6 +148,50 @@ public class EntityManagerManager extends AbstractLifeCycle implements Intercept
         }
         
         init();        
+    }
+    
+    static class Context
+    {
+        
+        private EntityManager _entityManager;
+        private Map<String,Object> _attributes = new HashMap<String,Object>(3);
+        
+        public EntityManager getEntityManager()
+        {
+            return _entityManager;
+        }
+        
+        void setEntityManager(EntityManager entityManager)
+        {
+            _entityManager = entityManager;
+        }        
+        
+        void clear()
+        {
+            _attributes.clear();
+            if(_entityManager!=null)
+                _entityManager.close();
+            _entityManager = null;
+        }
+        
+        public void setAttribute(String key, Object value)
+        {
+            _attributes.put(key, value);
+        }
+        
+        public Object getAttribute(String key)
+        {
+            return _attributes.get(key);
+        }
+        
+    }
+    
+    private static class ContextLocal extends ThreadLocal<Context>
+    {
+        protected Context initialValue()
+        {
+            return new Context();
+        }
     }
 
 }

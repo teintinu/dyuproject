@@ -44,19 +44,38 @@ public class DefaultDao
         return _entityManagerManager;
     }
     
-    public void begin()
+    public static void begin()
     {
         EntityManagerManager.getCurrentEntityManager().getTransaction().begin();
     }
     
-    public void commit()
+    public static void commit()
     {
         EntityManagerManager.getCurrentEntityManager().getTransaction().commit();        
     }
     
-    public void close()
+    public static void close()
     {
         EntityManagerManager.getCurrentEntityManager().close();
+    }
+    
+    public static void beginAndCommit()
+    {
+        EntityManager em = getCurrentEntityManager();
+        if(!em.getTransaction().isActive())
+            em.getTransaction().begin();
+
+        em.getTransaction().commit();
+    }
+    
+    public static void setAttribute(String key, Object value)
+    {
+        EntityManagerManager.setAttribute(key, value);
+    }
+    
+    public static Object getAttribute(String key)
+    {
+        return EntityManagerManager.getAttribute(key);
     }
     
     public boolean persist(Object obj)
