@@ -2,35 +2,26 @@
 <%@ taglib prefix="tl" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <tl:page>
-<div>
-  <div>
-    <span class="big_label">${action} Todo</span>
-	<p>
-	<c:choose>
-	  <c:when test="${empty action}">
-	  <span><a href="<c:url value="/todos/${todo.id}/edit"/>">Edit</a></span>
-	  </c:when>
-	  <c:otherwise>
-	  <span><a href="<c:url value="/"/>">Back to Home</a></span>
-	  </c:otherwise>
-	</c:choose>
-	</p>
+<div class="box">
+  <div><p class="msg"><span id="feedback">${msg}</span></p></div>
+  <div class="clearfix item todo">
+    <div class="clearfix bar">
+      <div class="rightcol">
+        <c:if test="${todo.completed==false}">
+          <a href="<c:url value="/todos/${todo.id}/complete"/>">Complete</a>
+          <span class="separator">&nbsp;|&nbsp;</span>
+        </c:if>
+        <a href="<c:url value="/todos/${todo.id}/edit"/>">Edit</a>
+        <span class="separator">&nbsp;|&nbsp;</span>
+        <a href="<c:url value="/todos/${todo.id}/delete"/>">Delete</a>
+      </div>
+      <div class="leftcol">
+        <div><span class="large highlight">${todo.title}</span></div>
+      </div>
+    </div>
+    <div>
+      <span class="content">${todo.content}</span>
+    </div>
   </div>
-  <div>    
-	<p class="msg"><span id="feedback">${msg}</span></p>
-	<p>Assigned to: <a href="<c:url value="/users/${todo.user.id}"/>">${todo.user.firstName} ${todo.user.lastName}</a></p>
-  </div>
-  <form method="POST" onsubmit="return Utils.validateForm(this, document.getElementById('feedback'), true);">    
-    <table height="100%" class="bean_table" cellspacing="4" cellpadding="0">
-	  <tr>
-	    <td class="left_col">Title</td>
-		<td name="Title">${todo.title}</td>
-	  </tr>
-	  <tr>
-	    <td class="left_col">Content</td>
-		<td name="Content">${todo.content}</td>
-	  </tr>  
-    </table>
-  </form>  
 </div>
 </tl:page>
