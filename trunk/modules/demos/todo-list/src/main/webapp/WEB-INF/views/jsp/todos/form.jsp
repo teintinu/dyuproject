@@ -19,7 +19,10 @@
         <div><textarea class="content" name="content" rows="5">${todo.content}</textarea></div>
       </li>
       <li>
-        <div><button type="submit" class="submit"><div>Submit</div></button></div>
+        <div>
+          <c:if test="${action=='Edit'}"><input type="hidden" name="sub" value="1"/></c:if>
+          <button type="submit" class="submit"><div>Submit</div></button>
+        </div>
       </li>
     </ul>
   </form>

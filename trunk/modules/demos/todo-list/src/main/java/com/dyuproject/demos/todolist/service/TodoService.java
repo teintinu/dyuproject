@@ -126,8 +126,24 @@ public class TodoService extends AbstractService
         if(updated)
             updated = TodoDao.executeUpdate();
         
-        request.setAttribute(Constants.MSG, updated ? Feedback.TODO_UPDATED.getMsg() : 
-            Feedback.COULD_NOT_UPDATE_TODO.getMsg());            
+        if(updated)
+        {
+            String sub = request.getParameter("sub");
+            if(sub!=null)
+            {
+                String[] pi = rc.getPathInfo();
+                int len = pi.length - Integer.parseInt(sub);
+                StringBuilder buffer = new StringBuilder().append(request.getContextPath());
+                for(int i=0; i<len; i++)
+                    buffer.append('/').append(pi[i]);
+                response.sendRedirect(buffer.toString());
+                return;
+            }
+            request.setAttribute(Constants.MSG, Feedback.TODO_UPDATED.getMsg());
+        }
+        else
+            request.setAttribute(Constants.MSG, Feedback.COULD_NOT_UPDATE_TODO.getMsg());
+   
         dispatchToFormView(todo, request, response); 
     }
     
@@ -187,11 +203,18 @@ public class TodoService extends AbstractService
         boolean deleted = _todoDao.delete(todo);
         if(deleted)
         {            
-            String referer = request.getHeader("Referer");
-            if(referer==null)
-                response.sendRedirect("/todos");
+            String sub = request.getParameter("sub");
+            if(sub!=null)
+            {
+                String[] pi = rc.getPathInfo();
+                int len = pi.length - Integer.parseInt(sub);
+                StringBuilder buffer = new StringBuilder().append(request.getContextPath());
+                for(int i=0; i<len; i++)
+                    buffer.append('/').append(pi[i]);
+                response.sendRedirect(buffer.toString());
+            }
             else
-                response.sendRedirect(referer);
+                response.sendRedirect(request.getHeader("Referer"));
         }
         else
         {
