@@ -49,7 +49,7 @@ public class UserService extends AbstractService
     @Override
     protected void init()
     {
-        _userDao = (UserDao)getWebContext().getAttribute("userDao");        
+        _userDao = (UserDao)getWebContext().getAttribute("userDao");
     }
     
     @HttpResource(location="/users")

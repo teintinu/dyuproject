@@ -9,43 +9,31 @@
       <div class="rightcol">
         <a href="<c:url value="/users/${user.id}/todos/new"/>">New Todo</a>
         <span class="separator">&nbsp;|&nbsp;</span>
-        <a href="<c:url value="/users/${user.id}/edit"/>">Edit</a>
+        <a href="<c:url value="/users/${user.id}/todos"/>">Todos</a>
         <span class="separator">&nbsp;|&nbsp;</span>
-        <a href="<c:url value="/users/${user.id}/delete"/>">Delete</a>
+        <a href="<c:url value="/users/${user.id}/edit"/>">Edit</a>
       </div>
-      <div class="leftcol"><span class="large highlight">${user.firstName} ${user.lastName}</span></div>
+      <div class="leftcol"><span class="large highlight">${user.username}</span></div>
     </div>
-    <div><span class="large highlight">Todos</div>
-    <div>
-      <c:choose>
-      <c:when test="${empty user.todos}"><tr><td><span style="padding: 0 5px;">none</span></td></tr></c:when>
-      <c:otherwise>
-      <table id="table_todo" class="stretch" cellspacing="5">
-        <thead>
-          <tr>
-          <td><span>Title</span></td>
-          <td><span>Content</span></td>
-          <td></td>
-          <td>&nbsp;</td>
-          <td>&nbsp;</td>
-        </tr>
-        </thead>
-        <tbody class="items">
-          <c:forEach var="t" items="${user.todos}">
-          <tr>
-            <td><a class="title" href="<c:url value="/todos/${t.id}"/>">${t.title}</a></td>
-            <td><span class="content">${t.content}</span></td>
-            <td>
-              <c:if test="${t.completed==false}"><a class="btn" href="<c:url value="/todos/${t.id}/complete"/>">complete</a></c:if>
-            </td>
-            <td><a class="btn" href="<c:url value="/todos/${t.id}/edit"/>">edit</a> </td>
-            <td><a class="btn" href="<c:url value="/todos/${t.id}/delete"/>">delete</a> </td>
-          </tr>
-          </c:forEach>
-      </table>
-      </c:otherwise>
-      </c:choose>
-    </div>
+  </div>
+  <div class="clearfix">
+    <ul class="padded">
+      <li>
+        <div>First Name</div>
+        <div><span class="highlight2">${user.firstName}</span></div>
+        <hr size="1"/>
+      </li>
+      <li>
+        <div>Last Name</div>
+        <div><span class="highlight2">${user.lastName}</span></div>
+        <hr size="1"/>
+      </li>
+      <li>
+        <div>Email</div>
+        <div><span class="highlight2">${user.email}</span></div>
+        <hr size="1"/>
+      </li>
+    </ul>
   </div>
 </div>
 </tl:page>

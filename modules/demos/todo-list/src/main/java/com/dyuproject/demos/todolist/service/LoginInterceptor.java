@@ -35,7 +35,7 @@ public class LoginInterceptor extends WrapperInterceptor
     throws ServletException, IOException
     {
         CookieSession session = getWebContext().getSession(requestContext.getRequest());        
-        if(session!=null && session.getAttribute(Constants.ID)!=null)
+        if(session!=null && session.getAttribute(Constants.USER)!=null)
             return super.preHandle(requestContext);
         requestContext.getResponse().setContentType(Constants.TEXT_HTML);
         getWebContext().getJSPDispatcher().dispatch("login/index.jsp", requestContext.getRequest(), 
