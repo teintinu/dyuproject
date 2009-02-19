@@ -26,9 +26,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.dyuproject.util.format.FormatConverter;
-import com.dyuproject.util.format.FormatConverter.Builder;
-
 /**
  * @author David Yu
  * @created May 21, 2008
@@ -36,7 +33,7 @@ import com.dyuproject.util.format.FormatConverter.Builder;
 @Entity
 @Table(name="todos")
 @SuppressWarnings("serial")
-public class Todo implements Serializable, FormatConverter.Bean
+public class Todo implements Serializable
 {
     
     private Long _id;
@@ -106,12 +103,4 @@ public class Todo implements Serializable, FormatConverter.Bean
         return _user;
     }    
 
-    public void convert(Builder builder, String format)
-    {
-        builder.put("id", getId());
-        builder.put("title", getTitle());
-        builder.put("content", getContent());
-        builder.put("completed", isCompleted());
-        builder.put("user", getUser());
-    }
 }

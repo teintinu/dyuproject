@@ -114,9 +114,25 @@ public class UserService extends AbstractService
         if(updated)
             updated = UserDao.executeUpdate();
         
-        request.setAttribute(Constants.MSG, updated ? Feedback.USER_UPDATED : 
-            UserDao.getCurrentFeedback()!=null ? UserDao.getCurrentFeedback().getMsg() : 
-                Feedback.COULD_NOT_UPDATE_USER.getMsg());
+        if(updated)
+        {
+            String sub = request.getParameter("sub");
+            if(sub!=null)
+            {
+                String[] pi = rc.getPathInfo();
+                int len = pi.length - Integer.parseInt(sub);
+                StringBuilder buffer = new StringBuilder().append(request.getContextPath());
+                for(int i=0; i<len; i++)
+                    buffer.append('/').append(pi[i]);
+                response.sendRedirect(buffer.toString());
+                return;
+            }
+            request.setAttribute(Constants.MSG, Feedback.USER_UPDATED.getMsg());
+        }
+        else
+            request.setAttribute(Constants.MSG, UserDao.getCurrentFeedback()!=null ? 
+                    UserDao.getCurrentFeedback().getMsg() : Feedback.COULD_NOT_UPDATE_USER.getMsg());
+        
         dispatchToFormView(user, request, response);        
     }
     

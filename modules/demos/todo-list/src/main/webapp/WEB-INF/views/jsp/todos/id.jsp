@@ -13,7 +13,7 @@
         </c:if>
         <a href="<c:url value="/todos/${todo.id}/edit"/>">Edit</a>
         <span class="separator">&nbsp;|&nbsp;</span>
-        <a href="<c:url value="/todos/${todo.id}/delete"/>">Delete</a>
+        <a href="<c:url value="/todos/${todo.id}/delete?sub=2"/>">Delete</a>
       </div>
       <div class="leftcol">
         <div><span class="large highlight">${todo.title}</span></div>
