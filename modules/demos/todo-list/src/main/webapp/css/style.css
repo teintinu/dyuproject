@@ -31,6 +31,7 @@ div#foot, div#head, div#main {
  margin:0 auto;
  padding-top: 20px;
  width: 800px;
+ cursor: default;
 }
 
 div#foot p{
@@ -57,10 +58,6 @@ div#main {
  font-size: 1.1em;
  text-align:left;
  color: #000;
-}
-
-div#main input {
- font-size: 1.1em;
 }
 
 table.stretch {
@@ -105,9 +102,45 @@ div.rightcol{
  color: #D8C674;
 }
 
-#login_box input, #login_box textarea, #form_todo input, #form_todo textarea, #form_user input, #form_user textarea{
- width: 200px;
+form.box {
+ width: 32%;
+ padding: 10px; 
 }
+
+form.box ul li {
+ padding-top: 5px;
+}
+
+form.box label {
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+ font-weight: bold;
+ letter-spacing: 1px;
+}
+
+form.box input, form.box textarea {
+ width: 99%;
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+}
+
+/*form.box input:focus, form.box textarea:focus {
+ border-color: #5B9B45;
+}*/
+
+button.submit {
+ color: #5B9B45;
+ font-family: Georgia, Tahoma, Verdana;
+ font-size: 1em;
+}
+
+button.submit div, button.submit span {
+ padding: 0 10px;
+}
+
+/*button.submit:hover, button.submit:focus {
+ color: #fff;
+}*/
 
 #table_overview div.item {
  padding-bottom: 5px;

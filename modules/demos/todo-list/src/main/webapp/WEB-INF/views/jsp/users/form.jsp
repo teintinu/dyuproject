@@ -8,41 +8,38 @@
     <div class="rightcol"></div>
     <div class="leftcol"><span class="highlight">${action} User</span></div>
   </div>
-  <form id="form_user" name="user" method="POST" onsubmit="return Utils.validateForm(this, document.getElementById('feedback'), true);">
-    <table cellspacing="5">
-      <tbody>
-        <tr>
-          <td><span>First Name</span></td>
-          <td name="First Name"><input name="firstName" type="text" value="${user.firstName}" required="true"/></td>
-        </tr>
-        <tr>
-          <td><span>Last Name</span></td>
-          <td name="Last Name"><input name="lastName" type="text" value="${user.lastName}" required="true"/></td>
-        </tr>
-        <tr>
-          <td><span>Email</span></td>
-          <td name="Email"><input name="email" type="text" value="${user.email}" required="true"/></td>
-        </tr>
-        <c:if test="${action=='New'}">
-        <tr>
-          <td><span>Username</span></td>
-          <td name="Username"><input name="username" type="text" value="${user.username}" required="true"/></td>
-        </tr>
-        <tr>
-          <td><span>Password</span></td>
-          <td name="Password"><input name="password" type="password" value="${user.password}" required="true"/></td>
-        </tr>
-        <tr>
-          <td><span>Confirm Password</span></td>
-          <td name="Confirm Password"><input name="confirmPassword" type="password" required="true"/></td>
-        </tr>
-        </c:if>
-        <tr>
-          <td>&nbsp;</td>
-          <td><input type="submit" value="Submit"/></td>
-        </tr>
-      </tbody>
-    </table>
+  <form id="form_user" name="user" class="box" method="POST" onsubmit="return Utils.validateForm(this, document.getElementById('feedback'), true);">
+    <ul>
+      <li>
+        <div><label>First Name</label></div>
+        <div name="First Name"><input name="firstName" type="text" value="${user.firstName}" required="true"/></div>
+      </li>
+      <li>
+        <div><label>Last Name</label></div>
+        <div name="Last Name"><input name="lastName" type="text" value="${user.lastName}" required="true"/></div>
+      </li>
+      <li>
+        <div><label>Email</label></div>
+        <div name="Email"><input name="email" type="text" value="${user.email}" required="true"/></div>
+      </li>
+      <c:if test="${action=='New'}">
+      <li>
+        <div><label>Username</label></div>
+        <div name="Username"><input name="username" type="text" value="${user.username}" required="true"/></div>
+      </li>
+      <li>
+        <div><label>Password</label></div>
+        <div name="Password"><input name="password" type="password" value="${user.password}" required="true"/></div>
+      </li>
+      <li>
+        <div><label>Confirm Password</label></div>
+        <div name="Confirm Password"><input name="confirmPassword" type="password" required="true"/></div>
+      </li>
+      </c:if>
+      <li>
+        <div><button type="submit" class="submit"><div>Submit</div></button></div>
+      </li>
+    </ul>
   </form>
 </div>
 <script type="text/javascript" src="<c:url value="/js/dyuproject.js"/>"></script>
