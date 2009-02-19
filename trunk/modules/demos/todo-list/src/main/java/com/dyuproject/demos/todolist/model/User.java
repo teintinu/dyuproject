@@ -15,22 +15,19 @@
 package com.dyuproject.demos.todolist.model;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.dyuproject.util.format.FormatConverter;
+import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.Output;
+
 import com.dyuproject.util.format.FormatConverter.Builder;
 
 /**
@@ -41,7 +38,7 @@ import com.dyuproject.util.format.FormatConverter.Builder;
 @Entity
 @Table(name="users", uniqueConstraints=@UniqueConstraint(columnNames="username"))
 @SuppressWarnings("serial")
-public class User implements Serializable, FormatConverter.Bean
+public class User implements Serializable, JSON.Convertible
 {
     
     private Long _id;
@@ -53,7 +50,7 @@ public class User implements Serializable, FormatConverter.Bean
     private String _username;
     private String _password;
     
-    private Set<Todo> _todos;
+    //private Set<Todo> _todos;
     
     public void setId(Long id)
     {
@@ -122,7 +119,7 @@ public class User implements Serializable, FormatConverter.Bean
         return _password;
     }
     
-    public void setTodos(Set<Todo> todos)
+    /*public void setTodos(Set<Todo> todos)
     {
         _todos = todos;
     }
@@ -139,7 +136,7 @@ public class User implements Serializable, FormatConverter.Bean
     public Set<Todo> getTodos()
     {
         return _todos;
-    }
+    }*/
 
     public void convert(Builder builder, String format)
     {
@@ -147,6 +144,25 @@ public class User implements Serializable, FormatConverter.Bean
         builder.put("firstName", getFirstName());
         builder.put("lastName", getLastName());
         builder.put("email", getEmail());        
+    }
+
+    public void fromJSON(Map map)
+    {
+        _id = (Long)map.get("i");
+        _firstName = (String)map.get("f");
+        _lastName = (String)map.get("l");
+        _email = (String)map.get("e");
+        _username = (String)map.get("u");
+    }
+
+    public void toJSON(Output out)
+    {
+        out.addClass(getClass());
+        out.add("i", _id);
+        out.add("f", _firstName);
+        out.add("l", _lastName);
+        out.add("e", _email);
+        out.add("u", _username);
     }
 
 }

@@ -27,6 +27,7 @@ import org.codehaus.jra.Post;
 import com.dyuproject.demos.todolist.Constants;
 import com.dyuproject.demos.todolist.Feedback;
 import com.dyuproject.demos.todolist.dao.UserDao;
+import com.dyuproject.demos.todolist.dao.TodoDao;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.CookieSession;
 import com.dyuproject.web.rest.RequestContext;
@@ -41,11 +42,13 @@ public class MainService extends AbstractService
 {
     
     private UserDao _userDao;
+    private TodoDao _todoDao;
 
     @Override
     protected void init()
     {
-        _userDao = (UserDao)getWebContext().getAttribute("userDao");        
+        _userDao = (UserDao)getWebContext().getAttribute("userDao");
+        _todoDao = (TodoDao)getWebContext().getAttribute("todoDao");
     }
     
     @HttpResource(location="/")
@@ -84,7 +87,7 @@ public class MainService extends AbstractService
             return;
         }
         CookieSession session = getWebContext().getSession(request, true);
-        session.setAttribute(Constants.ID, user.getId());
+        session.setAttribute(Constants.USER, user);
         getWebContext().persistSession(session, request, response);
         response.setContentType(Constants.TEXT_HTML);
         response.sendRedirect(request.getContextPath() + "/overview");        
@@ -98,7 +101,7 @@ public class MainService extends AbstractService
         HttpServletResponse response = rc.getResponse();
         
         CookieSession session = getWebContext().getSession(request);        
-        if(session!=null && session.getAttribute(Constants.ID)!=null)
+        if(session!=null && session.getAttribute(Constants.USER)!=null)
         {
             response.sendRedirect(request.getContextPath() + "/overview");
             return;
@@ -124,8 +127,9 @@ public class MainService extends AbstractService
         HttpServletResponse response = rc.getResponse();
         
         CookieSession session = getWebContext().getSession(request);
-        User user = _userDao.get((Long)session.getAttribute(Constants.ID));
+        User user = (User)session.getAttribute(Constants.USER);
         request.setAttribute(Constants.USER, user);
+        request.setAttribute(Constants.TODOS, _todoDao.getByUser(user.getId()));
         response.setContentType(Constants.TEXT_HTML);
         getWebContext().getJSPDispatcher().dispatch("overview/index.jsp", request, 
                 response);

@@ -18,6 +18,7 @@ div#footer{
  height: 140px;
  clear:both;
  background-color: #fff;
+ cursor: default;
 }
 
 div#header{
@@ -30,8 +31,7 @@ div#header{
 div#foot, div#head, div#main {
  margin:0 auto;
  padding-top: 20px;
- width: 800px;
- cursor: default;
+ width: 800px; 
 }
 
 div#foot p{
@@ -46,10 +46,12 @@ div#foot p{
 div#foot a { 
  font-weight: bold;
  color: #5B9B45;
+ cursor: pointer;
 }
 
 #head h1 {
  padding: 5px 0;
+ cursor: default;
 }
 
 div#main {
@@ -155,12 +157,24 @@ button.submit div, button.submit span {
  color: #5B9B45;
 }
 
+.highlight2 {
+ color: #D8C674;
+}
+
 div.item div {
  padding-top: 5px;
 }
 
 hr {
- color: #5B9B45;
+ color: #ccc;
+}
+
+ul.padded {
+ padding: 5px;
+}
+
+ul.padded li{
+ padding: 5px 0;
 }
 
 div.bar {
@@ -171,7 +185,7 @@ div.bar {
 }
 
 div.bar span.highlight {
-  color: #fff;
+  font-family: Georgia, Tahoma, Verdana;
 }
 
 div.bar span.separator {
@@ -182,12 +196,17 @@ div.bar span.separator {
 div.bar a {
  text-decoration: none;
  color: #5B9B45;
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+ font-weight: bold;
 }
 
 div.bar button.link {
- font-size: 1.1em;
- background-color: #EDDE91;
  color: #5B9B45;
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+ font-weight: bold;
+ background-color: #EDDE91;
 }
 
 span.large {
