@@ -13,21 +13,20 @@
         <span class="highlight large">Login</span>
       </div>
     </div>
-    <form method="POST" action="<c:url value="/auth"/>" onsubmit="return Utils.validateForm(this, document.getElementById('feedback'), true);">
-      <table id="table_login" cellspacing="5">
-        <tr>
-          <td>Username</td>
-          <td name="Username"><input name="username" value="${param.username}" required="true"/></td>
-        </tr>
-        <tr>
-          <td>Password</td>
-          <td name="Password"><input name="password" type="password" value="${param.password}" required="true"/></td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-          <td><input type="submit" value="Submit"/></td>
-        </tr>
-      </table>
+    <form id="form_login" name="login" class="box" method="POST" action="<c:url value="/auth"/>" onsubmit="return Utils.validateForm(this, document.getElementById('feedback'), true);">
+      <ul>
+        <li>
+          <div><label>Username</label></div>
+          <div name="Username"><input name="username" value="${param.username}" required="true"/></div>
+        </li>
+        <li>
+          <div><label>Password</label></div>
+          <div name="Password"><input name="password" type="password" value="${param.password}" required="true"/></div>
+        </li>
+        <li>
+          <div><button type="submit" class="submit"><div>Submit</div></button></div>
+        </li>
+      </ul>
     </form>
   </div>
 </div>

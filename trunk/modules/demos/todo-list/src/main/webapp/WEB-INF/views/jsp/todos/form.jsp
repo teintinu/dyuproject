@@ -8,23 +8,20 @@
     <div class="rightcol"></div>
     <div class="leftcol"><span class="highlight">${action} Todo</span></div>
   </div>
-  <form id="form_todo" name="todo" method="POST" onsubmit="return Utils.validateForm(this, document.getElementById('feedback'), true);">
-    <table cellspacing="5">
-      <tbody>
-        <tr>
-          <td><span>Title</span></td>
-          <td><input class="title" name="title" type="text" value="${todo.title}" required="true"/></td>
-        </tr>
-        <tr>
-          <td><span>Content</span></td>
-          <td><textarea class="content" name="content">${todo.content}</textarea></td>
-        </tr>
-        <tr>
-          <td>&nbsp;</td>
-          <td><input class="submit" type="submit" value="Submit"/></td>
-        </tr>
-      </tbody>
-    </table>
+  <form id="form_todo" name="todo" class="box" method="POST" onsubmit="return Utils.validateForm(this, document.getElementById('feedback'), true);">
+    <ul>
+      <li>
+        <div><label>Title</label></div>
+        <div><input class="title" name="title" type="text" value="${todo.title}" required="true"/></div>
+      </li>
+      <li>
+        <div><label>Content</label></div>
+        <div><textarea class="content" name="content" rows="5">${todo.content}</textarea></div>
+      </li>
+      <li>
+        <div><button type="submit" class="submit"><div>Submit</div></button></div>
+      </li>
+    </ul>
   </form>
 </div>
 <script type="text/javascript" src="<c:url value="/js/dyuproject.js"/>"></script>
