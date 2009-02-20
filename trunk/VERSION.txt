@@ -1,4 +1,6 @@
 dyuproject-1.1-SNAPSHOT
++ Pojo Consumers (validation, binding, etc)
++ port logging to SLF4J (commons-logging had classloader issues)
 + Issue 9: Explicit timeout for connecting OpenID provider
 + added support for GoogleAccount attribute exchange (axschema - email only)
 + restored RelyingParty.associate(user, request, response)
