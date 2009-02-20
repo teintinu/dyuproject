@@ -29,11 +29,11 @@ import org.apache.velocity.context.Context;
 public class LocalizedVelocityContext implements Context
 {
     
-    private static LocalLVC __currentContext = new LocalLVC();
+    private static final Local __current = new Local();
     
-    public static LocalizedVelocityContext getContext(HttpServletRequest request)
+    public static LocalizedVelocityContext getCurrent()
     {
-        return __currentContext.get().init(request);        
+        return __current.get();
     }
     
     private HttpServletRequest _request;
@@ -43,7 +43,7 @@ public class LocalizedVelocityContext implements Context
         
     }
     
-    private LocalizedVelocityContext init(HttpServletRequest request)
+    LocalizedVelocityContext setRequest(HttpServletRequest request)
     {
         _request = request;
         return this;
@@ -51,7 +51,7 @@ public class LocalizedVelocityContext implements Context
 
     public boolean containsKey(Object key)
     {        
-        return _request.getAttribute(String.valueOf(key))!=null;
+        return key!=null && _request.getAttribute(key.toString())!=null;
     }
 
     public Object get(String key)
@@ -60,7 +60,7 @@ public class LocalizedVelocityContext implements Context
     }
 
     public Object[] getKeys()
-    {        
+    {
         ArrayList<Object> list = new ArrayList<Object>();
         for(Enumeration<?> en = _request.getAttributeNames(); en.hasMoreElements();)
             list.add(en.nextElement());        
@@ -76,22 +76,20 @@ public class LocalizedVelocityContext implements Context
 
     public Object remove(Object key)
     {
-        String k = String.valueOf(key);
-        Object old = _request.getAttribute(k);
-        if(old==null)
+        if(key==null)
             return null;
-        _request.removeAttribute(k);
-        return old;
+        Object value = _request.getAttribute(key.toString());
+        if(value!=null)
+            _request.removeAttribute(key.toString());
+        return value;
     }
     
-    private static class LocalLVC extends ThreadLocal<LocalizedVelocityContext>
-    {
-        
+    static class Local extends ThreadLocal<LocalizedVelocityContext>
+    {        
         protected LocalizedVelocityContext initialValue()
         {
             return new LocalizedVelocityContext();
-        }
-        
+        }        
     }
 
 }

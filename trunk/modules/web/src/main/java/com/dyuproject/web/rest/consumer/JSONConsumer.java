@@ -27,11 +27,11 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.mortbay.util.ajax.JSON;
 import org.mortbay.util.ajax.JSON.Convertor;
 import org.mortbay.util.ajax.JSON.Output;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.util.reflect.ReflectUtil;
 import com.dyuproject.web.rest.JSONDispatcher;
@@ -55,7 +55,7 @@ public class JSONConsumer extends AbstractConsumer
     
     private static final Map<Class<?>, NumberType> __numberTypes = new HashMap<Class<?>, NumberType>();
     
-    private static final Log _log = LogFactory.getLog(JSONConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(JSONConsumer.class);
     
     private static String __defaultContentType = "text/json";
     
@@ -170,7 +170,7 @@ public class JSONConsumer extends AbstractConsumer
             boolean included = !"false".equalsIgnoreCase(getFieldParam(field+".included"));
             if(!included)
             {
-                _log.info(field + " excluded");
+                log.info(field + " excluded");
                 continue;
             }
             
@@ -235,7 +235,7 @@ public class JSONConsumer extends AbstractConsumer
         catch(Exception e)
         {
             generateResponse(__defaultErrorMsg, requestContext);
-            _log.warn("Consume error.", e);
+            log.warn("Consume error.", e);
         }
         if(result==null)
             return false;
@@ -415,7 +415,7 @@ public class JSONConsumer extends AbstractConsumer
                     catch(Exception e)
                     {
                         // TODO throw exception?
-                        _log.warn(_pojoClass.getName() + " property '"+setter.getPropertyName() + 
+                        log.warn(_pojoClass.getName() + " property '"+setter.getPropertyName() + 
                                 "' not set.", e);
                     }
                 }
@@ -436,7 +436,7 @@ public class JSONConsumer extends AbstractConsumer
                 catch(Exception e)
                 {
                     // TODO throw exception?
-                    _log.warn(_pojoClass.getName() + " property '" + entry.getKey() + 
+                    log.warn(_pojoClass.getName() + " property '" + entry.getKey() + 
                             "' excluded.", e);               
                 }
             }
@@ -492,7 +492,7 @@ public class JSONConsumer extends AbstractConsumer
                 catch(Exception e)
                 {
                     // TODO throw exception?
-                    _log.warn(_pojoClass.getName() + " property '"+setter.getPropertyName() + 
+                    log.warn(_pojoClass.getName() + " property '"+setter.getPropertyName() + 
                             "' not set.", e);
                 }
             }            

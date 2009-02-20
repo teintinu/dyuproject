@@ -22,8 +22,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.WebContext;
@@ -49,7 +49,7 @@ public class AnnotatedMethodResource implements Resource
         __httpMethods.put(org.codehaus.jra.Delete.class, DELETE);        
     }
     
-    private static Log _log = LogFactory.getLog(AnnotatedMethodResource.class);
+    private static final Logger log = LoggerFactory.getLogger(AnnotatedMethodResource.class);
     
     static String getHttpMethod(Class<?> clazz)
     {
@@ -102,12 +102,12 @@ public class AnnotatedMethodResource implements Resource
         } 
         catch (IllegalArgumentException e)
         {            
-            _log.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
             WebContext.getCurrentRequestContext().getResponse().sendError(404);
         } 
         catch (IllegalAccessException e)
         {            
-            _log.warn(e.getMessage(), e);
+            log.warn(e.getMessage(), e);
             WebContext.getCurrentRequestContext().getResponse().sendError(404);
         } 
         catch (InvocationTargetException e)
@@ -120,7 +120,7 @@ public class AnnotatedMethodResource implements Resource
             if(cause instanceof RuntimeException)
                 throw (RuntimeException)cause;
             
-            _log.info(cause.getMessage(), cause);
+            log.info(cause.getMessage(), cause);
             WebContext.getCurrentRequestContext().getResponse().sendError(500);
         }
     }

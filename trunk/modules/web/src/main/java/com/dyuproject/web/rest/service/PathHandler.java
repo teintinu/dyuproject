@@ -20,8 +20,8 @@ import java.util.Map;
 
 import javax.servlet.ServletException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.util.Delim;
 import com.dyuproject.web.rest.AbstractLifeCycle;
@@ -44,7 +44,7 @@ public class PathHandler extends AbstractLifeCycle
     
     public static final String ROOT = "/", PARAM = "$";
     
-    private static Log _log = LogFactory.getLog(PathHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(PathHandler.class);
     
     public static boolean isPathParameter(String id)
     {
@@ -182,14 +182,14 @@ public class PathHandler extends AbstractLifeCycle
     {
         PathHandler last = _pathHandlers.put(child.getId(), child);
         if(last!=null)
-            _log.warn("path overridden: " + last.getId() + " | " + last);
+            log.warn("path overridden: " + last.getId() + " | " + last);
     }
     
     void addResource(Resource resource)
     {
         Resource last = _resources.put(resource.getHttpMethod(), resource);
         if(last!=null)
-            _log.warn("resource overridden: " + last.getHttpMethod() + " | " + last);
+            log.warn("resource overridden: " + last.getHttpMethod() + " | " + last);
     }
     
     void resourceHandle(RequestContext rc) throws ServletException, IOException
@@ -236,7 +236,7 @@ public class PathHandler extends AbstractLifeCycle
         PathHandler pathHandler = _pathHandlers.get(id);
         if(pathHandler==null)
         {
-            _log.warn("unmapped interceptor: " + interceptor);
+            log.warn("unmapped interceptor: " + interceptor);
             return false;
         }
         
@@ -251,7 +251,7 @@ public class PathHandler extends AbstractLifeCycle
         {
             if(pathHandler._parameterHandler==null)
             {
-                _log.warn("unmapped interceptor: " + interceptor);
+                log.warn("unmapped interceptor: " + interceptor);
                 return false;
             }
             

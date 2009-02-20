@@ -29,8 +29,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.util.ClassLoaderUtil;
 import com.dyuproject.util.Delim;
@@ -59,7 +59,7 @@ public abstract class WebContext
     
     protected static final String CONSUMER_PROPERTIES_CACHE = "consumer.properties.cache";
     
-    private static final Log _log = LogFactory.getLog(WebContext.class);   
+    private static final Logger log = LoggerFactory.getLogger(WebContext.class);   
     
     private boolean _initialized = false, _destroyed = false, _sessionEnabled = false;
     private ServletContext _servletContext;
@@ -132,7 +132,7 @@ public abstract class WebContext
         
         _destroyed = true;
         destroy();
-        _log.info("destroyed.");
+        log.info("destroyed.");
     }
     
     void init(ServletContext servletContext)
@@ -151,7 +151,7 @@ public abstract class WebContext
             if(resource!=null)
             {
                 setEnv(resource.openStream());
-                _log.info("loaded: " + DEFAULT_ENV_LOCATION);
+                log.info("loaded: " + DEFAULT_ENV_LOCATION);
             }
         }
         catch(Exception e)
@@ -167,7 +167,7 @@ public abstract class WebContext
                 if(resource!=null)
                 {
                     setMime(resource.openStream());
-                    _log.info("loaded: " + DEFAULT_MIME_LOCATION);
+                    log.info("loaded: " + DEFAULT_MIME_LOCATION);
                 }
             }
             catch(Exception e)
@@ -176,7 +176,7 @@ public abstract class WebContext
             }
             if(_mime==null)
             {
-                _log.warn("no mime.properties found");
+                log.warn("no mime.properties found");
                 _mime = new Properties();
             }
         }
@@ -197,7 +197,7 @@ public abstract class WebContext
         
         _initialized = true;        
         
-        _log.info("initialized.");
+        log.info("initialized.");
     }
     
     public ServletContext getServletContext()
@@ -383,15 +383,15 @@ public abstract class WebContext
             {                
                 if(!response.isCommitted())
                 {
-                    _log.debug(e.getMessage(), e);
+                    log.debug(e.getMessage(), e);
                     response.sendError(404);
                 }
                 else
-                    _log.warn(e.getMessage(), e);
+                    log.warn(e.getMessage(), e);
             }
             catch(RuntimeException e)
             {
-                _log.info(e.getMessage(), e);
+                log.info(e.getMessage(), e);
                 if(!response.isCommitted())
                     response.sendError(500);
             }
@@ -464,15 +464,15 @@ public abstract class WebContext
         {                
             if(!response.isCommitted())
             {
-                _log.debug(e.getMessage(), e);
+                log.debug(e.getMessage(), e);
                 response.sendError(404);
             }
             else
-                _log.warn(e.getMessage(), e);
+                log.warn(e.getMessage(), e);
         }
         catch(RuntimeException e)
         {
-            _log.info(e.getMessage(), e);
+            log.info(e.getMessage(), e);
             if(!response.isCommitted())
                 response.sendError(500);
         }
