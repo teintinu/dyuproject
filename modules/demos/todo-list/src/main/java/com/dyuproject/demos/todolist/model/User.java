@@ -28,8 +28,6 @@ import javax.persistence.UniqueConstraint;
 import org.mortbay.util.ajax.JSON;
 import org.mortbay.util.ajax.JSON.Output;
 
-import com.dyuproject.util.format.FormatConverter.Builder;
-
 /**
  * @author David Yu
  * @created May 21, 2008
@@ -137,14 +135,6 @@ public class User implements Serializable, JSON.Convertible
     {
         return _todos;
     }*/
-
-    public void convert(Builder builder, String format)
-    {
-        builder.put("id", getId());
-        builder.put("firstName", getFirstName());
-        builder.put("lastName", getLastName());
-        builder.put("email", getEmail());        
-    }
 
     public void fromJSON(Map map)
     {
