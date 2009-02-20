@@ -78,17 +78,16 @@ public class TodoDao extends AbstractDao
     
     public boolean update(Todo todo)
     {
-        boolean updated = false;
         try
         {
-            updated = merge(todo);
+            beginAndCommit();
+            return true;
         }
         catch(Exception e)
         {
             e.printStackTrace();
-            updated = false;
+            return false;
         }
-        return updated;
     }
     
     public boolean delete(Todo todo)
