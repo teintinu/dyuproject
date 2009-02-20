@@ -18,13 +18,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.dyuproject.util.ResourceUtil;
 
 /**
@@ -35,12 +38,13 @@ import com.dyuproject.util.ResourceUtil;
  * @created Feb 14, 2008
  */
 
+@SuppressWarnings("serial")
 public class DevScriptServlet extends HttpServlet 
 {
     
     public static final String CONTENT_TYPE = "application/x-javascript";
     
-    private static Log log = LogFactory.getLog(DevScriptServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(DevScriptServlet.class);
     private byte[] _scriptBytes;
     private Object _lock = new Object();
     private File _scriptFile;

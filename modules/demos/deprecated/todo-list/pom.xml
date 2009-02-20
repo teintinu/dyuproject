@@ -5,7 +5,7 @@
     <groupId>com.dyuproject.demos</groupId>
     <version>1.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
-  </parent>  
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject.demos</groupId>
   <artifactId>deprecated-todo-list</artifactId>
@@ -64,12 +64,12 @@
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache</artifactId>
       <version>${ehcache-version}</version>
-    </dependency>            
+    </dependency>
     <dependency>
       <groupId>c3p0</groupId>
       <artifactId>c3p0</artifactId>
       <version>${c3p0-version}</version>
-    </dependency>        
+    </dependency>
     <dependency>
       <groupId>hsqldb</groupId>
       <artifactId>hsqldb</artifactId>

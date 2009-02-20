@@ -21,8 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -41,7 +41,7 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
     
     static final String INCLUDE_ATTR = "javax.servlet.include.servlet_path";
     
-    private static final Log _log = LogFactory.getLog(JSPDispatcher.class);
+    private static final Logger log = LoggerFactory.getLogger(JSPDispatcher.class);
     
     private boolean _jetty = false;
     private String _baseDir, _fileExtension, _suffix;
@@ -72,9 +72,9 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
         
         _jetty = getWebContext().getServletContext().getClass().getName().startsWith("org.mortbay.jetty");
         
-        _log.info("baseDir: " + _baseDir);
-        _log.info("fileExtension: " + _fileExtension);    
-        _log.info("initialized.");
+        log.info("baseDir: " + _baseDir);
+        log.info("fileExtension: " + _fileExtension);    
+        log.info("initialized.");
         
         _suffix = "." + _fileExtension;
     }

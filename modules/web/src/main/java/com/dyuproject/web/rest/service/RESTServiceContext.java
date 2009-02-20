@@ -30,9 +30,9 @@ import java.util.StringTokenizer;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.codehaus.jra.HttpResource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.util.Delim;
 import com.dyuproject.web.rest.ConsumerInterceptor;
@@ -52,7 +52,7 @@ import com.dyuproject.web.rest.annotation.Consume;
 public class RESTServiceContext extends WebContext
 {
     
-    private static Log _log = LogFactory.getLog(RESTServiceContext.class);
+    private static final Logger log = LoggerFactory.getLogger(RESTServiceContext.class);
     
     private PathHandler _pathHandler = new PathHandler();
     private List<Service> _services = new ArrayList<Service>();
@@ -136,9 +136,9 @@ public class RESTServiceContext extends WebContext
         
         _pathHandler.init(this);
         
-        _log.info(_services.size() + " services initialized.");
-        _log.info(_resources.size() + " resources initialized.");
-        _log.info(_interceptors.size() + " configured interceptors initialized.");
+        log.info(_services.size() + " services initialized.");
+        log.info(_resources.size() + " resources initialized.");
+        log.info(_interceptors.size() + " configured interceptors initialized.");
     }    
     
     protected void destroy()
@@ -151,9 +151,9 @@ public class RESTServiceContext extends WebContext
         
         _pathHandler.destroy(this);
         
-        _log.info(_services.size() + " services destroyed.");
-        _log.info(_resources.size() + " resources destroyed.");
-        _log.info(_interceptors.size() + " configured interceptors destroyed.");
+        log.info(_services.size() + " services destroyed.");
+        log.info(_resources.size() + " resources destroyed.");
+        log.info(_interceptors.size() + " configured interceptors destroyed.");
         
         _services.clear();
         _resources.clear();
@@ -219,7 +219,7 @@ public class RESTServiceContext extends WebContext
             
             if(httpMethod==null)
             {
-                _log.warn(location + " not mapped.  Http method annotation is required");
+                log.warn(location + " not mapped.  Http method annotation is required");
                 continue;
             }
             
@@ -233,7 +233,7 @@ public class RESTServiceContext extends WebContext
                 continue;
             }
 
-            _log.warn(location + " not mapped.  THe annotated method's only argument must be RequestContext or can also have no args.");
+            log.warn(location + " not mapped.  THe annotated method's only argument must be RequestContext or can also have no args.");
         }
         service.init(this);
     }
@@ -244,12 +244,12 @@ public class RESTServiceContext extends WebContext
         Class<?>[] consumers = c.consumers();
         if(pojoClass==null)
         {
-            _log.warn("consumer @ " + location + " excluded. Param pojoClass is required.");
+            log.warn("consumer @ " + location + " excluded. Param pojoClass is required.");
             return;
         }
         if(consumers==null || consumers.length==0)
         {
-            _log.warn("consumer @ " + location + " excluded. Param consumers is required.");
+            log.warn("consumer @ " + location + " excluded. Param consumers is required.");
             return;
         }
         
@@ -348,7 +348,7 @@ public class RESTServiceContext extends WebContext
                 int idx = next.indexOf('@');
                 if(idx==-1)
                 {
-                    _log.warn("invalid resource mapping: " + next);
+                    log.warn("invalid resource mapping: " + next);
                     continue;
                 }
                 String resourceClass = next.substring(0, idx).trim();
@@ -367,7 +367,7 @@ public class RESTServiceContext extends WebContext
                 int idx = next.indexOf('@');
                 if(idx==-1)
                 {
-                    _log.warn("invalid interceptor mapping: " + next);
+                    log.warn("invalid interceptor mapping: " + next);
                     continue;
                 }
                 String interceptorClass = next.substring(0, idx).trim();

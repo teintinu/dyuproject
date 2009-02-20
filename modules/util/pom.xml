@@ -5,14 +5,14 @@
     <groupId>com.dyuproject</groupId>
     <version>1.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
-  </parent>  
+  </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject</groupId>
   <artifactId>dyuproject-util</artifactId>
   <name>common utils</name>
   <packaging>jar</packaging>
   
-  <build>    
+  <build>
     <defaultGoal>install</defaultGoal>
     <plugins>
       <plugin>

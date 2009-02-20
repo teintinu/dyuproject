@@ -23,8 +23,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.web.rest.WebContext;
 import com.dyuproject.web.rest.mvc.AbstractController;
@@ -42,7 +42,7 @@ import com.dyuproject.web.rest.mvc.RESTControllerContext;
 public class ContextController extends AbstractController
 {
     
-    private static final Log log = LogFactory.getLog(ContextController.class);
+    private static final Logger log = LoggerFactory.getLogger(ContextController.class);
     
     private Controller _defaultController;
     private Map<String,Controller> _controllers = new HashMap<String,Controller>();

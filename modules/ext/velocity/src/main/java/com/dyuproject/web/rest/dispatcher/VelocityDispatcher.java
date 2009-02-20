@@ -25,10 +25,10 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.velocity.Template;
 import org.apache.velocity.app.VelocityEngine;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.web.rest.AbstractLifeCycle;
 import com.dyuproject.web.rest.ViewDispatcher;
@@ -49,7 +49,7 @@ public class VelocityDispatcher extends AbstractLifeCycle implements ViewDispatc
     private static final String VELOCITY_FILE_RESOURCE_LOADER_CLASS = "file.resource.loader.class";
     private static final String VELOCITY_FILE_RESOURCE_LOADER_PATH = "file.resource.loader.path";
     
-    private static final Log _log = LogFactory.getLog(VelocityDispatcher.class);
+    private static final Logger log = LoggerFactory.getLogger(VelocityDispatcher.class);
     
     private VelocityEngine _engine;
     private String _baseDir, _fileExtension, _suffix;    
@@ -103,9 +103,9 @@ public class VelocityDispatcher extends AbstractLifeCycle implements ViewDispatc
             throw new RuntimeException(e);
         }
 
-        _log.info("baseDir: " + _baseDir);
-        _log.info("fileExtension: " + _fileExtension);    
-        _log.info("initialized.");
+        log.info("baseDir: " + _baseDir);
+        log.info("fileExtension: " + _fileExtension);    
+        log.info("initialized.");
         
         _suffix = "." + _fileExtension;
     }
@@ -130,7 +130,7 @@ public class VelocityDispatcher extends AbstractLifeCycle implements ViewDispatc
         {
             throw new ServletException(e);
         }
-        template.merge(LocalizedVelocityContext.getContext(request), 
+        template.merge(LocalizedVelocityContext.getCurrent().setRequest(request), 
                 response.getWriter());
     }
     

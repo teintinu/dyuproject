@@ -15,7 +15,7 @@
       <email>david.yu.ftw@gmail.com</email>
       <url>http://www.linkedin.com/in/davidyuftw</url>
     </developer>
-  </developers>    
+  </developers>
   <scm>
     <connection>scm:svn:https://dyuproject.googlecode.com/svn/trunk</connection>
     <developerConnection>scm:svn:https://dyuproject.googlecode.com/svn/trunk</developerConnection>    
@@ -89,7 +89,7 @@
               <reportOutputDirectory>${basedir}</reportOutputDirectory> 
               <destDir>javadoc</destDir>
           </configuration>
-      </plugin>      
+      </plugin>
     </plugins>
   </build>
   <distributionManagement>
@@ -98,19 +98,23 @@
       <name>dyuproject local repository</name>
       <url>file:./../repos/maven2</url>
     </repository>
-  </distributionManagement>    
+  </distributionManagement>
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>commons-logging</groupId>
-        <artifactId>commons-logging</artifactId>
-        <version>${commons-logging-version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>          
-          </exclusion>
-        </exclusions>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>${slf4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-log4j12</artifactId>
+        <version>${slf4j-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>servlet-api</artifactId>
+        <version>${servlet-version}</version>
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -129,22 +133,20 @@
   </modules>
   
   <properties>
-    <commons-logging-version>1.1</commons-logging-version>    
+    <slf4j-version>1.5.6</slf4j-version>
+    <log4j-version>1.2.15</log4j-version>
     <junit-version>3.8.2</junit-version>
-    <hibernate-version>3.2.6.ga</hibernate-version>
+    <servlet-version>2.5-20081211</servlet-version>
+    <jetty-version>6.1.15.rc4</jetty-version>
+    <jra-version>1.0-alpha-4</jra-version>
+    <velocity-version>1.5</velocity-version>
+    <stringtemplate-version>3.2</stringtemplate-version>
     <spring-version>2.5.4</spring-version>
-    <jetty-version>7.0.0.pre5</jetty-version>
-    <c3p0-version>0.9.1.2</c3p0-version>    
-    <ehcache-version>1.5.0-beta1</ehcache-version>
+    <ejb3-persistence-version>1.0.2.GA</ejb3-persistence-version>
+    <hibernate-version>3.3.1.GA</hibernate-version>
+    <hibernate-entitymanager-version>3.4.0.GA</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
     <derby-version>10.4.1.3</derby-version>
-    <ejb3-persistence-version>1.0.1.GA</ejb3-persistence-version>
-    <hibernate-entitymanager-version>3.3.1.ga</hibernate-entitymanager-version>
-    <hibernate-annotations-version>3.3.1.GA</hibernate-annotations-version>
-    <velocity-version>1.5</velocity-version>
-    <servlet-api-version>3.0.pre4</servlet-api-version>
-    <jra-version>1.0-alpha-4</jra-version>
-    <stringtemplate-version>3.2</stringtemplate-version>
   </properties>
   
 </project>

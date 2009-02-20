@@ -24,8 +24,8 @@ import java.util.Map.Entry;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.util.reflect.ParameterType;
 import com.dyuproject.util.reflect.ReflectUtil;
@@ -52,7 +52,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
     
     static final String CACHE_KEY = SimpleParameterConsumer.class + ".cache";
     
-    private static final Log _log = LogFactory.getLog(SimpleParameterConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleParameterConsumer.class);
     
     private Map<String,Included> _includedFields;
     private String _pojoAttrName;
@@ -169,7 +169,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 }
                 catch(Exception e)
                 {
-                    _log.warn(e);
+                    log.warn(e.getMessage(), e);
                 }
             }
         }        
@@ -245,11 +245,11 @@ public class SimpleParameterConsumer extends AbstractConsumer
             }
             catch (IllegalAccessException e)
             {
-                _log.warn(field + " not set.", e);
+                log.warn(field + " not set.", e);
             } 
             catch (InvocationTargetException e)
             {
-                _log.warn(field + " not set.", e);
+                log.warn(field + " not set.", e);
             }            
         }
         

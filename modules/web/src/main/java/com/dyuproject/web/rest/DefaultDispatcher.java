@@ -21,8 +21,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -35,14 +35,14 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {
     
-    private static final Log _log = LogFactory.getLog(DefaultDispatcher.class);
+    private static final Logger log = LoggerFactory.getLogger(DefaultDispatcher.class);
     
     RequestDispatcher _default;
     
     protected void init()
     {
         _default = getWebContext().getServletContext().getNamedDispatcher("default");
-        _log.info("initialized.");   
+        log.info("initialized.");   
     }
 
     public void dispatch(String uri, HttpServletRequest request,

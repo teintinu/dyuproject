@@ -22,8 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.antlr.stringtemplate.StringTemplateErrorListener;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.dyuproject.web.rest.AbstractLifeCycle;
 import com.dyuproject.web.rest.ViewDispatcher;
@@ -39,7 +39,7 @@ public class StringTemplateDispatcher extends AbstractLifeCycle implements ViewD
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/stringtemplate/";
     public static final String DEFAULT_FILE_EXTENSION = "st";
     
-    private static final Log _log = LogFactory.getLog(StringTemplateDispatcher.class);
+    private static final Logger log = LoggerFactory.getLogger(StringTemplateDispatcher.class);
 
     private String _baseDir, _fileExtension, _suffix, _groupName = "root";
     private CustomTemplateGroup _group;
@@ -76,9 +76,9 @@ public class StringTemplateDispatcher extends AbstractLifeCycle implements ViewD
         _group = new CustomTemplateGroup(_groupName, 
                 getWebContext().getServletContext().getRealPath(_baseDir), this);
         
-        _log.info("baseDir: " + _baseDir);
-        _log.info("fileExtension: " + _fileExtension);    
-        _log.info("initialized.");
+        log.info("baseDir: " + _baseDir);
+        log.info("fileExtension: " + _fileExtension);    
+        log.info("initialized.");
         
         _suffix = "." + _fileExtension;
     }
@@ -99,17 +99,16 @@ public class StringTemplateDispatcher extends AbstractLifeCycle implements ViewD
             throw new IOException("Template not found.");
         
         template.init(request, response, "\r\n");        
-    }
-    
+    }    
 
     public void error(String message, Throwable t)
     {
-        _log.warn(message, t);        
+        log.error(message, t);
     }
 
     public void warning(String message)
     {
-        _log.warn(message);        
+        log.warn(message);        
     }
 
 
