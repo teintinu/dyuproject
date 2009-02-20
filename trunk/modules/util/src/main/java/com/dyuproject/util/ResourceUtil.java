@@ -36,17 +36,17 @@ import java.util.List;
 public abstract class ResourceUtil
 {
     
-    public static final int BUFFER_SIZE = 16384;
+    public static int __copyBufferSize = 4096;
     
-    public static String getCurrentPath()
+    public static void setCopyBufferSize(int size)
     {
-        return new File(".").getPath();
+        __copyBufferSize = size;
     }
     
-    public static File getBaseDir()
+    public static int getCopyBufferSize()
     {
-        return new File(".");
-    }
+        return __copyBufferSize;
+    }    
 
     public static byte[] readBytes(File file) throws IOException 
     {
@@ -76,9 +76,9 @@ public abstract class ResourceUtil
     public static ByteArrayOutputStream getByteArrayOutputStream(InputStream in) throws IOException 
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        byte[] buffer = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[__copyBufferSize];
         int length = 0;
-        while((length=in.read(buffer, 0, BUFFER_SIZE)) != -1) 
+        while((length=in.read(buffer, 0, __copyBufferSize)) != -1) 
             out.write(buffer, 0, length);           
         try{in.close();}catch(Exception e){}
         return out;
@@ -101,9 +101,18 @@ public abstract class ResourceUtil
     
     public static void copy(InputStream in, OutputStream out) throws IOException 
     {
-        byte[] buffer = new byte[BUFFER_SIZE];
+        byte[] buffer = new byte[__copyBufferSize];
         int length = 0;
-        while((length=in.read(buffer, 0, BUFFER_SIZE)) != -1) 
+        while((length=in.read(buffer, 0, __copyBufferSize)) != -1) 
+            out.write(buffer, 0, length);        
+        try{out.close();}catch(Exception e){}     
+    }
+    
+    public static void copy(InputStream in, OutputStream out, int bufferSize) throws IOException 
+    {
+        byte[] buffer = new byte[bufferSize];
+        int length = 0;
+        while((length=in.read(buffer, 0, bufferSize)) != -1) 
             out.write(buffer, 0, length);        
         try{out.close();}catch(Exception e){}     
     }
