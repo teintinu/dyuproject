@@ -31,7 +31,7 @@ public class XMLParserTest extends TestCase
     
     public void testParseOpenId() throws Exception
     {
-        String url = "http://davidyuftw.blogspot.com";
+        String url = "http://davidyu.myopenid.com";
         HttpURLConnection con = (HttpURLConnection)new URL(url).openConnection();
         con.setRequestMethod("GET");
         con.setDefaultUseCaches(false);
