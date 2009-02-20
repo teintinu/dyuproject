@@ -66,7 +66,7 @@ public class Application
         __tempDir = appTempDir;
         ArchiveUtil.extract(loader.getResource("app"), appTempDir, deleteOnExit);
         File appDir = new File(appTempDir, "app");
-        Application app = new Application(false);        
+        Application app = new Application();        
         String libPath = props.getProperty("app.lib.path");        
         if(libPath!=null)
         {            
@@ -88,7 +88,6 @@ public class Application
                 }                    
             }
         }        
-        app.createLoader();
         Thread.currentThread().setContextClassLoader(app.getClassLoader()); 
         System.setProperty("java.class.path", app.getClassLoader().toString());
         try
@@ -101,9 +100,10 @@ public class Application
         {
             e.printStackTrace();
         }              
-        Class clazz = app.getClassLoader().loadClass(mainClass);
+        Class<?> clazz = app.getClassLoader().loadClass(mainClass);
         Method main = clazz.getMethod("main", new Class[]{args.getClass()});
-        main.invoke(null, new Object[]{args});        
+        main.invoke(null, new Object[]{args});
+        System.setProperty("java.class.path", app.getAppClassLoader().toString());
     }
     
     public static Application newApplication()
@@ -114,13 +114,12 @@ public class Application
     static void createJar() throws Exception
     {
         System.out.println("creating jar...");
-        File baseDir = ResourceUtil.getBaseDir();
         String outputDirParam = System.getProperty("outputDir");
         String appDirParam = System.getProperty("appDir");        
-        File outputDir = outputDirParam==null ? baseDir : new File(outputDirParam);
+        File outputDir = outputDirParam==null ? new File(".") : new File(outputDirParam);
         if(!outputDir.exists())
             throw new IllegalStateException("outputDir doesnt not exist");
-        File appDir = appDirParam==null ? new File(baseDir, "app") : new File(appDirParam);
+        File appDir = appDirParam==null ? new File("app") : new File(appDirParam);
         if(!appDir.exists())
             throw new IllegalStateException("appDir doesnt not exist");
         
@@ -187,7 +186,7 @@ public class Application
         if(mainClass==null)
             throw new IllegalStateException("mainClass must be specified");
         String libPath = props.getProperty("libPath");
-        Application app = new Application(false);
+        Application app = new Application();
         if(libPath!=null)
         {
             StringTokenizer tokenizer = new StringTokenizer(libPath, ",;");
@@ -215,7 +214,6 @@ public class Application
                     System.out.println("libPath: " + file.getPath() + " doest noe exist");
             }
         }
-        app.createLoader();
         Thread.currentThread().setContextClassLoader(app.getClassLoader()); 
         System.setProperty("java.class.path", app.getClassLoader().toString());
         try
@@ -228,9 +226,10 @@ public class Application
         {
             e.printStackTrace();
         }              
-        Class clazz = app.getClassLoader().loadClass(mainClass);
+        Class<?> clazz = app.getClassLoader().loadClass(mainClass);
         Method main = clazz.getMethod("main", new Class[]{args.getClass()});
-        main.invoke(null, new Object[]{args});        
+        main.invoke(null, new Object[]{args});
+        System.setProperty("java.class.path", app.getAppClassLoader().toString());
     }
     
     public static void main(String[] args) throws Exception
@@ -266,33 +265,14 @@ public class Application
     
     public Application()
     {
-        init(true);
-    }
-    
-    private Application(boolean createLoader)
-    {
-        init(createLoader);
-    }
-    
-    private void init(boolean createLoader)
-    {
         ClassLoader parent = Thread.currentThread().getContextClassLoader();
         _parent = parent!=null ? parent : Application.class.getClassLoader();
         if(_parent==null) 
-            _parent = AppClassLoader.getSystemClassLoader();            
+            _parent = AppClassLoader.getSystemClassLoader();
         String oldPath = System.getProperty("java.class.path");
         StringTokenizer tokenizer = new StringTokenizer(oldPath, ",;");
         while(tokenizer.hasMoreTokens())            
-            addCanonicalFile(new File(tokenizer.nextToken().trim()));        
-        if(createLoader)
-            createLoader();
-    }
-    
-    private AppClassLoader createLoader()
-    {
-        if(_loader==null)
-            _loader = new AppClassLoader();
-        return _loader;
+            addCanonicalFile(new File(tokenizer.nextToken().trim())); 
     }
     
     private URL addCanonicalFile(File f)
@@ -302,7 +282,7 @@ public class Application
         try
         {
             File cf = f.getCanonicalFile();
-            URL url= cf.toURL();
+            URL url= cf.toURI().toURL();
             String key = url.toString();
             URL old = _urls.put(key, url);
             if(old==null)
@@ -366,8 +346,7 @@ public class Application
     {
         public AppClassLoader()
         {
-            super(_urls.values().toArray(new URL[_urls.size()]), getParentClassLoader());
-            System.setProperty("java.class.path", _builder.toString());
+            super(new URL[]{}, getParentClassLoader());            
         }
         
         public void addURL(URL url)
