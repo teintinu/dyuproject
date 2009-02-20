@@ -90,17 +90,16 @@ public class UserDao extends AbstractDao
     
     public boolean update(User user)
     {
-        boolean updated = false;
         try
         {
-            updated = persist(user);
-        } 
-        catch(Exception e)
-        {            
-            setCurrentFeedback(USERNAME_ALREADY_EXISTS);
-            updated = false;
+            beginAndCommit();
+            return true;
         }
-        return updated;
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
     }
     
     public boolean delete(User user)
