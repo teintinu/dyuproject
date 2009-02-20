@@ -24,10 +24,12 @@ import com.dyuproject.util.Delim;
 
 /**
  * Converts a bean to a string in XML format.
+ * This is deprecated ... Xstream is recommended.
  * 
  * @author David Yu
  */
 
+@Deprecated
 public class XMLConverter extends FormatConverter
 {
     

@@ -24,10 +24,12 @@ import com.dyuproject.util.Delim;
 
 /**
  * Converts a bean to a string in JSON format.
+ * This is deprecated ... org.mortbay.util.ajax.JSON is recommended.
  * 
  * @author David Yu
  */
 
+@Deprecated
 public class JSONConverter extends FormatConverter
 {    
     
