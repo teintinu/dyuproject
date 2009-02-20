@@ -27,6 +27,7 @@ import java.util.Set;
  * @author David Yu
  */
 
+@Deprecated
 public abstract class FormatConverter 
 {
     public static final String TEXT_JAVASCRIPT = "text/javascript";
