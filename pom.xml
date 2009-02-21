@@ -127,6 +127,7 @@
   <modules>
     <module>modules/util</module>
     <module>modules/openid</module>
+    <module>modules/ioc</module>
     <module>modules/web</module>
     <module>modules/ext</module>
     <module>modules/demos</module>
