@@ -1,0 +1,12 @@
+{
+  "person":
+  {
+    "class": "com.dyuproject.ioc.Person",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john_doe@email.com",
+    "age": 20,
+    "username": "john_doe",
+    "password": "some_password"
+  }
+}
