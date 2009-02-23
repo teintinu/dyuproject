@@ -19,6 +19,8 @@ import java.lang.reflect.Method;
 
 import org.mortbay.util.ajax.JSONPojoConvertor;
 
+import com.dyuproject.ioc.config.Reference;
+
 /**
  * @author David Yu
  * @created Feb 21, 2009

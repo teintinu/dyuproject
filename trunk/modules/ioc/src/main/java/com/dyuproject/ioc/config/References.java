@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc;
+package com.dyuproject.ioc.config;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ import java.util.Map;
 import org.mortbay.util.ajax.JSON.Convertible;
 import org.mortbay.util.ajax.JSON.Output;
 
-import com.dyuproject.ioc.Parser.Context;
+import com.dyuproject.ioc.Context;
 
 /**
  * @author David Yu
@@ -29,26 +29,48 @@ import com.dyuproject.ioc.Parser.Context;
 
 public class References implements Convertible
 {
+    
+    
+    public static References getLast(References refs)
+    {
+        return refs._refs==null ? refs : getLast(refs._refs);
+    }
+    
+    public static void wrapRefs(References refs, References wrapper)
+    {
+        if(wrapper._refs==null)
+            wrapper._refs = refs;
+        else
+            wrapRefs(refs, wrapper._refs);          
+    }
+    
+    public static Object getRef(String key, References refs)
+    {
+        if(refs._map==null)
+            return refs._refs==null ? null : getRef(key, refs._refs);
+        
+        Object value = refs._map.get(key);        
+        return value!=null ? value : (refs._refs==null ? null : getRef(key, refs._refs));
+    }
 
     References _refs;
     Map<String,Object> _map;
     
     public References()
     {
-        Context context = Parser.getCurrentContext();
+        Context context = Context.getCurrent();
         if(context!=null)
             context.getAppContext().addRefs(this);
     }
     
     public References(Map<String,Object> map)
     {
-        this();
         _map = map;
     }
     
     public void addRefs(References refs)
     {
-        ApplicationContext.wrapRefs(refs, this);
+        wrapRefs(refs, this);
     }
     
     public Object put(String key, Object value)
@@ -61,9 +83,7 @@ public class References implements Convertible
     
     public Object get(String key)
     {
-        if(key==null)
-            return null;
-        return ApplicationContext.getRef(key, this);
+        return key==null ? null : getRef(key, this);
     }
     
     public void putAll(Map<String,Object> map)
@@ -89,6 +109,17 @@ public class References implements Convertible
         
         for(Map.Entry<String, Object> entry: _map.entrySet())
             out.add(entry.getKey(), entry.getValue());
+    }
+    
+    public void destroy()
+    {
+        if(_refs!=null)
+            _refs.destroy();
+        _refs = null;
+        
+        if(_map!=null)
+            _map.clear();
+        _map = null;
     }
 
 }

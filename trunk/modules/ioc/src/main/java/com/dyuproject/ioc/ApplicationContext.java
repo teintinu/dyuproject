@@ -15,18 +15,16 @@
 package com.dyuproject.ioc;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.mortbay.log.Log;
-import org.mortbay.util.Loader;
-import org.mortbay.util.ajax.JSON.ReaderSource;
-import org.mortbay.util.ajax.JSON.Source;
+import com.dyuproject.ioc.config.OverrideReferences;
+import com.dyuproject.ioc.config.References;
 
-import com.dyuproject.ioc.factory.FileSourceFactory;
-import com.dyuproject.ioc.factory.URLSourceFactory;
 
 /**
  * @author David Yu
@@ -36,14 +34,21 @@ import com.dyuproject.ioc.factory.URLSourceFactory;
 public class ApplicationContext
 {
     
+    public static final String DEFAULT_RESOURCE_LOCATION = "application.json";
+    
+    public static ApplicationContext load()
+    {
+        return load(DEFAULT_RESOURCE_LOCATION);
+    }
+    
     public static ApplicationContext load(String resource)
     {
         try
         {
             Parser parser = Parser.getDefault();
-            return load(parser.getSourceFactory().getSource(resource), parser);
+            return load(parser.getResolver().createResource(resource), parser);
         }
-        catch(Exception e)
+        catch(IOException e)
         {
             throw new RuntimeException(e);
         }
@@ -53,9 +58,9 @@ public class ApplicationContext
     {
         try
         {
-            return load(FileSourceFactory.getInstance().getSource(resource), Parser.getDefault());
+            return load(FileResolver.getDefault().createResource(resource), Parser.getDefault());
         }
-        catch(Exception e)
+        catch(IOException e)
         {
             throw new RuntimeException(e);
         }        
@@ -65,9 +70,9 @@ public class ApplicationContext
     {
         try
         {
-            return load(URLSourceFactory.getInstance().getSource(resource), Parser.getDefault());
+            return load(URLResolver.getDefault().createResource(resource), Parser.getDefault());
         }
-        catch(Exception e)
+        catch(IOException e)
         {
             throw new RuntimeException(e);
         }        
@@ -77,9 +82,10 @@ public class ApplicationContext
     {
         try
         {
-            return load(URLSourceFactory.getInstance().getSource(resource), Parser.getDefault());
+            return load(new Resource(URLResolver.getDefault().newReader(resource)), 
+                    Parser.getDefault());
         }
-        catch(Exception e)
+        catch(IOException e)
         {
             throw new RuntimeException(e);
         }        
@@ -87,71 +93,56 @@ public class ApplicationContext
     
     public static ApplicationContext load(Reader resource)
     {
+        return load(new Resource(resource), Parser.getDefault());
+    }
+    
+    public static ApplicationContext load(Resource resource, Parser parser)
+    {
+        ApplicationContext ac = new ApplicationContext();
+        parser.parse(resource, ac);
+        return ac;
+    }
+    
+    public static ApplicationContext load(String[] resources)
+    {
         try
         {
-            return load(new ReaderSource(resource), Parser.getDefault());
+            ApplicationContext ac = null;
+            Parser parser = Parser.getDefault();
+            for(String r : resources)
+            {
+                ac = new ApplicationContext(ac);
+                parser.parse(parser.getResolver().createResource(r.trim()), ac);
+            }
+            return ac;
         }
-        catch(Exception e)
+        catch(IOException e)
         {
             throw new RuntimeException(e);
-        }        
-    }
-    
-    public static ApplicationContext load(Source source, Parser parser)
-    {
-        ApplicationContext appContext = new ApplicationContext();
-        parser.parse(source, appContext);
-        return appContext;
-    }
-   
-    public static Class<?> loadClass(String className)
-    {
-        Class<?> clazz = null;
-        try
-        {
-            clazz = Loader.loadClass(ApplicationContext.class, className);
-        }            
-        catch(Throwable e)
-        {
-            Log.warn(e);
         }
-        return clazz;
-    }
+    } 
     
-    static References getLast(References refs)
+    public static void main(String[] args)
     {
-        return refs._refs==null ? refs : getLast(refs._refs);
-    }
-    
-    static void wrapRefs(References refs, References wrapper)
-    {
-        if(wrapper._refs==null)
-            wrapper._refs = refs;
+        if(args==null)
+            load(DEFAULT_RESOURCE_LOCATION);
         else
-            wrapRefs(refs, wrapper._refs);          
+            load(args);
     }
-    
-    static Object getRef(String key, References refs)
-    {
-        if(refs._map==null)
-            return refs._refs==null ? null : getRef(key, refs._refs);
-        
-        Object value = refs._map.get(key);        
-        return value!=null ? value : (refs._refs==null ? null : getRef(key, refs._refs));
-    }
+
     
     static Object getPojo(String key, ApplicationContext ac)
     {
         if(ac._pojos==null)
-            return ac._refs==null ? null : getRef(key, ac._refs);
+            return ac._refs==null ? null : References.getRef(key, ac._refs);
         
         Object pojo = ac._pojos.get(key);
-        return pojo!=null ? pojo : (ac._refs==null ? null : getRef(key, ac._refs));
+        return pojo!=null ? pojo : (ac._refs==null ? null : References.getRef(key, ac._refs));
     }
     
     static Object findRef(String key, ApplicationContext ac)
     {
-        Object ref = getRef(key, ac._refs);
+        Object ref = References.getRef(key, ac._refs);
         return ref!=null ? ref : (ac._imported==null ? null : findRef(key, ac._imported));
     }
     
@@ -174,12 +165,17 @@ public class ApplicationContext
     }
 
     private ApplicationContext _imported;
-    private Map<?,?> _pojos;
+    private Map<String,Object> _pojos;
     private References _refs;
     
-    protected ApplicationContext()
+    public ApplicationContext()
     {
         
+    }
+    
+    public ApplicationContext(ApplicationContext imported)
+    {
+        addImport(imported);
     }
     
     References getRefs()
@@ -197,6 +193,18 @@ public class ApplicationContext
         return key==null || _pojos==null ? null : getPojo(key, this);
     }
     
+    public boolean setPojo(String key, Object value)
+    {
+        if(key==null)
+            return false;
+        
+        if(_pojos==null)
+            _pojos = new HashMap<String,Object>();
+        
+        _pojos.put(key, value);
+        return true;
+    }
+    
     public Object findRef(String key)
     {
         return key==null ? null : findRef(key, this);
@@ -204,10 +212,22 @@ public class ApplicationContext
     
     public Object getRef(String key)
     {
-        return key==null || _refs==null ? null : getRef(key, _refs);
+        return key==null || _refs==null ? null : References.getRef(key, _refs);
     }
     
-    void addRefs(References refs)
+    public boolean setRef(String key, Object value)
+    {
+        if(key==null)
+            return false;
+        
+        if(_refs==null)
+            _refs = new References(new HashMap<String,Object>());
+        
+        _refs.put(key, value);        
+        return true;
+    }
+    
+    public void addRefs(References refs)
     {
         if(refs==null)
             return;
@@ -216,14 +236,14 @@ public class ApplicationContext
             _refs = refs;
         else if(refs instanceof OverrideReferences)
         {
-            wrapRefs(_refs, getLast(refs));
+            References.wrapRefs(_refs, References.getLast(refs));
             _refs = refs;
         }
         else
-            wrapRefs(refs, _refs);
+            References.wrapRefs(refs, _refs);
     }
     
-    void addImport(ApplicationContext imported)
+    public void addImport(ApplicationContext imported)
     {
         if(imported==null)
             return;
@@ -231,16 +251,27 @@ public class ApplicationContext
         addImport(imported, this);
     }
     
-    void wrap(Map<?,?> pojos)
+    public void wrap(Map<String,Object> pojos)
     {
+        if(_pojos!=null)
+            pojos.putAll(_pojos);
+
         _pojos = pojos;
     }
     
-    public boolean destroy()
+    public void destroy()
     {
+        if(_imported!=null)
+            _imported.destroy();
+        _imported = null;
+        
+        if(_refs!=null)
+            _refs.destroy();
+        _refs = null;     
+        
+        if(_pojos!=null)
+            _pojos.clear();
         _pojos = null;
-        _refs = null;        
-        return true;
     }
     
     

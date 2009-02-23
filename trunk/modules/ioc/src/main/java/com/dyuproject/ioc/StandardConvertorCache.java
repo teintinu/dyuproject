@@ -53,7 +53,7 @@ public class StandardConvertorCache implements ConvertorCache
         Convertor convertor = (Convertor)_convertors.get(className);
         if(convertor==null)
         {
-            Class<?> clazz = ApplicationContext.loadClass(className);
+            Class<?> clazz = ClasspathResolver.loadClass(className);
             convertor = clazz==null ? UNRESOLVED_CONVERTOR : createConvertor(clazz);
             _convertors.putIfAbsent(className, convertor);
         }

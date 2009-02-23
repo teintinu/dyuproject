@@ -18,7 +18,7 @@ import java.util.Map;
 
 import org.mortbay.log.Log;
 
-import com.dyuproject.ioc.factory.MultipleSourceFactory;
+import com.dyuproject.ioc.Resource.Resolver;
 
 /**
  * @author David Yu
@@ -30,36 +30,39 @@ public class DefaultParser extends Parser
     
     public DefaultParser()
     {
-        this(new DefaultConvertorCache(), MultipleSourceFactory.getDefault());
+        this(new DefaultConvertorCache(), DefaultResolver.getInstance());
     }
     
     public DefaultParser(ConvertorCache convertorCache)
     {
-        this(convertorCache, MultipleSourceFactory.getDefault());
+        this(convertorCache, DefaultResolver.getInstance());
     }
     
-    public DefaultParser(ConvertorCache convertorCache, SourceFactory sourceFactory)
+    public DefaultParser(ConvertorCache convertorCache, Resolver resolver)
     {
-        setConvertorCache(convertorCache);
-        setSourceFactory(sourceFactory);
+        super(convertorCache);
+        setResolver(resolver);
     }
     
-    public DefaultParser(SourceFactory sourceFactory)
+    public DefaultParser(Resolver resolver)
     {
-        this(new DefaultConvertorCache(), sourceFactory);
+        this(new DefaultConvertorCache(), resolver);
     }
     
-    public void parse(Source source, ApplicationContext appContext)
+    public void parse(Resource resource, ApplicationContext appContext)
     {
-        Context context = new Context(this, appContext);
+        if(!resource.isResolved())
+            throw new IllegalStateException("resource not resolved.");
+        
+        Context context = new Context(resource, appContext, this);
         try
         {
-            setCurrentContext(context);
-            appContext.wrap((Map<?,?>)parse(source));
+            Context.setCurrent(context);
+            appContext.wrap((Map<String,Object>)parse(resource.getSource()));
         }
         finally
         {            
-            setCurrentContext(null);
+            Context.setCurrent(null);
             context.clear();
         }
     }
@@ -83,14 +86,14 @@ public class DefaultParser extends Parser
                 Log.warn("empty reference string");
                 return null;
             }
-            Context context = getCurrentContext();
-            if(context==null || context.getAppContext().getRefs()==null)
+            Context context = Context.getCurrent();
+            if(context==null)
             {
                 Log.warn("${} not found", buffer);
                 return null;
             }
 
-            return context.getAppContext().getRefs().get(buffer.toString());
+            return context.getAppContext().findPojo(buffer.toString());
         }
         return super.handleUnknown(source, c);
     }

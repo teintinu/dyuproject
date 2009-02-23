@@ -12,44 +12,45 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc.factory;
+package com.dyuproject.ioc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 
-import org.mortbay.util.ajax.JSON.ReaderSource;
-import org.mortbay.util.ajax.JSON.Source;
+import com.dyuproject.ioc.Resource.Resolver;
 
-import com.dyuproject.ioc.SourceFactory;
 
 /**
  * @author David Yu
- * @created Feb 21, 2009
+ * @created Feb 23, 2009
  */
 
-public abstract class AbstractSourceFactory implements SourceFactory
+public abstract class AbstractResolver implements Resolver
 {
     
-    public static final int DEFAULT_BUFFER_SIZE = 2048;
+    public static final int DEFAULT_BUFFER_SIZE = Integer.getInteger("resolver.default_buffer_size", 
+            4096).intValue();
     
+    public static String generateTypeFromClass(Class<?> clazz)
+    {
+        String sn = clazz.getSimpleName();
+        return sn.substring(0, sn.lastIndexOf(Resolver.class.getSimpleName())).toLowerCase();
+    }
+
     protected int _bufferSize = DEFAULT_BUFFER_SIZE;
     protected String _encoding;
-    
-    public void setBufferSize(int bufferSize)
-    {
-        _bufferSize = bufferSize;
-    }
     
     public int getBufferSize()
     {
         return _bufferSize;
     }
     
-    public void setEncoding(String encoding)
+    public void setBufferSize(int bufferSize)
     {
-        _encoding = encoding;
+        _bufferSize = bufferSize;
     }
     
     public String getEncoding()
@@ -57,15 +58,15 @@ public abstract class AbstractSourceFactory implements SourceFactory
         return _encoding;
     }
     
-    public Source getSource(InputStream in) throws IOException
+    public void setEncoding(String encoding)
     {
-        if(getEncoding()==null)
-            return new ReaderSource(new BufferedReader(new InputStreamReader(in), getBufferSize()));
-        
-        return new ReaderSource(new BufferedReader(new InputStreamReader(in, getEncoding()), 
-                getBufferSize()));
+        _encoding = encoding;
     }
-    
-    
+
+    protected Reader newReader(InputStream in) throws IOException
+    { 
+        return getEncoding()==null ? new BufferedReader(new InputStreamReader(in), getBufferSize()) : 
+            new BufferedReader(new InputStreamReader(in, getEncoding()), getBufferSize());
+    }
 
 }

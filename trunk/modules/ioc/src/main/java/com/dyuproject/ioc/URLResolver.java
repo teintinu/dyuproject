@@ -14,55 +14,59 @@
 
 package com.dyuproject.ioc;
 
-import com.dyuproject.ioc.Resource.Resolver;
-
-
+import java.io.IOException;
+import java.net.URL;
 
 
 /**
  * @author David Yu
- * @created Feb 21, 2009
+ * @created Feb 23, 2009
  */
 
-public abstract class Parser extends StandardJSON
+public class URLResolver extends AbstractResolver
 {
     
-    private static Parser __default;
+    public static final String TYPE = generateTypeFromClass(URLResolver.class);
     
-    public static Parser getDefault()
+    private static URLResolver __default;
+    
+    public static URLResolver getDefault()
     {
-        // TODO support pluggable parse handlers
         if(__default==null)
         {
-            synchronized(Parser.class)
+            synchronized(URLResolver.class)
             {
                 if(__default==null)
-                    __default = new DefaultParser();
+                    __default = new URLResolver();  
             }
         }
         return __default;
     }
     
-    protected Resolver _resolver;
-    
-    protected Parser(ConvertorCache convertorCache)
+    public URLResolver()
     {
-        super(convertorCache);
-    }
-
-    public Resolver getResolver()
-    {
-        return _resolver;
+        
     }
     
-    protected void setResolver(Resolver resolver)
+    public String getType()
     {
-        _resolver = resolver;
+        return TYPE;
+    }    
+
+    public void resolve(Resource resource, Context context) throws IOException
+    {
+        resource.resolve(newReader(new URL(resource.getPath()).openStream()));
+    }
+
+    public Resource createResource(String path) throws IOException
+    {
+        return new Resource(path, newReader(new URL(path).openStream()));
     }
     
-    public abstract void parse(Resource resource, ApplicationContext appContext);
-    //protected abstract Object handleUnknown(Source source, char c);
+    public Resource createResource(URL url) throws IOException
+    {
+        return new Resource(newReader(url.openStream()));
+    }
     
-
-
+    
 }

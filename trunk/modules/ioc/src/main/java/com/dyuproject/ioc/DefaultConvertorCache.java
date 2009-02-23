@@ -19,6 +19,8 @@ import java.util.Map;
 import org.mortbay.util.ajax.JSON.Convertor;
 import org.mortbay.util.ajax.JSON.Output;
 
+import com.dyuproject.ioc.config.Reference;
+
 /**
  * @author David Yu
  * @created Feb 21, 2009
