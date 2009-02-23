@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc;
+package com.dyuproject.ioc.test;
 
 /**
  * @author David Yu

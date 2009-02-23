@@ -1,15 +1,15 @@
 {
   "import":
   {
-    "class": "com.dyuproject.ioc.Import",
+    "class": "com.dyuproject.ioc.config.Import",
     "resources": 
     [
-      "classpath:com/dyuproject/ioc/basic.json"
+      "classpath:com/dyuproject/ioc/test/basic.json"
     ]  
   },
   "person1":
   {
-    "class": "com.dyuproject.ioc.Person",
+    "class": "com.dyuproject.ioc.test.Person",
     "firstName": "John",
     "lastName": "Doe",
     "email": "john_doe@email.com",

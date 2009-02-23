@@ -14,9 +14,9 @@
 
 package com.dyuproject.ioc;
 
-import java.io.IOException;
-
 import junit.framework.TestCase;
+
+import com.dyuproject.ioc.test.Person;
 
 /**
  * @author David Yu
@@ -26,26 +26,18 @@ import junit.framework.TestCase;
 public class ApplicationContextTest extends TestCase
 {
     
-    public void testClassPathResource() throws IOException
-    {
-        String resource = "classpath:com/dyuproject/ioc/basic.json";
-        ApplicationContext ac = ApplicationContext.load(resource);
-        Person person = (Person)ac.findPojo("person");
-        assertTrue(person.getAge()==20);
-    }
-    
     public void testBasic() throws Exception
     {        
-        String resource = "src/test/resources/com/dyuproject/ioc/basic.json";
+        String resource = "src/test/resources/com/dyuproject/ioc/test/basic.json";
         ApplicationContext ac = ApplicationContext.load(resource);
         Person person = (Person)ac.findPojo("person");
         assertTrue("john_doe".equals(person.getUsername()));
         assertTrue(person.getAge()==20);
     }
     
-    public void testImport() throws Exception
+    public void testImportBasic() throws Exception
     {
-        String resource = "src/test/resources/com/dyuproject/ioc/test_import.json";
+        String resource = "src/test/resources/com/dyuproject/ioc/test/import_basic.json";
         ApplicationContext ac = ApplicationContext.load(resource);
         assertTrue(ac.getPojo("person")==null);
         Person person = (Person)ac.findPojo("person");
@@ -53,8 +45,7 @@ public class ApplicationContextTest extends TestCase
         
         Person person1 = (Person)ac.getPojo("person1");
         assertTrue(person.getAge()==person1.getAge());
-        assertTrue(person.getEmail().endsWith(person1.getEmail()));
-        
+        assertTrue(person.getEmail().endsWith(person1.getEmail()));        
     }
 
 }

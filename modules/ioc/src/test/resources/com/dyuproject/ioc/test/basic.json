@@ -1,7 +1,7 @@
 {
   "person":
   {
-    "class": "com.dyuproject.ioc.Person",
+    "class": "com.dyuproject.ioc.test.Person",
     "firstName": "John",
     "lastName": "Doe",
     "email": "john_doe@email.com",
