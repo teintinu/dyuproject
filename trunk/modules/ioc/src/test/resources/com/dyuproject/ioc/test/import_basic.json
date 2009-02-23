@@ -12,9 +12,9 @@
     "class": "com.dyuproject.ioc.test.Person",
     "firstName": "John",
     "lastName": "Doe",
-    "email": "john_doe@email.com",
+    "email": "john_doe1@email.com",
     "age": 21,
-    "username": "john_doe",
-    "password": "some_password"
+    "username": "john_doe1",
+    "password": "some_password1"
   }
 }

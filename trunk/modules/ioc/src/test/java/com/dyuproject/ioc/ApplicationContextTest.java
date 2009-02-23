@@ -31,8 +31,8 @@ public class ApplicationContextTest extends TestCase
         String resource = "src/test/resources/com/dyuproject/ioc/test/basic.json";
         ApplicationContext ac = ApplicationContext.load(resource);
         Person person = (Person)ac.findPojo("person");
-        assertTrue("john_doe".equals(person.getUsername()));
-        assertTrue(person.getAge()==20);
+        assertTrue("John".equals(person.getFirstName()));
+        assertTrue(20==person.getAge());
     }
     
     public void testImportBasic() throws Exception
@@ -41,11 +41,12 @@ public class ApplicationContextTest extends TestCase
         ApplicationContext ac = ApplicationContext.load(resource);
         assertTrue(ac.getPojo("person")==null);
         Person person = (Person)ac.findPojo("person");
-        assertTrue(person.getAge()==20);
+        assertTrue("John".equals(person.getFirstName()));
+        assertTrue(20==person.getAge());
         
         Person person1 = (Person)ac.getPojo("person1");
-        assertTrue(person1.getAge()==21);
-        assertTrue(person.getEmail().equals(person1.getEmail()));        
+        assertTrue("John".equals(person1.getFirstName()));
+        assertTrue(21==person1.getAge());
     }
     
     public void testReference() throws Exception
@@ -53,7 +54,8 @@ public class ApplicationContextTest extends TestCase
         String resource = "src/test/resources/com/dyuproject/ioc/test/reference.json";
         ApplicationContext ac = ApplicationContext.load(resource);
         Person person2 = (Person)ac.findPojo("person2");
-        assertTrue(person2.getAge()==22);
+        assertTrue("John".equals(person2.getFirstName()));
+        assertTrue(22==person2.getAge());
     }
     
     public void testImportReference() throws Exception
@@ -61,8 +63,29 @@ public class ApplicationContextTest extends TestCase
         String resource = "src/test/resources/com/dyuproject/ioc/test/import_reference.json";
         ApplicationContext ac = ApplicationContext.load(resource);
         Person person3 = (Person)ac.findPojo("person3");
-        assertTrue(person3.getFirstName().equals("John"));
-        assertTrue(person3.getAge()==23);
+        assertTrue("John".equals(person3.getFirstName()));
+        assertTrue(23==person3.getAge());
+    }
+    
+    public void testImportBasicReference() throws Exception
+    {
+        String resource = "src/test/resources/com/dyuproject/ioc/test/import_basic_reference.json";
+        ApplicationContext ac = ApplicationContext.load(resource);
+        Person person = (Person)ac.findPojo("person");
+        Person person1 = (Person)ac.findPojo("person1");
+        Person person2 = (Person)ac.findPojo("person2");
+        Person person3 = (Person)ac.findPojo("person3");
+        Person person4 = (Person)ac.findPojo("person4");
+        assertTrue(person!=null);
+        assertTrue(person1!=null);
+        assertTrue(person2!=null);
+        assertTrue(person3!=null);
+        assertTrue(person4!=null);
+        assertTrue(person2==person3);
+        assertTrue(20==person.getAge());
+        assertTrue(21==person1.getAge());
+        assertTrue(23==person3.getAge());
+        assertTrue(24==person4.getAge());
     }
 
 }

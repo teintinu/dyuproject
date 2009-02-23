@@ -1,0 +1,21 @@
+{
+  "import":
+  {
+    "class": "com.dyuproject.ioc.config.Import",
+    "resources": 
+    [
+      "classpath:com/dyuproject/ioc/test/import_basic.json",
+      "import_reference.json"
+    ]  
+  },
+  "person4":
+  {
+    "class": "com.dyuproject.ioc.test.Person",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john_doe4@email.com",
+    "age": 24,
+    "username": "john_doe4",
+    "password": "some_password4"
+  }
+}
