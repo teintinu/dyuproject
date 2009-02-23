@@ -37,14 +37,7 @@ public class Import implements Convertible
     static void importResources(Map<?,?> resources) throws IOException
     {
         for(Map.Entry<?, ?> entry : resources.entrySet())
-        {
-            if(entry.getKey() instanceof String)
-            {
-                String key = (String)entry.getKey();
-                if(!"class".equalsIgnoreCase(key))
-                    importResource((String)entry.getKey(), entry.getValue().toString());
-            }
-        }
+            importResource((String)entry.getKey(), entry.getValue().toString());
     }
     
     static void importResources(Object array) throws IOException
@@ -68,6 +61,8 @@ public class Import implements Convertible
         }
         Resource resource = new Resource(path, type);
         context.getParser().getResolver().resolve(resource, context);
+        if(!resource.isResolved())
+            throw new IllegalStateException("resource not resolved.");
         try
         {
             context.getAppContext().addImport(ApplicationContext.load(resource, 
@@ -80,11 +75,12 @@ public class Import implements Convertible
     }    
 
     public void fromJSON(Map map)
-    {        
+    {
+        map.remove("class");
         Object resources = map.get("resources");
         if(resources==null)
         {
-            if(map.size()>1)
+            if(map.size()>0)
             {
                 try
                 {
@@ -112,7 +108,7 @@ public class Import implements Convertible
             }
         }
         
-        if(map.size()>2)
+        if(map.size()>1)
         {
             try
             {

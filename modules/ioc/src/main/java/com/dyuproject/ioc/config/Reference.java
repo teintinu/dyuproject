@@ -38,7 +38,7 @@ public class Reference
             Log.warn("No current context for Reference");
             return false;
         }
-        Convertor c = context.getParser().getConvertorCache().getConvertor(ref.getClass());
+        Convertor c = context.getParser().getConvertorCache().getConvertor(ref.getClass(), true);
         return c instanceof JSONPojoConvertor && ((JSONPojoConvertor)c).setProps(ref, props)!=0;
     }
     
@@ -85,21 +85,4 @@ public class Reference
         }
     }
 
-    public void addJSON(StringBuffer buffer)
-    {
-        if(_ref==null)
-        {
-            buffer.append("{}");
-            return;
-        }
-        Context context = Context.getCurrent();
-        // TODO
-        if(context!=null)
-        {
-            buffer.append(context.getParser().toJSON(_ref));
-        }
-        
-        
-    }
-    
 }

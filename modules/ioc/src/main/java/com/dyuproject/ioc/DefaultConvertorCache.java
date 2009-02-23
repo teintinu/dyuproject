@@ -31,12 +31,12 @@ public class DefaultConvertorCache extends StandardConvertorCache
     
     public DefaultConvertorCache()
     {
+        final Convertor wrapped = createConvertor(Reference.class);
         addConvertor(Reference.class, new Convertor()
         {
             public Object fromJSON(Map map)
             {
-                Object ref = map.get("ref");
-                return ref==null ? null : getConvertor(ref.getClass(), true).fromJSON(map);
+                return wrapped.fromJSON(map);
             }
             public void toJSON(Object obj, Output out)
             {
