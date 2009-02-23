@@ -12,7 +12,8 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc;
+package com.dyuproject.ioc.config;
+
 
 /**
  * @author David Yu

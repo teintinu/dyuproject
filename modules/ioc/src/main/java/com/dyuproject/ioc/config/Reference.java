@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc;
+package com.dyuproject.ioc.config;
 
 import java.util.Map;
 
@@ -20,7 +20,7 @@ import org.mortbay.log.Log;
 import org.mortbay.util.ajax.JSONPojoConvertor;
 import org.mortbay.util.ajax.JSON.Convertor;
 
-import com.dyuproject.ioc.Parser.Context;
+import com.dyuproject.ioc.Context;
 
 /**
  * @author David Yu
@@ -32,7 +32,7 @@ public class Reference
     
     static boolean setProps(Object ref, Map<String,Object> props)
     {
-        Context context = Parser.getCurrentContext();
+        Context context = Context.getCurrent();
         if(context==null)
         {
             Log.warn("No current context for Reference");
@@ -92,7 +92,7 @@ public class Reference
             buffer.append("{}");
             return;
         }
-        Context context = Parser.getCurrentContext();
+        Context context = Context.getCurrent();
         // TODO
         if(context!=null)
         {

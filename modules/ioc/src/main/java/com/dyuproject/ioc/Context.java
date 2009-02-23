@@ -12,52 +12,59 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc.factory;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-
-import org.mortbay.util.ajax.JSON.Source;
+package com.dyuproject.ioc;
 
 /**
  * @author David Yu
- * @created Feb 21, 2009
+ * @created Feb 23, 2009
  */
 
-public class FileSourceFactory extends AbstractSourceFactory
+public class Context
 {
     
-    private static final FileSourceFactory __instance = new FileSourceFactory();
+    private static final ThreadLocal<Context> __current = new ThreadLocal<Context>();
     
-    public static FileSourceFactory getInstance()
+    public static Context getCurrent()
     {
-        return __instance;
+        return __current.get();
     }
     
-    private FileSourceFactory()
+    public static void setCurrent(Context context)
     {
-        
+        __current.set(context);
     }
     
-    public Object getResource(String resource) throws IOException
+    private Resource _resource;
+    private ApplicationContext _appContext;
+    private Parser _parser;
+    
+    public Context(Resource resource, ApplicationContext appContext, Parser parser)
     {
-        return new File(resource);
-    }
-
-    public Source getSource(String resource) throws IOException
-    {        
-        return getSource(new File(resource));
+        _resource = resource;            
+        _appContext = appContext;
+        _parser = parser;
     }
     
-    public Source getSource(String resource, String metadata) throws IOException
+    public Resource getResource()
     {
-        return getSource(resource);
+        return _resource;
+    }        
+    
+    public ApplicationContext getAppContext()
+    {
+        return _appContext;
     }
     
-    public Source getSource(File resource) throws IOException
+    public Parser getParser()
     {
-        return getSource(new FileInputStream(resource));
+        return _parser;
+    }
+    
+    protected void clear()
+    {
+        _parser = null;
+        _appContext = null;
+        _resource = null;
     }
 
 }

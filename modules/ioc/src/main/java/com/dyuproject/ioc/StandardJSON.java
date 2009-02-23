@@ -12,51 +12,38 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc.factory;
+package com.dyuproject.ioc;
 
-import java.io.IOException;
-import java.net.URL;
-
-import org.mortbay.util.ajax.JSON.Source;
+import org.mortbay.util.ajax.JSON;
 
 /**
  * @author David Yu
- * @created Feb 21, 2009
+ * @created Feb 23, 2009
  */
 
-public class URLSourceFactory extends AbstractSourceFactory
+public class StandardJSON extends JSON
 {
     
-    private static final URLSourceFactory __instance = new URLSourceFactory();
+    private ConvertorCache _convertorCache;
     
-    public static URLSourceFactory getInstance()
+    public StandardJSON()
     {
-        return __instance;
+        this(new StandardConvertorCache());
     }
     
-    private URLSourceFactory()
+    public StandardJSON(ConvertorCache convertorCache)
     {
-        
+        _convertorCache = convertorCache;
     }
     
-    public Object getResource(String resource) throws IOException
+    public ConvertorCache getConvertorCache()
     {
-        return new URL(resource);
-    }
-
-    public Source getSource(String resource) throws IOException
-    {        
-        return getSource(new URL(resource));
+        return _convertorCache;
     }
     
-    public Source getSource(String resource, String metadata) throws IOException
+    protected Convertor getConvertor(Class clazz)
     {
-        return getSource(resource);
-    }
-    
-    public Source getSource(URL resource) throws IOException
-    {
-        return getSource(resource.openStream());
+        return getConvertorCache().getConvertor(clazz, true);
     }
 
 }

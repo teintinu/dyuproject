@@ -12,7 +12,7 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.ioc;
+package com.dyuproject.ioc.config;
 
 import java.io.IOException;
 import java.lang.reflect.Array;
@@ -21,9 +21,10 @@ import java.util.Map;
 import org.mortbay.log.Log;
 import org.mortbay.util.ajax.JSON.Convertible;
 import org.mortbay.util.ajax.JSON.Output;
-import org.mortbay.util.ajax.JSON.Source;
 
-import com.dyuproject.ioc.Parser.Context;
+import com.dyuproject.ioc.ApplicationContext;
+import com.dyuproject.ioc.Context;
+import com.dyuproject.ioc.Resource;
 
 /**
  * @author David Yu
@@ -57,22 +58,24 @@ public class Import implements Convertible
         }
     }
     
-    static void importResource(String resource, String type) throws IOException
+    static void importResource(String path, String type) throws IOException
     {
-        Context context = Parser.getCurrentContext();
+        Context context = Context.getCurrent();
         if(context==null)
         {
             Log.warn("Not in context.");
             return;
         }
-        Source source = context.getParser().getSourceFactory().getSource(resource, type);
+        Resource resource = new Resource(path, type);
+        context.getParser().getResolver().resolve(resource, context);
         try
         {
-            context.getAppContext().addImport(ApplicationContext.load(source, context.getParser()));
+            context.getAppContext().addImport(ApplicationContext.load(resource, 
+                    context.getParser()));
         }
         finally
         {
-            Parser.setCurrentContext(context);
+            Context.setCurrent(context);
         }
     }    
 
