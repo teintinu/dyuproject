@@ -60,9 +60,11 @@ public class FileResolver extends AbstractResolver
         File file = null;
         String path = resource.getPath();
         if(context==null || path.charAt(0)=='/' || (file=context.getResource().getFile())==null)
-            resource.resolve(newReader(new FileInputStream(new File(path))));
+            file = new File(path);
         else
-            resource.resolve(newReader(new FileInputStream(new File(file.getParentFile(), path))));
+            file = new File(file.getParentFile(), path);
+        
+        resource.resolve(newReader(new FileInputStream(file)), file);
     }
 
     public Resource createResource(String path) throws IOException
