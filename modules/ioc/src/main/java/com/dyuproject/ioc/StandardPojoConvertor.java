@@ -51,6 +51,16 @@ public class StandardPojoConvertor extends JSONPojoConvertor
         _fromJSON = fromJSON;
     }
     
+    public StandardPojoConvertor(Class<?> pojoClass, boolean fromJSON)
+    {
+        super(pojoClass, fromJSON);
+    }
+    
+    public StandardPojoConvertor(Class<?> pojoClass, boolean fromJSON, Set<String> excluded)
+    {
+        super(pojoClass, excluded, fromJSON);
+    }
+    
     protected void addSetter(String name, Method method)
     {
         _setters.put(name, newSetter(name, method));
