@@ -13,7 +13,7 @@
     "firstName": "John",
     "lastName": "Doe",
     "email": "john_doe@email.com",
-    "age": 20,
+    "age": 21,
     "username": "john_doe",
     "password": "some_password"
   }

@@ -44,8 +44,25 @@ public class ApplicationContextTest extends TestCase
         assertTrue(person.getAge()==20);
         
         Person person1 = (Person)ac.getPojo("person1");
-        assertTrue(person.getAge()==person1.getAge());
-        assertTrue(person.getEmail().endsWith(person1.getEmail()));        
+        assertTrue(person1.getAge()==21);
+        assertTrue(person.getEmail().equals(person1.getEmail()));        
+    }
+    
+    public void testReference() throws Exception
+    {
+        String resource = "src/test/resources/com/dyuproject/ioc/test/reference.json";
+        ApplicationContext ac = ApplicationContext.load(resource);
+        Person person2 = (Person)ac.findPojo("person2");
+        assertTrue(person2.getAge()==22);
+    }
+    
+    public void testImportReference() throws Exception
+    {
+        String resource = "src/test/resources/com/dyuproject/ioc/test/import_reference.json";
+        ApplicationContext ac = ApplicationContext.load(resource);
+        Person person3 = (Person)ac.findPojo("person3");
+        assertTrue(person3.getFirstName().equals("John"));
+        assertTrue(person3.getAge()==23);
     }
 
 }
