@@ -125,10 +125,5 @@ public class CookieSession implements JSON.Convertible
         out.add("c", _timeCreated);
         out.add("u", _timeUpdated);
     }
-    
-    public String toString()
-    {
-        return JSON.toString(this);
-    }    
 
 }

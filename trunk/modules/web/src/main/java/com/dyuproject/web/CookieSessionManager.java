@@ -22,8 +22,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.StringSource;
 
+import com.dyuproject.ioc.StandardJSON;
 import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Delim;
 import com.dyuproject.util.DigestUtil;
@@ -54,6 +55,7 @@ public class CookieSessionManager
     private String _secretKey, _cookieName, _cookiePath, _cookieDomain;
     private int _maxAge = 3600, _updateMs = 3600*500;
     private boolean _started = false, _includeRemoteAddr = false;
+    private StandardJSON _json = new StandardJSON();
     
     public static CookieSession getCurrentSession()
     {
@@ -63,6 +65,11 @@ public class CookieSessionManager
     public CookieSessionManager()
     {
         
+    }
+    
+    public StandardJSON getJSON()
+    {
+        return _json;
     }
 
     public void init(Properties props)
@@ -149,7 +156,7 @@ public class CookieSessionManager
             HttpServletResponse response) throws IOException
     {
         session.markPersisted();
-        String json = B64Code.encode(session.toString());
+        String json = B64Code.encode(_json.toJSON(session));
         StringBuilder toSign = new StringBuilder().append(json).append(_secretKey);
         if(_includeRemoteAddr)
             toSign.append(request.getRemoteAddr());
@@ -178,8 +185,9 @@ public class CookieSessionManager
             toSign.append(request.getRemoteAddr());
         if(!pair[1].equals(DigestUtil.digestMD5(toSign.toString())))
             return null;
-        
-        CookieSession session = (CookieSession)JSON.parse(B64Code.decode(pair[0]));
+
+        CookieSession session = (CookieSession)_json.parse(new StringSource(
+                B64Code.decode(pair[0])));
         __session.set(session);
         request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, session);
         return session;
