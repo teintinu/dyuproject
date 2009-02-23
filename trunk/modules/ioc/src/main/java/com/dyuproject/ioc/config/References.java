@@ -96,6 +96,7 @@ public class References implements Convertible
     
     public void fromJSON(Map map)
     {
+        map.remove("class");
         if(_map==null)
             _map = (Map<String,Object>)map;
         else
