@@ -18,7 +18,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -137,7 +136,12 @@ public class StandardPojoConvertor extends JSONPojoConvertor
                         }
                         try
                         {
-                            setter._method.invoke(obj, new Object[]{Arrays.asList(value)});
+                            ArrayList list = new ArrayList(len);
+                            list.add(first);
+                            for(int i=1; i<len; i++)
+                                list.add(Array.get(value, i));
+                            
+                            setter._method.invoke(obj, list);
                             return true;
                         }
                         catch(Exception e)
@@ -187,7 +191,12 @@ public class StandardPojoConvertor extends JSONPojoConvertor
                         }
                         try
                         {
-                            setter._method.invoke(obj, new Object[]{new HashSet(Arrays.asList(value))});
+                            HashSet set = new HashSet(len);
+                            set.add(first);
+                            for(int i=1; i<len; i++)
+                                set.add(Array.get(value, i));
+                            
+                            setter._method.invoke(obj, set);
                             return true;
                         }
                         catch(Exception e)

@@ -23,6 +23,9 @@ import org.mortbay.util.ajax.JSONPojoConvertor;
 import com.dyuproject.ioc.StandardPojoConvertor.StandardSetter;
 
 /**
+ * Sets the correct values for pojos with overloaded setters except when 
+ * 2 methods overload a number type (limitation).
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */
