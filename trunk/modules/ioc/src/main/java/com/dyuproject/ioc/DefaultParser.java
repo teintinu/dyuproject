@@ -19,6 +19,7 @@ import java.util.Map;
 import org.mortbay.log.Log;
 
 import com.dyuproject.ioc.Resource.Resolver;
+import com.dyuproject.json.ConvertorCache;
 
 /**
  * @author David Yu
