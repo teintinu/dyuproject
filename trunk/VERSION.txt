@@ -1,5 +1,6 @@
 dyuproject-1.1-SNAPSHOT
-+ new JSON IOC module
++ new ioc module
++ new json module
 + Pojo Consumers (validation, binding, etc)
 + port logging to SLF4J (commons-logging had classloader issues)
 + Issue 9: Explicit timeout for connecting OpenID provider
