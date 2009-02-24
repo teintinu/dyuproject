@@ -126,6 +126,7 @@
   
   <modules>
     <module>modules/util</module>
+    <module>modules/json</module>
     <module>modules/ioc</module>
     <module>modules/openid</module>    
     <module>modules/web</module>
