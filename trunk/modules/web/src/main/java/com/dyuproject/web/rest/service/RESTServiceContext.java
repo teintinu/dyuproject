@@ -257,14 +257,12 @@ public class RESTServiceContext extends WebContext
         Properties fieldParams = new Properties();
         loadPropertiesFromClass(fieldParams, pojoClass);
         addParamsToProperties(fieldParams, c.fieldParams());
-        Properties initParams = new Properties();
-        addParamsToProperties(initParams, c.initParams());
         for(int i=0; i<consumers.length; i++)
         {
             try
             {
                 ValidatingConsumer vc = (ValidatingConsumer)consumers[i].newInstance();
-                vc.preConfigure(httpMethod, pojoClass, fieldParams, initParams);
+                vc.preConfigure(httpMethod, c.contentType(), pojoClass, fieldParams);
                 ci.addConsumer(vc);
             }
             catch(Exception e)
