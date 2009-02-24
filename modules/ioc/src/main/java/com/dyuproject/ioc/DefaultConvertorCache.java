@@ -20,6 +20,7 @@ import org.mortbay.util.ajax.JSON.Convertor;
 import org.mortbay.util.ajax.JSON.Output;
 
 import com.dyuproject.ioc.config.Reference;
+import com.dyuproject.json.StandardConvertorCache;
 
 /**
  * @author David Yu
@@ -31,7 +32,7 @@ public class DefaultConvertorCache extends StandardConvertorCache
     
     public DefaultConvertorCache()
     {
-        final Convertor wrapped = createConvertor(Reference.class);
+        final Convertor wrapped = newConvertor(Reference.class);
         addConvertor(Reference.class, new Convertor()
         {
             public Object fromJSON(Map map)
@@ -45,7 +46,7 @@ public class DefaultConvertorCache extends StandardConvertorCache
         });
     }
     
-    public Convertor createConvertor(Class<?> clazz)
+    public Convertor newConvertor(Class<?> clazz)
     {
         return new DefaultPojoConvertor(clazz);
     }

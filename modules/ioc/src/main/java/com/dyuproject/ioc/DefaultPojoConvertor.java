@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import org.mortbay.util.ajax.JSONPojoConvertor;
 
 import com.dyuproject.ioc.config.Reference;
+import com.dyuproject.json.OverloadPojoConvertor;
 
 /**
  * @author David Yu

@@ -18,9 +18,6 @@ import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;
 
-import org.mortbay.log.Log;
-import org.mortbay.util.Loader;
-
 
 /**
  * @author David Yu
@@ -61,38 +58,22 @@ public class ClasspathResolver extends AbstractResolver
     
     public static Class<?> loadClass(String className, Class<?> context)
     {
-        try
-        {
-            return Loader.loadClass(context, className, __checkParents);
-        }            
-        catch(ClassNotFoundException e)
-        {
-            Log.warn(e);
-            return null;
-        }
+        return Parser.loadClass(className, context, __checkParents);
     }
     
     public static Class<?> loadClass(String className)
     {
-        return loadClass(className, ClasspathResolver.class);
+        return Parser.loadClass(className, ClasspathResolver.class, __checkParents);
     }
     
     public static URL getResource(String path, Class<?> context)
     {
-        try
-        {
-            return Loader.getResource(context, path, __checkParents);
-        } 
-        catch (ClassNotFoundException e)
-        {
-            Log.warn(e);
-            return null;
-        }  
+        return Parser.getResource(path, context, __checkParents);
     }
     
     public static URL getResource(String path)
     {
-        return getResource(path, ClasspathResolver.class);
+        return Parser.getResource(path, ClasspathResolver.class, __checkParents);
     }    
     
     public ClasspathResolver()
