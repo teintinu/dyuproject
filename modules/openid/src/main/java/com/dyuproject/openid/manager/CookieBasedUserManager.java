@@ -21,8 +21,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.StringSource;
 
+import com.dyuproject.json.StandardJSON;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.OpenIdUserManager;
 import com.dyuproject.util.B64Code;
@@ -41,6 +42,8 @@ public class CookieBasedUserManager implements OpenIdUserManager
 {
     
     private boolean _initialized = false;
+    
+    private StandardJSON _json = new StandardJSON();
     
     private String _secretKey;
     private String _cookieName;    
@@ -75,6 +78,11 @@ public class CookieBasedUserManager implements OpenIdUserManager
         setCookieName(cookieName);
         setSecretKey(secretKey);
         setEncrypted(encrypted);
+    }
+    
+    public StandardJSON getJSON()
+    {
+        return _json;
     }
     
     public void init(Properties properties)
@@ -212,7 +220,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
             return null;
         }
         
-        return (OpenIdUser)JSON.parse(B64Code.decode(u));
+        return (OpenIdUser)_json.parse(new StringSource(B64Code.decode(u)));
     }
     
     OpenIdUser getUserByDecryption(Cookie cookie) 
@@ -228,7 +236,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
             e.printStackTrace();
             return null;
         }        
-        return (OpenIdUser)JSON.parse(value);
+        return (OpenIdUser)_json.parse(new StringSource(value));
     }
     
     public boolean saveUser(OpenIdUser user, HttpServletRequest request, 
@@ -242,7 +250,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
     
     boolean saveUserWithSignature(OpenIdUser user, HttpServletResponse response) throws IOException
     {
-        String u = B64Code.encode(JSON.toString(user));
+        String u = B64Code.encode(_json.toJSON(user));
         String sig = DigestUtil.digestMD5(u + _secretKey);
         StringBuilder buffer = new StringBuilder().append(sig).append('&').append(u);
         return write(buffer.toString(), user.isAuthenticated() ? _maxAge : _loginTimeout, response);
@@ -250,7 +258,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
     
     boolean saveUserWithEncryption(OpenIdUser user, HttpServletResponse response) throws IOException
     {
-        String u = JSON.toString(user);
+        String u = _json.toJSON(user);
         String value = null;
         try
         {
