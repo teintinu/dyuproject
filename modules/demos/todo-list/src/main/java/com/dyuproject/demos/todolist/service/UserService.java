@@ -32,6 +32,7 @@ import com.dyuproject.demos.todolist.Feedback;
 import com.dyuproject.demos.todolist.dao.UserDao;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.rest.RequestContext;
+import com.dyuproject.web.rest.ValidationException;
 import com.dyuproject.web.rest.annotation.Consume;
 import com.dyuproject.web.rest.consumer.SimpleParameterConsumer;
 import com.dyuproject.web.rest.service.AbstractService;
@@ -110,11 +111,19 @@ public class UserService extends AbstractService
             return;
         }
         
-        boolean updated = rc.getConsumer().merge(user, rc);
-        if(updated)
-            updated = UserDao.executeUpdate();
+        boolean updated = false;
+        try
+        {
+            updated = rc.getConsumer().merge(user, rc);
+        }
+        catch(ValidationException ve)
+        {
+            request.setAttribute(Constants.MSG, ve.getMessage());
+            dispatchToFormView(user, request, response);
+            return;
+        }
         
-        if(updated)
+        if(updated && UserDao.executeUpdate())
         {
             String sub = request.getParameter("sub");
             if(sub!=null)
@@ -143,13 +152,26 @@ public class UserService extends AbstractService
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
-        String confirmPassword = request.getParameter(Constants.CONFIRM_PASSWORD);
-        User user = (User)rc.getConsumer().getConsumedObject(rc);
-        if(!user.getPassword().equals(confirmPassword))
+        String password = request.getParameter(Constants.PASSWORD);
+        String confirmPassword = request.getParameter(Constants.CONFIRM_PASSWORD);        
+        if(!password.equals(confirmPassword))
         {
             request.setAttribute(Constants.MSG, Feedback.PASSWORD_DID_NOT_MATCH.getMsg());
             request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);  
             dispatchToFormView(null, request, response);
+            return;
+        }
+        
+        User user = null;
+        try
+        {
+            user = (User)rc.getConsumer().consume(rc);
+        }
+        catch(ValidationException ve)
+        {
+            request.setAttribute(Constants.MSG, ve.getMessage());
+            request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
+            dispatchToFormView(user, request, response);
             return;
         }
         
@@ -202,8 +224,7 @@ public class UserService extends AbstractService
     @Post
     @Consume(
             consumers={SimpleParameterConsumer.class}, pojoClass=User.class, 
-            fieldParams="id.included=false&todos.included=false&username.included=false&password.included=false&email.validator=com.dyuproject.web.rest.validator.EmailValidator",
-            initParams="spc.dispatch_uri=users/form&consume_type=map&request_attributes=action:Edit"
+            fieldParams="id.included=false&todos.included=false&username.included=false&password.included=false&email.validator=com.dyuproject.web.rest.validator.EmailValidator"            
     )
     public void form_edit(RequestContext rc) throws IOException, ServletException
     {
@@ -223,8 +244,7 @@ public class UserService extends AbstractService
     @Post
     @Consume(
             consumers={SimpleParameterConsumer.class}, pojoClass=User.class, 
-            fieldParams="id.included=false&todos.included=false&email.validator=com.dyuproject.web.rest.validator.EmailValidator",
-            initParams="spc.dispatch_uri=users/form&request_attributes=action:New"
+            fieldParams="id.included=false&todos.included=false&email.validator=com.dyuproject.web.rest.validator.EmailValidator"            
     )
     public void form_new(RequestContext rc) throws IOException, ServletException
     {
