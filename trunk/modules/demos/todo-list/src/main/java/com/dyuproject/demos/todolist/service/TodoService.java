@@ -34,6 +34,7 @@ import com.dyuproject.demos.todolist.dao.UserDao;
 import com.dyuproject.demos.todolist.model.Todo;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.rest.RequestContext;
+import com.dyuproject.web.rest.ValidationException;
 import com.dyuproject.web.rest.annotation.Consume;
 import com.dyuproject.web.rest.consumer.SimpleParameterConsumer;
 import com.dyuproject.web.rest.service.AbstractService;
@@ -122,11 +123,19 @@ public class TodoService extends AbstractService
             response.sendError(404);
             return;
         }
-        boolean updated = rc.getConsumer().merge(todo, rc);
-        if(updated)
-            updated = TodoDao.executeUpdate();
+        boolean updated = false;
+        try
+        {
+            updated = rc.getConsumer().merge(todo, rc);
+        }
+        catch(ValidationException ve)
+        {
+            request.setAttribute(Constants.MSG, ve.getMessage());
+            dispatchToFormView(todo, request, response); 
+            return;
+        }
         
-        if(updated)
+        if(updated && TodoDao.executeUpdate())
         {
             String sub = request.getParameter("sub");
             if(sub!=null)
@@ -162,7 +171,19 @@ public class TodoService extends AbstractService
             return;
         }
           
-        Todo todo = (Todo)rc.getConsumer().getConsumedObject(rc);
+        Todo todo = null;
+        try
+        {
+            todo = (Todo)rc.getConsumer().consume(rc);
+        }
+        catch(ValidationException ve)
+        {
+            request.setAttribute(Constants.MSG, ve.getMessage());
+            request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
+            dispatchToFormView(todo, request, response);
+            return;
+        }
+        
         todo.setUser(user);
         boolean created = _todoDao.create(todo);
         
@@ -245,8 +266,7 @@ public class TodoService extends AbstractService
     @Post
     @Consume(
             consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class,
-            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false",
-            initParams="spc.dispatch_uri=todos/form&consume_type=map&request_attributes=action:Edit"
+            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false"            
     )
     public void form_edit(RequestContext rc) throws IOException, ServletException
     {
@@ -266,8 +286,7 @@ public class TodoService extends AbstractService
     @Post
     @Consume(
             consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class, 
-            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false",
-            initParams="spc.dispatch_uri=todos/form&request_attributes=action:New"
+            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false"
     )
     public void form_new(RequestContext rc) throws IOException, ServletException
     {
