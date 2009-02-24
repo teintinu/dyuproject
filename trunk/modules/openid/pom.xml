@@ -46,6 +46,13 @@
       <artifactId>jetty-util</artifactId>
       <version>${jetty-version}</version>
     </dependency>
+    <!-- CookieBasedUserManager dependency-->
+    <dependency>
+      <groupId>com.dyuproject</groupId>
+      <artifactId>dyuproject-json</artifactId>
+      <version>${project.version}</version>
+      <optional>true</optional>
+    </dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
