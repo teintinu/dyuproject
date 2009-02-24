@@ -23,6 +23,7 @@ import org.mortbay.util.ajax.JSON;
 
 /**
  * Standard JSON serialization of pojos using cached convertors with configurable classloading.
+ * Enhancement for jetty-util's org.mortbay.util.ajax.JSON
  * 
  * @author David Yu
  * @created Feb 23, 2009
