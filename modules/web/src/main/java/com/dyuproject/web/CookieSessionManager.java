@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.mortbay.util.ajax.JSON.StringSource;
 
-import com.dyuproject.ioc.StandardJSON;
+import com.dyuproject.json.StandardJSON;
 import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Delim;
 import com.dyuproject.util.DigestUtil;
