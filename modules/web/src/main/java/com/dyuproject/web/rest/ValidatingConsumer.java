@@ -17,8 +17,6 @@ package com.dyuproject.web.rest;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.servlet.ServletException;
-
 
 /**
  * @author David Yu
@@ -28,27 +26,18 @@ import javax.servlet.ServletException;
 public interface ValidatingConsumer extends LifeCycle
 {
     
-    public static final String CONSUMED_OBJECT = "consumed_object";
-    public static final String CONSUME_TYPE = "consume_type";
-    public static final String MSG = "msg";
-    public static final String DISPATCHER_NAME = "dispatcher_name";
-    public static final String DISPATCH_URI = "dispatch_uri";
-    public static final String RESPONSE_CONTENT_TYPE = "response_content_type";
     public static final String REQUEST_CONTENT_TYPE = "request_content_type";
-    public static final String REQUEST_ATTRIBUTES = "request_attributes";
     
-    public void preConfigure(String httpMethod, Class<?> pojoClass, Map<?,?> fieldParams, 
-            Map<?,?> initParams);
+    public void preConfigure(String httpMethod, String contentType, Class<?> pojoClass, 
+            Map<?,?> fieldParams);
     
-    public String getRequestContentType();
+    public String getContentType();
     
     public String getHttpMethod();
     
-    public boolean consume(RequestContext requestContext) throws ServletException, IOException;
+    public Object consume(RequestContext requestContext) throws IOException, ValidationException;
     
-    public Object getConsumedObject(RequestContext rc);
-    
-    public boolean merge(Object pojo, RequestContext rc);
+    public boolean merge(Object pojo, RequestContext rc) throws IOException, ValidationException;
     
     public interface FieldValidator
     {

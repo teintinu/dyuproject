@@ -15,23 +15,19 @@
 package com.dyuproject.web.rest;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.web.rest.consumer.JSONConsumer.CachedJSON;
-import com.dyuproject.web.rest.consumer.JSONConsumer.PojoConvertor;
+import com.dyuproject.json.StandardJSON;
 
 /**
  * @author David Yu
  * @created Feb 13, 2009
  */
 
-public class JSONDispatcher extends CachedJSON implements ViewDispatcher
+public class JSONDispatcher extends StandardJSON implements ViewDispatcher
 {
     
     public static final String JSON_DATA = "json_data";
@@ -42,17 +38,7 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
         {            
             buffer.append('{').append('}');
         }        
-    };    
-    
-    public JSONDispatcher()
-    {
-        super(new ConcurrentHashMap<String,Convertor>());
-    }
-    
-    public JSONDispatcher(ConcurrentMap<String,Convertor> cache)
-    {
-        super(cache);
-    }
+    };
 
     public void dispatch(String errorMsg, HttpServletRequest request, HttpServletResponse response) 
     throws ServletException,
@@ -76,17 +62,7 @@ public class JSONDispatcher extends CachedJSON implements ViewDispatcher
     {
         write(new SimpleResponse(msg, error), request, response);
     }
-    
-    protected Convertor getConvertor(Class clazz)
-    {
-        Convertor convertor = _cache.get(clazz.getName());
-        if(convertor==null)
-        {
-            convertor = new PojoConvertor(clazz);
-            addConvertor(clazz, convertor);
-        }
-        return convertor;
-    }
+
 
     public void destroy(WebContext webContext)
     {            

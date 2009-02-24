@@ -12,27 +12,28 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.web.rest.annotation;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
+package com.dyuproject.web.rest;
 
 /**
  * @author David Yu
- * @created Jan 14, 2009
+ * @created Feb 25, 2009
  */
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface Consume
+@SuppressWarnings("serial")
+public class ValidationException extends IllegalArgumentException
 {
-
-    Class<?>[] consumers();
-    Class<?> pojoClass();
-    String contentType() default "";    
-    String fieldParams() default "";
+    
+    private String _field;
+    
+    public ValidationException(String message, String field)
+    {
+        super(message);
+        _field = field;        
+    }
+    
+    public String getField()
+    {
+        return _field;
+    }
 
 }

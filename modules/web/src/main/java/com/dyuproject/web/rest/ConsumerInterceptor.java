@@ -56,12 +56,11 @@ public class ConsumerInterceptor extends AbstractLifeCycle implements Intercepto
         if(consumer!=null)
         {
             String contentType = requestContext.getRequest().getContentType();
-            if(contentType.startsWith(consumer.getRequestContentType()))
+            if(contentType.startsWith(consumer.getContentType()))
             {
                 requestContext.setConsumer(consumer);
-                return consumer.consume(requestContext);
+                return true;
             }
-
             requestContext.getResponse().sendError(404);
             return false;            
         }        
