@@ -72,13 +72,15 @@ public class DefaultResolver extends ResolverCollection
 
     protected void resolveDefault(Resource resource, Context context) throws IOException
     {
-        String path = resource.getPath();
+        String path = resource.getPath().trim();
         int idx = path.indexOf(':');
         switch(idx)
         {
             case -1:
                 FileResolver.getDefault().resolve(resource, context);
                 return;
+            //case 0:
+            //    throw new IOException("invalid resource: " + path);
             case 1:
                 // windows drive letter
                 FileResolver.getDefault().resolve(resource, context);
@@ -92,13 +94,17 @@ public class DefaultResolver extends ResolverCollection
                     return;
                 }
         }
-
-        Resolver resolver = getResolver(path.substring(0, idx));
+        String type = path.substring(0, idx).trim();
+        Resolver resolver = getResolver(type);
         if(resolver==null)
             FileResolver.getDefault().resolve(resource, context);
         else
         {
-            resource.setPath(path.substring(idx+1));
+            path = path.substring(idx+1).trim();
+            if(path.length()==0)
+                throw new IOException("invalid resource: " + path);
+            
+            resource.setPath(path);
             resolver.resolve(resource, context);
         }
     }
