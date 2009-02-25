@@ -222,10 +222,7 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users/$/edit")
     @Post
-    @Consume(
-            consumers={SimpleParameterConsumer.class}, pojoClass=User.class, 
-            fieldParams="id.included=false&todos.included=false&username.included=false&password.included=false&email.validator=com.dyuproject.web.rest.validator.EmailValidator"            
-    )
+    @Consume(consumers={SimpleParameterConsumer.class}, pojoClass=User.class)
     public void form_edit(RequestContext rc) throws IOException, ServletException
     {
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_EDIT);
@@ -242,10 +239,7 @@ public class UserService extends AbstractService
     
     @HttpResource(location="/users/new")
     @Post
-    @Consume(
-            consumers={SimpleParameterConsumer.class}, pojoClass=User.class, 
-            fieldParams="id.included=false&todos.included=false&email.validator=com.dyuproject.web.rest.validator.EmailValidator"            
-    )
+    @Consume(consumers={SimpleParameterConsumer.class}, pojoClass=User.class)
     public void form_new(RequestContext rc) throws IOException, ServletException
     {
         create(rc);
