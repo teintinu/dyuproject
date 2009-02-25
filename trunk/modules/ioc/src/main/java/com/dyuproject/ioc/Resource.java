@@ -50,14 +50,16 @@ public class Resource
         resolve(reader);
     }
     
-    public Resource(Reader reader)
+    public Resource(String path, String type, Reader reader)
     {
+        _path = path;
+        _type = type;
         resolve(reader);
     }
     
-    public Resource(Reader reader, File file)
+    public Resource(Reader reader)
     {
-        resolve(reader, file);        
+        resolve(reader);
     }
     
     public String getPath()
@@ -96,10 +98,16 @@ public class Resource
         _source.setReader(reader);
     }
     
-    public void resolve(Reader reader, File file)
+    public void resolve(Reader reader, String type)
     {
-        _reader = reader;
-        _source.setReader(reader);
+        resolve(reader);
+        _type = type;
+    }
+    
+    public void resolve(Reader reader, String type, File file)
+    {
+        resolve(reader);
+        _type = type;
         _file = file;
     }
     

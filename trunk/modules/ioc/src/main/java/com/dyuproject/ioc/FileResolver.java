@@ -64,7 +64,7 @@ public class FileResolver extends AbstractResolver
         else
             file = new File(file.getParentFile(), path);
         
-        resource.resolve(newReader(new FileInputStream(file)), file);
+        resource.resolve(newReader(new FileInputStream(file)), getType(), file);
     }
 
     public Resource createResource(String path) throws IOException
@@ -76,7 +76,7 @@ public class FileResolver extends AbstractResolver
     {
         Reader reader = newReader(new FileInputStream(file));
         Resource resource = new Resource(file.getPath(), getType());
-        resource.resolve(reader, file);
+        resource.resolve(reader, getType(), file);
         return resource;
     }
     
