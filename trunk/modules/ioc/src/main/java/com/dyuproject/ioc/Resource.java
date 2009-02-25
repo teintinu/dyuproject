@@ -44,16 +44,9 @@ public class Resource
         _type = type;
     }
     
-    public Resource (String path, Reader reader)
-    {
-        _path = path;
-        resolve(reader);
-    }
-    
     public Resource(String path, String type, Reader reader)
     {
-        _path = path;
-        _type = type;
+        this(path, type);
         resolve(reader);
     }
     

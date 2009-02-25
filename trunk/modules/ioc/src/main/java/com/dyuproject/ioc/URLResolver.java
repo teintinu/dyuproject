@@ -55,7 +55,7 @@ public class URLResolver extends AbstractResolver
 
     public void resolve(Resource resource, Context context) throws IOException
     {
-        resource.resolve(newReader(new URL(resource.getPath()).openStream()));
+        resource.resolve(newReader(new URL(resource.getPath()).openStream()), getType());
     }
 
     public Resource createResource(String path) throws IOException
