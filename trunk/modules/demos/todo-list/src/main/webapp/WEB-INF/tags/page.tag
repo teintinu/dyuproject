@@ -14,6 +14,7 @@
     <ul id="nav" class="clearfix">
       <li id="link_home"><a href="<c:url value="/"/>">Home</a></li>
       <li id="link_overview"><a href="<c:url value="/overview"/>">Overview</a></li>
+      <li id="link_account"><a href="<c:url value="/account"/>">Account</a></li>
       <li id="link_users"><a href="<c:url value="/users"/>">Users</a></li>
       <li id="link_todos"><a href="<c:url value="/todos"/>">Todos</a></li>
     </ul>

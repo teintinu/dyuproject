@@ -22,23 +22,9 @@
         <div><label>Email</label></div>
         <div name="Email"><input name="email" type="text" value="${user.email}" required="true"/></div>
       </li>
-      <c:if test="${action=='New'}">
-      <li>
-        <div><label>Username</label></div>
-        <div name="Username"><input name="username" type="text" value="${user.username}" required="true"/></div>
-      </li>
-      <li>
-        <div><label>Password</label></div>
-        <div name="Password"><input name="password" type="password" value="${user.password}" required="true"/></div>
-      </li>
-      <li>
-        <div><label>Confirm Password</label></div>
-        <div name="Confirm Password"><input name="confirmPassword" type="password" required="true"/></div>
-      </li>
-      </c:if>
       <li>
         <div>
-          <c:if test="${action=='Edit'}"><input type="hidden" name="sub" value="1"/></c:if>
+          <input type="hidden" name="sub" value="1"/>
           <button type="submit" class="submit"><div>Submit</div></button>
         </div>
       </li>

@@ -13,7 +13,7 @@
         <span class="separator">&nbsp;|&nbsp;</span>
         <a href="<c:url value="/users/${user.id}/edit"/>">Edit</a>
       </div>
-      <div class="leftcol"><span class="large highlight">${user.username}</span></div>
+      <div class="leftcol"><span class="large highlight">User</span></div>
     </div>
   </div>
   <div class="clearfix">

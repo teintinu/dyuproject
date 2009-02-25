@@ -26,11 +26,13 @@ import org.codehaus.jra.Post;
 
 import com.dyuproject.demos.todolist.Constants;
 import com.dyuproject.demos.todolist.Feedback;
-import com.dyuproject.demos.todolist.dao.UserDao;
+import com.dyuproject.demos.todolist.dao.CredentialDao;
 import com.dyuproject.demos.todolist.dao.TodoDao;
+import com.dyuproject.demos.todolist.model.Credential;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.CookieSession;
 import com.dyuproject.web.rest.RequestContext;
+import com.dyuproject.web.rest.WebContext;
 import com.dyuproject.web.rest.service.AbstractService;
 
 /**
@@ -39,16 +41,16 @@ import com.dyuproject.web.rest.service.AbstractService;
  */
 
 public class MainService extends AbstractService
-{
+{    
     
-    private UserDao _userDao;
     private TodoDao _todoDao;
+    private CredentialDao _credentialDao;
 
     @Override
     protected void init()
-    {
-        _userDao = (UserDao)getWebContext().getAttribute("userDao");
+    {        
         _todoDao = (TodoDao)getWebContext().getAttribute("todoDao");
+        _credentialDao = (CredentialDao)getWebContext().getAttribute("credentialDao");
     }
     
     @HttpResource(location="/")
@@ -71,44 +73,31 @@ public class MainService extends AbstractService
         
         if(username==null || password==null)
         {
-            request.setAttribute(Constants.MSG, "Required: Username, Password");
+            request.setAttribute(Constants.MSG, Feedback.AUTH_REQUIRED.getMsg());
             response.setContentType(Constants.TEXT_HTML);
-            getWebContext().getJSPDispatcher().dispatch("login/index.jsp", request, 
-                    response); 
+            getWebContext().getJSPDispatcher().dispatch("login/index.jsp", request, response); 
             return;
         }
-        User user = _userDao.get(username, password);
-        if(user==null)
+        Credential credential = _credentialDao.get(username, password);
+        if(credential==null)
         {
             request.setAttribute(Constants.MSG, Feedback.USER_NOT_FOUND.getMsg());
-            response.setContentType(Constants.TEXT_HTML);
-            getWebContext().getJSPDispatcher().dispatch("login/index.jsp", request, 
-                    response); 
+            dispatchToLogin(rc, getWebContext());
             return;
         }
-        CookieSession session = getWebContext().getSession(request, true);
-        session.setAttribute(Constants.USER, user);
-        getWebContext().persistSession(session, request, response);
-        response.setContentType(Constants.TEXT_HTML);
-        response.sendRedirect(request.getContextPath() + "/overview");        
+        User user = credential.getUser();
+        saveUser(user, rc, getWebContext());
+        redirectToOverview(rc, getWebContext());
     }
     
     @HttpResource(location="/login")
     @Get
     public void login(RequestContext rc) throws IOException, ServletException
-    {
-        HttpServletRequest request = rc.getRequest();
-        HttpServletResponse response = rc.getResponse();
-        
-        CookieSession session = getWebContext().getSession(request);        
-        if(session!=null && session.getAttribute(Constants.USER)!=null)
-        {
-            response.sendRedirect(request.getContextPath() + "/overview");
-            return;
-        }
-        response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("login/index.jsp", request, 
-                response);
+    {   
+        if(getUser(rc, getWebContext())!=null)
+            rc.getResponse().sendRedirect(rc.getRequest().getContextPath() + "/overview");
+        else
+            dispatchToLogin(rc, getWebContext());
     }
     
     @HttpResource(location="/logout")
@@ -116,7 +105,7 @@ public class MainService extends AbstractService
     public void logout(RequestContext rc) throws IOException
     {        
         getWebContext().invalidateSession(rc.getResponse());
-        rc.getResponse().sendRedirect(rc.getRequest().getContextPath() + "/overview");
+        redirectToOverview(rc, getWebContext());
     }
     
     @HttpResource(location="/overview")
@@ -124,15 +113,51 @@ public class MainService extends AbstractService
     public void overview(RequestContext rc) throws IOException, ServletException
     {
         HttpServletRequest request = rc.getRequest();
-        HttpServletResponse response = rc.getResponse();
-        
-        CookieSession session = getWebContext().getSession(request);
-        User user = (User)session.getAttribute(Constants.USER);
+
+        User user = getUser(rc, getWebContext());
         request.setAttribute(Constants.USER, user);
         request.setAttribute(Constants.TODOS, _todoDao.getByUser(user.getId()));
-        response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("overview/index.jsp", request, 
-                response);
+        dispatchToOverview(rc, getWebContext());
+    }
+    
+    /* ============================================================================= */
+    
+    static void dispatchToLogin(RequestContext rc, WebContext wc) 
+    throws ServletException, IOException
+    {
+        rc.getResponse().setContentType(Constants.TEXT_HTML);
+        wc.getJSPDispatcher().dispatch("login/index.jsp", rc.getRequest(), rc.getResponse());
+    }
+    
+    static void dispatchToOverview(RequestContext rc, WebContext wc) 
+    throws ServletException, IOException
+    {
+        rc.getResponse().setContentType(Constants.TEXT_HTML);
+        wc.getJSPDispatcher().dispatch("overview/index.jsp", rc.getRequest(), rc.getResponse());
+    }
+    
+    static void redirectToOverview(RequestContext rc, WebContext wc) throws IOException
+    {
+        rc.getResponse().sendRedirect(rc.getRequest().getContextPath() + "/overview");
+    }
+    
+    static void redirectToLogin(RequestContext rc) throws IOException
+    {
+        rc.getResponse().sendRedirect(rc.getRequest().getContextPath() + "/login");
+    }
+    
+    static User getUser(RequestContext rc, WebContext wc)
+    {
+        CookieSession session = wc.getSession(rc.getRequest());
+        return session==null ? null : (User)session.getAttribute(Constants.USER);
+    }
+    
+    static void saveUser(User user, RequestContext rc, WebContext wc) throws IOException
+    {
+        HttpServletRequest request = rc.getRequest();
+        CookieSession session = wc.getSession(request, true);
+        session.setAttribute(Constants.USER, user);
+        wc.persistSession(session, request, rc.getResponse());        
     }
     
 
