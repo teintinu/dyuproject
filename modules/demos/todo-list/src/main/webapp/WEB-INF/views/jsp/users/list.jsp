@@ -5,7 +5,7 @@
 <div class="box">
   <div class="clearfix bar">
     <div class="rightcol">
-      <a href="<c:url value="/users/new"/>">New User</a>
+      <a href="<c:url value="/account/new"/>">Register</a>
     </div>
     <div class="leftcol">
       <span class="highlight large">Users</span> 

@@ -4,7 +4,7 @@
 <tl:page>
 <div class="box">
   <p>
-    Create an account <a class="highlight" href="<c:url value="/users/new"/>">here</a>.<br/>
+    Create an account <a class="highlight" href="<c:url value="/account/new"/>">here</a>.<br/>
     You will be able to see your current todos when you're <a class="highlight" href="<c:url value="/login"/>">logged</a> in.<br/>
   </p>
 </div>

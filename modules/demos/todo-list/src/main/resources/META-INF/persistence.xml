@@ -7,6 +7,7 @@
 		
 		<provider>org.hibernate.ejb.HibernatePersistence</provider>
 		
+		<class>com.dyuproject.demos.todolist.model.Credential</class>
 		<class>com.dyuproject.demos.todolist.model.User</class>
         <class>com.dyuproject.demos.todolist.model.Todo</class>		
 		

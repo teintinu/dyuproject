@@ -26,8 +26,17 @@ public class Feedback extends SimpleResponse
     
     public static final Feedback USER_NOT_FOUND = new Feedback("User not found.", false);  
     
-    public static final Feedback COULD_NOT_CREATE_USER = new Feedback(
-            "Could not create user.", false);
+    public static final Feedback COULD_NOT_CREATE_ACCOUNT= new Feedback(
+            "Could not create account.", false);
+    
+    public static final Feedback AUTH_REQUIRED = new Feedback(
+            "The ff are required: Username, Password", false);  
+    
+    public static final Feedback ACCOUNT_CREATE_REQUIRED = new Feedback(
+            "The ff are required: Username, Password, Confirm Password", false);
+    
+    public static final Feedback COULD_NOT_UPDATE_ACCOUNT = new Feedback(
+            "Could not update account.", false);
     
     public static final Feedback COULD_NOT_UPDATE_USER = new Feedback(
             "Could not update user.", false);
@@ -50,14 +59,14 @@ public class Feedback extends SimpleResponse
     public static final Feedback NO_CHANGES_MADE = new Feedback(
             "No changes made.", false);
     
-    public static final Feedback REQUIRED_PARAMS_USER_CREATE = new Feedback(
-            "The ff are required: First Name, Last Name, Email, Username, Password, Confirm Password", false);
-    
-    public static final Feedback REQUIRED_PARAMS_CHANGE_PASSWORD = new Feedback(
-            "Old and new password are required.", false);
+    public static final Feedback CHANGE_PASSWORD_REQUIRED = new Feedback(
+            "The ff are required: Old Password, New Password, Confirm Password", false);
     
     public static final Feedback PASSWORD_DID_NOT_MATCH = new Feedback(
             "Password did not match.", false);
+    
+    public static final Feedback PASSWORD_INCORRECT = new Feedback(
+            "Password is incorrect.", false);
     
     /* ---------------------------------------------------------------------------- */
     

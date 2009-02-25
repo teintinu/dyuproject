@@ -40,6 +40,10 @@ public class Constants
     
     public static final String DISABLED = "disabled";
     
+    // account constants
+    
+    public static final String ACCOUNT = "account";
+    
     // todos constants
     
     public static final String TODO = "todo";

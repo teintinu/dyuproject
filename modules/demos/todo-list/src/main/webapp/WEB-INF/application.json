@@ -9,9 +9,9 @@
     "class": "com.dyuproject.demos.todolist.service.LoginInterceptor",
     "interceptor": $entityManagerManager
   },
-  "todoDao":
+  "credentialDao":
   {
-    "class": "com.dyuproject.demos.todolist.dao.TodoDao",
+    "class": "com.dyuproject.demos.todolist.dao.CredentialDao",
     "entityManagerManager": $entityManagerManager
   },
   "userDao":
@@ -19,13 +19,19 @@
     "class": "com.dyuproject.demos.todolist.dao.UserDao",
     "entityManagerManager": $entityManagerManager
   },
+  "todoDao":
+  {
+    "class": "com.dyuproject.demos.todolist.dao.TodoDao",
+    "entityManagerManager": $entityManagerManager
+  },
   "webContext":
   {
     "class": "com.dyuproject.web.rest.service.RESTServiceContext",
     "attributes":
     {
-      "todoDao": $todoDao,
-      "userDao": $userDao
+      "credentialDao": $credentialDao,
+      "userDao": $userDao,
+      "todoDao": $todoDao
     },
     "viewDispatchers":
     {
@@ -38,14 +44,20 @@
     "interceptors":
     {
       "/overview": $loginInterceptor,
+      "/account": $loginInterceptor,
+      "/account/change_password": $loginInterceptor,
+      "/account/new": $entityManagerManager,
       "/auth": $entityManagerManager,
-      "/users": $entityManagerManager,
-      "/todos": $entityManagerManager
+      "/users/**": $entityManagerManager,
+      "/todos/**": $entityManagerManager
     },
     "services":
     [
       {
         "class": "com.dyuproject.demos.todolist.service.MainService"
+      },
+      {
+        "class": "com.dyuproject.demos.todolist.service.CredentialService"
       },
       {
         "class": "com.dyuproject.demos.todolist.service.UserService"

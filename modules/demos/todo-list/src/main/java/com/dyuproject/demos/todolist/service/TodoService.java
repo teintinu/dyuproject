@@ -35,6 +35,7 @@ import com.dyuproject.demos.todolist.model.Todo;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.ValidationException;
+import com.dyuproject.web.rest.WebContext;
 import com.dyuproject.web.rest.annotation.Consume;
 import com.dyuproject.web.rest.consumer.SimpleParameterConsumer;
 import com.dyuproject.web.rest.service.AbstractService;
@@ -62,27 +63,25 @@ public class TodoService extends AbstractService
     public void get(RequestContext rc) throws IOException, ServletException
     {
         if("json".equals(rc.getMime()))
-            dispatchToJSON(_todoDao.get(), rc);
+            dispatchToJSON(_todoDao.get(), rc, getWebContext());
         else
-            dispatchToView(_todoDao.get(), rc);
+            dispatchToView(_todoDao.get(), rc, getWebContext());
     }
     
     @HttpResource(location="/todos/$")
     @Get
     public void getById(RequestContext rc) throws IOException, ServletException
     {
-        
-        String id = rc.getPathElement(1);
-        Todo todo = _todoDao.get(Long.valueOf(id));
+        Todo todo = _todoDao.get(Long.valueOf(rc.getPathElement(1)));
         if(todo==null)
         {
             rc.getResponse().sendError(404);
             return;
         }
         if("json".equals(rc.getMime()))
-            dispatchToJSON(todo, rc);
+            dispatchToJSON(todo, rc, getWebContext());
         else
-            dispatchToView(todo, rc);
+            dispatchToView(todo, rc, getWebContext());
     }    
     
     @HttpResource(location="/users/$/todos")
@@ -91,9 +90,9 @@ public class TodoService extends AbstractService
     {
         Long id = Long.valueOf(rc.getPathElement(1));
         if("json".equals(rc.getMime()))
-            dispatchToJSON(_todoDao.getByUser(id), rc);
+            dispatchToJSON(_todoDao.getByUser(id), rc, getWebContext());
         else
-            dispatchToView(_todoDao.getByUser(id), rc);
+            dispatchToView(_todoDao.getByUser(id), rc, getWebContext());
     }    
     
     @HttpResource(location="/todos/$")
@@ -102,8 +101,7 @@ public class TodoService extends AbstractService
     {
         HttpServletRequest request = rc.getRequest();
         
-        String id = rc.getPathElement(1);
-        Todo todo = _todoDao.get(Long.valueOf(id));
+        Todo todo = _todoDao.get(Long.valueOf(rc.getPathElement(1)));
         if(todo==null)
         {
             rc.getResponse().sendError(404);
@@ -115,7 +113,7 @@ public class TodoService extends AbstractService
         request.setAttribute(Constants.MSG, deleted ? Feedback.TODO_DELETED.getMsg() : 
             Feedback.COULD_NOT_DELETE_TODO.getMsg());
         
-        dispatchToView(todo, rc);
+        dispatchToView(todo, rc, getWebContext());
     }
     
     @HttpResource(location="/todos/$")
@@ -139,7 +137,7 @@ public class TodoService extends AbstractService
         catch(ValidationException ve)
         {
             request.setAttribute(Constants.MSG, ve.getMessage());
-            dispatchToFormView(todo, rc); 
+            dispatchToFormView(todo, rc, getWebContext()); 
             return;
         }
         
@@ -161,7 +159,7 @@ public class TodoService extends AbstractService
         else
             request.setAttribute(Constants.MSG, Feedback.COULD_NOT_UPDATE_TODO.getMsg());
    
-        dispatchToFormView(todo, rc); 
+        dispatchToFormView(todo, rc, getWebContext()); 
     }
     
     @HttpResource(location="/users/$/todos")
@@ -171,8 +169,7 @@ public class TodoService extends AbstractService
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
-        String userId = rc.getPathElement(1);        
-        User user = _userDao.get(Long.valueOf(userId));        
+        User user = _userDao.get(Long.valueOf(rc.getPathElement(1)));        
         if(user==null)
         {
             response.sendError(404);
@@ -188,7 +185,7 @@ public class TodoService extends AbstractService
         {
             request.setAttribute(Constants.MSG, ve.getMessage());
             request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
-            dispatchToFormView((Todo)ve.getPojo(), rc);
+            dispatchToFormView((Todo)ve.getPojo(), rc, getWebContext());
             return;
         }
         
@@ -208,7 +205,7 @@ public class TodoService extends AbstractService
         {
             request.setAttribute(Constants.MSG, Feedback.COULD_NOT_CREATE_TODO.getMsg());
             request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
-            dispatchToFormView(todo, rc);
+            dispatchToFormView(todo, rc, getWebContext());
         }
     }
     
@@ -220,9 +217,8 @@ public class TodoService extends AbstractService
     {
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
-        
-        String id = rc.getPathElement(1);
-        Todo todo = _todoDao.get(Long.valueOf(id));
+
+        Todo todo = _todoDao.get(Long.valueOf(rc.getPathElement(1)));
         if(todo==null)
         {
             rc.getResponse().sendError(404);
@@ -248,7 +244,7 @@ public class TodoService extends AbstractService
         else
         {
             request.setAttribute(Constants.MSG, Feedback.COULD_NOT_DELETE_TODO.getMsg());        
-            dispatchToView(todo, rc);
+            dispatchToView(todo, rc, getWebContext());
         }
     }
     
@@ -258,15 +254,13 @@ public class TodoService extends AbstractService
     {
         HttpServletRequest request = rc.getRequest();
         
-        String id = rc.getPathElement(1);
-        
-        Todo todo = _todoDao.get(Long.valueOf(id));
+        Todo todo = _todoDao.get(Long.valueOf(rc.getPathElement(1)));
         if(todo==null)
             request.setAttribute(Constants.MSG, Feedback.TODO_NOT_FOUND.getMsg());
         else
             request.setAttribute(Constants.TODO, todo);
         request.setAttribute(Constants.ACTION, Constants.ACTION_EDIT);
-        dispatchToFormView(todo, rc);
+        dispatchToFormView(todo, rc, getWebContext());
     }
     
     @HttpResource(location="/todos/$/edit")
@@ -283,7 +277,7 @@ public class TodoService extends AbstractService
     public void verb_new(RequestContext rc) throws IOException, ServletException
     {
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
-        dispatchToFormView((Todo)null, rc);
+        dispatchToFormView((Todo)null, rc, getWebContext());
     }
     
     @HttpResource(location="/users/$/todos/new")
@@ -301,24 +295,21 @@ public class TodoService extends AbstractService
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         
-        String id = rc.getPathElement(1);
-        
+        Todo todo = _todoDao.get(Long.valueOf(rc.getPathElement(1)));
         boolean updated = false;
-        
-        Todo todo = _todoDao.get(Long.valueOf(id));
         if(todo!=null && !todo.isCompleted())
         {
             todo.setCompleted(true);
             updated = TodoDao.executeUpdate();
         }
         
-        if(!updated)
-            request.setAttribute(Constants.MSG, Feedback.COULD_NOT_UPDATE_TODO.getMsg());            
-        String referer = request.getHeader("Referer");
-        if(referer==null)                
-            dispatchToView(todo, rc);
+        if(updated)
+            response.sendRedirect(request.getHeader("Referer"));
         else
-            response.sendRedirect(referer);
+        {
+            request.setAttribute(Constants.MSG, Feedback.COULD_NOT_UPDATE_TODO.getMsg());
+            dispatchToView(todo, rc, getWebContext());
+        }        
     }
     
     /* ================================== FILTERS ================================== */
@@ -329,11 +320,9 @@ public class TodoService extends AbstractService
     {
         Long userId = Long.valueOf(rc.getPathElement(1));
         if("json".equals(rc.getMime()))
-            dispatchToJSON(_todoDao.getByUserAndStatus(userId, true), rc);
+            dispatchToJSON(_todoDao.getByUserAndStatus(userId, true), rc, getWebContext());
         else
-        {
-            dispatchToView(_todoDao.getByUserAndStatus(userId, true), rc);
-        }
+            dispatchToView(_todoDao.getByUserAndStatus(userId, true), rc, getWebContext());
     }
     
     @HttpResource(location="/users/$/todos/current")
@@ -342,11 +331,9 @@ public class TodoService extends AbstractService
     {
         Long userId = Long.valueOf(rc.getPathElement(1));
         if("json".equals(rc.getMime()))
-            dispatchToJSON(_todoDao.getByUserAndStatus(userId, false), rc);
+            dispatchToJSON(_todoDao.getByUserAndStatus(userId, false), rc, getWebContext());
         else
-        {
-            dispatchToView(_todoDao.getByUserAndStatus(userId, false), rc);
-        }
+            dispatchToView(_todoDao.getByUserAndStatus(userId, false), rc, getWebContext());
     }
     
     @HttpResource(location="/todos/completed")
@@ -354,9 +341,9 @@ public class TodoService extends AbstractService
     public void filter_completed(RequestContext rc) throws IOException, ServletException
     {
         if("json".equals(rc.getMime()))
-            dispatchToJSON(_todoDao.getByStatus(true), rc);
+            dispatchToJSON(_todoDao.getByStatus(true), rc, getWebContext());
         else
-            dispatchToView(_todoDao.getByStatus(true), rc);
+            dispatchToView(_todoDao.getByStatus(true), rc, getWebContext());
     }
     
     @HttpResource(location="/todos/current")
@@ -364,50 +351,53 @@ public class TodoService extends AbstractService
     public void filter_current(RequestContext rc) throws IOException, ServletException
     {
         if("json".equals(rc.getMime()))
-            dispatchToJSON(_todoDao.getByStatus(false), rc);
+            dispatchToJSON(_todoDao.getByStatus(false), rc, getWebContext());
         else
-            dispatchToView(_todoDao.getByStatus(false), rc);
+            dispatchToView(_todoDao.getByStatus(false), rc, getWebContext());
     }
     
     /* ============================================================================= */
     
-    private void dispatchToJSON(Object data, RequestContext rc) throws ServletException, 
-            IOException
+    static void dispatchToJSON(Object data, RequestContext rc, WebContext wc) 
+    throws ServletException, IOException
     {
         rc.getRequest().setAttribute("json_data", data);
-        getWebContext().getViewDispatcher("json").dispatch(null, rc.getRequest(), 
-                rc.getResponse());
+        wc.getViewDispatcher("json").dispatch(null, rc.getRequest(), rc.getResponse());
     }
     
-    private void dispatchToFormView(Todo todo, RequestContext rc) throws ServletException, 
-            IOException
+    static void dispatchToFormView(Todo todo, RequestContext rc, WebContext wc) 
+    throws ServletException, IOException
     {
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         request.setAttribute(Constants.TODO, todo);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("todos/form.jsp", request, response);
+        wc.getJSPDispatcher().dispatch("todos/form.jsp", request, response);
     }
     
-    private void dispatchToView(Todo todo, RequestContext rc) throws ServletException, 
-            IOException
+    static void dispatchToView(Todo todo, RequestContext rc, WebContext wc) 
+    throws ServletException, IOException
     {
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         request.setAttribute(Constants.TODO, todo);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("todos/id.jsp", request, response);
+        wc.getJSPDispatcher().dispatch("todos/id.jsp", request, response);
     }
 
-    private void dispatchToView(List<?> todos, RequestContext rc) throws ServletException, 
-            IOException
+    static void dispatchToView(List<?> todos, RequestContext rc, WebContext wc) 
+    throws ServletException, IOException
     {
         HttpServletRequest request = rc.getRequest();
         HttpServletResponse response = rc.getResponse();
         request.setAttribute(Constants.TODOS, todos);
         response.setContentType(Constants.TEXT_HTML);
-        getWebContext().getJSPDispatcher().dispatch("todos/list.jsp", request, 
-                response);
+        wc.getJSPDispatcher().dispatch("todos/list.jsp", request, response);
+    }
+    
+    static void redirectToView(Todo todo, RequestContext rc) throws IOException
+    {
+        rc.getResponse().sendRedirect(rc.getRequest().getContextPath() + "/todos/" + todo.getId());
     }
 
 }

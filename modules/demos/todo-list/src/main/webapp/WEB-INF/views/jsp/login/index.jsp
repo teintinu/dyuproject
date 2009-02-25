@@ -7,7 +7,7 @@
     <div><p class="msg"><span id="feedback">${msg}</span></p></div>
     <div class="clearfix bar">
       <div class="rightcol">
-        <a href="<c:url value="/users/new"/>">Register</a>
+        <a href="<c:url value="/account/new"/>">Register</a>
       </div>
       <div>
         <span class="highlight large">Login</span>
