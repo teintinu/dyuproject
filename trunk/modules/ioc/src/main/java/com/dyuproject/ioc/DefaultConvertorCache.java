@@ -46,9 +46,9 @@ public class DefaultConvertorCache extends StandardConvertorCache
         });
     }
     
-    public Convertor newConvertor(Class<?> clazz)
+    public Convertor newConvertor(Class<?> clazz, boolean addClass)
     {
-        return new DefaultPojoConvertor(clazz);
+        return new DefaultPojoConvertor(clazz, addClass);
     }
 
 }

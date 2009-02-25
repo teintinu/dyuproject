@@ -35,6 +35,11 @@ public class DefaultPojoConvertor extends OverloadPojoConvertor
         super(pojoClass);            
     }
     
+    public DefaultPojoConvertor(Class<?> pojoClass, boolean addClass)
+    {
+        super(pojoClass, addClass);
+    }
+    
     protected OverloadSetter newSetter(String name, Method method)
     {
         return new DefaultSetter(name, method);
