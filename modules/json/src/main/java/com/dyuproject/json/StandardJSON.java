@@ -80,7 +80,8 @@ public class StandardJSON extends JSON
         return getResource(path, StandardConvertorCache.class, __checkParents);
     }
     
-    private ConvertorCache _convertorCache;
+    protected ConvertorCache _convertorCache;
+    protected boolean _addClass = true;
     
     public StandardJSON()
     {
@@ -97,9 +98,19 @@ public class StandardJSON extends JSON
         return _convertorCache;
     }
     
+    public boolean isAddClass()
+    {
+        return _addClass;
+    }
+    
+    public void setAddClass(boolean addClass)
+    {
+        _addClass = addClass;
+    }
+    
     protected Convertor getConvertor(Class clazz)
     {
-        return getConvertorCache().getConvertor(clazz, true);
+        return getConvertorCache().getConvertor(clazz, true, _addClass);
     }
     
     protected Object parseObject(Source source)
