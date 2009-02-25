@@ -18,7 +18,6 @@ import java.util.Map;
 
 import com.dyuproject.web.rest.AbstractLifeCycle;
 import com.dyuproject.web.rest.ValidatingConsumer;
-import com.dyuproject.web.rest.ViewDispatcher;
 
 /**
  * @author David Yu
