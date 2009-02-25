@@ -38,6 +38,11 @@ public class OverloadPojoConvertor extends JSONPojoConvertor
         super(pojoClass);
     }
     
+    public OverloadPojoConvertor(Class<?> pojoClass, boolean addClass)
+    {
+        super(pojoClass, addClass);
+    }
+    
     // TODO remove this when 6.1.15 is out.
     protected void init()
     {

@@ -24,9 +24,9 @@ import org.mortbay.util.ajax.JSON.Convertor;
 public class OverloadConvertorCache extends StandardConvertorCache
 {
     
-    public Convertor newConvertor(Class<?> clazz)
+    public Convertor newConvertor(Class<?> clazz, boolean addClass)
     {
-        return new OverloadPojoConvertor(clazz);
+        return new OverloadPojoConvertor(clazz, addClass);
     }
 
 }

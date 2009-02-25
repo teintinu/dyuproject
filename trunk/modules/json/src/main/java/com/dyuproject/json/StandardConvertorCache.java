@@ -46,19 +46,29 @@ public class StandardConvertorCache implements ConvertorCache
     public StandardConvertorCache()
     {
         
-    }   
+    }
+    
+    public Convertor newConvertor(Class<?> clazz, boolean addClass)
+    {
+        return new StandardPojoConvertor(clazz, addClass);
+    }
     
     public Convertor newConvertor(Class<?> clazz)
     {
-        return new StandardPojoConvertor(clazz);
+        return newConvertor(clazz, true);
+    }
+    
+    public Convertor getConvertor(Class<?> clazz, boolean create)
+    {
+        return getConvertor(clazz, create, true);
     }
 
-    public Convertor getConvertor(Class<?> clazz, boolean create)
+    public Convertor getConvertor(Class<?> clazz, boolean create, boolean addClass)
     {
         Convertor convertor = (Convertor)_convertors.get(clazz.getName());
         if(convertor==null && create)
         {
-            convertor = newConvertor(clazz);
+            convertor = newConvertor(clazz, addClass);
             _convertors.putIfAbsent(clazz.getName(), convertor);
         }        
         return convertor;

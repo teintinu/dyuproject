@@ -25,9 +25,11 @@ public interface ConvertorCache extends Convertor
 {
     
     public Convertor getConvertor(Class<?> clazz, boolean create);
+    public Convertor getConvertor(Class<?> clazz, boolean create, boolean addClass);
     public Convertor getConvertor(Class<?> clazz);
     public boolean addConvertor(Class<?> clazz, Convertor convertor);
     public boolean hasConvertor(Class<?> clazz);
     public Convertor newConvertor(Class<?> clazz);
+    public Convertor newConvertor(Class<?> clazz, boolean addClass);
 
 }
