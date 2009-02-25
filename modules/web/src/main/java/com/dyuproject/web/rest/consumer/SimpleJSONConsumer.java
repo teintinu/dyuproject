@@ -36,16 +36,16 @@ import com.dyuproject.web.rest.ValidationException;
  * @created Jan 18, 2009
  */
 
-public class JSONConsumer extends AbstractConsumer
+public class SimpleJSONConsumer extends AbstractConsumer
 {   
     
     public static final String DEFAULT_DISPATCHER_NAME = "json";
     
-    public static final String CACHE_KEY = JSONConsumer.class + ".cache";
+    public static final String CACHE_KEY = SimpleJSONConsumer.class + ".cache";
     
     private static String __defaultContentType = "text/json";
     
-    private static final Logger log = LoggerFactory.getLogger(JSONConsumer.class);
+    private static final Logger log = LoggerFactory.getLogger(SimpleJSONConsumer.class);
     
     public static void setDefaultContentType(String defaultContentType)
     {
@@ -64,7 +64,7 @@ public class JSONConsumer extends AbstractConsumer
     
     private ValidatingPojoConvertor _pojoConvertor;
     
-    public JSONConsumer()
+    public SimpleJSONConsumer()
     {
         
     }
@@ -98,13 +98,14 @@ public class JSONConsumer extends AbstractConsumer
     
     public boolean merge(Object pojo, RequestContext rc) throws IOException, ValidationException
     {
-        return _pojoConvertor.setProps(pojo, (Map<?,?>)__json.parse(new ReaderSource(
-                rc.getRequest().getReader())))!=0;
+        Map<?,?> props = (Map<?,?>)__json.parse(new ReaderSource(rc.getRequest().getReader()));
+        return props!=null && !props.isEmpty() && _pojoConvertor.setProps(pojo, props)!=0;
     }
     
-    public Object consume(RequestContext requestContext) throws IOException, ValidationException
+    public Object consume(RequestContext rc) throws IOException, ValidationException
     {
-        return _pojoConvertor.fromJSON((Map<?,?>)__json.parse(new ReaderSource(requestContext.getRequest().getReader())));
+        Map<?,?> props = (Map<?,?>)__json.parse(new ReaderSource(rc.getRequest().getReader()));
+        return props==null || props.isEmpty() ? null : _pojoConvertor.fromJSON(props);
     }
 
     public static class ValidatingPojoConvertor extends StandardPojoConvertor
@@ -162,7 +163,7 @@ public class JSONConsumer extends AbstractConsumer
                 if(value==null)
                 {
                     if(vs.isRequired())
-                        throw new ValidationException(vs.getErrorMsg(), vs.getPropertyName());
+                        throw new ValidationException(vs.getErrorMsg(), vs.getPropertyName(), obj);
                     
                     continue;
                 }
@@ -170,10 +171,15 @@ public class JSONConsumer extends AbstractConsumer
                 {
                     vs.invoke(obj, value);
                     count++;
-                } 
+                }
+                catch(ValidationException e)
+                {
+                    // need as its a subclass of IllegalArgumentException
+                    throw e;
+                }
                 catch (IllegalArgumentException e)
                 {                    
-                    throw new ValidationException(vs.getErrorMsg(), vs.getPropertyName());
+                    throw new ValidationException(vs.getErrorMsg(), vs.getPropertyName(), obj);
                 } 
                 catch (IllegalAccessException e)
                 {                    
@@ -181,7 +187,7 @@ public class JSONConsumer extends AbstractConsumer
                 } 
                 catch (InvocationTargetException e)
                 {                    
-                    throw new ValidationException(vs.getErrorMsg(), vs.getPropertyName());
+                    throw new ValidationException(vs.getErrorMsg(), vs.getPropertyName(), obj);
                 }                
             }            
             return count;
@@ -236,7 +242,7 @@ public class JSONConsumer extends AbstractConsumer
                 if(errorMsg==null)
                     super.invokeObject(obj, value);
                 else
-                    throw new ValidationException(errorMsg, getPropertyName());
+                    throw new ValidationException(errorMsg, getPropertyName(), obj);
             }
         }
     }
