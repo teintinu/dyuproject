@@ -171,7 +171,7 @@ public class UserService extends AbstractService
         {
             request.setAttribute(Constants.MSG, ve.getMessage());
             request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
-            dispatchToFormView(user, request, response);
+            dispatchToFormView((User)ve.getPojo(), request, response);
             return;
         }
         

@@ -180,7 +180,7 @@ public class TodoService extends AbstractService
         {
             request.setAttribute(Constants.MSG, ve.getMessage());
             request.setAttribute(Constants.ACTION, Constants.ACTION_CREATE);
-            dispatchToFormView(todo, request, response);
+            dispatchToFormView((Todo)ve.getPojo(), request, response);
             return;
         }
         
