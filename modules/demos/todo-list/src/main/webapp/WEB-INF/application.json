@@ -27,6 +27,14 @@
       "todoDao": $todoDao,
       "userDao": $userDao
     },
+    "viewDispatchers":
+    {
+      "json":
+      {
+        "class": "com.dyuproject.web.rest.JSONDispatcher",
+        "addClass": false
+      }
+    },
     "interceptors":
     {
       "/overview": $loginInterceptor,
