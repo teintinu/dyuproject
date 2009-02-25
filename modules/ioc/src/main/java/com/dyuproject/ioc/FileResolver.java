@@ -75,7 +75,7 @@ public class FileResolver extends AbstractResolver
     public Resource createResource(File file) throws IOException
     {
         Reader reader = newReader(new FileInputStream(file));
-        Resource resource = new Resource(file.getPath(), getType());
+        Resource resource = new Resource(file.getPath());
         resource.resolve(reader, getType(), file);
         return resource;
     }

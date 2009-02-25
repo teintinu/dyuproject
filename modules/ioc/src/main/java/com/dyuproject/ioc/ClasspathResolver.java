@@ -15,7 +15,6 @@
 package com.dyuproject.ioc;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.net.URL;
 
 
@@ -92,7 +91,7 @@ public class ClasspathResolver extends AbstractResolver
         if(url==null)
             throw new IOException(resource.getPath() + " not found in classpath.");
 
-        resource.resolve(newReader(url.openStream()));
+        resource.resolve(newReader(url.openStream()), getType());
     }
 
     public Resource createResource(String path) throws IOException
@@ -100,11 +99,8 @@ public class ClasspathResolver extends AbstractResolver
         URL url = getResource(path);
         if(url==null)
             throw new IOException(path + " not found in classpath.");
-        
-        Reader reader = newReader(url.openStream());
-        Resource resource = new Resource(path, getType());
-        resource.resolve(reader);
-        return resource;
+
+        return new Resource(path, getType(), newReader(url.openStream()));
     }
 
 }
