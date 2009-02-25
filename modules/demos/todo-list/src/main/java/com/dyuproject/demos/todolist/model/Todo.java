@@ -46,11 +46,6 @@ public class Todo implements Serializable
     
     private User _user;
     
-    public void setId(Long id)
-    {
-        _id = id;
-    }
-    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId()
@@ -58,9 +53,9 @@ public class Todo implements Serializable
         return _id;
     } 
     
-    public void setTitle(String title)
+    public void setId(Long id)
     {
-        _title = title;
+        _id = id;
     }
     
     @Column(name="title", length=40)
@@ -69,9 +64,9 @@ public class Todo implements Serializable
         return _title;
     }
     
-    public void setContent(String content)
+    public void setTitle(String title)
     {
-        _content = content;
+        _title = title;
     }
     
     @Column(name="content")
@@ -80,9 +75,9 @@ public class Todo implements Serializable
         return _content;
     }
     
-    public void setCompleted(boolean completed)
+    public void setContent(String content)
     {
-        _completed = completed;
+        _content = content;
     }
     
     @Column(name="completed")
@@ -91,9 +86,9 @@ public class Todo implements Serializable
         return _completed;
     }
     
-    public void setUser(User user)
+    public void setCompleted(boolean completed)
     {
-        _user = user;
+        _completed = completed;
     }
     
     @ManyToOne(fetch=FetchType.EAGER)
@@ -102,5 +97,9 @@ public class Todo implements Serializable
     {
         return _user;
     }    
-
+    
+    public void setUser(User user)
+    {
+        _user = user;
+    }
 }
