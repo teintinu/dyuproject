@@ -167,6 +167,7 @@ public class ApplicationContext
     private ApplicationContext _imported;
     private Map<String,Object> _pojos;
     private References _refs;
+    private boolean _wrapPojos = true;
     
     public ApplicationContext()
     {
@@ -176,11 +177,6 @@ public class ApplicationContext
     public ApplicationContext(ApplicationContext imported)
     {
         addImport(imported);
-    }
-    
-    References getRefs()
-    {
-        return _refs;
     }
     
     public Object findPojo(String key)
@@ -251,29 +247,73 @@ public class ApplicationContext
         addImport(imported, this);
     }
     
-    public void wrap(Map<String,Object> pojos)
+    public void setPojos(Map<String,Object> pojos)
     {
-        if(_pojos!=null)
+        if(pojos==null || _pojos==pojos)
+            return;
+        
+        if(_pojos==null)
+            _pojos = pojos;
+        else
+        {
             pojos.putAll(_pojos);
-
-        _pojos = pojos;
+            _pojos = pojos;
+        }
+    }
+    
+    void wrap(Map<String,Object> pojos)
+    {
+        if(pojos==null || _pojos==pojos)
+            return;
+        
+        _wrapPojos = false;
+        if(_pojos==null)
+            _pojos = pojos;
+        else
+        {
+            pojos.putAll(_pojos);
+            _pojos = pojos;
+        }
     }
     
     public void destroy()
     {
         if(_imported!=null)
+        {
             _imported.destroy();
-        _imported = null;
-        
+            _imported = null;
+        }        
         if(_refs!=null)
+        {
             _refs.destroy();
-        _refs = null;     
-        
+            _refs = null;
+        }
         if(_pojos!=null)
+        {
             _pojos.clear();
-        _pojos = null;
+            _pojos = null;
+        }
+        _wrapPojos = true;
     }
     
+    ApplicationContext getImported()
+    {
+        return _imported;
+    }
     
+    Map<String,Object> getPojos()
+    {
+        return _pojos;
+    }
+    
+    References getRefs()
+    {
+        return _refs;
+    }
+    
+    boolean isWrapPojos()
+    {
+        return _wrapPojos;
+    }
 
 }

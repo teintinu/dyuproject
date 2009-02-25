@@ -14,6 +14,7 @@
 
 package com.dyuproject.ioc;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.mortbay.log.Log;
@@ -59,7 +60,9 @@ public class DefaultParser extends Parser
         try
         {
             Context.setCurrent(context);
-            appContext.wrap((Map<String,Object>)parse(resource.getSource()));
+            Map<String,Object> pojos = (Map<String,Object>)parse(resource.getSource());
+            if(appContext.isWrapPojos())
+                appContext.wrap(pojos);
         }
         finally
         {            
@@ -97,6 +100,15 @@ public class DefaultParser extends Parser
             return context.getAppContext().findPojo(buffer.toString());
         }
         return super.handleUnknown(source, c);
+    }
+    
+    protected Map newMap()
+    {
+        Map<String,Object> map = new HashMap<String,Object>();
+        Context context = Context.getCurrent();
+        if(context!=null && context.getAppContext().isWrapPojos())
+            context.getAppContext().wrap(map);
+        return map;
     }
 
 }
