@@ -282,7 +282,6 @@ public class RESTServiceContext extends WebContext
             cache = new HashMap<Class<?>,Properties>(7);
             setAttribute(CONSUMER_PROPERTIES_CACHE, cache);
         }
-        Properties params = new Properties();
         Properties defaultProps = cache.get(clazz);
         if(defaultProps==null)
         {
@@ -303,7 +302,7 @@ public class RESTServiceContext extends WebContext
             }
         }
         if(defaultProps.size()!=0)
-            params.putAll(defaultProps);        
+            props.putAll(defaultProps);        
     }    
     
     static void addParamsToProperties(Properties props, String params)
