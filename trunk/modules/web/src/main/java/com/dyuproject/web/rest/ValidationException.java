@@ -24,6 +24,7 @@ public class ValidationException extends IllegalArgumentException
 {
     
     private String _field;
+    private Object _pojo;
     
     public ValidationException(String message, String field)
     {
@@ -31,9 +32,21 @@ public class ValidationException extends IllegalArgumentException
         _field = field;        
     }
     
+    public ValidationException(String message, String field, Object pojo)
+    {
+        super(message);
+        _field = field; 
+        _pojo = pojo;
+    }
+    
     public String getField()
     {
         return _field;
+    }
+    
+    public Object getPojo()
+    {
+        return _pojo;
     }
 
 }

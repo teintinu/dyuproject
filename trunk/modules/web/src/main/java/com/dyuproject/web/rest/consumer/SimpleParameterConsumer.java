@@ -126,17 +126,17 @@ public class SimpleParameterConsumer extends AbstractConsumer
     
     public boolean merge(Object pojo, RequestContext rc) throws IOException, ValidationException
     {
-        setProps(pojo, rc);
-        return true;
+        return setProps(pojo, rc)!=0;
     }
 
     public Object consume(RequestContext rc) throws IOException, ValidationException
     {
-        return setProps(null, rc);
+        return getPojo(rc);
     }
     
-    Object setProps(Object pojo, RequestContext requestContext) throws IOException, ValidationException
-    {        
+    int setProps(Object pojo, RequestContext requestContext) throws IOException, ValidationException
+    {
+        int count = 0;
         HttpServletRequest request = requestContext.getRequest();
         for(Map.Entry<String, Included> entry : _includedFields.entrySet())
         {
@@ -148,7 +148,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 if(!included.isRequired())
                     continue;
                 
-                throw new ValidationException(included.getErrorMsg(), field);
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
             }
             value = value.trim();
             if(value.length()==0)
@@ -156,13 +156,63 @@ public class SimpleParameterConsumer extends AbstractConsumer
                 if(!included.isRequired())
                     continue;
                 
-                throw new ValidationException(included.getErrorMsg(), field);
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
             }
             Object actualValue = included.getSimpleField().getType().getActualValue(value);
             
-            String validationErrorMsg = included.getErrorMsg(actualValue);
-            if(validationErrorMsg!=null)
-                throw new ValidationException(validationErrorMsg, field);
+            String errorMsg = included.getErrorMsg(actualValue);
+            if(errorMsg!=null)
+                throw new ValidationException(errorMsg, field, pojo);
+            try
+            {                
+                included.getSimpleField().getMethod().invoke(pojo, new Object[]{actualValue});
+                count++;
+            }
+            catch(IllegalArgumentException e)
+            {
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
+            }
+            catch (IllegalAccessException e)
+            {
+                throw new RuntimeException(e);
+            } 
+            catch (InvocationTargetException e)
+            {
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
+            }            
+        }
+        return count;
+    }
+    
+    Object getPojo(RequestContext requestContext) throws IOException, ValidationException
+    {        
+        HttpServletRequest request = requestContext.getRequest();
+        Object pojo = null;
+        for(Map.Entry<String, Included> entry : _includedFields.entrySet())
+        {
+            String field = entry.getKey();
+            Included included = entry.getValue();
+            String value = request.getParameter(field);
+            if(value==null)
+            {
+                if(!included.isRequired())
+                    continue;
+                
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
+            }
+            value = value.trim();
+            if(value.length()==0)
+            {
+                if(!included.isRequired())
+                    continue;
+                
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
+            }
+            Object actualValue = included.getSimpleField().getType().getActualValue(value);
+            
+            String errorMsg = included.getErrorMsg(actualValue);
+            if(errorMsg!=null)
+                throw new ValidationException(errorMsg, field, pojo);
             // lazy
             if(pojo==null)
             {
@@ -181,7 +231,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             }
             catch(IllegalArgumentException e)
             {
-                throw new ValidationException(included.getErrorMsg(), field);
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
             }
             catch (IllegalAccessException e)
             {
@@ -189,7 +239,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
             } 
             catch (InvocationTargetException e)
             {
-                throw new ValidationException(included.getErrorMsg(), field);
+                throw new ValidationException(included.getErrorMsg(), field, pojo);
             }            
         }
         return pojo;
