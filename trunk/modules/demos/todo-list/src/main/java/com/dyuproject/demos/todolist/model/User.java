@@ -15,7 +15,6 @@
 package com.dyuproject.demos.todolist.model;
 
 import java.io.Serializable;
-import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,9 +24,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import org.mortbay.util.ajax.JSON;
-import org.mortbay.util.ajax.JSON.Output;
-
 /**
  * @author David Yu
  * @created May 21, 2008
@@ -36,7 +32,7 @@ import org.mortbay.util.ajax.JSON.Output;
 @Entity
 @Table(name="users", uniqueConstraints=@UniqueConstraint(columnNames="username"))
 @SuppressWarnings("serial")
-public class User implements Serializable, JSON.Convertible
+public class User implements Serializable
 {
     
     private Long _id;
@@ -48,23 +44,16 @@ public class User implements Serializable, JSON.Convertible
     private String _username;
     private String _password;
     
-    //private Set<Todo> _todos;
-    
-    public void setId(Long id)
-    {
-        _id = id;
-    }
-    
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId()
     {
         return _id;
-    }    
+    }
     
-    public void setFirstName(String firstName)
+    public void setId(Long id)
     {
-        _firstName = firstName;
+        _id = id;
     }
     
     @Column(name="first_name", nullable=false, length=40)
@@ -72,10 +61,10 @@ public class User implements Serializable, JSON.Convertible
     {
         return _firstName;
     }
-    
-    public void setLastName(String lastName)
+        
+    public void setFirstName(String firstName)
     {
-        _lastName = lastName;
+        _firstName = firstName;
     }
     
     @Column(name="last_name", nullable=false, length=40)
@@ -84,9 +73,9 @@ public class User implements Serializable, JSON.Convertible
         return _lastName;
     }
     
-    public void setEmail(String email)
+    public void setLastName(String lastName)
     {
-        _email = email;
+        _lastName = lastName;
     }
     
     @Column(name="email", nullable=false, length=40)
@@ -95,9 +84,9 @@ public class User implements Serializable, JSON.Convertible
         return _email;
     }
     
-    public void setUsername(String username)
+    public void setEmail(String email)
     {
-        _username = username;
+        _email = email;
     }
     
     @Column(name="username", nullable=false, length=40)
@@ -106,9 +95,9 @@ public class User implements Serializable, JSON.Convertible
         return _username;
     }
     
-    public void setPassword(String password)
+    public void setUsername(String username)
     {
-        _password = password;
+        _username = username;
     }
     
     @Column(name="password", nullable=false, length=40)
@@ -117,42 +106,8 @@ public class User implements Serializable, JSON.Convertible
         return _password;
     }
     
-    /*public void setTodos(Set<Todo> todos)
+    public void setPassword(String password)
     {
-        _todos = todos;
+        _password = password;
     }
-    
-    public void addTodo(Todo todo)
-    {
-        if(_todos==null)
-            _todos = new HashSet<Todo>();
-        _todos.add(todo);
-    }    
-
-    @OneToMany(cascade = { CascadeType.REMOVE }, fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    public Set<Todo> getTodos()
-    {
-        return _todos;
-    }*/
-
-    public void fromJSON(Map map)
-    {
-        _id = (Long)map.get("i");
-        _firstName = (String)map.get("f");
-        _lastName = (String)map.get("l");
-        _email = (String)map.get("e");
-        _username = (String)map.get("u");
-    }
-
-    public void toJSON(Output out)
-    {
-        out.addClass(getClass());
-        out.add("i", _id);
-        out.add("f", _firstName);
-        out.add("l", _lastName);
-        out.add("e", _email);
-        out.add("u", _username);
-    }
-
 }
