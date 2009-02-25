@@ -93,6 +93,17 @@ public class StandardJSON extends JSON
         _convertorCache = convertorCache;
     }
     
+    public StandardJSON(ConvertorCache convertorCache, boolean addClass)
+    {
+        _convertorCache = convertorCache;
+        _addClass = addClass;
+    }
+    
+    public StandardJSON(boolean addClass)
+    {
+        this(new StandardConvertorCache(), addClass);
+    }
+    
     public ConvertorCache getConvertorCache()
     {
         return _convertorCache;
