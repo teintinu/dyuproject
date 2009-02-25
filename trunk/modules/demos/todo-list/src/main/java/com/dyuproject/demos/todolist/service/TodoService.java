@@ -264,10 +264,7 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/todos/$/edit")
     @Post
-    @Consume(
-            consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class,
-            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false"            
-    )
+    @Consume(consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class)
     public void form_edit(RequestContext rc) throws IOException, ServletException
     {
         rc.getRequest().setAttribute(Constants.ACTION, Constants.ACTION_EDIT);
@@ -284,10 +281,7 @@ public class TodoService extends AbstractService
     
     @HttpResource(location="/users/$/todos/new")
     @Post
-    @Consume(
-            consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class, 
-            fieldParams="id.included=false&completed.included=false&user.included=false&content.required=false"
-    )
+    @Consume(consumers={SimpleParameterConsumer.class}, pojoClass=Todo.class)
     public void form_new(RequestContext rc) throws IOException, ServletException
     {
         createByUserId(rc);
