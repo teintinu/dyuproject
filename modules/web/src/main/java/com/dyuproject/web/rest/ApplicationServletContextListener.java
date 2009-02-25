@@ -60,7 +60,10 @@ public class ApplicationServletContextListener implements ServletContextListener
         {
             File file = new File(event.getServletContext().getRealPath(RESOURCE_LOCATION));
             if(file.exists())
+            {
                 _appContext = ApplicationContext.load(file);
+                log.info("loaded file: " + file);
+            }
             else
             {
                 _appContext = ApplicationContext.load(event.getServletContext().getResourceAsStream(
