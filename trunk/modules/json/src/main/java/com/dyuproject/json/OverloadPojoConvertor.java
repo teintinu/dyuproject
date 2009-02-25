@@ -38,6 +38,45 @@ public class OverloadPojoConvertor extends JSONPojoConvertor
         super(pojoClass);
     }
     
+    // TODO remove this when 6.1.15 is out.
+    protected void init()
+    {
+        Method[] methods = _pojoClass.getMethods();
+        for (int i=0;i<methods.length;i++)
+        {
+            Method m=methods[i];
+            if (!java.lang.reflect.Modifier.isStatic(m.getModifiers()) && m.getDeclaringClass()!=Object.class)
+            {
+                String name=m.getName();
+                switch(m.getParameterTypes().length)
+                {
+                    case 0:
+                        
+                        if(m.getReturnType()!=null)
+                        {
+                            if (name.startsWith("is") && name.length()>2)
+                                name=name.substring(2,3).toLowerCase()+name.substring(3);
+                            else if (name.startsWith("get") && name.length()>3)
+                                name=name.substring(3,4).toLowerCase()+name.substring(4);
+                            else 
+                                break;
+                            if(includeField(name, m))
+                                addGetter(name, m);
+                        }
+                        break;
+                    case 1:
+                        if (name.startsWith("set") && name.length()>3)
+                        {
+                            name=name.substring(3,4).toLowerCase()+name.substring(4);
+                            if(includeField(name, m))
+                                addSetter(name, m);
+                        }
+                        break;                
+                }
+            }
+        }
+    }
+    
     protected void addSetter(String name, Method method)
     {
         OverloadSetter ds = newSetter(name, method);
