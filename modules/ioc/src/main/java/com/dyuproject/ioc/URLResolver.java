@@ -60,12 +60,12 @@ public class URLResolver extends AbstractResolver
 
     public Resource createResource(String path) throws IOException
     {
-        return new Resource(path, newReader(new URL(path).openStream()));
+        return new Resource(path, getType(), newReader(new URL(path).openStream()));
     }
     
     public Resource createResource(URL url) throws IOException
     {
-        return new Resource(newReader(url.openStream()));
+        return new Resource(url.toString(), getType(), newReader(url.openStream()));
     }
     
     
