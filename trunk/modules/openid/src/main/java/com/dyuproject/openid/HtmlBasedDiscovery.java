@@ -158,9 +158,14 @@ public class HtmlBasedDiscovery implements Discovery
         {            
             _stack++;
             if(_headFound)
-            {                
+            {
+                boolean lastLink = _link;
                 _link = LINK.equalsIgnoreCase(name);
-                return true;
+                // assumes that the link tags are grouped together.
+                // this way it doesn't have to parse the whole document
+                // some link tags do not end with "/>" ... but ">" instead
+                // handling on endElement() wont be used because of that
+                return _link || !lastLink;                
             }
             _headFound = HEAD.equalsIgnoreCase(name);
             return _headFound;
