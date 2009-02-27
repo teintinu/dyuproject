@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ fixed parsing of html documents with uncommented <script> body that contains unescaped &gt; and &lt;
 + new ioc module
 + new json module
 + Pojo Consumers (validation, binding, etc)

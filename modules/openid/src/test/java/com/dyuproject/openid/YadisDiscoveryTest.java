@@ -1,5 +1,5 @@
 //========================================================================
-//Copyright 2007-2008 David Yu dyuproject@gmail.com
+//Copyright 2007-2009 David Yu dyuproject@gmail.com
 //------------------------------------------------------------------------
 //Licensed under the Apache License, Version 2.0 (the "License");
 //you may not use this file except in compliance with the License.
@@ -21,19 +21,17 @@ import junit.framework.TestCase;
  * @created Sep 24, 2008
  */
 
-public class DefaultDiscoveryTest extends TestCase
+public class YadisDiscoveryTest extends TestCase
 {
     
     public void testDiscovery() throws Exception
     {        
         OpenIdContext context = new OpenIdContext();
         context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(new DefaultDiscovery());
-        Identifier identifier = Identifier.getIdentifier("http://davidyuftw.blogspot.com", null, context);
+        context.setDiscovery(new HtmlBasedDiscovery());
+        Identifier identifier = Identifier.getIdentifier("http://davidyu.myopenid.com", null, context);
         OpenIdUser user = context.getDiscovery().discover(identifier, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
-        System.err.println(user.getOpenIdServer());
-        System.err.println(user.getClaimedId());
     }
 
 }
