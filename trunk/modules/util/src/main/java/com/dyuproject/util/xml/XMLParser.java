@@ -78,7 +78,7 @@ public class XMLParser
         {            
             for(int i=0; i<len; i++, offset++)
             {                
-                char c = cbuf[offset];                
+                char c = cbuf[offset];
                 switch(c)
                 {
                     case '<':
@@ -86,6 +86,9 @@ public class XMLParser
                         {
                             case STATE_COMMENT_STARTED:
                             case STATE_IGNORE:                                
+                                continue;
+                            case STATE_COMMENT_ENDING://handle --< comments
+                                state = STATE_COMMENT_STARTED;
                                 continue;
                             case 0:
                                 state = STATE_EL_STARTING;
@@ -116,6 +119,7 @@ public class XMLParser
                                 if(stateBeforeComment==0)
                                     state = 0;
                                 continue;
+                            case STATE_EL_TEXT:// uncommented text
                             case STATE_COMMENT_STARTED:
                                 continue;
                             case STATE_EL_ENDING:
@@ -163,6 +167,9 @@ public class XMLParser
                             case STATE_COMMENT_STARTED:
                             case STATE_IGNORE:                                
                                 continue;
+                            case STATE_COMMENT_ENDING://handle --/ comments
+                                state = STATE_COMMENT_STARTED;
+                                continue;
                             case STATE_EL_ATTR_NAME_START:
                                 mark = -1;                                
                                 state = STATE_EL_ENDING;
@@ -180,6 +187,12 @@ public class XMLParser
                     case ':':
                         switch(state)
                         {
+                            case STATE_COMMENT_STARTED:
+                            case STATE_IGNORE:                                
+                                continue;
+                            case STATE_COMMENT_ENDING://handle --: comments
+                                state = STATE_COMMENT_STARTED;
+                                continue;
                             case STATE_EL_STARTING:
                                 if(nsMark!=-1)
                                     throw new IOException("invalid xml.");
@@ -188,12 +201,32 @@ public class XMLParser
                         }                        
                         continue;
                     case '?':
+                        switch(state)
+                        {
+                            case STATE_COMMENT_STARTED:
+                            case STATE_IGNORE:                                
+                                continue;
+                            case STATE_COMMENT_ENDING://handle --? comments
+                                state = STATE_COMMENT_STARTED;
+                                continue;   
+                            case STATE_EL_STARTING:
+                                // uncommented text
+                                if(stateBeforeComment==STATE_EL_TEXT)
+                                    continue;
+                                state = STATE_COMMENT_STARTING;
+                                mark = -1;
+                                continue;
+                        }
+                        continue;
                     case '!':
                         switch(state)
                         {
                             case STATE_COMMENT_STARTED:
                             case STATE_IGNORE:                                
                                 continue; 
+                            case STATE_COMMENT_ENDING://handle --! comments
+                                state = STATE_COMMENT_STARTED;
+                                continue;   
                             case STATE_EL_STARTING:
                                 state = STATE_COMMENT_STARTING;
                                 mark = -1;
@@ -218,7 +251,9 @@ public class XMLParser
                             case STATE_COMMENT_DASH_END:
                                 state = STATE_COMMENT_ENDING;
                                 continue;
-
+                            case STATE_COMMENT_ENDING:// handle ---- text
+                                state = STATE_COMMENT_STARTED;
+                                continue;
                         }
                         continue;
                         
@@ -228,6 +263,9 @@ public class XMLParser
                             case STATE_COMMENT_STARTED:
                             case STATE_IGNORE:                                
                                 continue;
+                            case STATE_COMMENT_ENDING://handle --= comments
+                                state = STATE_COMMENT_STARTED;
+                                continue;   
                             case STATE_EL_ATTR_NAME_START:                                
                                 state = STATE_EL_ATTR_VALUE_START;
                                 attrName = new String(cbuf, mark+1, offset-mark-1).trim();                                
@@ -243,6 +281,9 @@ public class XMLParser
                             case STATE_COMMENT_STARTED:
                             case STATE_IGNORE:                                
                                 continue;
+                            case STATE_COMMENT_ENDING://handle --' comments
+                                state = STATE_COMMENT_STARTED;
+                                continue;   
                             case STATE_EL_ATTR_VALUE_START:
                                 dq = false;
                                 state = STATE_EL_ATTR_VALUE_END;
@@ -268,6 +309,9 @@ public class XMLParser
                             case STATE_COMMENT_STARTED:
                             case STATE_IGNORE:                                
                                 continue;
+                            case STATE_COMMENT_ENDING://handle --" comments
+                                state = STATE_COMMENT_STARTED;
+                                continue;   
                             case STATE_EL_ATTR_VALUE_START:
                                 dq = true;
                                 state = STATE_EL_ATTR_VALUE_END;
