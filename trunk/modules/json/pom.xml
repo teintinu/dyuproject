@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.dyuproject</groupId>
   <artifactId>dyuproject-json</artifactId>
-  <name>json serialization</name>
+  <name>json pojo util</name>
   <packaging>jar</packaging>
   
   <build>
