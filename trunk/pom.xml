@@ -139,7 +139,7 @@
     <log4j-version>1.2.15</log4j-version>
     <junit-version>3.8.2</junit-version>
     <servlet-version>2.5-20081211</servlet-version>
-    <jetty-version>6.1.15.rc5</jetty-version>
+    <jetty-version>6.1.15</jetty-version>
     <jra-version>1.0-alpha-4</jra-version>
     <velocity-version>1.5</velocity-version>
     <stringtemplate-version>3.2</stringtemplate-version>
