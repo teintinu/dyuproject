@@ -1,0 +1,12 @@
+==============================================================
+ dyuproject
+ Copyright 2007-2009 David Yu dyuproject@gmail.com
+==============================================================
+
+The jetty-util is Copyright Mort Bay Consulting Pty Ltd
+unless otherwise noted. It is licensed under the apache 2.0
+license.
+
+The javax.servlet package used was sourced from the Apache
+Software Foundation and is distributed under the apache 2.0
+license.
