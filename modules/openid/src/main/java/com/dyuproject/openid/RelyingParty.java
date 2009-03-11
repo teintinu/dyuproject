@@ -132,6 +132,7 @@ public class RelyingParty
             relyingParty._identifierParameter = identifierParameter;
         
         // relying party listeners
+        relyingParty.addListener(new com.dyuproject.openid.ext.GoogleAccountConfigListener());
         String listenersParam = properties.getProperty("openid.relyingparty.listeners");
         if(listenersParam!=null)
         {

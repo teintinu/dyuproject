@@ -46,11 +46,10 @@ public class HomeServlet extends HttpServlet
     
     public void init()
     {
+        // google account attribute exchange is enabled by default on RelyingParty.getInstance() (as of dyuproject-1.1.2 )
+        
         // enable sreg attribute exchange
         _relyingParty.addListener(new SRegConfigListener());
-        
-        // enable google account attribute exchange
-        _relyingParty.addListener(new GoogleAccountConfigListener());
         
         // custom listener
         _relyingParty.addListener(new RelyingParty.Listener()
