@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.mortbay.util.ajax.JSON;
 import org.mortbay.util.ajax.JSON.Output;
 
+import com.dyuproject.openid.Constants;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.UrlEncodedParameterMap;
 
@@ -33,6 +34,9 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 @SuppressWarnings("serial")
 public class GoogleAccount implements Serializable, JSON.Convertible
 {
+    
+    public static final String OP_PREFIX = "https://www.google.com/accounts/o8/";
+    public static final String OPTIONAL_CLAIMED_ID = "http://specs.openid.net/auth/2.0/identifier_select";    
     
     public static final String ATTR_NAME = "google_account";
     
@@ -53,6 +57,8 @@ public class GoogleAccount implements Serializable, JSON.Convertible
     
     static void put(UrlEncodedParameterMap params)
     {
+        if(params.getUrl().startsWith(OP_PREFIX))
+            params.put(Constants.OPENID_IDENTITY, OPTIONAL_CLAIMED_ID);
         params.put(NS_KEY, NS_VALUE);
         params.put(MODE_KEY, MODE_VALUE);
         params.put(TYPE_EMAIL_KEY, TYPE_EMAIL_VALUE);
