@@ -48,4 +48,10 @@ public class GoogleAccountConfigListener implements RelyingParty.Listener
     {        
         
     }
+    
+    public boolean equals(Object another)
+    {
+        // stateless
+        return another!=null && another.getClass()==getClass();
+    }
 }
