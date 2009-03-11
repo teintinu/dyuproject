@@ -1,4 +1,4 @@
-dyuproject-1.1-SNAPSHOT
+dyuproject-1.1.2 2009-03-11
 + GoogleAccount attribute exchange enabled by default on RelyingParty.getInstance()
 + update to support Google's recent service changes on authentication request (thanks Shawn Pearce)
 + faster HtmlBasedDiscovery parsing
