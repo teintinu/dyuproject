@@ -1,0 +1,44 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>project</artifactId>
+    <groupId>com.dyuproject.demos</groupId>
+    <version>1.1.2</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.dyuproject.demos</groupId>
+  <artifactId>openid-servlet</artifactId>
+  <name>demos :: openid-servlet</name>  
+  <packaging>war</packaging>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>org.mortbay.jetty</groupId>
+        <artifactId>maven-jetty-plugin</artifactId>
+        <version>${jetty-version}</version>
+        <configuration>
+          <contextPath>/</contextPath>
+          <webDefaultXml>src/main/etc/webdefault.xml</webDefaultXml>
+          <reload>manual</reload>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.dyuproject</groupId>
+      <artifactId>dyuproject-openid</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+</project>
