@@ -117,13 +117,18 @@ public class RelyingParty
         HttpConnector httpConnector = httpConnectorParam==null ? new SimpleHttpConnector() : 
             (HttpConnector)newObjectInstance(httpConnectorParam);       
         
+        // auth redirection
+        String authRedirectionParam = properties.getProperty("openid.authredirection");
+        AuthRedirection authRedirection = authRedirectionParam==null ? SimpleRedirection.DEFAULT_INSTANCE : 
+            (AuthRedirection)newObjectInstance(authRedirectionParam);
+        
         // user manager
         String managerParam = properties.getProperty("openid.user.manager");            
         OpenIdUserManager manager = managerParam == null ? new HttpSessionUserManager() :
             (OpenIdUserManager)newObjectInstance(managerParam);        
         manager.init(properties);        
         
-        OpenIdContext context = new OpenIdContext(discovery, association, httpConnector);        
+        OpenIdContext context = new OpenIdContext(discovery, association, httpConnector, authRedirection);        
         RelyingParty relyingParty = new RelyingParty(context, manager);
         
         // identifier parameter (default is openid_identifier)
@@ -184,6 +189,11 @@ public class RelyingParty
     public static boolean isAuthResponse(HttpServletRequest request)
     {
         return Constants.Mode.ID_RES.equals(request.getParameter(Constants.OPENID_MODE));
+    }
+    
+    public static boolean isAuthCancel(HttpServletRequest request)
+    {
+        return Constants.Mode.CANCEL.equals(request.getParameter(Constants.OPENID_MODE));
     }
     
     public static UrlEncodedParameterMap getAuthUrlMap(OpenIdUser user, String trustRoot, 
@@ -307,35 +317,53 @@ public class RelyingParty
     throws Exception
     {
         OpenIdUser user = (OpenIdUser)request.getAttribute(OpenIdUser.ATTR_NAME);
-        if(user!=null)
-            return user;
-
-        user = _manager.getUser(request);
-        if(user!=null)
+        if(user==null)
         {
-            if(user.isAuthenticated())
-                _listener.onAccess(user, request);
-            request.setAttribute(OpenIdUser.ATTR_NAME, user);
-            return user;
+            user = _manager.getUser(request);
+            String id = null;
+            if(user!=null)
+            {
+                if(user.isAuthenticated())
+                {
+                    _listener.onAccess(user, request);
+                    request.setAttribute(OpenIdUser.ATTR_NAME, user);
+                    return user;
+                }
+                if((id=request.getParameter(_identifierParameter))==null)
+                    return isAuthCancel(request) ? null : user;
+                else if((id=id.trim()).length()!=0)
+                {
+                    Identifier identifier = Identifier.getIdentifier(id, _resolver, _context);
+                    if(identifier.isResolved())
+                    {                    
+                        if(!identifier.getId().equals(user.getIdentifier()))
+                        {
+                            // new user or ... the user cancels authentication
+                            // and provides a different openid identifier
+                            return discover(identifier, request);
+                        }
+                    }
+                }
+            }
+            else if((id=request.getParameter(_identifierParameter))!=null && (id=id.trim()).length()!=0)
+            {
+                Identifier identifier = Identifier.getIdentifier(id, _resolver, _context);
+                if(identifier.isResolved())
+                    return discover(identifier, request);
+            }
         }
-        String id = request.getParameter(_identifierParameter);
-        if(id==null)
-            return null;
-        id = id.trim();
-        if(id.length()==0)
-            return null;
-        
-        Identifier identifier = Identifier.getIdentifier(id, _resolver, _context);
-        if(!identifier.isResolved())
-            return null;
-        
-        user = _context.getDiscovery().discover(identifier, _context);
+        return user;
+    }
+    
+    protected OpenIdUser discover(Identifier identifier, HttpServletRequest request) 
+    throws Exception
+    {
+        OpenIdUser user = _context.getDiscovery().discover(identifier, _context);
         if(user!=null)
         {
             _listener.onDiscovery(user, request);
-            request.setAttribute(OpenIdUser.ATTR_NAME, user);
+            request.setAttribute(OpenIdUser.ATTR_NAME, user);            
         }
-        
         return user;
     }
     
@@ -380,7 +408,10 @@ public class RelyingParty
         
         _manager.saveUser(user, request, response);        
         
-        response.sendRedirect(params.toString());
+        AuthRedirection ar = _context.getAuthRedirection();
+        if(ar==null)
+            ar = SimpleRedirection.DEFAULT_INSTANCE;
+        ar.redirect(params, request, response);
         
         return true;
     }    

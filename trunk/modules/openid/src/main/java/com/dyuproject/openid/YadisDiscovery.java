@@ -109,8 +109,8 @@ public class YadisDiscovery implements Discovery
     {        
         XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, true);
-        return handler._openIdServer==null ? null : new OpenIdUser(handler._signon ? 
-                identifier.getId() : IDENTIFIER_SELECT, handler._openIdServer, 
+        return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
+                handler._signon ? identifier.getId() : IDENTIFIER_SELECT, handler._openIdServer, 
                 handler._openIdDelegate);
     }    
     

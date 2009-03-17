@@ -29,6 +29,7 @@ public class OpenIdContext
     private Association _association;
     private Discovery _discovery;
     private HttpConnector _httpConnector;
+    private AuthRedirection _authRedirection;
     
     public OpenIdContext()
     {
@@ -37,9 +38,16 @@ public class OpenIdContext
     
     public OpenIdContext(Discovery discovery, Association association, HttpConnector httpConnector)
     {
+        this(discovery, association, httpConnector, SimpleRedirection.DEFAULT_INSTANCE);
+    }
+    
+    public OpenIdContext(Discovery discovery, Association association, HttpConnector httpConnector, 
+            AuthRedirection authRedirection)
+    {
         _discovery = discovery;
         _association = association;
         _httpConnector = httpConnector;
+        _authRedirection = authRedirection;
     }
     
     public void setAssociation(Association association)
@@ -72,5 +80,15 @@ public class OpenIdContext
         return _httpConnector;
     }    
     
+    public void setAuthRedirection(AuthRedirection authRedirection)
+    {
+        _authRedirection = authRedirection;
+    }
+    
+    public AuthRedirection getAuthRedirection()
+    {
+        return _authRedirection;
+    }
+     
 
 }

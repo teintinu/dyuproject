@@ -4,6 +4,9 @@ dyuproject-1.1.3 2009-03-17
 + Fixed YadisDiscovery bug (signon and server handling) - the actual fix for the GoogleAccount issue (removed the previous
   GoogleAccount workaround)
 + Optimized HtmlBasedDiscovery parsing set as default (faster) ... turned of via using HtmlBasedDiscovery.setOptmized(false);
++ refactored/improved handling when user cancels authentication
++ identifier field added on OpenIdUser to track the original identifier provided by user
++ added FormRedirection option for use when data to be sent is larger than usual.
 
 dyuproject-1.1.2 2009-03-11
 + GoogleAccount attribute exchange enabled by default on RelyingParty.getInstance()
