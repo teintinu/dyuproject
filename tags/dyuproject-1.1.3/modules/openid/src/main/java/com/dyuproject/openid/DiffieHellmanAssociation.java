@@ -111,14 +111,16 @@ public class DiffieHellmanAssociation implements Association
         if(user.isAuthenticated())
             return true;
         
-        if(authRedirect==null || !Constants.Mode.ID_RES.equals(authRedirect.get(Constants.OPENID_MODE)))
+        if(authRedirect==null || !user.isAssociated())
             return false;
-        
-        if(!user.isAssociated())
-            throw new IllegalStateException("claimed_id of user has not been associated with server.");
-        
-        if(!user.getAssocHandle().equals(authRedirect.get(Constants.OPENID_ASSOC_HANDLE)))
-            throw new IllegalStateException("association did not match.");
+
+        if(!Constants.Mode.ID_RES.equals(authRedirect.get(Constants.OPENID_MODE)) ||
+                !user.getAssocHandle().equals(authRedirect.get(Constants.OPENID_ASSOC_HANDLE)))
+        {
+            //user.setAssocHandle(null);
+            //user.setAssociationData(null);
+            return false;
+        }
         
         Map<String,Object> associationData = user.getAssociationData();
 

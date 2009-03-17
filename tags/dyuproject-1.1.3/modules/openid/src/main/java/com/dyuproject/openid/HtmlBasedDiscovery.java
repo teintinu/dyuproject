@@ -98,7 +98,7 @@ public class HtmlBasedDiscovery implements Discovery
         XmlHandler handler = __optimized ? new OptimizedXmlHandler() : new XmlHandler();
         XMLParser.parse(reader, handler, false);
         return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
-                handler._openIdServer, handler._openIdDelegate);        
+                identifier.getId(), handler._openIdServer, handler._openIdDelegate);        
     }
     
     static int check(String rel)

@@ -84,7 +84,8 @@ public abstract class Constants
     {        
         public static final String ASSOCIATE = "associate";
         public static final String CHECKID_SETUP = "checkid_setup";
-        public static final String ID_RES = "id_res";        
+        public static final String ID_RES = "id_res";
+        public static final String CANCEL = "cancel";
     }
     
     public static class Assoc
