@@ -31,6 +31,18 @@ import com.dyuproject.util.xml.XMLParser;
 public class HtmlBasedDiscovery implements Discovery
 {
     
+    private static boolean __optimized = !"false".equals(System.getProperty("hbd.optimized"));
+    
+    public static void setOptimized(boolean optmized)
+    {
+        __optimized = optmized;
+    }
+    
+    public static boolean isOptimized()
+    {
+        return __optimized;
+    }
+    
     static final String CHECKED_PREFIX = "openid";
     static final String SERVER = "server";
     static final String DELEGATE = "delegate";    
@@ -83,7 +95,7 @@ public class HtmlBasedDiscovery implements Discovery
     
     static OpenIdUser parse(Identifier identifier, InputStreamReader reader) throws Exception
     {
-        XmlHandler handler = new XmlHandler();
+        XmlHandler handler = __optimized ? new OptimizedXmlHandler() : new XmlHandler();
         XMLParser.parse(reader, handler, false);
         return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
                 handler._openIdServer, handler._openIdDelegate);        
@@ -134,14 +146,14 @@ public class HtmlBasedDiscovery implements Discovery
     static class XmlHandler implements LazyHandler
     {
         
-        private String _openIdServer;
-        private String _openIdDelegate;
-        private String _lastHref;
-        private String _lastRel;
-        private int _stack = 0;
-        private boolean _headFound = false;
-        private boolean _link = false;        
-        private boolean _searching = true;
+        String _openIdServer;
+        String _openIdDelegate;
+        String _lastHref;
+        String _lastRel;
+        int _stack = 0;
+        boolean _headFound = false;
+        boolean _link = false;        
+        boolean _searching = true;
         
         XmlHandler()
         {
@@ -159,13 +171,8 @@ public class HtmlBasedDiscovery implements Discovery
             _stack++;
             if(_headFound)
             {
-                boolean lastLink = _link;
                 _link = LINK.equalsIgnoreCase(name);
-                // assumes that the link tags are grouped together.
-                // this way it doesn't have to parse the whole document
-                // some link tags do not end with "/>" ... but ">" instead
-                // handling on endElement() wont be used because of that
-                return _link || !lastLink;                
+                return true;
             }
             _headFound = HEAD.equalsIgnoreCase(name);
             return _headFound;
@@ -231,6 +238,26 @@ public class HtmlBasedDiscovery implements Discovery
             // not needed as we're not parsing innerText            
         }
         
+    }
+    
+    static class OptimizedXmlHandler extends XmlHandler
+    {
+        public boolean startElement(String name, String namespace)
+        {            
+            _stack++;
+            if(_headFound)
+            {
+                boolean lastLink = _link;
+                _link = LINK.equalsIgnoreCase(name);
+                // assumes that the link tags are grouped together.
+                // this way it doesn't have to parse the whole document
+                // some link tags do not end with "/>" ... but ">" instead
+                // handling on endElement() wont be used because of that
+                return _link || !lastLink;                
+            }
+            _headFound = HEAD.equalsIgnoreCase(name);
+            return _headFound;
+        }
     }
     
     /*public static void main(String[] args)
