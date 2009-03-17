@@ -1,4 +1,4 @@
-dyuproject-1.1-SNAPSHOT
+dyuproject-1.1.3 2009-03-17
 + Fixed YadisDiscovery bug (signon and server handling) - the actual fix for the GoogleAccount issue (removed the previous
   GoogleAccount workaround)
 
