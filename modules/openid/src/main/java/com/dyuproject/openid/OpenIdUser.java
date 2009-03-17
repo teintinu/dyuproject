@@ -33,6 +33,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     
     public static final String ATTR_NAME = "openid_user";
     
+    private String _identifier;
     private String _claimedId;
     private String _identity;
     private String _openIdServer;
@@ -47,8 +48,9 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         
     }
     
-    OpenIdUser(String claimedId, String openIdServer, String openIdDelegate)
+    OpenIdUser(String identifier, String claimedId, String openIdServer, String openIdDelegate)
     {
+        _identifier = identifier;
         _claimedId = claimedId;
         _openIdServer = openIdServer;
         _openIdDelegate = openIdDelegate;
@@ -62,6 +64,11 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     public boolean isAuthenticated()
     {
         return _identity!=null;
+    }
+    
+    public String getIdentifier()
+    {
+        return _identifier;
     }
     
     public String getClaimedId()
@@ -150,7 +157,8 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     }
 
     public void fromJSON(Map map)
-    {        
+    {
+        _identifier = (String)map.get("h");
         _claimedId = (String)map.get("a");
         _identity = (String)map.get("b");
         _assocHandle = (String)map.get("c");
@@ -163,6 +171,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     public void toJSON(Output out)
     {        
         out.addClass(getClass());
+        out.add("h", _identifier);
         out.add("a", _claimedId);
         if(_identity!=null)
         {
