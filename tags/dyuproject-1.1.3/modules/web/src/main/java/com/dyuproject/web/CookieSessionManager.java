@@ -1,0 +1,208 @@
+//========================================================================
+//Copyright 2007-2008 David Yu dyuproject@gmail.com
+//------------------------------------------------------------------------
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at 
+//http://www.apache.org/licenses/LICENSE-2.0
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
+//========================================================================
+
+package com.dyuproject.web;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Properties;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.mortbay.util.ajax.JSON.StringSource;
+
+import com.dyuproject.json.StandardJSON;
+import com.dyuproject.util.B64Code;
+import com.dyuproject.util.Delim;
+import com.dyuproject.util.DigestUtil;
+
+/**
+ * Manages the CookieSession.
+ * The environment is setup from a java.util.Properties 
+ * and taking the valaues of session.* keys
+ * 
+ * @author David Yu
+ * @created Jun 2, 2008
+ */
+
+public class CookieSessionManager
+{
+    
+    public static final String SESSION_COOKIE_SECRET_KEY = "session.cookie.secretKey";
+    public static final String SESSION_COOKIE_NAME = "session.cookie.name";
+    public static final String SESSION_COOKIE_MAX_AGE = "session.cookie.maxAge";
+    public static final String SESSION_COOKIE_DOMAIN = "session.cookie.domain";
+    public static final String SESSION_COOKIE_PATH = "session.cookie.path";
+    public static final String SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS = "session.cookie.include.remoteAddress";
+    
+    public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
+    
+    private static final ThreadLocal<CookieSession> __session = new ThreadLocal<CookieSession>();
+
+    private String _secretKey, _cookieName, _cookiePath, _cookieDomain;
+    private int _maxAge = 3600, _updateMs = 3600*500;
+    private boolean _started = false, _includeRemoteAddr = false;
+    private StandardJSON _json = new StandardJSON();
+    
+    public static CookieSession getCurrentSession()
+    {
+        return __session.get();
+    }
+    
+    public CookieSessionManager()
+    {
+        
+    }
+    
+    public StandardJSON getJSON()
+    {
+        return _json;
+    }
+
+    public void init(Properties props)
+    {
+        if(_started)
+            return;
+        
+        _cookieName = props.getProperty(SESSION_COOKIE_NAME);
+        _secretKey = props.getProperty(SESSION_COOKIE_SECRET_KEY);
+        if(_cookieName==null || _secretKey==null)
+        {
+            throw new IllegalStateException(SESSION_COOKIE_NAME + " and " + 
+                    SESSION_COOKIE_SECRET_KEY + " env property must be set.");
+        }
+        
+        _cookiePath = props.getProperty(SESSION_COOKIE_PATH);
+        _cookieDomain = props.getProperty(SESSION_COOKIE_DOMAIN);
+        
+        String maxAge = props.getProperty(SESSION_COOKIE_MAX_AGE);
+        if(maxAge!=null)
+        {
+            _maxAge = Integer.parseInt(maxAge);
+            _updateMs = _maxAge * 500;
+        }
+        
+        String includeRemoteAddr = props.getProperty(SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS);
+        if(includeRemoteAddr!=null)
+            _includeRemoteAddr = Boolean.parseBoolean(includeRemoteAddr);
+
+        _started = true;
+    }
+
+    
+    public CookieSession getSession(HttpServletRequest request, boolean create)
+    {
+        CookieSession session = __session.get();
+        if(session!=null)
+            return session;
+        
+        session = (CookieSession)request.getAttribute(COOKIE_SESSION_REQUEST_ATTR);
+        if(session!=null)
+            return session;
+        
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null)
+        {
+            for(Cookie c : cookies)
+            {
+                if(_cookieName.equals(c.getName()))
+                    return read(c, request);
+            }  
+        }      
+        return create ? create(request) : null;
+    }
+    
+    public boolean persistSession(CookieSession session, HttpServletRequest request, 
+            HttpServletResponse response) throws IOException
+    {
+        if(session.isPersisted())
+            throw new IllegalStateException("session has already been persisted during this request.");
+        
+        return persist(session, request, response);
+    }
+    
+    public boolean invalidateSession(HttpServletResponse response) throws IOException
+    {
+        return write("0", 0, response);
+    }
+    
+    public void postHandle(HttpServletRequest request, HttpServletResponse response)
+    throws IOException
+    {
+        CookieSession session = __session.get();
+        __session.set(null);
+
+        if(session==null || session.isPersisted() || response.isCommitted())
+            return;
+
+        if(System.currentTimeMillis() > session.getTimeUpdated()+_updateMs)
+            persist(session, request, response);
+    }
+        
+    private boolean persist(CookieSession session, HttpServletRequest request, 
+            HttpServletResponse response) throws IOException
+    {
+        session.markPersisted();
+        String json = B64Code.encode(_json.toJSON(session));
+        StringBuilder toSign = new StringBuilder().append(json).append(_secretKey);
+        if(_includeRemoteAddr)
+            toSign.append(request.getRemoteAddr());
+        
+        String sig = DigestUtil.digestMD5(toSign.toString());        
+        return write(new StringBuilder().append(json).append('&').append(sig).toString(), _maxAge, 
+                response);
+    }
+    
+    private CookieSession create(HttpServletRequest request)
+    {
+        CookieSession session = new CookieSession(new HashMap<String,Object>(3));
+        __session.set(session);
+        request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, session);
+        return session;
+    }
+    
+    private CookieSession read(Cookie cookie, HttpServletRequest request)
+    {
+        String[] pair = Delim.AMPER.split(cookie.getValue());
+        if(pair.length!=2)
+            return null;
+        
+        StringBuilder toSign = new StringBuilder().append(pair[0]).append(_secretKey);
+        if(_includeRemoteAddr)
+            toSign.append(request.getRemoteAddr());
+        if(!pair[1].equals(DigestUtil.digestMD5(toSign.toString())))
+            return null;
+
+        CookieSession session = (CookieSession)_json.parse(new StringSource(
+                B64Code.decode(pair[0])));
+        __session.set(session);
+        request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, session);
+        return session;
+    }
+
+    private boolean write(String value, int maxAge, HttpServletResponse response) 
+    throws IOException
+    {
+        Cookie cookie = new Cookie(_cookieName, value);
+        cookie.setMaxAge(maxAge);
+        cookie.setPath(_cookiePath);
+        if(_cookieDomain!=null)
+            cookie.setDomain(_cookieDomain);
+        response.addCookie(cookie);
+        return true;
+    }
+
+}
