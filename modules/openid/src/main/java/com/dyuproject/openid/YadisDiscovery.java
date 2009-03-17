@@ -30,6 +30,7 @@ import com.dyuproject.util.xml.XMLParser;
 
 public class YadisDiscovery implements Discovery
 {
+    static final String IDENTIFIER_SELECT = "http://specs.openid.net/auth/2.0/identifier_select";
     static final String XRDS_CONTENT_TYPE = "application/xrds+xml";
     static final String X_XRDS_LOCATION = "X-XRDS-Location";
     static final String NS_PREFIX = "http://specs.openid.net/auth/2.0/";
@@ -108,8 +109,9 @@ public class YadisDiscovery implements Discovery
     {        
         XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, true);
-        return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
-                handler._openIdServer, handler._openIdDelegate);
+        return handler._openIdServer==null ? null : new OpenIdUser(handler._signon ? 
+                identifier.getId() : IDENTIFIER_SELECT, handler._openIdServer, 
+                handler._openIdDelegate);
     }    
     
     static class XmlHandler implements LazyHandler
@@ -120,6 +122,7 @@ public class YadisDiscovery implements Discovery
         private String _lastName;
         private String _openIdServer;
         private String _openIdDelegate;
+        private boolean _signon = false;
         
         XmlHandler()
         {
@@ -174,11 +177,8 @@ public class YadisDiscovery implements Discovery
                 String str = new String(data, start, length).trim();
                 if(str.startsWith(NS_PREFIX))
                 {
-                    if(str.endsWith(SIGNON) || str.endsWith(SERVER))
-                    {
-                        _service = true;
-                        return;
-                    }
+                    _service = true;
+                    _signon = str.endsWith(SIGNON);
                 }
             }
         }        

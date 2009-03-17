@@ -1,5 +1,6 @@
 dyuproject-1.1-SNAPSHOT
-+
++ Fixed YadisDiscovery bug (signon and server handling) - the actual fix for the GoogleAccount issue (removed the previous
+  GoogleAccount workaround)
 
 dyuproject-1.1.2 2009-03-11
 + GoogleAccount attribute exchange enabled by default on RelyingParty.getInstance()
