@@ -95,7 +95,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
         _secretKey = properties.getProperty("openid.user.manager.cookie.security.secret_key");
         
         // optional
-        _cookiePath = properties.getProperty("openid.user.manager.cookie.path");
+        _cookiePath = properties.getProperty("openid.user.manager.cookie.path", "/");
         _cookieDomain = properties.getProperty("openid.user.manager.cookie.domain");
         String cookieMaxAge = properties.getProperty("openid.user.manager.cookie.max_age");
         if(cookieMaxAge!=null)
