@@ -85,7 +85,7 @@ public class CookieSessionManager
                     SESSION_COOKIE_SECRET_KEY + " env property must be set.");
         }
         
-        _cookiePath = props.getProperty(SESSION_COOKIE_PATH);
+        _cookiePath = props.getProperty(SESSION_COOKIE_PATH, "/");
         _cookieDomain = props.getProperty(SESSION_COOKIE_DOMAIN);
         
         String maxAge = props.getProperty(SESSION_COOKIE_MAX_AGE);
