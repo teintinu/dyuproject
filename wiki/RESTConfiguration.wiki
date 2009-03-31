@@ -3,7 +3,7 @@
 
 For a sample REST service, see [HelloWorldService]
 
-*_2 ways to setup the REST services, resources and interceptors:*
+*_3 ways to setup the REST services, resources and interceptors:*
 
 *1.* Through the servlet's init-param:
 
@@ -58,8 +58,57 @@ For a sample REST service, see [HelloWorldService]
 </web-app>
 
 }}}
+*2.* Through JSON IOC (as of 1.1.3 and up)
 
-*2.* Through Spring IOC
+WEB-INF/web.xml
+{{{
+  <listener>
+    <listener-class>com.dyuproject.web.rest.ApplicationServletContextListener</listener-class>
+  </listener>
+
+}}}
+
+WEB-INF/application.json
+{{{
+{
+  "loginInterceptor":
+  {
+    "class": "com.dyuproject.demos.todolist.service.LoginInterceptor"
+  },
+  "webContext":
+  {
+    "class": "com.dyuproject.web.rest.service.RESTServiceContext",
+    "viewDispatchers":
+    {
+      "json":
+      {
+        "class": "com.dyuproject.web.rest.JSONDispatcher",
+        "addClass": false
+      }
+    },
+    "interceptors":
+    {
+      "/overview": $loginInterceptor,
+      "/account/**": $loginInterceptor
+    },
+    "services":
+    [
+      {
+        "class": "com.dyuproject.demos.todolist.service.MainService"
+      },
+      {
+        "class": "com.dyuproject.demos.todolist.service.UserService"
+      },
+      {
+        "class": "com.dyuproject.demos.todolist.service.TodoService"
+      }
+    ]
+  }
+}
+
+}}}
+
+*3.* Through Spring IOC
 
 {{{
 
