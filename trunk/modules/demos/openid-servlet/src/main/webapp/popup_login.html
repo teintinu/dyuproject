@@ -42,7 +42,7 @@ function getCenteredCoords(width, height) {
 }
 
 function handleOpenIDResponse(openid_args) {
-  $("#msg").html("<p>Verifying authentication ...</p>");
+  $("#msg").hide().html("<p>Verifying authentication ...</p>").show(2000);
   $.ajax({
     type: "POST",
     url: "/popup_verify/",
@@ -51,7 +51,7 @@ function handleOpenIDResponse(openid_args) {
     success: function(user){
      $("#login").hide();
      $("#logout").show();
-     $("#msg").html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>");
+     $("#msg").hide().html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>").show(2000);
     },
     error: function(xhr, errStatus, errMessage) {
       $("#msg").html("<p class='red'>Login failed.  Please try again.</p>");
@@ -74,7 +74,7 @@ $(function(){
       success: function(text){
         $("#logout").hide();
         $("#login").show();
-        $("#msg").html("<p>You are currently not logged in.</p>");
+        $("#msg").hide().html("<p>You are currently not logged in.</p>").show(2000);
       }
     });
   });
@@ -85,7 +85,7 @@ $(function(){
     success: function(user){
      $("#login").hide();
      $("#logout").show();
-     $("#msg").html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>");
+     $("#msg").hide().html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>").show(2000);
     },
     error: function(xhr, errStatus, errMessage) {
       $("#logout").hide();
