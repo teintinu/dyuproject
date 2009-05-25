@@ -5,13 +5,13 @@ This is based on [http://www.sociallipstick.com/2009/02/?y%/how-to-accept-openid
 
 ==Setting it up===
 
-Files required:
+Files required (browse [http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/src/main/webapp here]):
  * WEB-INF/web.xml
  * popup_login.html
  * popup_verify.html
  * login.jsp 
 
-They are browse them [http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/src/main/webapp here]
+
 
 {{{PopupVerifyServlet.java}}}
 {{{
