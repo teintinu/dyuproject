@@ -44,9 +44,8 @@ function getCenteredCoords(width, height) {
 function handleOpenIDResponse(openid_args) {
   $("#msg").hide().html("<p>Verifying authentication ...</p>").show(2000);
   $.ajax({
-    type: "POST",
-    url: "/popup_verify/",
-    data: openid_args,
+    type: "GET",
+    url: "/popup_verify/?" + openid_args,
     dataType: "json",
     success: function(user){
      $("#login").hide();
