@@ -3,15 +3,15 @@
 
 This is based on [http://www.sociallipstick.com/2009/02/?y%/how-to-accept-openid-in-a-popup-without-leaving-the-page/]
 
+See it live at [http://dyuproject.appspot.com/popup_login.html]
+
 ==Setting it up===
 
 Files required (browse [http://dyuproject.googlecode.com/svn/trunk/modules/demos/openid-servlet/src/main/webapp here]):
  * WEB-INF/web.xml
+ * login.jsp
  * popup_login.html
  * popup_verify.html
- * login.jsp 
-
-
 
 {{{PopupVerifyServlet.java}}}
 {{{
@@ -149,6 +149,28 @@ public class PopupVerifyServlet extends HttpServlet
     
 </web-app>
 
+}}}
+
+{{{login.jsp}}}
+{{{
+<%@ page session="false" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Login</title>
+</head>
+<body>
+<div id="container">
+  <div style="color:red;font-size:1.4em">&nbsp;${openid_servlet_filter_msg}</div>
+  <p>Login with your <span style="color:orange">openid</span></p>
+  <form method="POST">
+    <input id="openid_identifier" name="openid_identifier" type="text" size=80/>
+    <input class="btn" type="submit" value="send"/>
+  </form>
+</div>
+
+</body>
+</html>
 }}}
 
 {{{popup_verify.html}}}
