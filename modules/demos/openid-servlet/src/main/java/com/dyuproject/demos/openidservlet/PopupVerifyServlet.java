@@ -41,23 +41,17 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 public class PopupVerifyServlet extends HttpServlet
 {
     
-    RelyingParty _relyingParty = RelyingParty.getInstance();
-    
-    public void init()
-    {
-        _relyingParty.addListener(new RelyingParty.Listener()
+    RelyingParty _relyingParty = RelyingParty.getInstance()
+        .addListener(new RelyingParty.Listener()
         {
             public void onAccess(OpenIdUser user, HttpServletRequest request)
-            {
-                
+            {                
             }
             public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
-            {
-                
+            {                
             }
             public void onDiscovery(OpenIdUser user, HttpServletRequest request)
-            {
-                
+            {                
             }
             public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request, 
                     UrlEncodedParameterMap params)
@@ -71,9 +65,8 @@ public class PopupVerifyServlet extends HttpServlet
                     params.put("openid.ns.ui", "http://specs.openid.net/extensions/ui/1.0");
                     params.put("openid.ui.mode", "popup");
                 }
-            }            
+            } 
         });
-    }
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException

@@ -42,18 +42,10 @@ import com.dyuproject.openid.ext.SRegConfigListener;
 public class HomeServlet extends HttpServlet
 {
 
-    RelyingParty _relyingParty = RelyingParty.getInstance();
-    
-    public void init()
-    {
-        // enable sreg attribute exchange
-        _relyingParty.addListener(new SRegConfigListener());
-        
-        // enable google account attribute exchange
-        _relyingParty.addListener(new GoogleAccountConfigListener());
-        
-        // custom listener
-        _relyingParty.addListener(new RelyingParty.Listener()
+    RelyingParty _relyingParty = RelyingParty.getInstance()
+        .addListener(new SRegConfigListener())
+        .addListener(new GoogleAccountConfigListener())
+        .addListener(new RelyingParty.Listener()
         {
             public void onDiscovery(OpenIdUser user, HttpServletRequest request)
             {
@@ -86,9 +78,8 @@ public class HomeServlet extends HttpServlet
                 if(sreg!=null)
                     System.err.print(" aka " + sreg.getNickname());
                 System.err.print("\n");
-            }            
+            }   
         });
-    }    
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
