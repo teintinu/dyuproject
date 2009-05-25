@@ -27,6 +27,17 @@
     <url-pattern>/logout/</url-pattern>
   </servlet-mapping>
   
+  <servlet>
+    <servlet-name>popup-verify-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.openidservlet.PopupVerifyServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>popup-verify-servlet</servlet-name>
+    <url-pattern>/popup_verify/</url-pattern>
+  </servlet-mapping>
+  
   <filter>
     <filter-name>openid-filter</filter-name>
     <filter-class>com.dyuproject.openid.OpenIdServletFilter</filter-class>
