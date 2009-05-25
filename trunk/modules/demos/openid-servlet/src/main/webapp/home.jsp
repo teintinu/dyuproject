@@ -28,6 +28,7 @@
   <p>
     Welcome <span style="color:green">${openid_user.claimedId}</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="<c:url value="/logout/"/>">logout</a></span>
   </p>
+  <p><a href="/popup_login.html">/popup_login.html</a> <span style="font-size:.8em">Signing in without refreshing or leaving the page</span></p>
 </div>
 </body>
 </html>
