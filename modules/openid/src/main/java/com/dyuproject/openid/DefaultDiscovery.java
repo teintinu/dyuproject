@@ -23,13 +23,12 @@ package com.dyuproject.openid;
  * @created Sep 23, 2008
  */
 
-public class DefaultDiscovery implements Discovery
+public class DefaultDiscovery extends ChainedDiscovery
 {
-
-    public OpenIdUser discover(Identifier identifier, OpenIdContext context) throws Exception
+    
+    public DefaultDiscovery()
     {
-        OpenIdUser user = YadisDiscovery.tryDiscover(identifier, context);
-        return user==null ? HtmlBasedDiscovery.tryDiscover(identifier, context) : user;
+        add(new YadisDiscovery()).add(new HtmlBasedDiscovery());
     }
 
 }
