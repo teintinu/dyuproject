@@ -26,9 +26,28 @@ import java.util.Stack;
 
 public class SimpleHandler implements LazyHandler
 {
+    
+    private static final boolean __trimText = !"false".equals(System.getProperty(
+            "simplehandler.trimText"));
 
     private Stack<Node> _stack = new Stack<Node>();
     private Node _root;
+    private boolean _trimText = __trimText;
+    
+    public SimpleHandler()
+    {
+        
+    }
+    
+    public SimpleHandler(boolean trimText)
+    {
+        _trimText = trimText;
+    }
+    
+    public boolean isTrimText()
+    {
+        return _trimText;
+    }
     
     public Node getNode()
     {
@@ -62,7 +81,17 @@ public class SimpleHandler implements LazyHandler
 
     public void characters(char[] data, int start, int length)
     {
-        _stack.peek().addText(data, start, length);            
+        if(_trimText)
+        {
+            for(int end=start+length; end>start && Character.isWhitespace(data[--end]); length--);                
+            
+            if(length!=0)
+                _stack.peek().addText(data, start, length);
+        }
+        else
+        {
+            _stack.peek().addText(data, start, length);
+        }         
     }
 
 }
