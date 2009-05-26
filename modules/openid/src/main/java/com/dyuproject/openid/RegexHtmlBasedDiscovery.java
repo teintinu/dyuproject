@@ -80,7 +80,6 @@ public class RegexHtmlBasedDiscovery implements Discovery
             Matcher matcher = __pattern.matcher(line);
             if(matcher.find())
             {
-                System.err.println(line);
                 Boolean isServer = __suffixMap.get(matcher.group(1).trim());
                 if(isServer!=null)
                 {
