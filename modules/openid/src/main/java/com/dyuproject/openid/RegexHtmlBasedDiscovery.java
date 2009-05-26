@@ -88,25 +88,28 @@ public class RegexHtmlBasedDiscovery implements Discovery
                     if(idx!=-1)
                     {
                         char c = line.charAt(idx+__lookup.length());
-                        String value = line.substring(idx+__lookup.length()+1, 
-                                line.indexOf(c, idx+__lookup.length()+1)).trim();
-                        if(isServer.booleanValue())
+                        int start = idx+__lookup.length()+1;
+                        String value = line.substring(start, line.indexOf(c, start)).trim();
+                        if(value.length()!=0)
                         {
-                            openIdServer = value;
-                            parsedServer = true;
-                            if(openIdDelegate!=null)
+                            if(isServer.booleanValue())
                             {
-                                new OpenIdUser(identifier.getId(), identifier.getId(), 
-                                        openIdServer, openIdDelegate);
+                                openIdServer = value;
+                                parsedServer = true;
+                                if(openIdDelegate!=null)
+                                {
+                                    new OpenIdUser(identifier.getId(), identifier.getId(), 
+                                            openIdServer, openIdDelegate);
+                                }
                             }
-                        }
-                        else
-                        {
-                            openIdDelegate = value;
-                            if(openIdServer!=null)
+                            else
                             {
-                                new OpenIdUser(identifier.getId(), identifier.getId(), 
-                                        openIdServer, openIdDelegate);
+                                openIdDelegate = value;
+                                if(openIdServer!=null)
+                                {
+                                    new OpenIdUser(identifier.getId(), identifier.getId(), 
+                                            openIdServer, openIdDelegate);
+                                }
                             }
                         }                        
                     }
