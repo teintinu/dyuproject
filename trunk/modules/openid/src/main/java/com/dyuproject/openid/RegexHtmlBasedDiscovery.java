@@ -33,7 +33,7 @@ public class RegexHtmlBasedDiscovery implements Discovery
     
     static final Pattern __pattern = Pattern.compile("rel=['\"]openid2?\\.(\\w+)['\"]");
     
-    static final HashMap<String,Boolean> __suffixMap = new HashMap<String,Boolean>();
+    static final HashMap<String,Boolean> __suffixMap = new HashMap<String,Boolean>(6);
     
     private static final String __lookup = "href=";
     
@@ -78,6 +78,7 @@ public class RegexHtmlBasedDiscovery implements Discovery
         while((line=br.readLine())!=null)
         {
             Matcher matcher = __pattern.matcher(line);
+            boolean parsedServer = false;
             if(matcher.find())
             {
                 Boolean isServer = __suffixMap.get(matcher.group(1).trim());
@@ -92,6 +93,7 @@ public class RegexHtmlBasedDiscovery implements Discovery
                         if(isServer.booleanValue())
                         {
                             openIdServer = value;
+                            parsedServer = true;
                             if(openIdDelegate!=null)
                             {
                                 new OpenIdUser(identifier.getId(), identifier.getId(), 
@@ -110,6 +112,13 @@ public class RegexHtmlBasedDiscovery implements Discovery
                     }
                 }
             }
+            else if(parsedServer)
+            {
+                // the <link rel='openid.suffix'> tags are expected to be next to each other.
+                return new OpenIdUser(identifier.getId(), identifier.getId(), 
+                        openIdServer, openIdDelegate);
+            }
+                
         }
         return openIdServer==null ? null : new OpenIdUser(identifier.getId(), identifier.getId(), 
                 openIdServer, openIdDelegate);

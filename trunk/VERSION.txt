@@ -1,7 +1,7 @@
 dyuproject-1.1-SNAPSHOT
 + fix openid association bug when the openid.server contains query parameters
 + new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
-+ HtmlBasedDiscovery is non-optimized by default due to <link> not grouped together for other sites.
++ significantly faster openid Discovery
 + CDATA support for XMLParser 
 
 dyuproject-1.1.3 2009-03-18

@@ -29,7 +29,7 @@ public class HtmlBasedDiscoveryTest extends TestCase
         doDiscovery(newContext(new HtmlBasedDiscovery()), "http://davidyu.myopenid.com");
     }
     
-    public void $testDiscovery2() throws Exception
+    public void testDiscovery2() throws Exception
     {
         doDiscovery(newContext(new HtmlBasedDiscovery()), "http://davidyuftw.blogspot.com");
     }
@@ -67,7 +67,7 @@ public class HtmlBasedDiscoveryTest extends TestCase
         Identifier identifier = Identifier.getIdentifier(url, null, context);
         OpenIdUser user = context.getDiscovery().discover(identifier, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
-        System.err.println(user.getOpenIdServer());
+        System.err.println(user.getOpenIdServer() + " | " + user.getOpenIdDelegate());
     }
 
 }
