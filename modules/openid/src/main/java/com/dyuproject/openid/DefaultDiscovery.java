@@ -28,7 +28,7 @@ public class DefaultDiscovery extends ChainedDiscovery
     
     public DefaultDiscovery()
     {
-        add(new YadisDiscovery()).add(new HtmlBasedDiscovery());
+        add(new YadisDiscovery()).add(new RegexHtmlBasedDiscovery());
     }
 
 }
