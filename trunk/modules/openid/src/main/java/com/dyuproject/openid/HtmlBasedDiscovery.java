@@ -31,7 +31,7 @@ import com.dyuproject.util.xml.XMLParser;
 public class HtmlBasedDiscovery implements Discovery
 {
     
-    private static boolean __optimized = !"false".equals(System.getProperty("hbd.optimized"));
+    private static boolean __optimized = Boolean.getBoolean("hbd.optimized");
     
     public static void setOptimized(boolean optmized)
     {

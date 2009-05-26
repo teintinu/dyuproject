@@ -233,8 +233,8 @@ public class RelyingParty
             identity = user.getClaimedId();
         
         StringBuilder buffer = new StringBuilder().append(user.getOpenIdServer());        
-        
-        buffer.append('?').append(Constants.OPENID_NS).append('=').append(Constants.DEFAULT_NS);
+        char separator = user.getOpenIdServer().indexOf('?')==-1 ? '?' : '&';
+        buffer.append(separator).append(Constants.OPENID_NS).append('=').append(Constants.DEFAULT_NS);
         
         buffer.append('&').append(Constants.OPENID_MODE).append('=').append(
                 Constants.Mode.CHECKID_SETUP);

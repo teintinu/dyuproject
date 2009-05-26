@@ -90,7 +90,7 @@ public class SimpleHttpConnector implements HttpConnector
     throws IOException
     {
         StringBuilder buffer = new StringBuilder().append(url);
-        char separator = '?';
+        char separator = url.lastIndexOf('?')==-1 ? '?' : '&';
         for(Map.Entry<?,?> entry : parameters.entrySet())
         {
             buffer.append(separator).append(entry.getKey()).append('=').append(
@@ -110,7 +110,7 @@ public class SimpleHttpConnector implements HttpConnector
     throws IOException
     {
         StringBuilder buffer = new StringBuilder().append(url);
-        char separator = '?';
+        char separator = url.lastIndexOf('?')==-1 ? '?' : '&';
         for(Map.Entry<?,?> entry : parameters.entrySet())
         {
             buffer.append(separator).append(entry.getKey()).append('=').append(

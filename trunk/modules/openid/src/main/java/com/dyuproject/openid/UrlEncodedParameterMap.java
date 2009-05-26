@@ -44,7 +44,7 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
     public String toString()
     {
         StringBuilder buffer = new StringBuilder().append(getUrl());
-        char separator = '?';
+        char separator = getUrl().lastIndexOf('?')==-1 ? '?' : '&';
         for(Map.Entry<String,String> entry : entrySet())
         {
             buffer.append(separator).append(entry.getKey()).append('=').append(UrlEncoded.encodeString(entry.getValue()));            
