@@ -55,5 +55,30 @@ public class XMLParserTest extends TestCase
             con.disconnect();
         }   
     }
+    
+    public void testTrimAndCDATA() throws Exception
+    {
+        SimpleHandler handler = new SimpleHandler();
+        InputStreamReader reader = new InputStreamReader(
+                Thread.currentThread().getContextClassLoader().getResource("xrds").openStream());
+        try
+        {
+            XMLParser.parse(reader, handler, true);
+            Node xrds = handler.getNode();
+            assertEquals("xrds", xrds.getNamespace());
+            Node xrd = xrds.getNode("xrd");
+            Node service = xrd.getNode("service");
+            assertTrue(0!=service.getNodes("type").size());
+            assertEquals("xrds", service.getLastNode().getNamespace());
+            Node foo = xrds.getNode("FOO");
+            assert(foo!=null);
+            assertEquals(foo.getText().toString(), "I am a cdata text. yep\nyep");
+            System.err.println(foo.getText().toString());
+        }
+        finally
+        {
+            reader.close();
+        }        
+    }
 
 }
