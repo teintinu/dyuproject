@@ -31,18 +31,6 @@ import com.dyuproject.util.xml.XMLParser;
 public class HtmlBasedDiscovery implements Discovery
 {
     
-    private static boolean __optimized = Boolean.getBoolean("hbd.optimized");
-    
-    public static void setOptimized(boolean optmized)
-    {
-        __optimized = optmized;
-    }
-    
-    public static boolean isOptimized()
-    {
-        return __optimized;
-    }
-    
     static final String CHECKED_PREFIX = "openid";
     static final String SERVER = "server";
     static final String DELEGATE = "delegate";    
@@ -95,7 +83,7 @@ public class HtmlBasedDiscovery implements Discovery
     
     static OpenIdUser parse(Identifier identifier, InputStreamReader reader) throws Exception
     {
-        XmlHandler handler = __optimized ? new OptimizedXmlHandler() : new XmlHandler();
+        XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, false);
         return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
                 identifier.getId(), handler._openIdServer, handler._openIdDelegate);        
@@ -172,10 +160,10 @@ public class HtmlBasedDiscovery implements Discovery
             if(_headFound)
             {
                 _link = LINK.equalsIgnoreCase(name);
+                _searching = _openIdServer==null;
                 return true;
             }
-            _headFound = HEAD.equalsIgnoreCase(name);
-            return _headFound;
+            return (_headFound = HEAD.equalsIgnoreCase(name));
         }
 
         public boolean endElement()
@@ -238,26 +226,6 @@ public class HtmlBasedDiscovery implements Discovery
             // not needed as we're not parsing innerText            
         }
         
-    }
-    
-    static class OptimizedXmlHandler extends XmlHandler
-    {
-        public boolean startElement(String name, String namespace)
-        {            
-            _stack++;
-            if(_headFound)
-            {
-                boolean lastLink = _link;
-                _link = LINK.equalsIgnoreCase(name);
-                // assumes that the link tags are grouped together.
-                // this way it doesn't have to parse the whole document
-                // some link tags do not end with "/>" ... but ">" instead
-                // handling on endElement() wont be used because of that
-                return _link || !lastLink;                
-            }
-            _headFound = HEAD.equalsIgnoreCase(name);
-            return _headFound;
-        }
     }
     
     /*public static void main(String[] args)
