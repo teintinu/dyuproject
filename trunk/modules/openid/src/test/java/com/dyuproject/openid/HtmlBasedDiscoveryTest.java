@@ -45,5 +45,27 @@ public class HtmlBasedDiscoveryTest extends TestCase
         System.err.println(user.getOpenIdServer());
         System.err.println(user.getOpenIdDelegate());
     }
+    
+    public void testRegexDiscovery() throws Exception
+    {        
+        OpenIdContext context = new OpenIdContext();
+        context.setHttpConnector(new SimpleHttpConnector());
+        context.setDiscovery(new RegexHtmlBasedDiscovery());
+        Identifier identifier = Identifier.getIdentifier("http://davidyu.myopenid.com", null, context);
+        OpenIdUser user = context.getDiscovery().discover(identifier, context);
+        assertTrue(user!=null && user.getOpenIdServer()!=null);
+    }
+    
+    public void testRegexDiscovery2() throws Exception
+    {        
+        OpenIdContext context = new OpenIdContext();
+        context.setHttpConnector(new SimpleHttpConnector());
+        context.setDiscovery(new RegexHtmlBasedDiscovery());
+        Identifier identifier = Identifier.getIdentifier("http://ct15.wordpress.com", null, context);
+        OpenIdUser user = context.getDiscovery().discover(identifier, context);
+        assertTrue(user!=null && user.getOpenIdServer()!=null);
+        System.err.println(user.getOpenIdServer());
+        System.err.println(user.getOpenIdDelegate());
+    }
 
 }
