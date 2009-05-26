@@ -24,48 +24,50 @@ import junit.framework.TestCase;
 public class HtmlBasedDiscoveryTest extends TestCase
 {
     
-    public void testDiscovery() throws Exception
-    {        
-        OpenIdContext context = new OpenIdContext();
-        context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(new HtmlBasedDiscovery());
-        Identifier identifier = Identifier.getIdentifier("http://davidyu.myopenid.com", null, context);
-        OpenIdUser user = context.getDiscovery().discover(identifier, context);
-        assertTrue(user!=null && user.getOpenIdServer()!=null);
+    public void testDiscovery1() throws Exception
+    {
+        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://davidyu.myopenid.com");
     }
     
-    public void testDiscoveryWithCDATA() throws Exception
-    {        
-        OpenIdContext context = new OpenIdContext();
-        context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(new HtmlBasedDiscovery());
-        Identifier identifier = Identifier.getIdentifier("http://ct15.wordpress.com", null, context);
-        OpenIdUser user = context.getDiscovery().discover(identifier, context);
-        assertTrue(user!=null && user.getOpenIdServer()!=null);
-        System.err.println(user.getOpenIdServer());
-        System.err.println(user.getOpenIdDelegate());
+    public void $testDiscovery2() throws Exception
+    {
+        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://davidyuftw.blogspot.com");
     }
     
-    public void testRegexDiscovery() throws Exception
-    {        
-        OpenIdContext context = new OpenIdContext();
-        context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(new RegexHtmlBasedDiscovery());
-        Identifier identifier = Identifier.getIdentifier("http://davidyu.myopenid.com", null, context);
-        OpenIdUser user = context.getDiscovery().discover(identifier, context);
-        assertTrue(user!=null && user.getOpenIdServer()!=null);
+    public void testDiscovery3() throws Exception
+    {
+        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://ct15.wordpress.com");
+    }
+    
+    public void testRegexDiscovery1() throws Exception
+    {
+        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://davidyu.myopenid.com");
     }
     
     public void testRegexDiscovery2() throws Exception
-    {        
+    {
+        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://davidyuftw.blogspot.com");
+    }
+    
+    public void testRegexDiscovery3() throws Exception
+    {
+        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://ct15.wordpress.com");
+    }
+    
+    static OpenIdContext newContext(Discovery discovery)
+    {
         OpenIdContext context = new OpenIdContext();
         context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(new RegexHtmlBasedDiscovery());
-        Identifier identifier = Identifier.getIdentifier("http://ct15.wordpress.com", null, context);
+        context.setDiscovery(discovery);
+        return context;
+    }
+    
+    static void doDiscovery(OpenIdContext context, String url) throws Exception
+    {
+        Identifier identifier = Identifier.getIdentifier(url, null, context);
         OpenIdUser user = context.getDiscovery().discover(identifier, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
         System.err.println(user.getOpenIdServer());
-        System.err.println(user.getOpenIdDelegate());
     }
 
 }
