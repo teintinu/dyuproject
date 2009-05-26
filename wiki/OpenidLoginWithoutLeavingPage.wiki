@@ -1,7 +1,10 @@
-#labels openid,popup,login,ajax
+#labels openid,popup,login,ajax,ui,extension
 =Openid Login Without Leaving Page=
 
 This is based on [http://www.sociallipstick.com/2009/02/?y%/how-to-accept-openid-in-a-popup-without-leaving-the-page/]
+
+This demo makes use of the extension [http://wiki.openid.net/f/openid_ui_extension_draft01.html
+]
 
 See it live at [http://dyuproject.appspot.com/popup_login.html]
 
