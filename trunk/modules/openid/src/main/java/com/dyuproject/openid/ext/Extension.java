@@ -14,7 +14,13 @@
 
 package com.dyuproject.openid.ext;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
+import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
  * Extension for openid
@@ -28,5 +34,19 @@ public interface Extension extends RelyingParty.Listener
     
     public String getAlias();
     public String getNamespace();
+    
+    
+    public static interface Exchange
+    {
+        
+        public String getAlias();
+        
+        public void put(OpenIdUser user, HttpServletRequest request,
+                UrlEncodedParameterMap params, String alias);
+        
+        public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
+                Map<String,String> attributes, String alias);
+        
+    }
 
 }
