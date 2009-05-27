@@ -145,6 +145,9 @@ public class DiffieHellmanAssociation implements Association
             String v = authRedirect.get("openid."+s);
             if(v==null)
                 throw new IllegalStateException("invalid signature from openid provider");
+            // extension
+            if(s.startsWith("ns."))
+                user.addExtension(v, s.substring(3));
             buffer.append(s).append(':').append(v).append('\n');
         }        
         String generatedSig = null;

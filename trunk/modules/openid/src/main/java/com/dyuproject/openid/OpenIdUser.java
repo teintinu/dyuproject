@@ -15,7 +15,9 @@
 package com.dyuproject.openid;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mortbay.util.ajax.JSON;
@@ -42,6 +44,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     
     private Map<String,Object> _associationData;
     private Map<String,Object> _attributes;
+    private Map<String,String> _extensions;
     
     public OpenIdUser()
     {
@@ -154,6 +157,24 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     public boolean removeAttribute(String name)
     {
         return _attributes!=null && _attributes.remove(name)!=null;
+    }
+    
+    public Map<String,String> getExtensions()
+    {
+        return _extensions;
+    }
+    
+    public void addExtension(String namespace, String alias)
+    {
+        if(_extensions==null)
+            _extensions = new HashMap<String,String>(3);
+        
+        _extensions.put(namespace, alias);
+    }
+    
+    public String getExtension(String namespace)
+    {
+        return _extensions==null ? null : _extensions.get(namespace);
     }
 
     public void fromJSON(Map map)
