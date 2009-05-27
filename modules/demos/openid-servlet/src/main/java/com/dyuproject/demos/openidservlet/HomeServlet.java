@@ -17,6 +17,7 @@ package com.dyuproject.demos.openidservlet;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -27,10 +28,8 @@ import com.dyuproject.openid.OpenIdServletFilter;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.openid.UrlEncodedParameterMap;
-import com.dyuproject.openid.ext.GoogleAccount;
-import com.dyuproject.openid.ext.GoogleAccountConfigListener;
-import com.dyuproject.openid.ext.SReg;
-import com.dyuproject.openid.ext.SRegConfigListener;
+import com.dyuproject.openid.ext.AxSchemaExtension;
+import com.dyuproject.openid.ext.SRegExtension;
 
 /**
  * Home Servlet. If authenticated, goes to the home page. If not, goes to the login page.
@@ -43,8 +42,16 @@ public class HomeServlet extends HttpServlet
 {
 
     RelyingParty _relyingParty = RelyingParty.getInstance()
-        .addListener(new SRegConfigListener())
-        .addListener(new GoogleAccountConfigListener())
+        .addListener(new SRegExtension()
+            .addExchange("email")
+            .addExchange("country")
+            .addExchange("language")
+        )
+        .addListener(new AxSchemaExtension()
+            .addExchange("email")
+            .addExchange("country")
+            .addExchange("language")
+        )
         .addListener(new RelyingParty.Listener()
         {
             public void onDiscovery(OpenIdUser user, HttpServletRequest request)
@@ -58,26 +65,24 @@ public class HomeServlet extends HttpServlet
             }            
             public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
             {
-
-                System.err.print("newly authenticated user: " + user.getIdentity());
-                SReg sreg = SReg.get(user);
-                if(sreg!=null)
-                    System.err.print(" aka " + sreg.getNickname());
-                else
+                System.err.println("newly authenticated user: " + user.getIdentity());
+                Map<String,String> sreg = SRegExtension.remove(user);
+                Map<String,String> axschema = AxSchemaExtension.remove(user);
+                if(sreg!=null && !sreg.isEmpty())
                 {
-                    GoogleAccount ga = GoogleAccount.get(user);
-                    if(ga!=null)
-                        System.err.print(" aka " + ga.getEmail());
+                    System.err.println("sreg: " + sreg);
+                    user.setAttribute("info", sreg);
                 }
-                System.err.print("\n");            
+                else if(axschema!=null && !axschema.isEmpty())
+                {                    
+                    System.err.println("axschema: " + axschema);
+                    user.setAttribute("info", axschema);
+                }          
             }            
             public void onAccess(OpenIdUser user, HttpServletRequest request)
             {        
-                System.err.print("user access: " + user.getIdentity());
-                SReg sreg = SReg.get(user);
-                if(sreg!=null)
-                    System.err.print(" aka " + sreg.getNickname());
-                System.err.print("\n");
+                System.err.println("user access: " + user.getIdentity());
+                System.err.println("info: " + user.getAttribute("info"));
             }   
         });
     
