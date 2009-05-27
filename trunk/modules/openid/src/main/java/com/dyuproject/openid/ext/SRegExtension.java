@@ -105,23 +105,24 @@ public class SRegExtension extends AbstractExtension
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
         String alias = user.getExtension(getNamespace());
-        if(alias!=null)
+        if(alias!=null || NAMESPACE.equals(request.getParameter(NS_KEY)))
         {
             Map<String,String> attributes = new HashMap<String,String>(new Double(_exchanges.size()/.75).intValue()+1);
-            user.setAttribute("sreg", attributes);
+            user.setAttribute(ATTR_NAME, attributes);
             for(Exchange e : _exchanges.values())
-                e.parseAndPut(user, request, attributes, alias);
+                e.parseAndPut(user, request, attributes, getAlias());
         }
     }
     
     public static class SimpleExchange implements Exchange
     {
         
-        private String _alias;
+        private String _alias, _key;
         
         public SimpleExchange(String alias)
         {
             _alias = alias;
+            _key = "openid.sreg." + _alias;
         }
 
         public String getAlias()
@@ -138,7 +139,7 @@ public class SRegExtension extends AbstractExtension
         public void parseAndPut(OpenIdUser user, HttpServletRequest request,
                 Map<String, String> attributes, String alias)
         {
-            String value = request.getParameter("openid." + alias + "." + _alias);
+            String value = request.getParameter(_key);
             if(value!=null)
                 attributes.put(_alias, value);
         }
