@@ -21,10 +21,12 @@ import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
+ * Sets the GoogleAccount parameters
+ * 
  * @author David Yu
  * @created Feb 16, 2009
  */
-
+@Deprecated
 public class GoogleAccountConfigListener implements RelyingParty.Listener
 {
 

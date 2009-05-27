@@ -31,6 +31,7 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
  */
 
 @SuppressWarnings("serial")
+@Deprecated
 public class GoogleAccount implements Serializable, JSON.Convertible
 {
     

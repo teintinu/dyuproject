@@ -21,10 +21,12 @@ import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
+ * Sets the sreg parameters
+ * 
  * @author David Yu
  * @created Jan 8, 2009
  */
-
+@Deprecated
 public class SRegConfigListener implements RelyingParty.Listener
 {
 

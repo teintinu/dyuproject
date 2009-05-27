@@ -27,11 +27,15 @@ import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
+ * Simple Registration
+ * See http://openid.net/specs/openid-simple-registration-extension-1_1-01.html
+ * 
  * @author David Yu
  * @created Jan 8, 2009
  */
 
 @SuppressWarnings("serial")
+@Deprecated
 public class SReg implements Serializable, JSON.Convertible
 {
     
