@@ -25,6 +25,9 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 import com.dyuproject.util.ClassLoaderUtil;
 
 /**
+ * AxSchema Extension for http://www.axschema.org/types/
+ * See also http://openid.net/specs/openid-attribute-exchange-1_0-05.html
+ * 
  * @author David Yu
  * @created May 27, 2009
  */
