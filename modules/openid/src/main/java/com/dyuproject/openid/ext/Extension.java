@@ -17,6 +17,8 @@ package com.dyuproject.openid.ext;
 import com.dyuproject.openid.RelyingParty;
 
 /**
+ * Extension for openid
+ * 
  * @author David Yu
  * @created May 27, 2009
  */

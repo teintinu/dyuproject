@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.dyuproject.openid.OpenIdUser;
 
 /**
+ * Base class for extensions
+ * 
  * @author David Yu
  * @created May 27, 2009
  */
