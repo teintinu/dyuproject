@@ -105,11 +105,13 @@ public class AxSchemaExtension extends AbstractExtension
 
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
-        String alias = user.getExtension(getNamespace());
+        String alias = user.getExtension(getNamespace());        
         if(alias!=null && MODE_RESPONSE.equals(request.getParameter("openid." + alias + ".mode")))
         {
+            Map<String,String> axschema = new HashMap<String,String>(new Double(_exchanges.size()/.75).intValue()+1);
+            user.setAttribute("axschema", axschema);
             for(Exchange e : _exchanges.values())
-                e.parse(user, request, alias);
+                e.parseAndPut(user, request, axschema, alias);
         }
     }
     
@@ -121,7 +123,8 @@ public class AxSchemaExtension extends AbstractExtension
         public void put(OpenIdUser user, HttpServletRequest request,
                 UrlEncodedParameterMap params, String alias);
         
-        public void parse(OpenIdUser user, HttpServletRequest request, String alias);
+        public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
+                Map<String,String> attibutes, String alias);
         
     }
     
@@ -146,11 +149,12 @@ public class AxSchemaExtension extends AbstractExtension
             params.put("openid." + alias + ".type." + getAlias(), getNamespace());
         }
         
-        public void parse(OpenIdUser user, HttpServletRequest request, String alias)
+        public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
+                Map<String,String> axschema, String alias)
         {
             String value = request.getParameter("openid." + alias + ".value." + getAlias());
             if(value!=null)
-                user.setAttribute(getAlias(), value);
+                axschema.put(getAlias(), value);
         }
         
         public abstract String getNamespace();
