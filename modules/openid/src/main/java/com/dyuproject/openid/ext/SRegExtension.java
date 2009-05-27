@@ -68,6 +68,7 @@ public class SRegExtension extends AbstractExtension
     }
     
     private Map<String,Exchange> _exchanges = new HashMap<String,Exchange>();
+    private String _checkKey;
     
     public SRegExtension()
     {
@@ -87,6 +88,9 @@ public class SRegExtension extends AbstractExtension
     
     protected SRegExtension addExchange(Exchange exchange)
     {
+        // 1 single test key (email recommended)
+        if(_exchanges.size()==0)
+            _checkKey = "openid.sreg." + exchange.getAlias();
         _exchanges.put(exchange.getAlias(), exchange);
         return this;
     }
@@ -105,7 +109,8 @@ public class SRegExtension extends AbstractExtension
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
         String alias = user.getExtension(getNamespace());
-        if(alias!=null || NAMESPACE.equals(request.getParameter(NS_KEY)))
+        if(alias!=null || NAMESPACE.equals(request.getParameter(NS_KEY)) 
+                || request.getParameter(_checkKey)!=null)
         {
             Map<String,String> attributes = new HashMap<String,String>(new Double(_exchanges.size()/.75).intValue()+1);
             user.setAttribute(ATTR_NAME, attributes);
