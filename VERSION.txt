@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ customizable axschema extension (specifying only the parameters needed)
 + fix openid association bug when the openid.server contains query parameters
 + new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
 + significantly faster html-based discovery
