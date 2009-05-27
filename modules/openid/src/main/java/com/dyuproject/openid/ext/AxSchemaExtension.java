@@ -38,6 +38,7 @@ public class AxSchemaExtension extends AbstractExtension
     public static final String NAMESPACE = "http://openid.net/srv/ax/1.0";
     public static final String MODE_REQUEST = "fetch_request";
     public static final String MODE_RESPONSE = "fetch_response";
+    public static final String ATTR_NAME = "axschema";
     
     private static final Properties __axschemaConfig = new Properties();
     
@@ -82,7 +83,7 @@ public class AxSchemaExtension extends AbstractExtension
         return addExchange(new SimpleExchange(alias, namespace));
     }
     
-    public AxSchemaExtension addExchange(Exchange exchange)
+    protected AxSchemaExtension addExchange(Exchange exchange)
     {
         _exchanges.put(exchange.getAlias(), exchange);
         return this;
@@ -108,24 +109,11 @@ public class AxSchemaExtension extends AbstractExtension
         String alias = user.getExtension(getNamespace());        
         if(alias!=null && MODE_RESPONSE.equals(request.getParameter("openid." + alias + ".mode")))
         {
-            Map<String,String> axschema = new HashMap<String,String>(new Double(_exchanges.size()/.75).intValue()+1);
-            user.setAttribute("axschema", axschema);
+            Map<String,String> attributes = new HashMap<String,String>(new Double(_exchanges.size()/.75).intValue()+1);
+            user.setAttribute(ATTR_NAME, attributes);
             for(Exchange e : _exchanges.values())
-                e.parseAndPut(user, request, axschema, alias);
+                e.parseAndPut(user, request, attributes, alias);
         }
-    }
-    
-    public static interface Exchange
-    {
-        
-        public String getAlias();
-        
-        public void put(OpenIdUser user, HttpServletRequest request,
-                UrlEncodedParameterMap params, String alias);
-        
-        public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
-                Map<String,String> attibutes, String alias);
-        
     }
     
     public static abstract class AbstractExchange implements Exchange
@@ -150,11 +138,11 @@ public class AxSchemaExtension extends AbstractExtension
         }
         
         public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
-                Map<String,String> axschema, String alias)
+                Map<String,String> attributes, String alias)
         {
             String value = request.getParameter("openid." + alias + ".value." + getAlias());
             if(value!=null)
-                axschema.put(getAlias(), value);
+                attributes.put(getAlias(), value);
         }
         
         public abstract String getNamespace();
