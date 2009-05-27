@@ -25,6 +25,9 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 import com.dyuproject.util.ClassLoaderUtil;
 
 /**
+ * Simple Registration Extension
+ * See http://openid.net/specs/openid-simple-registration-extension-1_1-01.html
+ * 
  * @author David Yu
  * @created May 27, 2009
  */
