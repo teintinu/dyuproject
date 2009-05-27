@@ -74,8 +74,10 @@ public class AxSchemaExtension extends AbstractExtension
     
     public AxSchemaExtension addExchange(String alias, String namespace)
     {
+        if(alias==null)
+            throw new IllegalArgumentException("alias must be specified.");
         if(namespace==null)
-            throw new IllegalArgumentException("namespace not found");
+            throw new IllegalArgumentException("namespace for '" + alias + "' not found.");
         
         return addExchange(new SimpleExchange(alias, namespace));
     }
