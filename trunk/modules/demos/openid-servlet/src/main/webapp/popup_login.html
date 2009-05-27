@@ -6,12 +6,12 @@
  padding: 1em;
  font-family: Tahoma,Verdana;
 }
-.info {
+.top {
  color: #fff;
  padding: 0 5px;
  background-color: green;
 }
-.info p {
+.top p {
  font-size: 1.6em;
 }
 .green {
@@ -19,6 +19,9 @@
 }
 .red {
  color: red;
+}
+.init {
+ display: none;
 }
 </style>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
@@ -42,26 +45,35 @@ function getCenteredCoords(width, height) {
 }
 
 function handleOpenIDResponse(openid_args) {
-  $("#msg").hide().html("<p>Verifying authentication ...</p>").show();
+  $("#msg").html("<p>Verifying authentication ...</p>");
   $.ajax({
     type: "POST",
     url: "/popup_verify/",
     data: openid_args,
     dataType: "json",
     success: function(user){
-     $("#login").hide();
-     $("#logout").show();
-     $("#msg").hide().html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>").show(1500);
+      $("#content").hide();
+      $("#login").hide();
+      $("#logout").show();
+      $("#msg").html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>")
+      var renderDiv = $("#info > div").hide();
+      renderDiv.find("span").empty();
+      renderDiv.show();
+      var info = user.g ? user.g.info : {};
+      for(var i in info)
+        renderDiv.find("span." + i).html(info[i])
+      $("#content").show(1000);
     },
     error: function(xhr, errStatus, errMessage) {
+      $("#content").hide();
       $("#msg").html("<p class='red'>Login failed.  Please try again.</p>");
+      $("#info > div").hide().find("span").empty();
+      $("#content").show(1000);
     }
   });
 }
 
 $(function(){
-  $("#logout").hide();
-  $("#login").hide();
   $("#login").click(function(e){
     var w = window.open("/filtered.jsp?popup=true", "openid_popup", "width=450,height=500,location=1,status=1,resizable=yes");
     var coords = getCenteredCoords(450,500);
@@ -72,9 +84,12 @@ $(function(){
       type: "GET",
       url: "/popup_verify/?logout=true",
       success: function(text){
+        $("#content").hide();
         $("#logout").hide();
         $("#login").show();
-        $("#msg").hide().html("<p>You are currently not logged in.</p>").show(1500);
+        $("#msg").html("<p>You are currently not logged in.</p>");
+        $("#info > div").hide().find("span").empty();
+        $("#content").show(1000);
       }
     });
   });
@@ -83,14 +98,24 @@ $(function(){
     url: "/popup_verify/",
     dataType: "json",
     success: function(user){
-     $("#login").hide();
-     $("#logout").show();
-     $("#msg").hide().html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>").show(1500);
+      $(".init").hide().removeClass("init");
+      $("#login").hide();
+      $("#logout").show();
+      $("#msg").html("<p><span class='green'>" + user.b + "</span> is authenticated.</p>");
+      var renderDiv = $("#info > div").hide();
+      renderDiv.find("span").empty();
+      renderDiv.show();
+      var info = user.g ? user.g.info : {};
+      for(var i in info)
+        renderDiv.find("span." + i).html(info[i])
+      $("#content").show(1000);
     },
     error: function(xhr, errStatus, errMessage) {
       $("#logout").hide();
       $("#login").show();
       $("#msg").html("<p>You are currently not logged in.</p>");
+      $("#info > div").hide().find("span").empty();
+      $(".init").hide().removeClass("init").show(1000);
     }
   });
   
@@ -101,13 +126,18 @@ $(function(){
 </head>
 <body>
 <div id="container">
-  <div class="info">
+  <div class="top">
     <p>OpenID Login without refreshing or leaving the page</p>
   </div>
-  <div>
+  <div id="content" class="init">
     <button id="login">Login</button>
     <button id="logout">Logout</button>
     <div id="msg"></div>
+    <div id="info">
+      <div class="email">email: <span class="green email"></span></div>
+      <div class="country">country: <span class="green country"></span></div>
+      <div class="language">language: <span class="green language"></span></div>
+    </div>
   </div>
 </div>
 </body>
