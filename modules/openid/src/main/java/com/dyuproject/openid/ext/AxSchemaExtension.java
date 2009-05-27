@@ -40,6 +40,11 @@ public class AxSchemaExtension extends AbstractExtension
     public static final String MODE_RESPONSE = "fetch_response";
     public static final String ATTR_NAME = "axschema";
     
+    public static Map<String,String> get(OpenIdUser user)
+    {
+        return (Map<String,String>)user.getAttribute(ATTR_NAME);
+    }
+    
     private static final Properties __axschemaConfig = new Properties();
     
     static
