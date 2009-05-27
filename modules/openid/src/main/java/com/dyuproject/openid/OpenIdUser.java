@@ -154,9 +154,9 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         return _attributes==null ? null : _attributes.get(name);
     }
     
-    public boolean removeAttribute(String name)
+    public Object removeAttribute(String name)
     {
-        return _attributes!=null && _attributes.remove(name)!=null;
+        return _attributes==null ? null : _attributes.remove(name);
     }
     
     public Map<String,String> getExtensions()
