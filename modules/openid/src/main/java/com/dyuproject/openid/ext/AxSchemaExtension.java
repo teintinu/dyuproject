@@ -45,6 +45,11 @@ public class AxSchemaExtension extends AbstractExtension
         return (Map<String,String>)user.getAttribute(ATTR_NAME);
     }
     
+    public static Map<String,String> remove(OpenIdUser user)
+    {
+        return (Map<String,String>)user.removeAttribute(ATTR_NAME);
+    }
+    
     private static final Properties __axschemaConfig = new Properties();
     
     static
