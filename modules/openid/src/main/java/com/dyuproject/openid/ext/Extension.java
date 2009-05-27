@@ -1,5 +1,5 @@
 //========================================================================
-//Copyright 2007-2008 David Yu dyuproject@gmail.com
+//Copyright 2007-2009 David Yu dyuproject@gmail.com
 //------------------------------------------------------------------------
 //Licensed under the Apache License, Version 2.0 (the "License");
 //you may not use this file except in compliance with the License.
@@ -12,23 +12,19 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.openid;
+package com.dyuproject.openid.ext;
 
-
+import com.dyuproject.openid.RelyingParty;
 
 /**
- * Discovery initially through yadis.  If that fails, delegates to HtmlBasedDiscovery
- * 
  * @author David Yu
- * @created Sep 23, 2008
+ * @created May 27, 2009
  */
 
-public class DefaultDiscovery extends ChainedDiscovery
+public interface Extension extends RelyingParty.Listener
 {
     
-    public DefaultDiscovery()
-    {
-        add(new YadisDiscovery()).add(new HtmlBasedDiscovery());
-    }
+    public String getAlias();
+    public String getNamespace();
 
 }
