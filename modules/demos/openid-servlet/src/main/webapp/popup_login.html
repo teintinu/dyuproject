@@ -49,7 +49,7 @@ function handleOpenIDResponse(openid_args) {
   $("#msg").html("<p>Verifying authentication ...</p>");
   $.ajax({
     type: "POST",
-    url: "/popup_verify/",
+    url: "popup_verify/",
     data: openid_args,
     dataType: "json",
     success: function(user){
@@ -84,7 +84,7 @@ $(function(){
   $("#logout").click(function(e){
     $.ajax({
       type: "GET",
-      url: "/popup_verify/?logout=true",
+      url: "popup_verify/?logout=true",
       success: function(text){
         $("#content").hide();
         $("#logout").hide();
@@ -97,7 +97,7 @@ $(function(){
   });
   $.ajax({
     type: "GET",
-    url: "/popup_verify/",
+    url: "popup_verify/",
     dataType: "json",
     success: function(user){
       $(".init").hide().removeClass("init");
