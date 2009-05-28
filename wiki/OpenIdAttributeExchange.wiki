@@ -1,5 +1,5 @@
 #labels openid,attribute,exchange,ax,axschema,extension
-= OpenIdAttributeExchange =
+*OpenIdAttributeExchange*
 
 {{{AxSchema Extension}}} for [http://www.axschema.org/types/]
 
