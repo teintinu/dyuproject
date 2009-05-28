@@ -3,7 +3,7 @@ openid relying party howto
 
 See the [QuickStartOpenid Quick Start Guide], [OpenIdServletFilter] and [SampleOpenIdServlet].
 
-To enable openid sreg extension, see [OpenIdSimpleRegistration].
+For extensions, see [OpenIdAttributeExchange] and [OpenIdSimpleRegistration]
 
 ----
 
@@ -60,8 +60,6 @@ and using the [OpenIdServletFilter] (can be easily subclassed if needed)
     
     public void init()
     {
-        // enable sreg
-        _relyingParty.addListener(new SRegConfigListener());
         // custom listener
         _relyingParty.addListener(new RelyingParty.Listener()
         {
@@ -77,19 +75,11 @@ and using the [OpenIdServletFilter] (can be easily subclassed if needed)
             public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
             {
 
-                System.err.print("newly authenticated user: " + user.getIdentity());
-                SReg sreg = SReg.get(user);
-                if(sreg!=null)
-                    System.err.print(" aka " + sreg.getNickname());
-                System.err.print("\n");            
+                System.err.println("newly authenticated user: " + user.getIdentity());
             }            
             public void onAccess(OpenIdUser user, HttpServletRequest request)
             {        
-                System.err.print("user access: " + user.getIdentity());
-                SReg sreg = SReg.get(user);
-                if(sreg!=null)
-                    System.err.print(" aka " + sreg.getNickname());
-                System.err.print("\n");
+                System.err.println("user access: " + user.getIdentity());
             }            
         });
     }
