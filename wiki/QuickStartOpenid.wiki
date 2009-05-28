@@ -4,6 +4,7 @@
 === dyuproject-1.1.1(+)===
 
 Let us learn by example ... this will help you create/deploy asap.
+For extensions, see [OpenIdAttributeExchange] and [OpenIdSimpleRegistration]
 
 *The web.xml configuration:*
 
@@ -73,9 +74,6 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
         // use default. See the http://code.google.com/p/dyuproject/wiki/openid for more info.
         _relyingParty = RelyingParty.getInstance();
         
-        // enable simple registration extension
-        _relyingParty.addListener(new SRegConfigListener());
-        
         // listen to the authentication events
         _relyingParty.addListener(this);
         
@@ -96,11 +94,7 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
     
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
-        System.err.print("newly authenticated user: " + user.getIdentity());
-        SReg sreg = SReg.get(user);
-        if(sreg!=null)
-            System.err.print(" aka " + sreg.getNickname());
-        System.err.print("\n");       
+        System.err.println("newly authenticated user: " + user.getIdentity());  
     }
 
     public void onAccess(OpenIdUser user, HttpServletRequest request)
