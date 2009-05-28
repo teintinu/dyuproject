@@ -15,5 +15,5 @@ Build Output:
 - the generated jars are located on the "dist" dir
 - the javadocs are located on the "javadoc" dir
 
-Questions/Concerns:
-- send to dyuproject@gmail.com
+Questions/Concerns/Suggestions:
+- send to http://groups.google.com/group/dyuproject
