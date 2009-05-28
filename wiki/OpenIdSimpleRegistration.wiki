@@ -1,5 +1,45 @@
-#labels sreg,openid,simple,registration,1.1
+#labels sreg,openid,simple,registration,1.1,extension
 Enabling openid simple registration extension
+
+Simple Registration Extension
+
+See [http://openid.net/specs/openid-simple-registration-extension-1_1-01.html]
+
+==dyuproject-1.1.4(+)==
+
+{{{
+
+    RelyingParty _relyingParty = RelyingParty.getInstance()
+        .addListener(new SRegExtension()
+            .addExchange("email")
+            .addExchange("country")
+            .addExchange("language")
+        )
+        .addListener(new RelyingParty.Listener()
+        {         
+            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+            {
+                System.err.println("newly authenticated user: " + user.getIdentity());
+                Map<String,String> sreg = SRegExtension.get(user);
+                f(sreg!=null && !sreg.isEmpty())
+                {                    
+                    System.err.println("sreg: " + sreg);
+                    System.err.println(sreg.get("email") + " | " + sreg.get("country") + " | " + sreg.get("language"));
+                }          
+            }            
+            public void onAccess(OpenIdUser user, HttpServletRequest request)
+            {        
+            }   
+            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+            {
+            }            
+            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
+                    UrlEncodedParameterMap params)
+            {
+            }  
+        });
+
+}}}
 
 ==dyuproject-1.1.1(+)==
 
