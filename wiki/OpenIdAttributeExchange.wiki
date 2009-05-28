@@ -1,0 +1,44 @@
+#labels openid,attribute,exchange,ax,axschema,extension
+= OpenIdAttributeExchange =
+
+AxSchema Extension for [http://www.axschema.org/types/]
+
+See also [http://openid.net/specs/openid-attribute-exchange-1_0-05.html]
+
+Available on version 1.1.4 and up.
+
+
+
+{{{
+
+    RelyingParty _relyingParty = RelyingParty.getInstance()
+        .addListener(new AxSchemaExtension()
+            .addExchange("email")
+            .addExchange("country")
+            .addExchange("language")
+        )
+        .addListener(new RelyingParty.Listener()
+        {         
+            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+            {
+                System.err.println("newly authenticated user: " + user.getIdentity());
+                Map<String,String> axschema = AxSchemaExtension.get(user);
+                f(axschema!=null && !axschema.isEmpty())
+                {                    
+                    System.err.println("axschema: " + axschema);
+                    System.err.println(axschema.get("email") + " | " + axschema.get("country") + " | " + axschema.get("language");
+                }          
+            }            
+            public void onAccess(OpenIdUser user, HttpServletRequest request)
+            {        
+            }   
+            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+            {
+            }            
+            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
+                    UrlEncodedParameterMap params)
+            {
+            }  
+        });
+
+}}}
