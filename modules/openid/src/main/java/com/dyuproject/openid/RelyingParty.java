@@ -128,8 +128,9 @@ public class RelyingParty
             (OpenIdUserManager)newObjectInstance(managerParam);        
         manager.init(properties);        
         
-        OpenIdContext context = new OpenIdContext(discovery, association, httpConnector, authRedirection);        
+        OpenIdContext context = new OpenIdContext(discovery, association, httpConnector);        
         RelyingParty relyingParty = new RelyingParty(context, manager);
+        relyingParty.setAuthRedirection(authRedirection);
         
         // identifier parameter (default is openid_identifier)
         String identifierParameter = properties.getProperty("openid.identifier.parameter");
@@ -265,7 +266,7 @@ public class RelyingParty
     private OpenIdUserManager _manager;
     private OpenIdContext _context;
     private String _identifierParameter = DEFAULT_IDENTIFIER_PARAMETER;
-    
+    private AuthRedirection _authRedirection = SimpleRedirection.DEFAULT_INSTANCE;
     private ListenerCollection _listener = new ListenerCollection();
     private ResolverCollection _resolver = new ResolverCollection();
     
@@ -311,6 +312,16 @@ public class RelyingParty
     public boolean isDestroyed()
     {
         return _destroyed;
+    }
+    
+    public AuthRedirection getAuthRedirection()
+    {
+        return _authRedirection;
+    }     
+    
+    public void setAuthRedirection(AuthRedirection authRedirection)
+    {
+        _authRedirection = authRedirection;
     }
     
     public OpenIdUser discover(HttpServletRequest request) 
@@ -408,10 +419,7 @@ public class RelyingParty
         
         _manager.saveUser(user, request, response);        
         
-        AuthRedirection ar = _context.getAuthRedirection();
-        if(ar==null)
-            ar = SimpleRedirection.DEFAULT_INSTANCE;
-        ar.redirect(params, request, response);
+        _authRedirection.redirect(params, request, response);
         
         return true;
     }    
