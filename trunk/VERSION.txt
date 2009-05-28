@@ -3,6 +3,7 @@ dyuproject-1.1-SNAPSHOT
 + fix openid association bug when the openid.server contains query parameters
 + new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
 + significantly faster html-based discovery
++ moved AuthRedirection to RelyingParty
 + CDATA support for XMLParser 
 
 dyuproject-1.1.3 2009-03-18
