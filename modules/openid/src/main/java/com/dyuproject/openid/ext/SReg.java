@@ -29,7 +29,8 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 /**
  * Simple Registration
  * See http://openid.net/specs/openid-simple-registration-extension-1_1-01.html
- * 
+ * Deprecated.  Use SRegExtension instead.
+ *
  * @author David Yu
  * @created Jan 8, 2009
  */

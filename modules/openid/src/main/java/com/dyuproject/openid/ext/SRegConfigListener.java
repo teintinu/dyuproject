@@ -22,7 +22,8 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
  * Sets the sreg parameters
- * 
+ * Deprecated.  Use SRegExtension instead.
+ *
  * @author David Yu
  * @created Jan 8, 2009
  */

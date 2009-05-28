@@ -22,7 +22,8 @@ import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
  * Sets the GoogleAccount parameters
- * 
+ * Deprecated.  Use AxSchemaExtension instead.
+ *
  * @author David Yu
  * @created Feb 16, 2009
  */

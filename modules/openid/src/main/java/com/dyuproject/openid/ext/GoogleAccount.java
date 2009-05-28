@@ -26,6 +26,8 @@ import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.UrlEncodedParameterMap;
 
 /**
+ * Deprecated.  Use AxSchemaExtension instead.
+  *
  * @author David Yu
  * @created Feb 16, 2009
  */
