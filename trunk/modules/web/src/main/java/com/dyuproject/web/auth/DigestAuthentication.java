@@ -170,7 +170,7 @@ public class DigestAuthentication extends Authentication
         StringBuilder buffer = new StringBuilder().append("Digest realm=\"").append(realm);
         buffer.append("\", domain=\"").append(domain!=null && domain.length()>0 ? domain : '/');
         buffer.append("\", nonce=\"").append(newNonce(request));
-        buffer.append("\", algorithm=MD5, qop=\"auth\"");
+        buffer.append("\", algorithm=\"MD5\", qop=\"auth\"");
 
         response.setHeader(WWW_AUTHENTICATE, buffer.toString());
         response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
