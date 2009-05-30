@@ -1,6 +1,7 @@
 dyuproject-1.1-SNAPSHOT
 + customizable axschema extension (specifying only the parameters needed)
-+ fix openid association bug when the openid.server contains query parameters
++ fixed openid association bug when the openid.server contains query parameters
++ fixed simple http connector bug on POST/PUT and GET with url having existing query params
 + new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
 + significantly faster html-based discovery
 + moved AuthRedirection to RelyingParty
