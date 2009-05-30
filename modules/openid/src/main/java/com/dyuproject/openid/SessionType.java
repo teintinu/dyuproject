@@ -14,6 +14,9 @@
 
 package com.dyuproject.openid;
 
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -74,7 +77,8 @@ public final class SessionType
         return _algorithm;
     }
     
-    public byte[] getSignature(byte[] secretKey, byte[] toSign) throws Exception
+    public byte[] getSignature(byte[] secretKey, byte[] toSign) throws NoSuchAlgorithmException, 
+        InvalidKeyException
     {
         SecretKeySpec sks = new SecretKeySpec(secretKey, _algorithm);
         Mac m = Mac.getInstance(sks.getAlgorithm());
