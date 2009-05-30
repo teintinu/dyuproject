@@ -37,7 +37,7 @@ public interface HttpConnector
     
     public static final String CONTENT_TYPE_HEADER = "Content-Type";
     public static final String CONTENT_LENGTH_HEADER = "Content-Length";
-    public static final String X_WWW_FORM_URLENCODED = "x-www-form-urlencoded";
+    public static final String X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
     
     public Response doHEAD(String url, Map<?,?> headers) throws IOException;
     
