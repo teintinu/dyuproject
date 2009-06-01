@@ -26,7 +26,7 @@ import org.mortbay.util.ajax.JSON;
 import com.dyuproject.openid.Constants;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
-import com.dyuproject.openid.UrlEncodedParameterMap;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * Based from http://www.sociallipstick.com/2009/02/how-to-accept-openid-in-a-popup-without-leaving-the-page/

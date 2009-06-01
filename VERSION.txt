@@ -5,6 +5,7 @@ dyuproject-1.1-SNAPSHOT
 + new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
 + significantly faster html-based discovery
 + moved AuthRedirection to RelyingParty
++ moved common http components to dyuproject-util
 + CDATA support for XMLParser 
 + quote the algorithm param of the WWW-Authenticate header response from DigestAuthentication
 
