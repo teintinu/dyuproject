@@ -27,9 +27,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.openid.OpenIdServletFilter;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
-import com.dyuproject.openid.UrlEncodedParameterMap;
 import com.dyuproject.openid.ext.AxSchemaExtension;
 import com.dyuproject.openid.ext.SRegExtension;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * Home Servlet. If authenticated, goes to the home page. If not, goes to the login page.

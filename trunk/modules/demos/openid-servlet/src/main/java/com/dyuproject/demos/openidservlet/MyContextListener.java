@@ -20,11 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
-import com.dyuproject.openid.UrlEncodedParameterMap;
-import com.dyuproject.openid.ext.GoogleAccount;
-import com.dyuproject.openid.ext.GoogleAccountConfigListener;
-import com.dyuproject.openid.ext.SReg;
-import com.dyuproject.openid.ext.SRegConfigListener;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * @author David Yu
@@ -46,12 +42,6 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
         // use default. See the http://code.google.com/p/dyuproject/wiki/openid for more info.
         _relyingParty = RelyingParty.getInstance();
         
-        // enable sreg attribute exchange
-        _relyingParty.addListener(new SRegConfigListener());
-        
-        // enable google account attribute exchange
-        _relyingParty.addListener(new GoogleAccountConfigListener());
-        
         // listen to the authentication events
         _relyingParty.addListener(this);
         
@@ -72,17 +62,7 @@ public class MyContextListener implements ServletContextListener, RelyingParty.L
     
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
     {
-        System.err.print("newly authenticated user: " + user.getIdentity());
-        SReg sreg = SReg.get(user);
-        if(sreg!=null)
-            System.err.print(" aka " + sreg.getNickname());
-        else
-        {
-            GoogleAccount ga = GoogleAccount.get(user);
-            if(ga!=null)
-                System.err.print(" aka " + ga.getEmail());
-        }
-        System.err.print("\n");       
+        System.err.println("newly authenticated user: " + user.getIdentity());   
     }
 
     public void onAccess(OpenIdUser user, HttpServletRequest request)
