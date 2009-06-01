@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
-import com.dyuproject.openid.UrlEncodedParameterMap;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * Sets the sreg parameters

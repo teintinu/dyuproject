@@ -30,6 +30,9 @@ import com.dyuproject.openid.Identifier.Resolver;
 import com.dyuproject.openid.Identifier.ResolverCollection;
 import com.dyuproject.openid.manager.HttpSessionUserManager;
 import com.dyuproject.util.ClassLoaderUtil;
+import com.dyuproject.util.http.HttpConnector;
+import com.dyuproject.util.http.SimpleHttpConnector;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * Relying party which discovers, associates and verifies the authentication of a user.

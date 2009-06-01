@@ -14,6 +14,8 @@
 
 package com.dyuproject.openid;
 
+import com.dyuproject.util.http.HttpConnector;
+
 /**
  * OpenIdContext - contains all necessary objects to operate on openid procedures.
  * 

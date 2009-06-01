@@ -21,8 +21,8 @@ import java.util.Properties;
 import javax.servlet.http.HttpServletRequest;
 
 import com.dyuproject.openid.OpenIdUser;
-import com.dyuproject.openid.UrlEncodedParameterMap;
 import com.dyuproject.util.ClassLoaderUtil;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * Simple Registration Extension

@@ -16,8 +16,9 @@ package com.dyuproject.openid;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
-import com.dyuproject.openid.HttpConnector.Response;
+import com.dyuproject.util.http.HttpConnector.Response;
 import com.dyuproject.util.xml.LazyHandler;
 import com.dyuproject.util.xml.XMLParser;
 
@@ -57,7 +58,7 @@ public class HtmlBasedDiscovery implements Discovery
     throws Exception
     {
         return discoverHtmlHead(identifier, context.getHttpConnector().doGET(identifier.getUrl(), 
-                null));
+                (Map<?,?>)null));
     }
     
     static OpenIdUser discoverHtmlHead(Identifier identifier, Response response) throws Exception

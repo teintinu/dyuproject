@@ -22,6 +22,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.util.http.UrlEncodedParameterMap;
+
 /**
  * @author David Yu
  * @created Mar 17, 2009

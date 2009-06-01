@@ -16,6 +16,8 @@ package com.dyuproject.openid;
 
 import junit.framework.TestCase;
 
+import com.dyuproject.util.http.SimpleHttpConnector;
+
 /**
  * @author David Yu
  * @created Sep 20, 2008
