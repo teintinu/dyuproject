@@ -31,6 +31,11 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
     
     private String _url;
     
+    public UrlEncodedParameterMap()
+    {
+        
+    }
+    
     public UrlEncodedParameterMap(String url)
     {
         _url = url;
@@ -39,6 +44,11 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
     public String getUrl()
     {
         return _url;
+    }
+    
+    public void setUrl(String url)
+    {
+        _url = url;
     }
     
     public String toString()
@@ -67,6 +77,16 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
     public static String encode(String value)
     {
         return UrlEncoded.encodeString(value);
+    }
+    
+    public static String decode(String value, String charset)
+    {
+        return UrlEncoded.decodeString(value, 0, value.length(), charset);
+    }
+    
+    public static String decode(String value, int start, int len, String charset)
+    {
+        return UrlEncoded.decodeString(value, start, len, charset);
     }
 
 }
