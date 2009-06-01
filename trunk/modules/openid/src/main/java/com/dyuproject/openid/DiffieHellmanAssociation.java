@@ -21,11 +21,11 @@ import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.dyuproject.openid.HttpConnector.Response;
 import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Delim;
 import com.dyuproject.util.DiffieHellman;
 import com.dyuproject.util.DigestUtil;
+import com.dyuproject.util.http.HttpConnector.Response;
 
 /**
  * Association using DiffieHellman session
@@ -85,7 +85,7 @@ public class DiffieHellmanAssociation implements Association
         
         String publicKeyString = new String(B64Code.encode(publicKey.toByteArray()));
         associationData.put(Constants.OPENID_DH_CONSUMER_PUBLIC, publicKeyString);
-        Response response = context.getHttpConnector().doGET(user.getOpenIdServer(), null,
+        Response response = context.getHttpConnector().doGET(user.getOpenIdServer(), (Map<?,?>)null,
                 associationData);
         BufferedReader br = null;        
         try

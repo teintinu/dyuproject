@@ -24,7 +24,7 @@ import org.mortbay.util.ajax.JSON.Output;
 
 import com.dyuproject.openid.Constants;
 import com.dyuproject.openid.OpenIdUser;
-import com.dyuproject.openid.UrlEncodedParameterMap;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * Simple Registration

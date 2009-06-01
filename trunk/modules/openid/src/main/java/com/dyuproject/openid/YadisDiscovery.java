@@ -16,8 +16,10 @@ package com.dyuproject.openid;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
-import com.dyuproject.openid.HttpConnector.Response;
+import com.dyuproject.util.http.HttpConnector;
+import com.dyuproject.util.http.HttpConnector.Response;
 import com.dyuproject.util.xml.LazyHandler;
 import com.dyuproject.util.xml.XMLParser;
 
@@ -59,7 +61,7 @@ public class YadisDiscovery implements Discovery
             return discoverXRDS(identifier, identifier.getUrl(), context);
         }
         
-        Response response = context.getHttpConnector().doHEAD(identifier.getUrl(), null);
+        Response response = context.getHttpConnector().doHEAD(identifier.getUrl(), (Map<?,?>)null);
         String location = response.getHeader(X_XRDS_LOCATION);
         if(location==null)
         {
@@ -80,7 +82,7 @@ public class YadisDiscovery implements Discovery
     static OpenIdUser discoverXRDS(Identifier identifier, String location, OpenIdContext context) 
     throws Exception
     {
-        Response response = context.getHttpConnector().doGET(location, null);
+        Response response = context.getHttpConnector().doGET(location, (Map<?,?>)null);
         InputStreamReader reader = null;
         OpenIdUser user = null;
         try

@@ -17,6 +17,7 @@ package com.dyuproject.openid;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,7 +68,7 @@ public class RegexHtmlBasedDiscovery implements Discovery
     throws Exception
     {
         return parse(identifier, new BufferedReader(new InputStreamReader(
-                context.getHttpConnector().doGET(identifier.getUrl(), null).getInputStream(), 
+                context.getHttpConnector().doGET(identifier.getUrl(), (Map<?,?>)null).getInputStream(), 
                 Constants.DEFAULT_ENCODING), __bufferSize));
     }
 

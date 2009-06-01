@@ -23,7 +23,7 @@ import org.mortbay.util.ajax.JSON;
 import org.mortbay.util.ajax.JSON.Output;
 
 import com.dyuproject.openid.OpenIdUser;
-import com.dyuproject.openid.UrlEncodedParameterMap;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
  * Deprecated.  Use AxSchemaExtension instead.
