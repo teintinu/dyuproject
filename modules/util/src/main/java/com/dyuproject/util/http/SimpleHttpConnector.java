@@ -40,7 +40,7 @@ public class SimpleHttpConnector implements HttpConnector
     private static int __connectTimeout = Integer.getInteger("shc.connect_timeout", 10000).intValue();
     private static boolean __followRedirects = !"false".equals(System.getProperty("shc.follow_redirects"));
     
-    private static SimpleHttpConnector __default = new SimpleHttpConnector();
+    private static final SimpleHttpConnector __default = new SimpleHttpConnector();
     
     public static SimpleHttpConnector getDefault()
     {
