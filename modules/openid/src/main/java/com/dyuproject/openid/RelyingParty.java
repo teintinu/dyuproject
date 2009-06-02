@@ -117,7 +117,7 @@ public class RelyingParty
         
         // http connector
         String httpConnectorParam = properties.getProperty("openid.httpconnector");
-        HttpConnector httpConnector = httpConnectorParam==null ? new SimpleHttpConnector() : 
+        HttpConnector httpConnector = httpConnectorParam==null ? SimpleHttpConnector.getDefault() : 
             (HttpConnector)newObjectInstance(httpConnectorParam);       
         
         // auth redirection
