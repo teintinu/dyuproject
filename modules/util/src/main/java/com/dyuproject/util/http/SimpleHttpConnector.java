@@ -40,6 +40,13 @@ public class SimpleHttpConnector implements HttpConnector
     private static int __connectTimeout = Integer.getInteger("shc.connect_timeout", 10000).intValue();
     private static boolean __followRedirects = !"false".equals(System.getProperty("shc.follow_redirects"));
     
+    private static SimpleHttpConnector __default = new SimpleHttpConnector();
+    
+    public static SimpleHttpConnector getDefault()
+    {
+        return __default;
+    }
+    
     public static void setBufferSize(int bufferSize)
     {
         __bufferSize = bufferSize;
@@ -71,9 +78,50 @@ public class SimpleHttpConnector implements HttpConnector
         return __followRedirects;
     }
     
+    private int _instanceBufferSize = __bufferSize;
+    private int _instanceConnectTimeout = __connectTimeout;
+    private boolean _instanceFollowRedirects = __followRedirects;
+    
     public SimpleHttpConnector()
     {
         
+    }
+    
+    public SimpleHttpConnector(int bufferSize, int connectTimeout, boolean followRedirects)
+    {
+        _instanceBufferSize = bufferSize;
+        _instanceConnectTimeout = connectTimeout;
+        _instanceFollowRedirects = followRedirects;
+    }
+    
+    public int getInstanceBufferSize()
+    {
+        return _instanceBufferSize;
+    }
+    
+    public void setInstanceBufferSize(int bufferSize)
+    {
+        _instanceBufferSize = bufferSize;
+    }
+    
+    public int getInstanceConnectTimeout()
+    {
+        return _instanceConnectTimeout;
+    }
+    
+    public void setInstanceConnectTimeout(int instanceConnectTimeout)
+    {
+        _instanceConnectTimeout = instanceConnectTimeout;
+    }
+    
+    public boolean isInstanceFollowRedirects()
+    {
+        return _instanceFollowRedirects;
+    }
+    
+    public void setInstanceFollowRedirects(boolean instanceFollowRedirects)
+    {
+        _instanceFollowRedirects = instanceFollowRedirects;
     }
     
     static HttpURLConnection getConnection(String url, Map<?,?> headers) throws IOException
@@ -221,12 +269,12 @@ public class SimpleHttpConnector implements HttpConnector
         return send(DELETE, getConnection(appendUrl(url, parameters), headers));
     }
     
-    static Response send(String method, HttpURLConnection connection)
+    Response send(String method, HttpURLConnection connection)
     throws IOException
     {
         connection.setRequestMethod(method);
-        connection.setConnectTimeout(__connectTimeout);
-        connection.setInstanceFollowRedirects(__followRedirects);
+        connection.setConnectTimeout(_instanceConnectTimeout);
+        connection.setInstanceFollowRedirects(_instanceFollowRedirects);
         connection.setDoInput(true);        
         connection.connect();
         return new HttpURLConnectionWrapper(connection);
@@ -426,14 +474,14 @@ public class SimpleHttpConnector implements HttpConnector
         return sendContent(PUT, getConnection(url, headers), contentType, reader);
     }
     
-    static Response sendContent(String method, HttpURLConnection connection, 
+    Response sendContent(String method, HttpURLConnection connection, 
             String contentType, byte[] data) throws IOException
     {
         connection.setRequestMethod(method);
         connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);
         connection.setRequestProperty(CONTENT_LENGTH_HEADER, String.valueOf(data.length));
-        connection.setConnectTimeout(__connectTimeout);
-        connection.setInstanceFollowRedirects(__followRedirects);
+        connection.setConnectTimeout(_instanceConnectTimeout);
+        connection.setInstanceFollowRedirects(_instanceFollowRedirects);
         connection.setDoInput(true);        
         connection.setDoOutput(true); 
         OutputStream out = null;
@@ -450,20 +498,20 @@ public class SimpleHttpConnector implements HttpConnector
         return new HttpURLConnectionWrapper(connection);
     }
     
-    static Response sendContent(String method, HttpURLConnection connection, String contentType, 
+    Response sendContent(String method, HttpURLConnection connection, String contentType, 
             InputStreamReader reader) throws IOException
     {
         connection.setRequestMethod(method);
         connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);        
-        connection.setConnectTimeout(__connectTimeout);
-        connection.setInstanceFollowRedirects(__followRedirects);
+        connection.setConnectTimeout(_instanceConnectTimeout);
+        connection.setInstanceFollowRedirects(_instanceFollowRedirects);
         connection.setDoInput(true);        
         connection.setDoOutput(true); 
         OutputStreamWriter out = null;
         try
         {
             out = new OutputStreamWriter(connection.getOutputStream(), reader.getEncoding());            
-            char[] buf = new char[__bufferSize];
+            char[] buf = new char[_instanceBufferSize];
             for(int len=0; (len=reader.read(buf))!=-1;)
                 out.write(buf, 0, len);
         }
@@ -513,12 +561,6 @@ public class SimpleHttpConnector implements HttpConnector
                 return 404;
             }
         }
-    }
-    
-    public static void main(String[] args) throws Exception
-    {
-        SimpleHttpConnector shc = new SimpleHttpConnector();
-        shc.doGET("", new java.util.ArrayList<Parameter>());
     }
 
 }
