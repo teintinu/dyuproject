@@ -34,6 +34,13 @@ import com.dyuproject.openid.OpenIdUserManager;
 public class HttpSessionUserManager implements OpenIdUserManager
 {
     
+    private static HttpSessionUserManager __default = new HttpSessionUserManager();
+    
+    public static HttpSessionUserManager getDefault()
+    {
+        return __default;
+    }
+    
     public void init(Properties properties)
     {
         
@@ -57,8 +64,6 @@ public class HttpSessionUserManager implements OpenIdUserManager
     public boolean saveUser(OpenIdUser user, HttpServletRequest request,
             HttpServletResponse response) throws IOException
     {
-        if(user==null)
-            return false;
         request.getSession().setAttribute(OpenIdUser.ATTR_NAME, user);
         return true;
     }

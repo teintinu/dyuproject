@@ -127,7 +127,7 @@ public class RelyingParty
         
         // user manager
         String managerParam = properties.getProperty("openid.user.manager");            
-        OpenIdUserManager manager = managerParam == null ? new HttpSessionUserManager() :
+        OpenIdUserManager manager = managerParam == null ? HttpSessionUserManager.getDefault() :
             (OpenIdUserManager)newObjectInstance(managerParam);        
         manager.init(properties);        
         
