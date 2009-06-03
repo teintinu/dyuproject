@@ -59,7 +59,7 @@ public class PopupVerifyServlet extends HttpServlet
                 // the popup sign-in magic
                 if("true".equals(request.getParameter("popup")))
                 {
-                    String returnTo = params.get(Constants.OPENID_TRUST_ROOT) + "/popup_verify.html";                    
+                    String returnTo = params.get(Constants.OPENID_TRUST_ROOT) + request.getContextPath() + "/popup_verify.html";                    
                     params.put(Constants.OPENID_RETURN_TO, returnTo);
                     params.put(Constants.OPENID_REALM, returnTo);                    
                     params.put("openid.ns.ui", "http://specs.openid.net/extensions/ui/1.0");
