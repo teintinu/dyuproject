@@ -46,9 +46,16 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
         return _url;
     }
     
-    public void setUrl(String url)
+    public UrlEncodedParameterMap setUrl(String url)
     {
         _url = url;
+        return this;
+    }
+    
+    public UrlEncodedParameterMap add(String key, String value)
+    {
+        put(key, value);
+        return this;
     }
     
     public String toString()
