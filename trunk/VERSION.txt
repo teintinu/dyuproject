@@ -1,14 +1,19 @@
 dyuproject-1.1-SNAPSHOT
-+ customizable axschema extension (specifying only the parameters needed)
-+ fixed openid association bug when the openid.server contains query parameters
-+ fixed simple http connector bug on POST/PUT and GET with url having existing query params
-+ new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
-+ significantly faster html-based discovery
-+ moved AuthRedirection to RelyingParty
-+ moved common http components to dyuproject-util
-+ allow multiple values for HttpConnector request parameters
-+ CDATA support for XMLParser 
-+ quote the algorithm param of the WWW-Authenticate header response from DigestAuthentication
++ oauth: implementation for the latest oauth spec 1.0a - http://oauth.googlecode.com/svn/spec/core/1.0a/drafts/3/oauth-core-1_0a.html
+         The 1.0 spec was found to have a security issue - http://blog.oauth.net/2009/04/22/acknowledgement-of-the-oauth-security-issue/
+
++ openid: customizable axschema extension (specifying only the parameters needed)
++ openid: fixed openid association bug when the openid.server contains query parameters
++ openid: fixed simple http connector bug on POST/PUT and GET with url having existing query params
++ openid: new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
++ openid: improved html-based discovery
++ openid: moved AuthRedirection to RelyingParty
++ openid: moved common http components to dyuproject-util
+
++ util: allow multiple values for HttpConnector request parameters
++ util: CDATA support for XMLParser 
+
++ web: quote the algorithm param of the WWW-Authenticate header response from DigestAuthentication
 
 dyuproject-1.1.3 2009-03-18
 + Fixed YadisDiscovery bug (signon and server handling) - the actual fix for the GoogleAccount issue (removed the previous
