@@ -113,7 +113,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
             throw new IllegalStateException("openid.user.manager.cookie.name must be set.");
         
         if(_secretKey==null)
-            throw new IllegalStateException("openid.user.manager.cookie.security.secretKey must be set.");
+            throw new IllegalStateException("openid.user.manager.cookie.security.secret_key must be set.");
         
         _initialized = true;
     }
