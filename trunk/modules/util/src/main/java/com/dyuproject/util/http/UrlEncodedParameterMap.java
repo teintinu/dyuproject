@@ -79,6 +79,11 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
         return UrlEncoded.encodeString(value);
     }
     
+    public static String encode(String value, String charset)
+    {
+        return UrlEncoded.encodeString(value, charset);
+    }
+    
     public static String decode(String value, String charset)
     {
         return UrlEncoded.decodeString(value, 0, value.length(), charset);
