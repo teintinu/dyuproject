@@ -68,7 +68,7 @@ public abstract class Signature
      * @param string 
      * @return encoded string.
      */
-    public static String encodeString(String string)
+    public static String encode(String string)
     {
         byte[] bytes=null;
         try
@@ -147,10 +147,10 @@ public abstract class Signature
     public static String getKey(String consumerSecret, String secret)
     {   
         StringBuilder buffer = new StringBuilder()
-            .append(encodeString(consumerSecret))
+            .append(encode(consumerSecret))
             .append('&');
         
-        return secret==null ? buffer.toString() : buffer.append(encodeString(secret)).toString();
+        return secret==null ? buffer.toString() : buffer.append(encode(secret)).toString();
     }
     
     public static String getBase(UrlEncodedParameterMap params, String method)
@@ -161,7 +161,7 @@ public abstract class Signature
         String tokenValue = params.remove(Constants.OAUTH_TOKEN);
         if(tokenValue!=null)
         {
-            tokenValue = encodeString(tokenValue);
+            tokenValue = encode(tokenValue);
             base.add(new StringBuilder()
                 .append(Constants.OAUTH_TOKEN)
                 .append(ENCODED_EQ)
@@ -172,7 +172,7 @@ public abstract class Signature
         // default oauth parameters
         for(String key : DEFAULT_OAUTH_TO_SIGN)
         {
-            String value = encodeString(params.remove(key));
+            String value = encode(params.remove(key));
             base.add(new StringBuilder()
                 .append(key)
                 .append(ENCODED_EQ)
@@ -184,11 +184,11 @@ public abstract class Signature
         for(Map.Entry<String, String> entry : params.entrySet())
         {
             String key = entry.getKey();
-            String value = encodeString(entry.getValue());
+            String value = encode(entry.getValue());
             base.add(new StringBuilder()
                 .append(key)
                 .append(ENCODED_EQ)
-                .append(encodeString(value))
+                .append(encode(value))
                 .toString());
         }
         
@@ -196,7 +196,7 @@ public abstract class Signature
         StringBuilder buffer = new StringBuilder()
             .append(method)
             .append('&')
-            .append(encodeString(params.getUrl()))
+            .append(encode(params.getUrl()))
             .append('&');
         
         for(String b : base)
@@ -257,7 +257,7 @@ public abstract class Signature
         String tokenValue = params.remove(Constants.OAUTH_TOKEN);
         if(tokenValue!=null)
         {
-            tokenValue = encodeString(tokenValue);
+            tokenValue = encode(tokenValue);
             transport.handleOAuthParameter(Constants.OAUTH_TOKEN, tokenValue, oathBuffer);
             base.add(new StringBuilder()
                 .append(Constants.OAUTH_TOKEN)
@@ -269,7 +269,7 @@ public abstract class Signature
         // default oauth parameters
         for(String key : DEFAULT_OAUTH_TO_SIGN)
         {
-            String value = encodeString(params.remove(key));
+            String value = encode(params.remove(key));
             transport.handleOAuthParameter(key, value, oathBuffer);
             base.add(new StringBuilder()
                 .append(key)
@@ -282,13 +282,13 @@ public abstract class Signature
         for(Map.Entry<String, String> entry : params.entrySet())
         {
             String key = entry.getKey();
-            String value = encodeString(entry.getValue());
+            String value = encode(entry.getValue());
             if(requestBuffer!=null)
                 transport.handleRequestParameter(key, value, requestBuffer);
             base.add(new StringBuilder()
                 .append(key)
                 .append(ENCODED_EQ)
-                .append(encodeString(value))
+                .append(encode(value))
                 .toString());
         }
         
@@ -296,7 +296,7 @@ public abstract class Signature
         StringBuilder buffer = new StringBuilder()
             .append(transport.getMethod())
             .append('&')
-            .append(encodeString(params.getUrl()))
+            .append(encode(params.getUrl()))
             .append('&');
         
         for(String b : base)
@@ -377,7 +377,7 @@ public abstract class Signature
         {
             String base = getBaseAndPutDefaults(params, transport, oauthBuffer, requestBuffer);
             String sig = sign(consumerSecret, token.getSecret(), base);
-            transport.handleOAuthParameter(Constants.OAUTH_SIGNATURE, encodeString(sig), oauthBuffer);
+            transport.handleOAuthParameter(Constants.OAUTH_SIGNATURE, encode(sig), oauthBuffer);
         }
         
     };

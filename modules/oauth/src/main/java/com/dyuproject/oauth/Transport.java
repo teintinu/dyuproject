@@ -86,7 +86,7 @@ public abstract class Transport
     
     public static void appendToUrl(String key, String value, StringBuilder urlBuffer)
     {
-        urlBuffer.append('&').append(key).append('=').append(Signature.encodeString(value));
+        urlBuffer.append('&').append(key).append('=').append(Signature.encode(value));
     }
     
     public static StringBuilder buildAuthUrl(String authUrl, Token token, String callbackUrl)
@@ -99,7 +99,7 @@ public abstract class Transport
             .append('=')
             .append(token.getKey());
         return callbackUrl==null ? buffer : buffer.append('&').append(Constants.OAUTH_CALLBACK)
-                .append('=').append(Signature.encodeString(callbackUrl));
+                .append('=').append(Signature.encode(callbackUrl));
     }
     
     public static String getAuthUrl(String authUrl, Token token, String callbackUrl)
