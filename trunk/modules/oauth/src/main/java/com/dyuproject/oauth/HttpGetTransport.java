@@ -48,7 +48,7 @@ public class HttpGetTransport extends Transport
         return HttpConnector.GET;
     }
     
-    protected void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         handleRequestParameter(key, value, buffer);
     }

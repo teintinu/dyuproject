@@ -48,7 +48,7 @@ public class HttpPostTransport extends Transport
         return HttpConnector.POST;
     }
     
-    protected void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         handleRequestParameter(key, value, buffer);
     }

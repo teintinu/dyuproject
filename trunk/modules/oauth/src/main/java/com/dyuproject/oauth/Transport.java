@@ -34,7 +34,7 @@ import com.dyuproject.util.http.HttpConnector.Response;
  * @created Jun 1, 2009
  */
 
-public abstract class Transport
+public abstract class Transport implements Signature.Listener
 {
     
     private static final Map<String,Transport> __defaults = new HashMap<String,Transport>(5);
@@ -157,13 +157,11 @@ public abstract class Transport
             HttpConnector connector) throws IOException;
     
     public abstract String getName();
-    public abstract String getMethod();    
-    protected abstract void handleOAuthParameter(String key, String value, StringBuilder buffer);
+    public abstract String getMethod();
     
-    protected void handleRequestParameter(String key, String value, StringBuilder buffer)
+    public void handleRequestParameter(String key, String value, StringBuilder buffer)
     {
-        if(buffer!=null)
-            buffer.append('&').append(key).append('=').append(value);
+        buffer.append('&').append(key).append('=').append(value);
     }
     
     public void putDefaults(UrlEncodedParameterMap params, Endpoint ep, Token token, 
@@ -172,7 +170,8 @@ public abstract class Transport
     {
         exchange.put(params, ep, token);
         nts.put(params, ep.getConsumerKey());
-        signature.generate(params, ep.getConsumerSecret(), token, this, oauthBuffer, requestBuffer);
+        signature.generate(params, ep.getConsumerSecret(), token, getMethod(), this, oauthBuffer, 
+                requestBuffer);
     }
 
 }

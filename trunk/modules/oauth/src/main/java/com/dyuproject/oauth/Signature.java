@@ -155,8 +155,8 @@ public abstract class Signature
         return getMethod().hashCode();
     }
     
-    protected String getBaseAndPutDefaults(UrlEncodedParameterMap params, Transport transport, 
-            StringBuilder oathBuffer, StringBuilder requestBuffer)
+    protected String getBaseAndPutDefaults(UrlEncodedParameterMap params, String httpMethod, 
+            Listener listener, StringBuilder oathBuffer, StringBuilder requestBuffer)
     {        
         String url = params.getUrl();
         int idx = url.indexOf('?');
@@ -186,7 +186,7 @@ public abstract class Signature
         if(tokenValue!=null)
         {
             tokenValue = encode(tokenValue);
-            transport.handleOAuthParameter(Constants.OAUTH_TOKEN, tokenValue, oathBuffer);
+            listener.handleOAuthParameter(Constants.OAUTH_TOKEN, tokenValue, oathBuffer);
             base.add(new StringBuilder()
                 .append(Constants.OAUTH_TOKEN)
                 .append(ENCODED_EQ)
@@ -198,7 +198,7 @@ public abstract class Signature
         for(String key : DEFAULT_OAUTH_TO_SIGN)
         {
             String value = encode(params.remove(key));
-            transport.handleOAuthParameter(key, value, oathBuffer);
+            listener.handleOAuthParameter(key, value, oathBuffer);
             base.add(new StringBuilder()
                 .append(key)
                 .append(ENCODED_EQ)
@@ -211,7 +211,7 @@ public abstract class Signature
         {
             String key = entry.getKey();
             String value = encode(entry.getValue());
-            transport.handleRequestParameter(key, value, requestBuffer);
+            listener.handleRequestParameter(key, value, requestBuffer);
             base.add(new StringBuilder()
                 .append(key)
                 .append(ENCODED_EQ)
@@ -221,7 +221,7 @@ public abstract class Signature
         
         Collections.sort(base);
         StringBuilder buffer = new StringBuilder()
-            .append(transport.getMethod())
+            .append(httpMethod)
             .append('&')
             .append(encode(params.getUrl()))
             .append('&');
@@ -238,7 +238,8 @@ public abstract class Signature
             UrlEncodedParameterMap params);
     
     public abstract void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
-            Transport transport, StringBuilder oauthBuffer, StringBuilder requestBuffer);
+            String httpMethod, Listener listener, StringBuilder oauthBuffer, 
+            StringBuilder requestBuffer);
     
     
     public static Signature PLAINTEXT = new Signature()
@@ -270,11 +271,12 @@ public abstract class Signature
         }
         
         public void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
-                Transport transport, StringBuilder oauthBuffer, StringBuilder requestBuffer)
+                String httpMethod, Listener listener, StringBuilder oauthBuffer, 
+                StringBuilder requestBuffer)
         {
-            getBaseAndPutDefaults(params, transport, oauthBuffer, requestBuffer);
+            getBaseAndPutDefaults(params, httpMethod, listener, oauthBuffer, requestBuffer);
             String sig = sign(consumerSecret, token.getSecret(), null);
-            transport.handleOAuthParameter(Constants.OAUTH_SIGNATURE, sig, oauthBuffer);
+            listener.handleOAuthParameter(Constants.OAUTH_SIGNATURE, sig, oauthBuffer);
         }
         
     };
@@ -300,14 +302,21 @@ public abstract class Signature
         }
         
         public void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
-                Transport transport, StringBuilder oauthBuffer, StringBuilder requestBuffer)
+                String httpMethod, Listener listener, StringBuilder oauthBuffer, 
+                StringBuilder requestBuffer)
         {
-            String base = getBaseAndPutDefaults(params, transport, oauthBuffer, requestBuffer);
+            String base = getBaseAndPutDefaults(params, httpMethod, listener, oauthBuffer, requestBuffer);
             String sig = sign(consumerSecret, token.getSecret(), base);
-            transport.handleOAuthParameter(Constants.OAUTH_SIGNATURE, encode(sig), oauthBuffer);
+            listener.handleOAuthParameter(Constants.OAUTH_SIGNATURE, encode(sig), oauthBuffer);
         }
         
     };
+    
+    public interface Listener
+    {
+        void handleOAuthParameter(String key, String value, StringBuilder oauthBuffer);
+        void handleRequestParameter(String key, String value, StringBuilder requestBuffer);
+    }
     
     static
     {
