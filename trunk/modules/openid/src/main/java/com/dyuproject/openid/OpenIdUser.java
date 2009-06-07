@@ -42,7 +42,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     
     private Map<String,Object> _associationData;
     private Map<String,Object> _attributes;
-    private Map<String,String> _extensions;
+    private transient Map<String,String> _extensions;
     
     public OpenIdUser()
     {
