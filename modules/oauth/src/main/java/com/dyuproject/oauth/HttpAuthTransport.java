@@ -51,7 +51,7 @@ public class HttpAuthTransport extends Transport
         return HttpConnector.GET;
     }
     
-    protected void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         buffer.append(',').append(key).append('=').append('"').append(value).append('"');
     }
