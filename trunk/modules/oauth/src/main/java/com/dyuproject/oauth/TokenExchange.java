@@ -26,6 +26,8 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public abstract class TokenExchange
 {
     
+    private static String __version = System.getProperty("oauth.tokenexchange.send_version");
+    
     public static TokenExchange getExchange(Token token)
     {
         return token.getKey()==null ? REQUEST_TOKEN : ACCESS_TOKEN; 
@@ -38,7 +40,7 @@ public abstract class TokenExchange
             if(params.getUrl()==null)
                 params.setUrl(ep.getRequestTokenUrl());
             
-            if(!params.containsKey(Constants.OAUTH_VERSION))
+            if(__version!=null && !params.containsKey(Constants.OAUTH_VERSION))
                 params.put(Constants.OAUTH_VERSION, Constants.CURRENT_VERSION);
             
             params.put(Constants.OAUTH_CONSUMER_KEY, ep.getConsumerKey());
@@ -52,7 +54,7 @@ public abstract class TokenExchange
             if(params.getUrl()==null)
                 params.setUrl(ep.getAccessTokenUrl());
             
-            if(!params.containsKey(Constants.OAUTH_VERSION))
+            if(__version!=null && !params.containsKey(Constants.OAUTH_VERSION))
                 params.put(Constants.OAUTH_VERSION, Constants.CURRENT_VERSION);
             
             params.add(Constants.OAUTH_CONSUMER_KEY, ep.getConsumerKey())

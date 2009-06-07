@@ -140,7 +140,7 @@ public abstract class Transport implements Signature.Listener
             if(idx==-1)
                 continue;
             String k = pair.substring(0, idx);
-            String v = UrlEncodedParameterMap.decode(pair.substring(idx+1), Constants.ENCODING);
+            String v = Signature.decode(pair.substring(idx+1));
             if(key==null && Constants.OAUTH_TOKEN.equals(k))
                 key = v;
             else if(secret==null && Constants.OAUTH_TOKEN_SECRET.equals(k))

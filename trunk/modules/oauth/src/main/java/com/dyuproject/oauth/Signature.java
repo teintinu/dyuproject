@@ -39,16 +39,15 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public abstract class Signature
 {
     
-    static final String ENCODED_EQ = "%3D";
-    static final String ENCODED_AMP = "%26";
-    
-    static final String[] DEFAULT_OAUTH_TO_SIGN = new String[]{
-        Constants.OAUTH_VERSION,
+    public static final String[] REQUIRED_HEADER_TO_SIGN = new String[]{
         Constants.OAUTH_CONSUMER_KEY,
         Constants.OAUTH_NONCE,
         Constants.OAUTH_TIMESTAMP,
         Constants.OAUTH_SIGNATURE_METHOD
     };
+    
+    static final String ENCODED_EQ = "%3D";
+    static final String ENCODED_AMP = "%26";
     
     private static final Map<String,Signature> __defaults = new HashMap<String,Signature>(5);
     
@@ -85,6 +84,18 @@ public abstract class Signature
     {
         List<String> base = new ArrayList<String>();
         
+        // oauth_version parameter
+        String versionValue = params.remove(Constants.OAUTH_VERSION);
+        if(versionValue!=null)
+        {
+            versionValue = encode(versionValue);
+            base.add(new StringBuilder()
+                .append(Constants.OAUTH_VERSION)
+                .append(ENCODED_EQ)
+                .append(versionValue)
+                .toString());
+        }
+        
         // oauth_token parameter
         String tokenValue = params.remove(Constants.OAUTH_TOKEN);
         if(tokenValue!=null)
@@ -98,7 +109,7 @@ public abstract class Signature
         }
         
         // default oauth parameters
-        for(String key : DEFAULT_OAUTH_TO_SIGN)
+        for(String key : REQUIRED_HEADER_TO_SIGN)
         {
             String value = encode(params.remove(key));
             base.add(new StringBuilder()
@@ -195,7 +206,7 @@ public abstract class Signature
         }
         
         // default oauth parameters
-        for(String key : DEFAULT_OAUTH_TO_SIGN)
+        for(String key : REQUIRED_HEADER_TO_SIGN)
         {
             String value = encode(params.remove(key));
             listener.handleOAuthParameter(key, value, oathBuffer);
