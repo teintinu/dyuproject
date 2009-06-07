@@ -12,16 +12,31 @@
 //limitations under the License.
 //========================================================================
 
-package com.dyuproject.oauth;
+package com.dyuproject.oauth.sp;
+
+import java.io.Serializable;
+
 
 /**
- * Service Provider helper class which manages the oauth service provider lifecycle.
+ * The token persisted by the service provider
  * 
  * @author David Yu
- * @created May 29, 2009
+ * @created Jun 8, 2009
  */
 
-public class ServiceProvider
+public interface ServiceToken extends Serializable
 {
+    
+    public String getConsumerSecret();
+    public String getKey();
+    public String getSecret();
+    
+    public interface Store
+    {
+        public ServiceToken getRequestToken(String consumerKey);
+        public ServiceToken getAccessToken(String consumerKey, String requestToken);
+        // url with oauth_token and oauth_verifier param
+        public StringBuilder getAuthorizedCallbackUrl(String requestToken);
+    }
 
 }
