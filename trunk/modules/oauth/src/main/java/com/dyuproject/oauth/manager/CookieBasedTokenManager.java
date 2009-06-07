@@ -26,7 +26,6 @@ import org.mortbay.util.ajax.JSON.StringSource;
 import com.dyuproject.json.StandardJSON;
 import com.dyuproject.oauth.Token;
 import com.dyuproject.oauth.TokenManager;
-import com.dyuproject.util.B64Code;
 import com.dyuproject.util.Cryptography;
 
 /**
@@ -68,12 +67,14 @@ public class CookieBasedTokenManager implements TokenManager
         setSecretKey(secretKey);        
     }
     
-    public CookieBasedTokenManager(String secretKey, String cookiePath, String cookieDomain, int loginTimeout)
+    public CookieBasedTokenManager(String secretKey, String cookiePath, String cookieDomain, int loginTimeout, int maxAge)
     {
         setSecretKey(secretKey);
         setCookiePath(cookiePath==null ? "/" : cookiePath);
         setCookieDomain(cookieDomain);
         setLoginTimeout(loginTimeout);
+        _loginTimeout = loginTimeout;
+        _maxAge = maxAge;
         init();
         _initialized = true;
     }
