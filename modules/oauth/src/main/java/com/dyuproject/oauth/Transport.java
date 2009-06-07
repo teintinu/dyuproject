@@ -162,7 +162,8 @@ public abstract class Transport
     
     protected void handleRequestParameter(String key, String value, StringBuilder buffer)
     {
-        buffer.append('&').append(key).append('=').append(value);
+        if(buffer!=null)
+            buffer.append('&').append(key).append('=').append(value);
     }
     
     public void putDefaults(UrlEncodedParameterMap params, Endpoint ep, Token token, 

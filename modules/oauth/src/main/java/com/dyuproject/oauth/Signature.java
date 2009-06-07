@@ -283,8 +283,7 @@ public abstract class Signature
         {
             String key = entry.getKey();
             String value = encode(entry.getValue());
-            if(requestBuffer!=null)
-                transport.handleRequestParameter(key, value, requestBuffer);
+            transport.handleRequestParameter(key, value, requestBuffer);
             base.add(new StringBuilder()
                 .append(key)
                 .append(ENCODED_EQ)
