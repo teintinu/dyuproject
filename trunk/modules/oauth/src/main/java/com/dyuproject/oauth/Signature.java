@@ -14,7 +14,6 @@
 
 package com.dyuproject.oauth;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -63,85 +62,14 @@ public abstract class Signature
         return __defaults.get(method);
     }
     
-    /* From UrlEncoded snippet customized to skip {'-', '.', '_', '~'} */
-    /** Perform URL encoding.
-     * @param string 
-     * @return encoded string.
-     */
-    public static String encode(String string)
+    public static String encode(String value)
     {
-        byte[] bytes=null;
-        try
-        {
-            bytes=string.getBytes(Constants.ENCODING);
-        }
-        catch(UnsupportedEncodingException e)
-        {
-            // Log.warn(LogSupport.EXCEPTION,e);
-            bytes=string.getBytes();
-        }
-        
-        int len=bytes.length;
-        byte[] encoded= new byte[bytes.length*3];
-        int n=0;
-        boolean noEncode=true;
-        
-        for (int i=0;i<len;i++)
-        {
-            byte b = bytes[i];
-            
-            if (b==' ')
-            {
-                noEncode=false;
-                //encoded[n++]=(byte)'+';
-                encoded[n++]=(byte)'%';
-                encoded[n++]=(byte)'2';
-                encoded[n++]=(byte)'0';
-            }
-            else if (b>='a' && b<='z' ||
-                     b>='A' && b<='Z' ||
-                     b>='0' && b<='9')
-            {
-                encoded[n++]=b;
-            }
-            else
-            {
-                switch(b)
-                {
-                    case '-':
-                    case '.':
-                    case '_':
-                    case '~':
-                        encoded[n++] = b;
-                        continue;                        
-                }
-                noEncode=false;
-                encoded[n++]=(byte)'%';
-                byte nibble= (byte) ((b&0xf0)>>4);
-                if (nibble>=10)
-                    encoded[n++]=(byte)('A'+nibble-10);
-                else
-                    encoded[n++]=(byte)('0'+nibble);
-                nibble= (byte) (b&0xf);
-                if (nibble>=10)
-                    encoded[n++]=(byte)('A'+nibble-10);
-                else
-                    encoded[n++]=(byte)('0'+nibble);
-            }
-        }
-
-        if (noEncode)
-            return string;
-        
-        try
-        {    
-            return new String(encoded,0,n,Constants.ENCODING);
-        }
-        catch(UnsupportedEncodingException e)
-        {
-            // Log.warn(LogSupport.EXCEPTION,e);
-            return new String(encoded,0,n);
-        }
+        return UrlEncodedParameterMap.encodeRFC3986(value, Constants.ENCODING);
+    }
+    
+    public static String decode(String value)
+    {
+        return UrlEncodedParameterMap.decode(value, Constants.ENCODING);
     }
     
     public static String getKey(String consumerSecret, String secret)

@@ -14,9 +14,11 @@
 
 package com.dyuproject.util.http;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.mortbay.util.StringUtil;
 import org.mortbay.util.UrlEncoded;
 
 /**
@@ -83,12 +85,17 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
     
     public static String encode(String value)
     {
-        return UrlEncoded.encodeString(value);
+        return encode(value, StringUtil.__UTF8);
     }
     
     public static String encode(String value, String charset)
     {
         return UrlEncoded.encodeString(value, charset);
+    }
+    
+    public static String decode(String value)
+    {
+        return UrlEncoded.decodeString(value, 0, value.length(), StringUtil.__UTF8);
     }
     
     public static String decode(String value, String charset)
@@ -99,6 +106,92 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
     public static String decode(String value, int start, int len, String charset)
     {
         return UrlEncoded.decodeString(value, start, len, charset);
+    }
+    
+    public static String encodeRFC3986(String value)
+    {
+        return encodeRFC3986(value, StringUtil.__UTF8);
+    }
+    
+    /* From UrlEncoded snippet customized to skip {'-', '.', '_', '~'} */
+    /** Perform URL encoding.
+     * @param string 
+     * @return encoded string.
+     */
+    public static String encodeRFC3986(String value, String charset)
+    {
+        byte[] bytes=null;
+        try
+        {
+            bytes=value.getBytes(charset);
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            // Log.warn(LogSupport.EXCEPTION,e);
+            bytes=value.getBytes();
+        }
+        
+        int len=bytes.length;
+        byte[] encoded= new byte[bytes.length*3];
+        int n=0;
+        boolean noEncode=true;
+        
+        for (int i=0;i<len;i++)
+        {
+            byte b = bytes[i];
+            
+            if (b==' ')
+            {
+                noEncode=false;
+                //encoded[n++]=(byte)'+';
+                encoded[n++]=(byte)'%';
+                encoded[n++]=(byte)'2';
+                encoded[n++]=(byte)'0';
+            }
+            else if (b>='a' && b<='z' ||
+                     b>='A' && b<='Z' ||
+                     b>='0' && b<='9')
+            {
+                encoded[n++]=b;
+            }
+            else
+            {
+                switch(b)
+                {
+                    case '-':
+                    case '.':
+                    case '_':
+                    case '~':
+                        encoded[n++] = b;
+                        continue;                        
+                }
+                noEncode=false;
+                encoded[n++]=(byte)'%';
+                byte nibble= (byte) ((b&0xf0)>>4);
+                if (nibble>=10)
+                    encoded[n++]=(byte)('A'+nibble-10);
+                else
+                    encoded[n++]=(byte)('0'+nibble);
+                nibble= (byte) (b&0xf);
+                if (nibble>=10)
+                    encoded[n++]=(byte)('A'+nibble-10);
+                else
+                    encoded[n++]=(byte)('0'+nibble);
+            }
+        }
+
+        if (noEncode)
+            return value;
+        
+        try
+        {    
+            return new String(encoded,0,n,charset);
+        }
+        catch(UnsupportedEncodingException e)
+        {
+            // Log.warn(LogSupport.EXCEPTION,e);
+            return new String(encoded,0,n);
+        }
     }
 
 }
