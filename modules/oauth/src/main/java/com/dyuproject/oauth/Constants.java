@@ -44,6 +44,8 @@ public abstract class Constants
     
     public static final String OAUTH_CALLBACK = "oauth_callback";
     
+    public static final String OAUTH_CALLBACK_CONFIRMED = "oauth_callback_confirmed";
+    
     public static final String OAUTH_PROBLEM = "oauth_problem";
     
     public static final String OAUTH_VERIFIER = "oauth_verifier";
