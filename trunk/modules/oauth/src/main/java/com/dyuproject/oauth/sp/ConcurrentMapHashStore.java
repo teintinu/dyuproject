@@ -14,37 +14,35 @@
 
 package com.dyuproject.oauth.sp;
 
-import java.io.Serializable;
-
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * The token persisted by the service provider
- * 
+ * ConcurrentHashMap - in-memory consumer keys
  * @author David Yu
  * @created Jun 8, 2009
  */
 
-public interface ServiceToken extends Serializable
+public class ConcurrentMapHashStore extends HashStore
 {
     
-    public String getConsumerSecret();
-    public String getKey();
-    public String getSecret();
+    private ConcurrentMap<String,String> _consumers = new ConcurrentHashMap<String,String>();
     
-    public interface Store
+    public ConcurrentMapHashStore(String secretKey, String macSecretKey)
     {
-        
-        public ServiceToken newRequestToken(String consumerKey, String callback);
-        
-        public ServiceToken getRequestToken(String consumerKey, String requestToken);
-        
-        // url with oauth_token and oauth_verifier param
-        public String getAuthCallbackOrVerifier(String requestToken, String accessId);
-        
-        
-        public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken);
-        
-        public ServiceToken getAccessToken(String consumerKey, String accessToken);
+        setSecretKey(secretKey);
+        setMacSecretKey(macSecretKey);
+    }
+
+    protected String getConsumerSecret(String consumerKey)
+    {
+        return _consumers.get(consumerKey);
+    }
+    
+    public ConcurrentMapHashStore addConsumer(String key, String secret)
+    {
+        _consumers.putIfAbsent(key, secret);
+        return this;
     }
 
 }

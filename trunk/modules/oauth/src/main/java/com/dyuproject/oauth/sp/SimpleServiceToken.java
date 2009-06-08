@@ -14,37 +14,39 @@
 
 package com.dyuproject.oauth.sp;
 
-import java.io.Serializable;
-
-
 /**
- * The token persisted by the service provider
+ * Simple service token to hold the keys
  * 
  * @author David Yu
  * @created Jun 8, 2009
  */
 
-public interface ServiceToken extends Serializable
+@SuppressWarnings("serial")
+public class SimpleServiceToken implements ServiceToken
 {
     
-    public String getConsumerSecret();
-    public String getKey();
-    public String getSecret();
+    private String _consumerSecret, _key, _secret;
     
-    public interface Store
+    public SimpleServiceToken(String consumerSecret, String key, String secret)
     {
-        
-        public ServiceToken newRequestToken(String consumerKey, String callback);
-        
-        public ServiceToken getRequestToken(String consumerKey, String requestToken);
-        
-        // url with oauth_token and oauth_verifier param
-        public String getAuthCallbackOrVerifier(String requestToken, String accessId);
-        
-        
-        public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken);
-        
-        public ServiceToken getAccessToken(String consumerKey, String accessToken);
+        _consumerSecret = consumerSecret;
+        _key = key;
+        _secret = secret;
+    }
+
+    public String getConsumerSecret()
+    {
+        return _consumerSecret;
+    }
+
+    public String getKey()
+    {
+        return _key;
+    }
+
+    public String getSecret()
+    {
+        return _secret;
     }
 
 }

@@ -14,37 +14,47 @@
 
 package com.dyuproject.oauth.sp;
 
-import java.io.Serializable;
-
+import java.util.Properties;
 
 /**
- * The token persisted by the service provider
+ * PropertiesHashStore - in-memory consumer keys
  * 
  * @author David Yu
  * @created Jun 8, 2009
  */
 
-public interface ServiceToken extends Serializable
+public class PropertiesHashStore extends HashStore
 {
     
-    public String getConsumerSecret();
-    public String getKey();
-    public String getSecret();
+    private static PropertiesHashStore __instance;
     
-    public interface Store
+    public static PropertiesHashStore getInstance()
     {
-        
-        public ServiceToken newRequestToken(String consumerKey, String callback);
-        
-        public ServiceToken getRequestToken(String consumerKey, String requestToken);
-        
-        // url with oauth_token and oauth_verifier param
-        public String getAuthCallbackOrVerifier(String requestToken, String accessId);
-        
-        
-        public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken);
-        
-        public ServiceToken getAccessToken(String consumerKey, String accessToken);
+        if(__instance==null)
+        {
+            synchronized(PropertiesHashStore.class)
+            {
+                if(__instance==null)
+                {
+                    
+                }
+            }
+        }
+        return __instance;
+    }
+    
+    private Properties _consumers;
+    
+    public PropertiesHashStore(String secret, String macSecretKey, Properties consumers)
+    {
+        setSecretKey(secret);
+        setMacSecretKey(macSecretKey);
+        _consumers = consumers;
+    }
+
+    protected String getConsumerSecret(String consumerKey)
+    {
+        return _consumers.getProperty(consumerKey);
     }
 
 }
