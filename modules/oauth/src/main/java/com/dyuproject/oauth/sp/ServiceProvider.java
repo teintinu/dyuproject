@@ -88,7 +88,7 @@ public class ServiceProvider
     
     public static ServiceProvider newInstance(Properties props) throws IOException
     {
-
+        //TODO
         
         return null;
     }
@@ -199,9 +199,114 @@ public class ServiceProvider
     }
     
     // authorization
-    public StringBuilder getAuthorizedCallbackUrl (String requestToken)
+    public String getAuthCallbackOrVerifier(String requestToken, String accessId)
     {
-        return _store.getAuthorizedCallbackUrl(requestToken);
+        return _store.getAuthCallbackOrVerifier(requestToken, accessId);
+    }
+    
+    // access validity
+    public UrlEncodedParameterMap getAccessParams(HttpServletRequest request)
+    {
+        UrlEncodedParameterMap params = new UrlEncodedParameterMap();
+        if(parse(request, params)!=200)
+            return null;
+        
+        String consumerKey = params.get(Constants.OAUTH_CONSUMER_KEY);
+        if(consumerKey==null)
+            return null;
+        
+        String accessToken = params.get(Constants.OAUTH_TOKEN);
+        if(accessToken==null)
+            return null;
+        
+        ServiceToken ast = _store.getAccessToken(consumerKey, accessToken);            
+        return ast!=null && verifySignature(ast.getConsumerSecret(), ast.getSecret(), request, 
+                params)==200 ? params : null;
+    }
+    
+    boolean handleTokenRequest(UrlEncodedParameterMap params, String consumerKey, 
+            HttpServletRequest request, HttpServletResponse response) throws IOException
+    {        
+        String callback = params.get(Constants.OAUTH_CALLBACK);
+        if(callback==null)
+        {
+            response.setStatus(400);
+            return false;
+        }
+        ServiceToken st = _store.newRequestToken(consumerKey, callback);
+        if(st==null)
+        {
+            response.setStatus(401);
+            return false;
+        }
+        
+        int status = 200;
+        if((status=verifySignature(st.getConsumerSecret(), null, request, 
+                params))==200)
+        {                    
+            response.getWriter()
+                .append(Constants.OAUTH_TOKEN)
+                .append('=')
+                .append(Signature.encode(st.getKey()))
+                .append('&')
+                .append(Constants.OAUTH_TOKEN_SECRET)
+                .append('=')
+                .append(Signature.encode(st.getSecret()))
+                .append('&')
+                .append(Constants.OAUTH_CALLBACK_CONFIRMED)
+                .append('=')
+                .append("true");
+            
+            return true;
+        }
+        
+        response.setStatus(status);
+        return false;
+    }    
+    
+    boolean handleTokenExchange(UrlEncodedParameterMap params, String consumerKey, 
+            String requestToken, HttpServletRequest request, HttpServletResponse response) 
+            throws IOException
+    {        
+        String verifier = params.get(Constants.OAUTH_VERIFIER);
+        if(verifier==null)
+        {
+            response.setStatus(400);
+            return false;
+        }
+        
+        ServiceToken st = _store.getRequestToken(consumerKey, requestToken);
+        if(st==null)
+        {
+            response.setStatus(401);
+            return false;
+        }
+        
+        int status = 200;
+        if((status=verifySignature(st.getConsumerSecret(), st.getSecret(), request, 
+                params))==200)
+        {
+            ServiceToken ast = _store.newAccessToken(consumerKey, verifier, requestToken);
+            if(ast==null)
+            {
+                response.setStatus(401);
+                return false;
+            }
+            
+            Writer writer = response.getWriter();
+            writer.append(Constants.OAUTH_TOKEN)
+                .append('=')
+                .append(Signature.encode(ast.getKey()))
+                .append('&')
+                .append(Constants.OAUTH_TOKEN_SECRET)
+                .append('=')
+                .append(Signature.encode(ast.getSecret()));
+            
+            return true;
+        }
+        
+        response.setStatus(status);
+        return false;
     }
     
     public boolean handle(HttpServletRequest request, HttpServletResponse response)
@@ -219,67 +324,8 @@ public class ServiceProvider
             }
             
             String requestToken = params.get(Constants.OAUTH_TOKEN);
-            if(requestToken==null)
-            {
-                // request for request_token
-                ServiceToken st = _store.getRequestToken(consumerKey);
-                if(st==null)
-                {
-                    response.setStatus(401);
-                    return false;
-                }
-                
-                if((status=verifySignature(st.getConsumerSecret(), null, request, 
-                        params))==200)
-                {                    
-                    Writer writer = response.getWriter();
-                    writer.append(Constants.OAUTH_TOKEN)
-                        .append('=')
-                        .append(Signature.encode(st.getKey()))
-                        .append('&')
-                        .append(Constants.OAUTH_TOKEN_SECRET)
-                        .append('=')
-                        .append(Signature.encode(st.getSecret()))
-                        .append('&')
-                        .append(Constants.OAUTH_CALLBACK_CONFIRMED)
-                        .append('=')
-                        .append("true");
-                    
-                    return true;
-                }                
-            }
-            else
-            {
-                // request for access_token                
-                String verifier = params.get(Constants.OAUTH_VERIFIER);
-                if(verifier==null)
-                {
-                    response.setStatus(400);
-                    return false;
-                }
-                
-                ServiceToken st = _store.getAccessToken(consumerKey, requestToken);
-                if(st==null)
-                {
-                    response.setStatus(401);
-                    return false;
-                }
-                
-                if((status=verifySignature(st.getConsumerSecret(), st.getSecret(), request, 
-                        params))==200)
-                {
-                    Writer writer = response.getWriter();
-                    writer.append(Constants.OAUTH_TOKEN)
-                        .append('=')
-                        .append(Signature.encode(st.getKey()))
-                        .append('&')
-                        .append(Constants.OAUTH_TOKEN_SECRET)
-                        .append('=')
-                        .append(Signature.encode(st.getSecret()));
-                    
-                    return true;
-                }                
-            }            
+            return requestToken==null ? handleTokenRequest(params, consumerKey, request, response) :
+                handleTokenExchange(params, consumerKey, requestToken, request, response);
         }
         
         response.setStatus(status);
