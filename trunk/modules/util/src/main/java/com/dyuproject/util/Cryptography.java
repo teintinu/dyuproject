@@ -33,6 +33,52 @@ public class Cryptography
     public static final String DES = "DES";
     public static final String DESede = "DESede";
     
+    public static String pad(String secretKey, char pad)
+    {
+        int len = secretKey.length();
+        if(len>24)
+            throw new IllegalArgumentException(secretKey + " is limited to a length of 24.");
+        if(len==8 || len==24)
+            return secretKey;
+        
+        if(len<8)
+        {
+            StringBuilder buffer = new StringBuilder(8).append(secretKey);
+            while(buffer.length()<8)
+                buffer.append(pad);
+            return buffer.toString();
+        }
+        
+        StringBuilder buffer = new StringBuilder(24).append(secretKey);
+        while(buffer.length()<24)
+            buffer.append(pad);
+        return buffer.toString();
+    }
+
+    public static Cryptography create(String secretKey, char pad) throws Exception
+    {
+        int len = secretKey.length();
+        if(len>24)
+            throw new IllegalArgumentException(secretKey + " is limited to a length of 24.");
+        if(len==24)
+            return createDESede(secretKey);        
+        if(len==8)
+            return createDES(secretKey);
+        
+        if(len<8)
+        {
+            StringBuilder buffer = new StringBuilder(8).append(secretKey);
+            while(buffer.length()<8)
+                buffer.append(pad);
+            return createDES(buffer.toString());
+        }
+        
+        StringBuilder buffer = new StringBuilder(24).append(secretKey);
+        while(buffer.length()<24)
+            buffer.append(pad);
+        return createDESede(buffer.toString());
+    }
+    
     public static Cryptography createDES(String secretKey) throws Exception
     {
         byte[] secret = secretKey.getBytes(B64Code.__ISO_8859_1);
