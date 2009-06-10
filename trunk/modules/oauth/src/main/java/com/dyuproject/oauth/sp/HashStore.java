@@ -46,19 +46,11 @@ public abstract class HashStore implements ServiceToken.Store
     {
         if(_crypto==null)
         {
-            _secretKey = secretKey;
-            if(_secretKey.length()!=24)
-            {
-                if(_secretKey.length()>24)
-                    throw new IllegalArgumentException("supported secret keys are limited to 24 bytes long.");
-                
-                // padding
-                for(int i=0,len=24-_secretKey.length(); i<len; i++)
-                    _secretKey+=".";
-            }
+            _secretKey = Cryptography.pad(secretKey, '.');
             try
             {
-                _crypto = Cryptography.createDESede(_secretKey);
+                _crypto = _secretKey.length()==24 ? Cryptography.createDESede(_secretKey) : 
+                    Cryptography.createDES(_secretKey);
             }
             catch(Exception e)
             {
@@ -89,24 +81,24 @@ public abstract class HashStore implements ServiceToken.Store
     }
     
     public ServiceToken newRequestToken(String consumerKey, String callback)
-    {
-        String consumerSecret = getConsumerSecret(consumerKey);
-        if(consumerSecret==null)
-            return null;
-        
+    {        
         if(!"oob".equals(callback) && (callback=validateUrl(callback))==null)
             return null;
         
+        String consumerSecret = getConsumerSecret(consumerKey);
+        if(consumerSecret==null)
+            return null;
         try
         {
-            StringBuilder base = new StringBuilder()
+            StringBuilder buffer = new StringBuilder()
                 .append(System.currentTimeMillis())
                 .append('&')
                 .append(consumerKey)
                 .append('&')
                 .append(callback);
-            String key = _crypto.encryptEncode(base.toString());
-            return new SimpleServiceToken(consumerSecret, key, sign(key));
+            String base = buffer.toString();
+            String requestToken = _crypto.encryptEncode(base);
+            return new SimpleServiceToken(consumerSecret, requestToken, sign(base));
         }
         catch(Exception e)
         {
@@ -122,17 +114,18 @@ public abstract class HashStore implements ServiceToken.Store
         
         try
         {
-            String[] base = Delim.AMPER.split(_crypto.decryptDecode(requestToken));
-            if(base.length!=3)
+            String base = _crypto.decryptDecode(requestToken);
+            String[] tokens = Delim.AMPER.split(base);
+            if(tokens.length!=3)
                 return null;
 
-            if((System.currentTimeMillis() - Long.parseLong(base[0])) > _exchangeTimeout)
+            if((System.currentTimeMillis() - Long.parseLong(tokens[0])) > _exchangeTimeout)
                 return null;
             
-            if(!consumerKey.equals(base[1]))
+            if(!consumerKey.equals(tokens[1]))
                 return null;
 
-            return new SimpleServiceToken(consumerSecret, requestToken, sign(requestToken));
+            return new SimpleServiceToken(consumerSecret, requestToken, sign(base));
         }
         catch(Exception e)
         {
@@ -144,17 +137,17 @@ public abstract class HashStore implements ServiceToken.Store
     {
         try
         {
-            String[] base = Delim.AMPER.split(_crypto.decryptDecode(requestToken));
-            if(base.length!=3)
+            String[] tokens = Delim.AMPER.split(_crypto.decryptDecode(requestToken));
+            if(tokens.length!=3)
                 return null;
 
-            if((System.currentTimeMillis() - Long.parseLong(base[0])) > _loginTimeout)
+            if((System.currentTimeMillis() - Long.parseLong(tokens[0])) > _loginTimeout)
                 return null;
             
             //String consumerKey = base[1];
             String verifier = _crypto.encryptEncode(requestToken + accessId);
             
-            String callback = base[2];
+            String callback = tokens[2];
             // check if oob .. return verifier
             if(callback.length()==3)
                 return verifier;
@@ -210,8 +203,9 @@ public abstract class HashStore implements ServiceToken.Store
     {
         try
         {
-            String key = _crypto.encryptEncode(System.currentTimeMillis() + accessId);
-            return new SimpleServiceToken(consumerSecret, key, sign(key));
+            String base = System.currentTimeMillis() + accessId;
+            String accessToken = _crypto.encryptEncode(base);
+            return new SimpleServiceToken(consumerSecret, accessToken, sign(base));
         }
         catch(Exception e)
         {
@@ -223,15 +217,15 @@ public abstract class HashStore implements ServiceToken.Store
     {
         try
         {
-            String key = _crypto.decryptDecode(accessToken);
-            if((System.currentTimeMillis()-Long.parseLong(key.substring(0, 20))) > _accessTimeout)
+            String base = _crypto.decryptDecode(accessToken);
+            if((System.currentTimeMillis()-Long.parseLong(base.substring(0, 20))) > _accessTimeout)
                 return null;
             
             String consumerSecret = getConsumerSecret(consumerKey);
             if(consumerSecret==null)
                 return null;
             
-            return new SimpleServiceToken(consumerSecret, accessToken, sign(accessToken));
+            return new SimpleServiceToken(consumerSecret, accessToken, sign(base));
         }
         catch(Exception e)
         {
