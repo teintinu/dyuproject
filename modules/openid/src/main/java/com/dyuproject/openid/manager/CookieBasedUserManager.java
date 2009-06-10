@@ -163,18 +163,11 @@ public class CookieBasedUserManager implements OpenIdUserManager
     {
         if(encrypted && _crypto==null)
         {
-            if(_secretKey.length()!=24)
-            {
-                if(_secretKey.length()>24)
-                    throw new IllegalArgumentException("supported secret keys are limited to 24 bytes long.");
-                
-                // padding
-                for(int i=0,len=24-_secretKey.length(); i<len; i++)
-                    _secretKey+=".";
-            }
+            _secretKey = Cryptography.pad(_secretKey, '.');
             try
             {
-                _crypto = Cryptography.createDESede(_secretKey);
+                _crypto = _secretKey.length()==24 ? Cryptography.createDESede(_secretKey) : 
+                    Cryptography.createDES(_secretKey);
             }
             catch(Exception e)
             {
