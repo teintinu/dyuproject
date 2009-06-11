@@ -40,7 +40,7 @@ import com.dyuproject.util.Cryptography;
 public class CookieSessionManager
 {
     
-    public static final String SESSION_COOKIE_SECRET_KEY = "session.cookie.secret_key";
+    public static final String SESSION_COOKIE_SECURITY_SECRET_KEY = "session.cookie.security.secret_key";
     public static final String SESSION_COOKIE_NAME = "session.cookie.name";
     public static final String SESSION_COOKIE_MAX_AGE = "session.cookie.max_age";
     public static final String SESSION_COOKIE_DOMAIN = "session.cookie.domain";
@@ -76,11 +76,11 @@ public class CookieSessionManager
             return;
         
         _cookieName = props.getProperty(SESSION_COOKIE_NAME);
-        _secretKey = props.getProperty(SESSION_COOKIE_SECRET_KEY);
+        _secretKey = props.getProperty(SESSION_COOKIE_SECURITY_SECRET_KEY);
         if(_cookieName==null || _secretKey==null)
         {
             throw new IllegalStateException(SESSION_COOKIE_NAME + " and " + 
-                    SESSION_COOKIE_SECRET_KEY + " env property must be set.");
+                    SESSION_COOKIE_SECURITY_SECRET_KEY + " env property must be set.");
         }
         _secretKey = Cryptography.pad(_secretKey, '.');
 

@@ -15,6 +15,7 @@
 package com.dyuproject.openid.manager;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.Cookie;
@@ -196,6 +197,7 @@ public class CookieBasedUserManager implements OpenIdUserManager
         return _crypto==null ? getUserVerifiedBySignature(cookie) : getUserByDecryption(cookie);
     }
     
+    @SuppressWarnings("unchecked")
     OpenIdUser getUserVerifiedBySignature(Cookie cookie) 
     throws IOException
     {
@@ -213,9 +215,13 @@ public class CookieBasedUserManager implements OpenIdUserManager
             return null;
         }
         
-        return (OpenIdUser)_json.parse(new StringSource(B64Code.decode(u)));
+        Map map = (Map)_json.parse(new StringSource(B64Code.decode(u)));
+        OpenIdUser user = new OpenIdUser();
+        user.fromJSON(map);
+        return user;
     }
     
+    @SuppressWarnings("unchecked")
     OpenIdUser getUserByDecryption(Cookie cookie) 
     throws IOException
     {
@@ -228,8 +234,12 @@ public class CookieBasedUserManager implements OpenIdUserManager
         {
             e.printStackTrace();
             return null;
-        }        
-        return (OpenIdUser)_json.parse(new StringSource(value));
+        }
+        
+        Map map = (Map)_json.parse(new StringSource(value));
+        OpenIdUser user = new OpenIdUser();
+        user.fromJSON(map);
+        return user;
     }
     
     public boolean saveUser(OpenIdUser user, HttpServletRequest request, 

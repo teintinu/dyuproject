@@ -15,6 +15,7 @@
 package com.dyuproject.oauth.manager;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.Cookie;
@@ -183,6 +184,7 @@ public class CookieBasedTokenManager implements TokenManager
         return null;
     }
     
+    @SuppressWarnings("unchecked")
     Token getToken(Cookie cookie) 
     throws IOException
     {
@@ -195,20 +197,20 @@ public class CookieBasedTokenManager implements TokenManager
         {
             e.printStackTrace();
             return null;
-        }        
-        return (Token)_json.parse(new StringSource(value));
+        }
+        Map map = (Map)_json.parse(new StringSource(value));
+        Token token = new Token();
+        token.fromJSON(map);
+        return token;
     }
     
     public boolean saveToken(Token token, HttpServletRequest request, 
             HttpServletResponse response) throws IOException
     {
-        if(response.isCommitted())
-            return false;
-        String u = _json.toJSON(token);
         String value = null;
         try
         {
-            value = _crypto.encryptEncode(u);
+            value = _crypto.encryptEncode(_json.toJSON(token));
         }
         catch(Exception e)
         {
