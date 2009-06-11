@@ -175,6 +175,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         return _extensions==null ? null : _extensions.get(namespace);
     }
 
+    @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         _identifier = (String)map.get("h");

@@ -40,11 +40,13 @@ public class AxSchemaExtension extends AbstractExtension
     public static final String MODE_RESPONSE = "fetch_response";
     public static final String ATTR_NAME = "axschema";
     
+    @SuppressWarnings("unchecked")
     public static Map<String,String> get(OpenIdUser user)
     {
         return (Map<String,String>)user.getAttribute(ATTR_NAME);
     }
     
+    @SuppressWarnings("unchecked")
     public static Map<String,String> remove(OpenIdUser user)
     {
         return (Map<String,String>)user.removeAttribute(ATTR_NAME);

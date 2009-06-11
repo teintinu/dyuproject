@@ -249,11 +249,10 @@ public class CookieBasedUserManager implements OpenIdUserManager
     
     boolean saveUserWithEncryption(OpenIdUser user, HttpServletResponse response) throws IOException
     {
-        String u = _json.toJSON(user);
         String value = null;
         try
         {
-            value = _crypto.encryptEncode(u);
+            value = _crypto.encryptEncode(_json.toJSON(user));
         }
         catch(Exception e)
         {

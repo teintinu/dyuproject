@@ -252,6 +252,7 @@ public class SReg implements Serializable, JSON.Convertible
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         _propertyCount = ((Number)map.get("pc")).intValue();
