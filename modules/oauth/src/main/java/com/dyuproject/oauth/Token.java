@@ -160,7 +160,7 @@ public final class Token implements Serializable, JSON.Convertible
 
     public void toJSON(Output out)
     {
-        out.addClass(getClass());
+        //out.addClass(getClass());
         out.add("st", _state);
         out.add("ck", _ck);
         if(_key!=null)

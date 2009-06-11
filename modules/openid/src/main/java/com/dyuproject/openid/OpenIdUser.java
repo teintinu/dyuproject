@@ -190,7 +190,7 @@ public class OpenIdUser implements Serializable, JSON.Convertible
 
     public void toJSON(Output out)
     {        
-        out.addClass(getClass());
+        //out.addClass(getClass());
         out.add("h", _identifier);
         out.add("a", _claimedId);
         if(_identity!=null)

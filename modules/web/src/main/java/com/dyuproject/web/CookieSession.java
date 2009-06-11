@@ -120,6 +120,7 @@ public class CookieSession implements Serializable, JSON.Convertible
 
     public void toJSON(Output out)
     {
+        //out.addClass(getClass());
         if(_attributes!=null)
             out.add("a", _attributes);
         
