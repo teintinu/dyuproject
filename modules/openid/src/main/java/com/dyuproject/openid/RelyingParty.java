@@ -178,6 +178,7 @@ public class RelyingParty
         }
     }
     
+    @SuppressWarnings("unchecked")
     public static Map<String,String> getAuthParameters(HttpServletRequest request)
     {
         Map<String,String> params = new HashMap<String,String>();

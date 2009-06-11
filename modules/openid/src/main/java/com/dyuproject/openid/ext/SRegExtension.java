@@ -40,11 +40,13 @@ public class SRegExtension extends AbstractExtension
     public static final String NAMESPACE = "http://openid.net/extensions/sreg/1.1";
     public static final String ATTR_NAME = "sreg";
     
+    @SuppressWarnings("unchecked")
     public static Map<String,String> get(OpenIdUser user)
     {
         return (Map<String,String>)user.getAttribute(ATTR_NAME);
     }
     
+    @SuppressWarnings("unchecked")
     public static Map<String,String> remove(OpenIdUser user)
     {
         return (Map<String,String>)user.removeAttribute(ATTR_NAME);

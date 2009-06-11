@@ -110,6 +110,7 @@ public class GoogleAccount implements Serializable, JSON.Convertible
         _email = email;
     }
 
+    @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         _email = (String)map.get("e");        
