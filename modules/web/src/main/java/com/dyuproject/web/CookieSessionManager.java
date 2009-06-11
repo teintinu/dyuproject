@@ -32,7 +32,7 @@ import com.dyuproject.util.DigestUtil;
 /**
  * Manages the CookieSession.
  * The environment is setup from a java.util.Properties 
- * and taking the valaues of session.* keys
+ * with config parameters that starts with session.cookie.*
  * 
  * @author David Yu
  * @created Jun 2, 2008
@@ -41,14 +41,12 @@ import com.dyuproject.util.DigestUtil;
 public class CookieSessionManager
 {
     
-    public static final String SESSION_COOKIE_SECRET_KEY = "session.cookie.secretKey";
+    public static final String SESSION_COOKIE_SECRET_KEY = "session.cookie.secret_key";
     public static final String SESSION_COOKIE_NAME = "session.cookie.name";
-    public static final String SESSION_COOKIE_MAX_AGE = "session.cookie.maxAge";
+    public static final String SESSION_COOKIE_MAX_AGE = "session.cookie.max_age";
     public static final String SESSION_COOKIE_DOMAIN = "session.cookie.domain";
     public static final String SESSION_COOKIE_PATH = "session.cookie.path";
-    public static final String SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS = "session.cookie.include.remoteAddress";
-    
-    public static final String COOKIE_SESSION_REQUEST_ATTR = "cs";
+    public static final String SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS = "session.cookie.include_remote_address";
     
     private static final ThreadLocal<CookieSession> __session = new ThreadLocal<CookieSession>();
 
@@ -109,7 +107,7 @@ public class CookieSessionManager
         if(session!=null)
             return session;
         
-        session = (CookieSession)request.getAttribute(COOKIE_SESSION_REQUEST_ATTR);
+        session = (CookieSession)request.getAttribute(CookieSession.ATTR_NAME);
         if(session!=null)
             return session;
         
@@ -145,7 +143,7 @@ public class CookieSessionManager
         CookieSession session = __session.get();
         __session.set(null);
 
-        if(session==null || session.isPersisted() || response.isCommitted())
+        if(session==null || session.isPersisted())
             return;
 
         if(System.currentTimeMillis() > session.getTimeUpdated()+_updateMs)
@@ -170,7 +168,7 @@ public class CookieSessionManager
     {
         CookieSession session = new CookieSession(new HashMap<String,Object>(3));
         __session.set(session);
-        request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, session);
+        request.setAttribute(CookieSession.ATTR_NAME, session);
         return session;
     }
     
@@ -189,7 +187,7 @@ public class CookieSessionManager
         CookieSession session = (CookieSession)_json.parse(new StringSource(
                 B64Code.decode(pair[0])));
         __session.set(session);
-        request.setAttribute(COOKIE_SESSION_REQUEST_ATTR, session);
+        request.setAttribute(CookieSession.ATTR_NAME, session);
         return session;
     }
 
