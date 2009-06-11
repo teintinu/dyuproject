@@ -111,6 +111,7 @@ public class CookieSession implements JSON.Convertible
         return _persisted;
     }
 
+    @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         _attributes = (Map<String,Object>)map.get("a");

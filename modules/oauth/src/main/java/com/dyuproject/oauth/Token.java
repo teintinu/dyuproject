@@ -148,7 +148,7 @@ public final class Token implements Serializable, JSON.Convertible
         _attributes.put(key, value);
     }
 
-
+    @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         _state = ((Number)map.get("st")).intValue();

@@ -74,6 +74,7 @@ public class Import implements Convertible
         }
     }    
 
+    @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         map.remove("class");

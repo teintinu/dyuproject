@@ -30,7 +30,6 @@ import org.codehaus.jra.Put;
 import com.dyuproject.demos.todolist.Constants;
 import com.dyuproject.demos.todolist.Feedback;
 import com.dyuproject.demos.todolist.dao.UserDao;
-import com.dyuproject.demos.todolist.model.Todo;
 import com.dyuproject.demos.todolist.model.User;
 import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.ValidationException;

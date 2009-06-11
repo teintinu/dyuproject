@@ -96,6 +96,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
         return DEFAULT_RESPONSE_CONTENT_TYPE;
     }
 
+    @SuppressWarnings("unchecked")
     protected void init()
     {
         Map<String, CacheEntry> cache = 

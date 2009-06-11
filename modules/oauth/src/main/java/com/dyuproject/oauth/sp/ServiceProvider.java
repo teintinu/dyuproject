@@ -135,6 +135,7 @@ public class ServiceProvider
         return size>7 || size<Signature.REQUIRED_HEADER_TO_SIGN.length ? 400 : 200;
     }
     
+    @SuppressWarnings("unchecked")
     public static int parse(HttpServletRequest request, UrlEncodedParameterMap params)
     {
         int status = 200;

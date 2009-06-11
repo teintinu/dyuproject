@@ -273,6 +273,7 @@ public class RESTServiceContext extends WebContext
         ph.addMappedInterceptor(ci, 0);
     }
     
+    @SuppressWarnings("unchecked")
     public void loadPropertiesFromClass(Properties props, Class<?> clazz)
     {
         Map<Class<?>,Properties> cache = 

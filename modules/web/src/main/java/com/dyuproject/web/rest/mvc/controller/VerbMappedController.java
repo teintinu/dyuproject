@@ -49,7 +49,7 @@ public abstract class VerbMappedController extends AbstractController
             Method[] methods = getClass().getDeclaredMethods();
             for(Method m : methods)
             {
-                Class[] pt = m.getParameterTypes();
+                Class<?>[] pt = m.getParameterTypes();
                 if(pt.length==3)
                 {
                     // e.g public void list(string, request, response);

@@ -94,6 +94,7 @@ public class References implements Convertible
             _map.putAll(map);
     }
     
+    @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         map.remove("class");

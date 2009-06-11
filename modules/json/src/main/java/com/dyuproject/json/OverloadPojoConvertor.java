@@ -43,6 +43,7 @@ public class OverloadPojoConvertor extends JSONPojoConvertor
         super(pojoClass, addClass);
     }
     
+    @SuppressWarnings("unchecked")
     protected void addSetter(String name, Method method)
     {
         OverloadSetter ds = newSetter(name, method);

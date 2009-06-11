@@ -60,6 +60,7 @@ public class CustomTemplate extends StringTemplate
         _response = null;
     }
 
+    @SuppressWarnings("unchecked")
     public Object get(StringTemplate self, String attribute)
     {
         // System.out.println("### get("+getEnclosingInstanceStackString()+", "+attribute+")");
