@@ -14,6 +14,7 @@ dyuproject-1.1-SNAPSHOT
 + util: CDATA support for XMLParser 
 
 + web: quote the algorithm param of the WWW-Authenticate header response from DigestAuthentication
++ web: simplify cookie session and use encryption instead of md5 hash signature
 
 dyuproject-1.1.3 2009-03-18
 + Fixed YadisDiscovery bug (signon and server handling) - the actual fix for the GoogleAccount issue (removed the previous
