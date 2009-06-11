@@ -61,6 +61,7 @@ public class StandardPojoConvertor extends JSONPojoConvertor
         super(pojoClass, excluded, fromJSON);
     }
     
+    @SuppressWarnings("unchecked")
     protected void addSetter(String name, Method method)
     {
         _setters.put(name, newSetter(name, method));
@@ -98,6 +99,7 @@ public class StandardPojoConvertor extends JSONPojoConvertor
                 invokeObject(obj, value, this);
         }
         
+        @SuppressWarnings("unchecked")
         public static boolean invokeObject(Object obj, Object value, StandardSetter setter)
         throws IllegalArgumentException, IllegalAccessException, InvocationTargetException
         {

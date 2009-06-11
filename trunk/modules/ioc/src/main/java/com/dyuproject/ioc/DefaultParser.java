@@ -51,6 +51,7 @@ public class DefaultParser extends Parser
         this(new DefaultConvertorCache(), resolver);
     }
     
+    @SuppressWarnings("unchecked")
     public void parse(Resource resource, ApplicationContext appContext)
     {
         if(!resource.isResolved())
@@ -102,6 +103,7 @@ public class DefaultParser extends Parser
         return super.handleUnknown(source, c);
     }
     
+    @SuppressWarnings("unchecked")
     protected Map newMap()
     {
         Map<String,Object> map = new HashMap<String,Object>();

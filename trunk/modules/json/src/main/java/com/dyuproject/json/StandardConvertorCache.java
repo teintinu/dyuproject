@@ -26,6 +26,7 @@ import org.mortbay.util.ajax.JSON.Output;
  * @created Feb 21, 2009
  */
 
+@SuppressWarnings("unchecked")
 public class StandardConvertorCache implements ConvertorCache
 {
     

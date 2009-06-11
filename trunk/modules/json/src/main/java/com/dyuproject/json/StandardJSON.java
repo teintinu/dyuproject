@@ -119,11 +119,13 @@ public class StandardJSON extends JSON
         _addClass = addClass;
     }
     
+    @SuppressWarnings("unchecked")
     protected Convertor getConvertor(Class clazz)
     {
         return getConvertorCache().getConvertor(clazz, true, _addClass);
     }
     
+    @SuppressWarnings("unchecked")
     protected Object parseObject(Source source)
     {
         if (source.next()!='{')

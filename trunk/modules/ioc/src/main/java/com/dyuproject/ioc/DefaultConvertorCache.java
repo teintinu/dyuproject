@@ -27,6 +27,7 @@ import com.dyuproject.json.StandardConvertorCache;
  * @created Feb 21, 2009
  */
 
+@SuppressWarnings("unchecked")
 public class DefaultConvertorCache extends StandardConvertorCache
 {
     

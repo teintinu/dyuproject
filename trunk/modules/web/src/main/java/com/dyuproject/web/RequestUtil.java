@@ -56,6 +56,7 @@ public abstract class RequestUtil
     /*
      * Parses POST AND PUT application/x-www-form-urlencoded parameters
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, String> getParams(HttpServletRequest request) throws IOException
     {
         Map<String,String> params = new HashMap<String,String>();        
@@ -96,6 +97,7 @@ public abstract class RequestUtil
         return params;
     }
     
+    @SuppressWarnings("unchecked")
     public static Map<String, String> parsePUTParams(HttpServletRequest request) throws IOException
     {
         if(!PUT.equals(request.getMethod()))

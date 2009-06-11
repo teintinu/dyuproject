@@ -36,6 +36,7 @@ import com.dyuproject.web.rest.ValidationException;
  * @created Jan 18, 2009
  */
 
+@SuppressWarnings("unchecked")
 public class SimpleJSONConsumer extends AbstractConsumer
 {   
     
