@@ -35,8 +35,8 @@ public class CookieSession implements Serializable, JSON.Convertible
     public static final String ATTR_NAME = "cs";
     
     private Map<String,Object> _attributes;
-    private long _timeCreated = 0;
     private long _timeUpdated = 0;
+    private String _ip;
     private transient boolean _persisted = false;
     
     public CookieSession()
@@ -47,22 +47,15 @@ public class CookieSession implements Serializable, JSON.Convertible
     CookieSession(Map<String,Object> attributes)
     {
         _attributes = attributes;
-        _timeCreated = System.currentTimeMillis();
     }
     
     /**
      * 
      * @param name
-     * @param value The value should be a Map, Collection, String, Number(Long or Double) or 
-     * JSON.Convertible. You will get a ClassCastException from getAttribute(name) if the value was 
-     * not any of the specified objects.  
-     * The value could also be an array of the specified objects.
+     * @param value can be any object/pojo.
      */
     public void setAttribute(String name, Object value)
     {
-        if(_persisted)
-            throw new IllegalStateException("session has already been persisted during this request.");
-        
         _attributes.put(name, value);
     }
     
@@ -83,20 +76,12 @@ public class CookieSession implements Serializable, JSON.Convertible
     
     public boolean removeAttribute(String name)
     {
-        if(_persisted)
-            throw new IllegalStateException("session has already been persisted during this request.");
-        
         return _attributes.remove(name)!=null;
     }
     
     public Map<String,Object> getAttrs()
     {
         return _attributes;
-    }
-    
-    public long getTimeCreated()
-    {
-        return _timeCreated;
     }
     
     public long getTimeUpdated()
@@ -114,21 +99,34 @@ public class CookieSession implements Serializable, JSON.Convertible
     {
         return _persisted;
     }
+    
+    public String getIP()
+    {
+        return _ip;
+    }
+    
+    void setIP(String ip)
+    {
+        _ip = ip;
+    }
 
     @SuppressWarnings("unchecked")
     public void fromJSON(Map map)
     {
         _attributes = (Map<String,Object>)map.get("a");
-        _timeCreated = ((Number)map.get("c")).longValue();
         _timeUpdated = ((Number)map.get("u")).longValue();
+        _ip = (String)map.get("i");
     }
 
     public void toJSON(Output out)
     {
-        out.addClass(getClass());
-        out.add("a", _attributes);
-        out.add("c", _timeCreated);
+        if(_attributes!=null)
+            out.add("a", _attributes);
+        
         out.add("u", _timeUpdated);
+        
+        if(_ip!=null)
+            out.add("i", _ip);
     }
 
 }

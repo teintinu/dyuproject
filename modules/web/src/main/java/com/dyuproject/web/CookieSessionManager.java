@@ -16,6 +16,7 @@ package com.dyuproject.web;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.Cookie;
@@ -25,9 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.mortbay.util.ajax.JSON.StringSource;
 
 import com.dyuproject.json.StandardJSON;
-import com.dyuproject.util.B64Code;
-import com.dyuproject.util.Delim;
-import com.dyuproject.util.DigestUtil;
+import com.dyuproject.util.Cryptography;
 
 /**
  * Manages the CookieSession.
@@ -54,6 +53,7 @@ public class CookieSessionManager
     private int _maxAge = 3600, _updateMs = 3600*500;
     private boolean _started = false, _includeRemoteAddr = false;
     private StandardJSON _json = new StandardJSON();
+    private Cryptography _crypto;
     
     public static CookieSession getCurrentSession()
     {
@@ -82,7 +82,8 @@ public class CookieSessionManager
             throw new IllegalStateException(SESSION_COOKIE_NAME + " and " + 
                     SESSION_COOKIE_SECRET_KEY + " env property must be set.");
         }
-        
+        _secretKey = Cryptography.pad(_secretKey, '.');
+
         _cookiePath = props.getProperty(SESSION_COOKIE_PATH, "/");
         _cookieDomain = props.getProperty(SESSION_COOKIE_DOMAIN);
         
@@ -96,6 +97,16 @@ public class CookieSessionManager
         String includeRemoteAddr = props.getProperty(SESSION_COOKIE_INCLUDE_REMOTE_ADDRESS);
         if(includeRemoteAddr!=null)
             _includeRemoteAddr = Boolean.parseBoolean(includeRemoteAddr);
+        
+        try
+        {
+            _crypto = _secretKey.length()==24 ? Cryptography.createDESede(_secretKey) : 
+                Cryptography.createDES(_secretKey);
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
+        }
 
         _started = true;
     }
@@ -126,10 +137,7 @@ public class CookieSessionManager
     public boolean persistSession(CookieSession session, HttpServletRequest request, 
             HttpServletResponse response) throws IOException
     {
-        if(session.isPersisted())
-            throw new IllegalStateException("session has already been persisted during this request.");
-        
-        return persist(session, request, response);
+        return !session.isPersisted() && persist(session, request, response);
     }
     
     public boolean invalidateSession(HttpServletResponse response) throws IOException
@@ -153,15 +161,22 @@ public class CookieSessionManager
     private boolean persist(CookieSession session, HttpServletRequest request, 
             HttpServletResponse response) throws IOException
     {
-        session.markPersisted();
-        String json = B64Code.encode(_json.toJSON(session));
-        StringBuilder toSign = new StringBuilder().append(json).append(_secretKey);
         if(_includeRemoteAddr)
-            toSign.append(request.getRemoteAddr());
+            session.setIP(request.getRemoteAddr());
         
-        String sig = DigestUtil.digestMD5(toSign.toString());        
-        return write(new StringBuilder().append(json).append('&').append(sig).toString(), _maxAge, 
-                response);
+        session.markPersisted();
+        String value = null;
+        try
+        {
+            value = _crypto.encryptEncode(_json.toJSON(session));
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return false;
+        }
+        write(value, _maxAge, response);
+        return true;
     }
     
     private CookieSession create(HttpServletRequest request)
@@ -172,23 +187,27 @@ public class CookieSessionManager
         return session;
     }
     
+    @SuppressWarnings("unchecked")
     private CookieSession read(Cookie cookie, HttpServletRequest request)
     {
-        String[] pair = Delim.AMPER.split(cookie.getValue());
-        if(pair.length!=2)
+        try
+        {
+            Map map = (Map)_json.parse(new StringSource(_crypto.decryptDecode(cookie.getValue())));
+            if(_includeRemoteAddr)
+            {
+                String ip = (String)map.get("i");
+                if(ip!=null && !ip.equals(request.getRemoteAddr()))
+                    return null;
+            }
+            CookieSession session = new CookieSession();
+            session.fromJSON(map);
+            request.setAttribute(CookieSession.ATTR_NAME, session);
+            return session;
+        }
+        catch(Exception e)
+        {
             return null;
-        
-        StringBuilder toSign = new StringBuilder().append(pair[0]).append(_secretKey);
-        if(_includeRemoteAddr)
-            toSign.append(request.getRemoteAddr());
-        if(!pair[1].equals(DigestUtil.digestMD5(toSign.toString())))
-            return null;
-
-        CookieSession session = (CookieSession)_json.parse(new StringSource(
-                B64Code.decode(pair[0])));
-        __session.set(session);
-        request.setAttribute(CookieSession.ATTR_NAME, session);
-        return session;
+        }
     }
 
     private boolean write(String value, int maxAge, HttpServletResponse response) 
