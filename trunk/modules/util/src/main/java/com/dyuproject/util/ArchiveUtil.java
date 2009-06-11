@@ -71,12 +71,12 @@ public abstract class ArchiveUtil
     
     public static boolean extract(File archive, File targetDir) throws IOException
     {
-        return extract(archive.toURL(), targetDir, true);
+        return extract(archive.toURI().toURL(), targetDir, true);
     }
     
     public static boolean extract(File archive, File targetDir, boolean deleteOnExit) throws IOException
     {
-        return extract(archive.toURL(), targetDir, deleteOnExit);
+        return extract(archive.toURI().toURL(), targetDir, deleteOnExit);
     }
     
     public static boolean extract(URL archive, File targetDir) throws IOException
