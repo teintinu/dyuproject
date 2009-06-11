@@ -235,8 +235,6 @@ public class CookieBasedUserManager implements OpenIdUserManager
     public boolean saveUser(OpenIdUser user, HttpServletRequest request, 
             HttpServletResponse response) throws IOException
     {
-        if(response.isCommitted())
-            return false;
         return _crypto==null ? saveUserWithSignature(user, response) : saveUserWithEncryption(user, 
                 response);
     }
