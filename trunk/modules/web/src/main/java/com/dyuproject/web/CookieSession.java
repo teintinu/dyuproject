@@ -14,6 +14,7 @@
 
 package com.dyuproject.web;
 
+import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,13 +28,16 @@ import org.mortbay.util.ajax.JSON.Output;
  * @created May 19, 2008
  */
 
-public class CookieSession implements JSON.Convertible
+@SuppressWarnings("serial")
+public class CookieSession implements Serializable, JSON.Convertible
 {
+    
+    public static final String ATTR_NAME = "cs";
     
     private Map<String,Object> _attributes;
     private long _timeCreated = 0;
     private long _timeUpdated = 0;
-    private boolean _persisted = false;
+    private transient boolean _persisted = false;
     
     public CookieSession()
     {
