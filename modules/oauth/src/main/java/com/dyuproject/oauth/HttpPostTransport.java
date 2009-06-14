@@ -59,7 +59,7 @@ public class HttpPostTransport extends Transport
     {
         StringBuilder buffer = new StringBuilder();
         
-        putDefaults(params, ep, token, exchange, nts, signature, buffer, buffer);
+        putDefaults(params, ep, token, exchange, nts, signature, null, buffer);
         
         System.err.println(buffer.substring(1));
         return parse(connector.doPOST(params.getUrl(), (Map<?,?>)null, 
