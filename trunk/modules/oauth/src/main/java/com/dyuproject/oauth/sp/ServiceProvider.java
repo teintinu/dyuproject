@@ -132,7 +132,7 @@ public class ServiceProvider
         }
         
         int size = params.size()-initSize;
-        return size>7 || size<Signature.REQUIRED_HEADER_TO_SIGN.length ? 400 : 200;
+        return size>7 || size<Signature.REQUIRED_OAUTH_HEADERS_TO_SIGN.length ? 400 : 200;
     }
     
     @SuppressWarnings("unchecked")

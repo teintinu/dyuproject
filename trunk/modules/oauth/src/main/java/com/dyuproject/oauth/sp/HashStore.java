@@ -218,7 +218,7 @@ public abstract class HashStore implements ServiceToken.Store
         try
         {
             String base = _crypto.decryptDecode(accessToken);
-            if((System.currentTimeMillis()-Long.parseLong(base.substring(0, 20))) > _accessTimeout)
+            if((System.currentTimeMillis()-Long.parseLong(base.substring(0, 13))) > _accessTimeout)
                 return null;
             
             String consumerSecret = getConsumerSecret(consumerKey);

@@ -39,7 +39,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public abstract class Signature
 {
     
-    public static final String[] REQUIRED_HEADER_TO_SIGN = new String[]{
+    public static final String[] REQUIRED_OAUTH_HEADERS_TO_SIGN = new String[]{
         Constants.OAUTH_CONSUMER_KEY,
         Constants.OAUTH_NONCE,
         Constants.OAUTH_TIMESTAMP,
@@ -84,53 +84,6 @@ public abstract class Signature
     {
         List<String> base = new ArrayList<String>();
         
-        // oauth_version parameter
-        String versionValue = params.remove(Constants.OAUTH_VERSION);
-        if(versionValue!=null)
-        {
-            versionValue = encode(versionValue);
-            base.add(new StringBuilder()
-                .append(Constants.OAUTH_VERSION)
-                .append(ENCODED_EQ)
-                .append(versionValue)
-                .toString());
-        }
-        
-        // oauth_token parameter
-        String tokenValue = params.remove(Constants.OAUTH_TOKEN);
-        if(tokenValue!=null)
-        {
-            tokenValue = encode(tokenValue);
-            base.add(new StringBuilder()
-                .append(Constants.OAUTH_TOKEN)
-                .append(ENCODED_EQ)
-                .append(tokenValue)
-                .toString());
-        }
-        
-        // default oauth parameters
-        for(String key : REQUIRED_HEADER_TO_SIGN)
-        {
-            String value = encode(params.remove(key));
-            base.add(new StringBuilder()
-                .append(key)
-                .append(ENCODED_EQ)
-                .append(value)
-                .toString());
-        }
-        
-        // request parameters
-        for(Map.Entry<String, String> entry : params.entrySet())
-        {
-            String key = entry.getKey();
-            String value = encode(entry.getValue());
-            base.add(new StringBuilder()
-                .append(key)
-                .append(ENCODED_EQ)
-                .append(encode(value))
-                .toString());
-        }
-        
         Collections.sort(base);
         StringBuilder buffer = new StringBuilder()
             .append(method)
@@ -167,7 +120,7 @@ public abstract class Signature
     }
     
     protected String getBaseAndPutDefaults(UrlEncodedParameterMap params, String httpMethod, 
-            Listener listener, StringBuilder oathBuffer, StringBuilder requestBuffer)
+            Listener listener, StringBuilder oauthBuffer, StringBuilder requestBuffer)
     {        
         String url = params.getUrl();
         int idx = url.indexOf('?');
@@ -192,29 +145,45 @@ public abstract class Signature
         
         List<String> base = new ArrayList<String>();
         
-        // oauth_token parameter
-        String tokenValue = params.remove(Constants.OAUTH_TOKEN);
-        if(tokenValue!=null)
+        if(oauthBuffer!=null)
         {
-            tokenValue = encode(tokenValue);
-            listener.handleOAuthParameter(Constants.OAUTH_TOKEN, tokenValue, oathBuffer);
-            base.add(new StringBuilder()
-                .append(Constants.OAUTH_TOKEN)
-                .append(ENCODED_EQ)
-                .append(tokenValue)
-                .toString());
-        }
-        
-        // default oauth parameters
-        for(String key : REQUIRED_HEADER_TO_SIGN)
-        {
-            String value = encode(params.remove(key));
-            listener.handleOAuthParameter(key, value, oathBuffer);
-            base.add(new StringBuilder()
-                .append(key)
-                .append(ENCODED_EQ)
-                .append(value)
-                .toString());
+            // oauth_token parameter
+            String versionValue = params.remove(Constants.OAUTH_VERSION);
+            if(versionValue!=null)
+            {
+                versionValue = encode(versionValue);
+                listener.handleOAuthParameter(Constants.OAUTH_VERSION, versionValue, oauthBuffer);
+                base.add(new StringBuilder()
+                    .append(Constants.OAUTH_VERSION)
+                    .append(ENCODED_EQ)
+                    .append(encode(versionValue))
+                    .toString());
+            }
+            
+            // oauth_token parameter
+            String tokenValue = params.remove(Constants.OAUTH_TOKEN);
+            if(tokenValue!=null)
+            {
+                tokenValue = encode(tokenValue);
+                listener.handleOAuthParameter(Constants.OAUTH_TOKEN, tokenValue, oauthBuffer);
+                base.add(new StringBuilder()
+                    .append(Constants.OAUTH_TOKEN)
+                    .append(ENCODED_EQ)
+                    .append(encode(tokenValue))
+                    .toString());
+            }
+            
+            // default oauth parameters
+            for(String key : REQUIRED_OAUTH_HEADERS_TO_SIGN)
+            {
+                String value = encode(params.remove(key));
+                listener.handleOAuthParameter(key, value, oauthBuffer);
+                base.add(new StringBuilder()
+                    .append(key)
+                    .append(ENCODED_EQ)
+                    .append(encode(value))
+                    .toString());
+            }
         }
         
         // request parameters
@@ -287,7 +256,10 @@ public abstract class Signature
         {
             getBaseAndPutDefaults(params, httpMethod, listener, oauthBuffer, requestBuffer);
             String sig = sign(consumerSecret, token.getSecret(), null);
-            listener.handleOAuthParameter(Constants.OAUTH_SIGNATURE, sig, oauthBuffer);
+            if(oauthBuffer==null)
+                listener.handleRequestParameter(Constants.OAUTH_SIGNATURE, encode(sig), requestBuffer);
+            else
+                listener.handleOAuthParameter(Constants.OAUTH_SIGNATURE, encode(sig), oauthBuffer);
         }
         
     };
@@ -318,7 +290,10 @@ public abstract class Signature
         {
             String base = getBaseAndPutDefaults(params, httpMethod, listener, oauthBuffer, requestBuffer);
             String sig = sign(consumerSecret, token.getSecret(), base);
-            listener.handleOAuthParameter(Constants.OAUTH_SIGNATURE, encode(sig), oauthBuffer);
+            if(oauthBuffer==null)
+                listener.handleRequestParameter(Constants.OAUTH_SIGNATURE, encode(sig), requestBuffer);
+            else
+                listener.handleOAuthParameter(Constants.OAUTH_SIGNATURE, encode(sig), oauthBuffer);
         }
         
     };

@@ -59,7 +59,7 @@ public class HttpGetTransport extends Transport
     {
         StringBuilder buffer = new StringBuilder();
         
-        putDefaults(params, ep, token, exchange, nts, signature, buffer, buffer);
+        putDefaults(params, ep, token, exchange, nts, signature, null, buffer);
         
         buffer.setCharAt(0, '?');
         buffer.insert(0, params.getUrl());

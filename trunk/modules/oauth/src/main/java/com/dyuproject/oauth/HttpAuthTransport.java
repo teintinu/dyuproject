@@ -35,6 +35,17 @@ public class HttpAuthTransport extends Transport
     public static final String WWW_AUTHENTICATE= "WWW-Authenticate";
     
     static final HttpAuthTransport __default = new HttpAuthTransport();
+    static final Signature.Listener __authHeaderListener = new Signature.Listener()
+    {
+        public void handleOAuthParameter(String key, String value, StringBuilder oauthBuffer)
+        {
+            oauthBuffer.append(',').append(key).append('=').append('"').append(value).append('"');
+        }
+        public void handleRequestParameter(String key, String value, StringBuilder requestBuffer)
+        {
+            
+        }        
+    };
     
     public static HttpAuthTransport getDefault()
     {
@@ -80,11 +91,15 @@ public class HttpAuthTransport extends Transport
         return parse(connector.doGET(url, new Parameter(NAME, oauthBuffer.toString())), token);
     }
     
-    public String getAuthHeaderValue(UrlEncodedParameterMap params, Endpoint ep, 
-            Token token, TokenExchange exchange, NonceAndTimestamp nts, Signature signature)
+    public static String getAuthHeaderValue(UrlEncodedParameterMap params, Endpoint ep, 
+            Token token, NonceAndTimestamp nts, Signature signature)
     {
         StringBuilder oauthBuffer = new StringBuilder();
-        putDefaults(params, ep, token, exchange, nts, signature, oauthBuffer, null);
+        params.put(Constants.OAUTH_CONSUMER_KEY, ep.getConsumerKey());
+        params.put(Constants.OAUTH_TOKEN, token.getKey());
+        nts.put(params, ep.getConsumerKey());
+        signature.generate(params, ep.getConsumerSecret(), token, __default.getMethod(), 
+                __authHeaderListener, oauthBuffer, null);
         
         oauthBuffer.setCharAt(0, ' ');
         oauthBuffer.insert(0, "OAuth");
