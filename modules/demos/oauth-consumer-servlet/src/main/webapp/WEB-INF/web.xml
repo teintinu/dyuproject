@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+   xmlns="http://java.sun.com/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+   version="2.5" metadata-complete="true">
+   
+  <servlet>
+    <servlet-name>googlecontacts-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthconsumer.GoogleContactsServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>googlecontacts-servlet</servlet-name>
+    <url-pattern>/googlecontacts/</url-pattern>
+    <url-pattern>/services/google/</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>localcontacts-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthconsumer.LocalContactsServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>localcontacts-servlet</servlet-name>
+    <url-pattern>/localcontacts/</url-pattern>
+    <url-pattern>/services/local/</url-pattern>
+  </servlet-mapping>
+
+</web-app>
