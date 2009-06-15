@@ -30,6 +30,8 @@ public interface ServiceToken extends Serializable
     public String getConsumerSecret();
     public String getKey();
     public String getSecret();
+    // optional
+    public String getId();
     
     public interface Store
     {

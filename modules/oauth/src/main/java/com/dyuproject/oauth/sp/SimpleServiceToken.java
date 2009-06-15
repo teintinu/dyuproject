@@ -25,13 +25,19 @@ package com.dyuproject.oauth.sp;
 public class SimpleServiceToken implements ServiceToken
 {
     
-    private String _consumerSecret, _key, _secret;
+    private String _consumerSecret, _key, _secret, _id;
     
     public SimpleServiceToken(String consumerSecret, String key, String secret)
     {
         _consumerSecret = consumerSecret;
         _key = key;
         _secret = secret;
+    }
+    
+    public SimpleServiceToken(String consumerSecret, String key, String secret, String id)
+    {
+        this(consumerSecret, key, secret);
+        _id = id;
     }
 
     public String getConsumerSecret()
@@ -47,6 +53,11 @@ public class SimpleServiceToken implements ServiceToken
     public String getSecret()
     {
         return _secret;
+    }
+    
+    public String getId()
+    {
+        return _id;
     }
 
 }

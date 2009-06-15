@@ -225,7 +225,8 @@ public abstract class HashStore implements ServiceToken.Store
             if(consumerSecret==null)
                 return null;
             
-            return new SimpleServiceToken(consumerSecret, accessToken, sign(base));
+            return new SimpleServiceToken(consumerSecret, accessToken, sign(base), 
+                    base.substring(13));
         }
         catch(Exception e)
         {
