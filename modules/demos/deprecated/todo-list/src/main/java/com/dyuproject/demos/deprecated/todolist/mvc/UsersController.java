@@ -18,16 +18,15 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.mortbay.util.ajax.JSON;
 
 import com.dyuproject.demos.deprecated.todolist.Constants;
 import com.dyuproject.demos.deprecated.todolist.Feedback;
 import com.dyuproject.demos.deprecated.todolist.dao.UserDao;
 import com.dyuproject.demos.deprecated.todolist.model.User;
-import com.dyuproject.util.format.JSONConverter;
-import com.dyuproject.util.format.XMLConverter;
 import com.dyuproject.web.RequiredParametersValidator;
 import com.dyuproject.web.rest.mvc.controller.CRUDController;
 
@@ -322,19 +321,14 @@ public class UsersController extends CRUDController
     throws ServletException, IOException
     {
         response.setContentType(Constants.TEXT_XML);
-        ServletOutputStream out = response.getOutputStream();
-        out.write(XMLConverter.getInstance().toString(data, null).getBytes());
-        out.close();
+        //TODO
     }
     
     private void writeJSON(Object data, HttpServletRequest request, HttpServletResponse response) 
     throws ServletException, IOException
     {
         response.setContentType(Constants.TEXT_PLAIN);
-        ServletOutputStream out = response.getOutputStream();
-        out.write(JSONConverter.getInstance().toString(data, 
-                request.getParameter(Constants.CALLBACK)).getBytes());
-        out.close();
+        response.getWriter().write(JSON.toString(data));
     }
     
     /* ============================================================================= */

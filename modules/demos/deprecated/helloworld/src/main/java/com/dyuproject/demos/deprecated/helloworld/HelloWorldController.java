@@ -16,16 +16,16 @@ package com.dyuproject.demos.deprecated.helloworld;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.dyuproject.util.format.FormatConverter;
-import com.dyuproject.util.format.JSONConverter;
-import com.dyuproject.util.format.XMLConverter;
-import com.dyuproject.util.format.FormatConverter.Builder;
+import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.Output;
+
 import com.dyuproject.web.rest.mvc.AbstractController;
 
 /**
@@ -74,29 +74,20 @@ public class HelloWorldController extends AbstractController
     public void handle(String mime, HttpServletRequest request,
             HttpServletResponse response) throws IOException, ServletException
     {
-        // you can allow certain mimetypes, like xml and json w/c are common for webservices
+        // you can allow certain mimetypes, like json w/c are common for webservices
         // WEB-INF/mime.properties will be parsed
-        // format would be:
-        // $ xml=text/xml
+        // format would be: 
         //   json = text/json
         
         // /helloworld/${verbOrId}
         String verbOrId = getVerbOrId(request);        
-        
-        if("xml".equals(mime))
-        {
-            response.setContentType("text/xml");
-            // generate xml response
-            ServletOutputStream out = response.getOutputStream();
-            out.print(XMLConverter.getInstance().toString(new HelloWorldBean(verbOrId), null));
-        }
-        else if("json".equals(mime))
+
+        if("json".equals(mime))
         {
             response.setContentType("text/plain");
             // generate json response
             ServletOutputStream out = response.getOutputStream();
-            out.print(JSONConverter.getInstance().toString(new HelloWorldBean(verbOrId), 
-                    request.getParameter("callback")));
+            out.print(JSON.toString(new HelloWorldBean(verbOrId)));
         }
         else
         {
@@ -120,7 +111,7 @@ public class HelloWorldController extends AbstractController
     }
     
     // POJO to xml/json string
-    public static class HelloWorldBean implements FormatConverter.Bean
+    public static class HelloWorldBean implements JSON.Convertible
     {
         
         private long _timestamp = System.currentTimeMillis();
@@ -147,12 +138,18 @@ public class HelloWorldController extends AbstractController
         {
             return _verbOrId;
         }
-        
-        public void convert(Builder builder, String format)
+
+        public void fromJSON(Map map)
         {
-            builder.put("message", getMessage());
-            builder.put("verbOrId", getVerbOrId());
-            builder.put("timestamp", getTimestamp());
+            // TODO Auto-generated method stub
+            
+        }
+
+        public void toJSON(Output out)
+        {
+            out.add("message", getMessage());
+            out.add("verbOrId", getVerbOrId());
+            out.add("timestamp", getTimestamp());            
         }
         
     }

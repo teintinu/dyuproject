@@ -15,6 +15,7 @@
 package com.dyuproject.demos.deprecated.todolist.model;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -26,8 +27,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.dyuproject.util.format.FormatConverter;
-import com.dyuproject.util.format.FormatConverter.Builder;
+import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.Output;
 
 /**
  * @author David Yu
@@ -36,7 +37,7 @@ import com.dyuproject.util.format.FormatConverter.Builder;
 @Entity
 @Table(name="todos")
 @SuppressWarnings("serial")
-public class Todo implements Serializable, FormatConverter.Bean
+public class Todo implements Serializable, JSON.Convertible
 {
     
     private Long _id;
@@ -104,14 +105,20 @@ public class Todo implements Serializable, FormatConverter.Bean
     public User getUser()
     {
         return _user;
-    }    
-
-    public void convert(Builder builder, String format)
+    }
+    
+    public void fromJSON(Map map)
     {
-        builder.put("id", getId());
-        builder.put("title", getTitle());
-        builder.put("content", getContent());
-        builder.put("completed", isCompleted());
-        builder.put("user", getUser());
+        
+    }
+    
+
+    public void toJSON(Output out)
+    {
+        out.add("id", getId());
+        out.add("title", getTitle());
+        out.add("content", getContent());
+        out.add("completed", isCompleted());
+        out.add("user", getUser());
     }
 }
