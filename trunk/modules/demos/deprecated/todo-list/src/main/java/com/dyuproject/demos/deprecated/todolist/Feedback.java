@@ -14,15 +14,17 @@
 
 package com.dyuproject.demos.deprecated.todolist;
 
-import com.dyuproject.util.format.FormatConverter;
-import com.dyuproject.util.format.FormatConverter.Builder;
+import java.util.Map;
+
+import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.Output;
 
 /**
  * @author David Yu
  * @created May 22, 2008
  */
 
-public class Feedback implements FormatConverter.Bean
+public class Feedback implements JSON.Convertible
 {
     
     public static final Feedback USER_NOT_FOUND = new Feedback("User not found.", false);  
@@ -87,12 +89,17 @@ public class Feedback implements FormatConverter.Bean
         _msg = msg;
         _positive = positive;
     }
-
-    public void convert(Builder builder, String format)
+    
+    public void fromJSON(Map map)
     {
-        builder.put("msg", _msg);
-        builder.put("positive", _positive);
-        builder.put("error", !_positive);
+        
+    }    
+
+    public void toJSON(Output out)
+    {
+        out.add("msg", _msg);
+        out.add("positive", _positive);
+        out.add("error", !_positive);
     }
     
     public String getMsg()

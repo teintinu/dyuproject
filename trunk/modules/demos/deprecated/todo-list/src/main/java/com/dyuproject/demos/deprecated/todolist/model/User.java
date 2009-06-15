@@ -16,6 +16,7 @@ package com.dyuproject.demos.deprecated.todolist.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -30,8 +31,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.dyuproject.util.format.FormatConverter;
-import com.dyuproject.util.format.FormatConverter.Builder;
+import org.mortbay.util.ajax.JSON;
+import org.mortbay.util.ajax.JSON.Output;
 
 /**
  * @author David Yu
@@ -41,7 +42,7 @@ import com.dyuproject.util.format.FormatConverter.Builder;
 @Entity
 @Table(name="users", uniqueConstraints=@UniqueConstraint(columnNames="username"))
 @SuppressWarnings("serial")
-public class User implements Serializable, FormatConverter.Bean
+public class User implements Serializable, JSON.Convertible
 {
     
     private Long _id;
@@ -140,13 +141,18 @@ public class User implements Serializable, FormatConverter.Bean
     {
         return _todos;
     }
-
-    public void convert(Builder builder, String format)
+    
+    public void fromJSON(Map map)
     {
-        builder.put("id", getId());
-        builder.put("firstName", getFirstName());
-        builder.put("lastName", getLastName());
-        builder.put("email", getEmail());        
+        
+    }
+
+    public void toJSON(Output out)
+    {
+        out.add("id", getId());
+        out.add("firstName", getFirstName());
+        out.add("lastName", getLastName());
+        out.add("email", getEmail());        
     }
 
 }
