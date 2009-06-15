@@ -15,11 +15,8 @@
 package com.dyuproject.oauth.sp;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.Writer;
-import java.net.URL;
 import java.util.Enumeration;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +25,6 @@ import com.dyuproject.oauth.Constants;
 import com.dyuproject.oauth.HttpAuthTransport;
 import com.dyuproject.oauth.Signature;
 import com.dyuproject.oauth.sp.ServiceToken.Store;
-import com.dyuproject.util.ClassLoaderUtil;
 import com.dyuproject.util.Delim;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
@@ -41,69 +37,6 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 public class ServiceProvider
 {
-    
-    public static final String DEFAULT_RESOURCE_PATH = "oauth_serviceprovider.properties";
-    
-    private static ServiceProvider __instance;
-    
-    public static ServiceProvider getInstance()
-    {
-        if(__instance==null)
-        {
-            synchronized(ServiceProvider.class)
-            {
-                if(__instance==null)
-                    __instance = newInstance(DEFAULT_RESOURCE_PATH);
-            }
-        }
-        return __instance;
-    }
-    
-    public static ServiceProvider newInstance(String resourceLoc)
-    {        
-        URL resource = ClassLoaderUtil.getResource(resourceLoc, ServiceProvider.class);
-        if(resource==null)
-            throw new RuntimeException(resourceLoc + " not found in the classpath.");
-        try
-        {
-            return newInstance(resource);
-        }
-        catch(IOException e)
-        {
-            throw new RuntimeException(e);
-        }        
-    }
-    
-    public static ServiceProvider newInstance(URL resource) throws IOException
-    {
-        return newInstance(resource.openStream());
-    }
-    
-    public static ServiceProvider newInstance(InputStream in) throws IOException
-    {
-        Properties props = new Properties();
-        props.load(in);
-        return newInstance(props);
-    }
-    
-    public static ServiceProvider newInstance(Properties props) throws IOException
-    {
-        //TODO
-        
-        return null;
-    }
-    
-    static Object newObjectInstance(String className)
-    {        
-        try
-        {
-            return ClassLoaderUtil.newInstance(className, ServiceProvider.class);
-        }
-        catch(Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
     
     public static int parseHeader(String auth, UrlEncodedParameterMap params)
     {
@@ -199,6 +132,11 @@ public class ServiceProvider
         return _store;
     }
     
+    public void setStore(Store store)
+    {
+        _store = store;
+    }
+    
     // authorization
     public String getAuthCallbackOrVerifier(String requestToken, String accessId)
     {
@@ -206,7 +144,7 @@ public class ServiceProvider
     }
     
     // access validity
-    public UrlEncodedParameterMap getAccessParams(HttpServletRequest request)
+    public ServiceToken getAccessToken(HttpServletRequest request)
     {
         UrlEncodedParameterMap params = new UrlEncodedParameterMap();
         if(parse(request, params)!=200)
@@ -222,7 +160,7 @@ public class ServiceProvider
         
         ServiceToken ast = _store.getAccessToken(consumerKey, accessToken);            
         return ast!=null && verifySignature(ast.getConsumerSecret(), ast.getSecret(), request, 
-                params)==200 ? params : null;
+                params)==200 ? ast : null;
     }
     
     boolean handleTokenRequest(UrlEncodedParameterMap params, String consumerKey, 
@@ -327,6 +265,55 @@ public class ServiceProvider
             String requestToken = params.get(Constants.OAUTH_TOKEN);
             return requestToken==null ? handleTokenRequest(params, consumerKey, request, response) :
                 handleTokenExchange(params, consumerKey, requestToken, request, response);
+        }
+        
+        response.setStatus(status);
+        return false;
+    }
+    
+    public boolean handleTokenRequest(HttpServletRequest request, HttpServletResponse response)
+    throws IOException
+    {
+        UrlEncodedParameterMap params = new UrlEncodedParameterMap();
+        int status = parse(request, params);
+        if(status==200)
+        {
+            String consumerKey = params.get(Constants.OAUTH_CONSUMER_KEY);
+            if(consumerKey==null)
+            {
+                response.setStatus(400);
+                return false;                
+            }
+            
+            return handleTokenRequest(params, consumerKey, request, response);
+        }
+        
+        response.setStatus(status);
+        return false;
+    }
+    
+    public boolean handleTokenExchange(HttpServletRequest request, HttpServletResponse response)
+    throws IOException
+    {
+        UrlEncodedParameterMap params = new UrlEncodedParameterMap();
+        int status = parse(request, params);
+        if(status==200)
+        {
+            String consumerKey = params.get(Constants.OAUTH_CONSUMER_KEY);
+            if(consumerKey==null)
+            {
+                response.setStatus(400);
+                return false;                
+            }
+            
+            String requestToken = params.get(Constants.OAUTH_TOKEN);
+            if(requestToken==null)
+            {
+                response.setStatus(400);
+                return false;     
+            }
+            
+            return handleTokenExchange(params, consumerKey, requestToken, request, response);                
         }
         
         response.setStatus(status);

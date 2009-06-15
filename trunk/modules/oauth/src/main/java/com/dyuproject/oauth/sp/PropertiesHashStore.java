@@ -25,23 +25,7 @@ import java.util.Properties;
 
 public class PropertiesHashStore extends HashStore
 {
-    
-    private static PropertiesHashStore __instance;
-    
-    public static PropertiesHashStore getInstance()
-    {
-        if(__instance==null)
-        {
-            synchronized(PropertiesHashStore.class)
-            {
-                if(__instance==null)
-                {
-                    
-                }
-            }
-        }
-        return __instance;
-    }
+
     
     private Properties _consumers;
     
