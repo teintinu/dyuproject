@@ -14,6 +14,7 @@
 
 package com.dyuproject.util.http;
 
+import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
@@ -70,6 +71,42 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
             separator = '&';
         }       
         return buffer.toString();
+    }
+    
+    public byte[] getUrlFormEncodedBytes(String charset) throws UnsupportedEncodingException
+    {
+        StringBuilder buffer = new StringBuilder();
+        for(Map.Entry<String,String> entry : entrySet())
+        {
+            buffer.append('&')
+                .append(entry.getKey())
+                .append('=')
+                .append(UrlEncoded.encodeString(entry.getValue(), charset));
+        }       
+        return buffer.substring(1).getBytes(charset);
+    }
+    
+    public byte[] getUrlFormEncodedBytesRFC3986(String charset) throws UnsupportedEncodingException
+    {
+        StringBuilder buffer = new StringBuilder();
+        for(Map.Entry<String,String> entry : entrySet())
+        {
+            buffer.append('&')
+                .append(entry.getKey())
+                .append('=')
+                .append(encodeRFC3986(entry.getValue(), charset));            
+        }
+        return buffer.substring(1).getBytes(charset);
+    }
+    
+    public void prettyPrint(PrintStream out)
+    {
+        for(Map.Entry<String,String> entry : entrySet())
+        {
+            out.print(entry.getKey());
+            out.print(" = ");
+            out.println(entry.getValue());
+        }
     }
     
     public String getEncoded(String key)
