@@ -70,7 +70,9 @@ public class AuthorizeTokenServlet extends AbstractServiceProviderServlet
     
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
-    {        
+    {
+        String requestToken = request.getParameter(Constants.OAUTH_TOKEN);
+        request.setAttribute("requestToken", requestToken);
         String username = request.getParameter("username");
         if(username==null || username.length()==0)
         {
@@ -101,8 +103,7 @@ public class AuthorizeTokenServlet extends AbstractServiceProviderServlet
             request.getRequestDispatcher("/login.jsp").forward(request, response);
             return;            
         }
-        
-        String requestToken = request.getParameter(Constants.OAUTH_TOKEN);
+
         if(requestToken==null || requestToken.length()==0)
         {
             request.getSession().setAttribute("user", username);
@@ -112,6 +113,13 @@ public class AuthorizeTokenServlet extends AbstractServiceProviderServlet
         
         String callbackOrVerifier = getServiceProvider().getAuthCallbackOrVerifier(requestToken, 
                 username);
+        
+        if(callbackOrVerifier==null)
+        {
+            request.setAttribute("msg", "The site that sent you here did not provide valid credentials.");
+            request.getRequestDispatcher("/message.jsp").forward(request, response);
+            return;
+        }
         
         if(callbackOrVerifier.startsWith("http"))
             response.sendRedirect(callbackOrVerifier);

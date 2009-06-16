@@ -105,6 +105,9 @@ public class GoogleContactsServlet extends HttpServlet
             case Token.ACCESS_TOKEN:
                 queryGoogleContacts(token, request, response);
                 break;
+                
+            default:
+                response.sendRedirect(request.getContextPath() + "/index.html");
         }
     }
     
