@@ -104,6 +104,9 @@ public class LocalContactsServlet extends HttpServlet
             case Token.ACCESS_TOKEN:
                 queryLocalContacts(token, request, response);
                 break;
+            
+            default:
+                response.sendRedirect(request.getContextPath() + "/index.html");
         }
     }
     
