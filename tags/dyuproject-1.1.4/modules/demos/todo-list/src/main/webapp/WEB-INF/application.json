@@ -1,0 +1,70 @@
+{
+  "entityManagerManager":
+  {
+    "class": "com.dyuproject.ext.jpa.EntityManagerManager",
+    "persistenceUnitName": "todo-list-persistence"
+  },
+  "loginInterceptor":
+  {
+    "class": "com.dyuproject.demos.todolist.service.LoginInterceptor",
+    "interceptor": $entityManagerManager
+  },
+  "credentialDao":
+  {
+    "class": "com.dyuproject.demos.todolist.dao.CredentialDao",
+    "entityManagerManager": $entityManagerManager
+  },
+  "userDao":
+  {
+    "class": "com.dyuproject.demos.todolist.dao.UserDao",
+    "entityManagerManager": $entityManagerManager
+  },
+  "todoDao":
+  {
+    "class": "com.dyuproject.demos.todolist.dao.TodoDao",
+    "entityManagerManager": $entityManagerManager
+  },
+  "webContext":
+  {
+    "class": "com.dyuproject.web.rest.service.RESTServiceContext",
+    "attributes":
+    {
+      "credentialDao": $credentialDao,
+      "userDao": $userDao,
+      "todoDao": $todoDao
+    },
+    "viewDispatchers":
+    {
+      "json":
+      {
+        "class": "com.dyuproject.web.rest.JSONDispatcher",
+        "addClass": false
+      }
+    },
+    "interceptors":
+    {
+      "/overview": $loginInterceptor,
+      "/account": $loginInterceptor,
+      "/account/change_password": $loginInterceptor,
+      "/account/new": $entityManagerManager,
+      "/auth": $entityManagerManager,
+      "/users/**": $entityManagerManager,
+      "/todos/**": $entityManagerManager
+    },
+    "services":
+    [
+      {
+        "class": "com.dyuproject.demos.todolist.service.MainService"
+      },
+      {
+        "class": "com.dyuproject.demos.todolist.service.CredentialService"
+      },
+      {
+        "class": "com.dyuproject.demos.todolist.service.UserService"
+      },
+      {
+        "class": "com.dyuproject.demos.todolist.service.TodoService"
+      }
+    ]
+  }
+}

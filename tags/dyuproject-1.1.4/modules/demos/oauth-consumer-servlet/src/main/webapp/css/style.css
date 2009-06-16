@@ -1,0 +1,280 @@
+* {margin:0;padding:0;}
+ul {list-style: none;}
+html, body, #wrap{height:100%;}
+body > #wrap {height: auto; min-height: 100%;}
+
+a {
+ color: #5B9B45;
+}
+
+div#wrap{
+ font-family: Lucida Sans Unicode, Georgia, Tahoma, Verdana;
+ background-color:#fff;
+}
+
+div#footer{
+ position: relative;
+ margin-top: -140px;
+ height: 140px;
+ clear:both;
+ background-color: #fff;
+ cursor: default;
+}
+
+div#header{
+ background-color:#2B5F89;
+ padding-top: 80px;
+ font-family: Georgia, Tahoma, Verdana;
+ color: #FFF;
+}
+
+div#foot, div#head, div#main {
+ margin:0 auto;
+ padding-top: 20px;
+ width: 800px; 
+}
+
+div#foot p{
+ padding: 5px;
+ letter-spacing: 2px;
+ font-family:  Verdana;
+ font-style: italic;
+ font-size: 0.8em;
+ color: #000; 
+}
+
+div#foot a { 
+ font-weight: bold;
+ color: #5B9B45;
+ cursor: pointer;
+}
+
+#head h1 {
+ padding: 5px 0;
+ cursor: default;
+}
+
+div#main {
+ padding-top: 10px;
+ padding-bottom: 140px;
+ font-size: 1.1em;
+ text-align:left;
+ color: #000;
+}
+
+table.stretch {
+ width: 100%;
+}
+
+table#login td {
+ padding: 2px;
+}
+ 
+div.leftcol{
+ float:left;
+ position:relative;
+}
+
+div.rightcol{ 
+ float:right; 
+ position:relative;
+}
+
+#nav {
+ padding-top: 10px;
+}
+
+#nav li {
+ float:left;
+ margin-right:2px;
+}
+
+#nav li a {
+ float: left;
+ padding: 5px 1.2em;
+ font-size: 1.2em;
+ text-decoration: none;
+ letter-spacing: 2px;
+ color: #fff;
+ background-color: #D8C674;
+}
+
+#nav li a:hover, #nav li.current a, #nav li.current a:hover {
+ background-color: #fff;
+ color: #D8C674;
+}
+
+form.box {
+ width: 33%;
+ padding: 10px; 
+}
+
+form.box ul li {
+ padding-top: 5px;
+}
+
+form.box label {
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+ font-weight: bold;
+ letter-spacing: 1px;
+}
+
+form.box input, form.box textarea {
+ width: 99%;
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+}
+
+/*form.box input:focus, form.box textarea:focus {
+ border-color: #5B9B45;
+}*/
+
+button.submit {
+ color: #5B9B45;
+ font-family: Georgia, Tahoma, Verdana;
+ font-size: 1em;
+}
+
+button.submit div, button.submit span {
+ padding: 0 10px;
+}
+
+/*button.submit:hover, button.submit:focus {
+ color: #fff;
+}*/
+
+#table_overview div.item {
+ padding-bottom: 5px;
+}
+
+#table_todo thead td span, #table_user thead td span{
+ font-weight: bold;
+ /*cursor: pointer;*/
+}
+
+.highlight {
+ color: #5B9B45;
+}
+
+.highlight2 {
+ color: #D8C674;
+}
+
+div.item div {
+ padding-top: 5px;
+}
+
+hr {
+ color: #ccc;
+}
+
+ul.padded {
+ padding: 5px;
+}
+
+ul.padded li{
+ padding: 5px 0;
+}
+
+div.bar {
+ font-family: Arial, Tahoma, Verdana;
+ padding: 2px 5px;
+ background-color: #2B5F89;
+ border: 1px solid #D8C674;
+}
+
+div.bar span.highlight {
+  font-family: Georgia, Tahoma, Verdana;
+}
+
+div.bar span.separator {
+ color: #5B9B45;
+ font-size: 1em;
+}
+
+div.bar a {
+ text-decoration: none;
+ color: #5B9B45;
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+ font-weight: bold;
+}
+
+div.bar button.link {
+ color: #5B9B45;
+ font-family: Tahoma, Verdana;
+ font-size: 0.8em;
+ font-weight: bold;
+ background-color: #2B5F89;
+}
+
+span.large {
+ font-size: 1.2em;
+}
+
+div.bar a:hover{
+ text-decoration: underline;
+}
+
+.align_right {
+  text-align: right;
+}
+
+p.msg {
+ color: red;
+ font-weight: bold;
+ font-family: Arial;
+ font-size: 0.8em;
+ padding: 5px 0;
+}
+
+a.btn {
+ text-align: center;
+ color: #5B9B45;
+ margin: 0 1px;
+ padding: 0 1em; 
+ cursor: pointer;
+ background-color: #fff;
+ font-size: 0.8em;
+ text-decoration: none;
+ border: 1px solid #D8C674; 
+}
+a.btn:hover {
+ 
+}
+
+button.link {
+ cursor: pointer;
+ border: 0;
+ padding: 1px;
+ background-color: #fff;
+ color: #D8C674;
+ font-size: 1.1em;
+}
+button.link:hover {
+ color: #5B9B45;
+}
+ 
+/* CLEAR FIX*/
+.clearfix:after {
+ content: "."; 
+ display: block; 
+ height: 0; 
+ clear: both; 
+ visibility: hidden;
+} 
+.clearfix{display: inline-block;}
+/* Hides from IE-mac \*/
+* html .clearfix{height: 1%;}
+.clearfix{display: block;}
+/* End hide from IE-mac */
+ 
+/*printer styles*/
+/*hide the left column when printing*/
+/* 
+ @media print{ 
+#leftcol{display:none;} 
+#twocols, #maincol{width:100%; float:none;}
+}
+*/

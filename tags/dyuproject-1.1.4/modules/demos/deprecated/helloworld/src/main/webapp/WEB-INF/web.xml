@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+   xmlns="http://java.sun.com/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+   version="2.5" metadata-complete="true">
+   
+    <servlet>
+        <servlet-name>rest</servlet-name>
+        <servlet-class>com.dyuproject.web.rest.RESTServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+        <init-param>
+          <param-name>webContext</param-name>
+          <param-value>com.dyuproject.web.rest.mvc.RESTControllerContext</param-value>
+        </init-param>        
+        <init-param>
+          <param-name>defaultController</param-name>
+          <param-value>com.dyuproject.demos.deprecated.helloworld.MyDefaultController</param-value>
+        </init-param>
+        <!-- separated by comma or semi colon -->
+        <init-param>
+          <param-name>controllers</param-name>
+          <param-value>
+            com.dyuproject.demos.deprecated.helloworld.HelloWorldController, 
+            com.dyuproject.demos.deprecated.helloworld.ProtectedController
+          </param-value>
+        </init-param>       
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>rest</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+
+    
+</web-app>

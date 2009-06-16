@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: david
+Build-Jdk: 1.5.0_11
+Main-Class: com.dyuproject.util.Application
+implementation-version: 1.0-SNAPSHOT
+mode: development
+package: com.dyuproject
+url: http://code.google.com/p/dyuproject/
+
