@@ -61,7 +61,6 @@ public class HttpPostTransport extends Transport
         
         putDefaults(params, ep, token, exchange, nts, signature, null, buffer);
         
-        System.err.println(buffer.substring(1));
         return parse(connector.doPOST(params.getUrl(), (Map<?,?>)null, 
                 HttpConnector.X_WWW_FORM_URLENCODED, 
                 buffer.substring(1).getBytes(Constants.ENCODING)), token);

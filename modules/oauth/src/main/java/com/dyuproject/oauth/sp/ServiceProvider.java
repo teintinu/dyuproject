@@ -38,6 +38,8 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public class ServiceProvider
 {
     
+    static final boolean __checkTimestamp = Boolean.getBoolean("serviceprovider.check_timestamp");
+    
     public static int parseHeader(String auth, UrlEncodedParameterMap params)
     {
         int initSize = params.size();
@@ -117,6 +119,7 @@ public class ServiceProvider
     }
     
     private Store _store;
+    private boolean _checkTimestamp = __checkTimestamp;
     
     public ServiceProvider()
     {
@@ -136,6 +139,16 @@ public class ServiceProvider
     public void setStore(Store store)
     {
         _store = store;
+    }
+    
+    public boolean isCheckTimestamp()
+    {
+        return _checkTimestamp;
+    }
+    
+    public void setCheckTimestamp(boolean checkTimestamp)
+    {
+        _checkTimestamp = checkTimestamp;
     }
     
     // authorization
@@ -264,6 +277,24 @@ public class ServiceProvider
                 return false;                
             }
             
+            if(_checkTimestamp)
+            {
+                try
+                {
+                    if(System.currentTimeMillis()/1000 < Long.parseLong(params.get(
+                            Constants.OAUTH_TIMESTAMP)))
+                    {
+                        response.setStatus(401);
+                        return false;
+                    }
+                }
+                catch(Exception e)
+                {
+                    response.setStatus(401);
+                    return false;
+                }
+            }
+            
             String requestToken = params.get(Constants.OAUTH_TOKEN);
             return requestToken==null ? handleTokenRequest(params, consumerKey, request, response) :
                 handleTokenExchange(params, consumerKey, requestToken, request, response);
@@ -287,6 +318,24 @@ public class ServiceProvider
                 return false;                
             }
             
+            if(_checkTimestamp)
+            {
+                try
+                {
+                    if(System.currentTimeMillis()/1000 < Long.parseLong(params.get(
+                            Constants.OAUTH_TIMESTAMP)))
+                    {
+                        response.setStatus(401);
+                        return false;
+                    }
+                }
+                catch(Exception e)
+                {
+                    response.setStatus(401);
+                    return false;
+                }
+            }
+            
             return handleTokenRequest(params, consumerKey, request, response);
         }
 
@@ -306,6 +355,24 @@ public class ServiceProvider
             {
                 response.setStatus(400);
                 return false;                
+            }
+            
+            if(_checkTimestamp)
+            {
+                try
+                {
+                    if(System.currentTimeMillis()/1000 < Long.parseLong(params.get(
+                            Constants.OAUTH_TIMESTAMP)))
+                    {
+                        response.setStatus(401);
+                        return false;
+                    }
+                }
+                catch(Exception e)
+                {
+                    response.setStatus(401);
+                    return false;
+                }
             }
             
             String requestToken = params.get(Constants.OAUTH_TOKEN);
