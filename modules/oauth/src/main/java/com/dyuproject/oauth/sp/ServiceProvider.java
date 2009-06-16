@@ -42,26 +42,27 @@ public class ServiceProvider
     {
         int initSize = params.size();
         String[] pairs = Delim.COMMA.split(auth);
-        String first = pairs[0];
+        String first = pairs[0].trim();
         int space = first.indexOf(' ');
         if(space==-1 || !"oauth".equalsIgnoreCase(first.substring(0, space)))
             return 400;
         
-        int eqIdx = first.indexOf('=', space+1+Constants.PREFIX.length());
+        int eqIdx = first.indexOf('=', space+1);
         if(eqIdx==-1)
             return 400;
         
-        params.put(first.substring(space+1, eqIdx), Signature.decode(first.substring(eqIdx+2, first.length()-eqIdx-2)));
+        params.put(first.substring(space+1, eqIdx), Signature.decode(first.substring(eqIdx+2, 
+                first.length()-1)));
         
         for(int i=1; i<pairs.length; i++)
         {
-            String pair = pairs[i];
+            String pair = pairs[i].trim();
             int eq = pair.indexOf('=', Constants.PREFIX.length());
             if(eq==-1)
                 return 400;
             
             params.put(pair.substring(0, eq), Signature.decode(pair.substring(eq+2, 
-                    pair.length()-eq-2)));
+                    pair.length()-1)));
         }
         
         int size = params.size()-initSize;
@@ -94,25 +95,25 @@ public class ServiceProvider
     
     public static int verifySignature(String consumerSecret, String tokenSecret, 
             HttpServletRequest request, UrlEncodedParameterMap params)
-    {        
+    {
         Signature sig = Signature.get(params.get(Constants.OAUTH_SIGNATURE_METHOD));
         if(sig==null)
             return 400;
         
         try
         {
-            if(!sig.verify(consumerSecret, tokenSecret, request.getMethod(), 
+            if(sig.verify(consumerSecret, tokenSecret, request.getMethod(), 
                     params.setUrl(request.getRequestURL().toString())))
             {
-                return 401;
+                return 200;
             }
         }
         catch(NullPointerException npe)
         {
             return 400;
         }
-        
-        return 200;
+
+        return 401;
     }
     
     private Store _store;
@@ -172,13 +173,14 @@ public class ServiceProvider
             response.setStatus(400);
             return false;
         }
+
         ServiceToken st = _store.newRequestToken(consumerKey, callback);
         if(st==null)
         {
             response.setStatus(401);
             return false;
         }
-        
+
         int status = 200;
         if((status=verifySignature(st.getConsumerSecret(), null, request, 
                 params))==200)
@@ -287,7 +289,7 @@ public class ServiceProvider
             
             return handleTokenRequest(params, consumerKey, request, response);
         }
-        
+
         response.setStatus(status);
         return false;
     }
