@@ -48,6 +48,8 @@
   </build>
   
   <modules>
+    <module>oauth-consumer-servlet</module>
+    <module>oauth-serviceprovider-servlet</module>
     <module>openid-servlet</module>
     <module>helloworld</module>
     <module>todo-list</module>
@@ -57,7 +59,7 @@
     <profile>
       <activation>
         <property>
-          <name>appengine</name>
+          <name>slf4j-jdk14</name>
         </property>
       </activation>
     <dependencies>
