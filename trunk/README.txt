@@ -16,4 +16,4 @@ Build Output:
 - the javadocs are located on the "javadoc" dir
 
 Questions/Concerns/Suggestions:
-- send to http://groups.google.com/group/dyuproject
+- subscribe to http://groups.google.com/group/dyuproject
