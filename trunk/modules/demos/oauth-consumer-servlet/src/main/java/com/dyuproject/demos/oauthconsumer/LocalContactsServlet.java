@@ -46,7 +46,7 @@ import com.dyuproject.util.http.HttpConnector.Response;
 public class LocalContactsServlet extends HttpServlet
 {
     
-    static final String CONTACTS_SERVICE_URL = "http://localhost/services/contacts";
+    static final String CONTACTS_SERVICE_URL = "http://localhost/services/contacts/";
     
     Consumer _consumer = Consumer.getInstance();
     Endpoint _localEndpoint = _consumer.getEndpoint("localhost");
