@@ -53,5 +53,7 @@ public abstract class Constants
     public static final String PREFIX = "oauth_";
     
     public static final String CURRENT_VERSION = "1.0";
+    
+    public static final String OOB = "oob";
 
 }

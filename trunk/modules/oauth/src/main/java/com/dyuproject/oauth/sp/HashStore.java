@@ -82,7 +82,7 @@ public abstract class HashStore implements ServiceToken.Store
     
     public ServiceToken newRequestToken(String consumerKey, String callback)
     {   
-        if(!"oob".equals(callback) && !validateCallbackUrl(callback))
+        if(!Constants.OOB.equals(callback) && !validateCallbackUrl(callback))
             return null;
         
         String consumerSecret = getConsumerSecret(consumerKey);

@@ -92,14 +92,16 @@ public abstract class Transport implements Signature.Listener
     public static StringBuilder buildAuthUrl(String authUrl, Token token, String callbackUrl)
     {
         char separator = authUrl.indexOf('?')==-1 ? '?' : '&';
-        StringBuilder buffer = new StringBuilder()
+        return new StringBuilder()
             .append(authUrl)
             .append(separator)
             .append(Constants.OAUTH_TOKEN)
             .append('=')
-            .append(token.getKey());
-        return callbackUrl==null ? buffer : buffer.append('&').append(Constants.OAUTH_CALLBACK)
-                .append('=').append(Signature.encode(callbackUrl));
+            .append(Signature.encode(token.getKey()))
+            .append('&')
+            .append(Constants.OAUTH_CALLBACK)
+            .append('=')
+            .append(callbackUrl==null ? Constants.OOB : Signature.encode(callbackUrl));
     }
     
     public static String getAuthUrl(String authUrl, Token token, String callbackUrl)
