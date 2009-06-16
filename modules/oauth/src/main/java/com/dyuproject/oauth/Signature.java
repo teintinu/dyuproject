@@ -84,6 +84,17 @@ public abstract class Signature
     {
         List<String> base = new ArrayList<String>();
         
+        for(Map.Entry<String, String> entry : params.entrySet())
+        {
+            String key = entry.getKey();
+            String value = encode(entry.getValue());
+            base.add(new StringBuilder()
+                .append(key)
+                .append(ENCODED_EQ)
+                .append(encode(value))
+                .toString());
+        }
+        
         Collections.sort(base);
         StringBuilder buffer = new StringBuilder()
             .append(method)
