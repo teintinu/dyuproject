@@ -82,7 +82,7 @@ public abstract class HashStore implements ServiceToken.Store
     
     public ServiceToken newRequestToken(String consumerKey, String callback)
     {   
-        if(!Constants.OOB.equals(callback) && !validateCallbackUrl(callback))
+        if(!Constants.OOB.equals(callback) && (callback=validateCallbackUrl(callback))==null)
             return null;
         
         String consumerSecret = getConsumerSecret(consumerKey);
@@ -237,9 +237,9 @@ public abstract class HashStore implements ServiceToken.Store
 
     protected abstract String getConsumerSecret(String consumerKey);
     
-    protected boolean validateCallbackUrl(String callbackUrl)
+    protected String validateCallbackUrl(String callbackUrl)
     {
-        return callbackUrl.startsWith(CHECKED_PREFIX);
+        return callbackUrl.startsWith(CHECKED_PREFIX) ? callbackUrl : null;
     }
 
     public static String validateUrl(String url)
