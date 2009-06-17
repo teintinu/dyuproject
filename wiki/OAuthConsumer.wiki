@@ -1,4 +1,175 @@
 #labels oauth,consumer
 = OAuthConsumer=
 
-todo
+Setup guide when on a desktop/embedded environment.
+
+{{{consumer_google.properties}}}
+{{{
+domain = www.google.com
+consumer_key = your_consumer_key
+consumer_secret = your_consumer_secret
+secure = true
+request_token_url = /accounts/OAuthGetRequestToken
+authorization_url = /accounts/OAuthAuthorizeToken
+access_token_url = /accounts/OAuthGetAccessToken
+signature_method = HMAC-SHA1
+#Authorization, POST or GET
+transport_name = Authorization
+}}}
+
+{{{DesktopClient.java}}}
+{{{
+package com.dyuproject.demos.oauthconsumer;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
+
+import com.dyuproject.oauth.Constants;
+import com.dyuproject.oauth.Endpoint;
+import com.dyuproject.oauth.HttpAuthTransport;
+import com.dyuproject.oauth.NonceAndTimestamp;
+import com.dyuproject.oauth.Signature;
+import com.dyuproject.oauth.SimpleNonceAndTimestamp;
+import com.dyuproject.oauth.Token;
+import com.dyuproject.oauth.TokenExchange;
+import com.dyuproject.oauth.Transport;
+import com.dyuproject.util.http.HttpConnector;
+import com.dyuproject.util.http.SimpleHttpConnector;
+import com.dyuproject.util.http.UrlEncodedParameterMap;
+import com.dyuproject.util.http.HttpConnector.Parameter;
+import com.dyuproject.util.http.HttpConnector.Response;
+
+public class DesktopClient
+{
+    
+    public static Response fetchToken(TokenExchange exchange, UrlEncodedParameterMap params,
+            Endpoint endpoint, Token token) 
+    throws IOException
+    {
+        // via GET, POST or Authorization
+        Transport transport = endpoint.getTransport();
+        
+        // via HMAC-SHA1 or PLAINTEXT
+        Signature sig = endpoint.getSignature();
+        
+        // nonce and timestamp generator
+        NonceAndTimestamp nts = SimpleNonceAndTimestamp.getDefault();
+        
+        // http connector
+        HttpConnector connector = SimpleHttpConnector.getDefault();
+        
+        // returns the http response
+        return transport.send(params, endpoint, token, exchange, nts, sig, connector);
+    }
+    
+    public static void main(String[] args) throws Exception
+    {
+        
+        Endpoint googleEndpoint = Endpoint.load("consumer_google.properties");
+        
+        Token token = new Token(googleEndpoint.getConsumerKey());
+        
+        UrlEncodedParameterMap requestTokenParams = new UrlEncodedParameterMap()            
+            .add(Constants.OAUTH_CALLBACK, "http://localhost:8080/callbackUrl")
+            .add("scope", "http://www.google.com/m8/feeds/");
+        
+        // fetch request token
+        Response requestTokenResponse = fetchToken(TokenExchange.REQUEST_TOKEN, requestTokenParams, 
+                googleEndpoint, token);
+        
+        assert(requestTokenResponse.getStatus()==200
+                && token.getState()==Token.UNAUTHORIZED
+                && "true".equals(token.getAttribute(Constants.OAUTH_CALLBACK_CONFIRMED)));
+        
+        
+        /* ===================================================================================== */
+        // Redirect to service provider url
+        
+        
+        // specify a callback url if deployed on the web
+        String callbackUrl = null; // null would default to: oauth_callback="oob"
+        
+        // redirect to the service provider using this url      
+        String authUrl = Transport.getAuthUrl(googleEndpoint.getAuthorizationUrl(), token,
+                callbackUrl);
+
+        
+        /* ===================================================================================== */
+        // After receiving callback of authToken, oauthVerifier
+        
+        String oauthToken = "oauth_token from callback";
+        String oauthVerifier = "oauth_verifier from callback";
+        
+        // check that its authorized
+        assert(token.authorize(oauthToken, oauthVerifier));
+        
+        UrlEncodedParameterMap accessTokenParams = new UrlEncodedParameterMap();
+        
+        // fetch access token
+        Response accessTokenResponse = fetchToken(TokenExchange.ACCESS_TOKEN, accessTokenParams, 
+                googleEndpoint, token);
+        
+        assert(accessTokenResponse.getStatus()==200 && token.getState()==Token.ACCESS_TOKEN);
+        
+        /* ===================================================================================== */
+        // You are now ready to make an authorized web service request
+        
+        UrlEncodedParameterMap serviceParams = new UrlEncodedParameterMap("http://www.google.com/m8/feeds/contacts/default/full");
+        
+        Response serviceResponse = doGET(serviceParams, googleEndpoint, token);
+        
+        // get header
+        String someHeader = serviceResponse.getHeader("someHeader");
+        
+        // parse data
+        InputStream in = serviceResponse.getInputStream();
+
+    }    
+    
+    public static Response doGET(UrlEncodedParameterMap params, Endpoint endpoint, Token token) 
+    throws IOException
+    {
+        // via HMAC-SHA1 or PLAINTEXT
+        Signature sig = endpoint.getSignature();
+        
+        // nonce and timestamp generator
+        NonceAndTimestamp nts = SimpleNonceAndTimestamp.getDefault();
+        
+        // http connector
+        HttpConnector connector = SimpleHttpConnector.getDefault();
+        
+        // Authorization Header with the access_token
+        Parameter authorizationHeader = new Parameter("Authorization", 
+                HttpAuthTransport.getAuthHeaderValue(params, endpoint, token, nts,  sig));
+        
+        return connector.doGET(params.toStringRFC3986(), authorizationHeader);
+    }
+    
+    static Response doPOST(UrlEncodedParameterMap params, Endpoint endpoint, Token token) 
+    throws IOException
+    {
+        // via HMAC-SHA1 or PLAINTEXT
+        Signature sig = endpoint.getSignature();
+        
+        // nonce and timestamp generator
+        NonceAndTimestamp nts = SimpleNonceAndTimestamp.getDefault();
+        
+        // http connector
+        HttpConnector connector = SimpleHttpConnector.getDefault();
+        
+        // Authorization Header with the access_token
+        Parameter authorizationHeader = new Parameter("Authorization", 
+                HttpAuthTransport.getAuthHeaderValue(params, endpoint, token, nts,  sig));
+        
+        if(params.isEmpty())
+            return connector.doPOST(params.getUrl(), authorizationHeader, (Map<?,?>)null, null);
+        
+        byte[] data = params.getUrlFormEncodedBytesRFC3986(Constants.ENCODING);
+        
+        return connector.doPOST(params.getUrl(), authorizationHeader, Constants.ENCODING, data);
+    }
+
+}
+
+}}}
