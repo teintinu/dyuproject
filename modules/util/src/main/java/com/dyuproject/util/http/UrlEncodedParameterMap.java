@@ -73,6 +73,18 @@ public class UrlEncodedParameterMap extends HashMap<String,String>
         return buffer.toString();
     }
     
+    public String toStringRFC3986()
+    {
+        StringBuilder buffer = new StringBuilder().append(getUrl());
+        char separator = getUrl().lastIndexOf('?')==-1 ? '?' : '&';
+        for(Map.Entry<String,String> entry : entrySet())
+        {
+            buffer.append(separator).append(entry.getKey()).append('=').append(encodeRFC3986(entry.getValue()));            
+            separator = '&';
+        }       
+        return buffer.toString();
+    }
+    
     public byte[] getUrlFormEncodedBytes(String charset) throws UnsupportedEncodingException
     {
         StringBuilder buffer = new StringBuilder();
