@@ -283,6 +283,9 @@ public class SimpleHttpConnector implements HttpConnector
     public Response doPOST(String url, Map<?,?> headers, Map<?,?> parameters, String charset) 
     throws IOException
     {
+        if(parameters==null)
+            return send(POST, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
@@ -301,6 +304,9 @@ public class SimpleHttpConnector implements HttpConnector
     public Response doPOST(String url, Map<?,?> headers, Iterable<Parameter> parameters, String charset) 
     throws IOException
     {
+        if(parameters==null)
+            return send(POST, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
@@ -318,7 +324,10 @@ public class SimpleHttpConnector implements HttpConnector
     
     public Response doPOST(String url, Iterable<Parameter> headers, Map<?,?> parameters, String charset) 
     throws IOException
-    {       
+    {
+        if(parameters==null)
+            return send(POST, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
@@ -336,7 +345,10 @@ public class SimpleHttpConnector implements HttpConnector
     
     public Response doPOST(String url, Iterable<Parameter> headers, Iterable<Parameter> parameters, String charset) 
     throws IOException
-    {       
+    {
+        if(parameters==null)
+            return send(POST, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
@@ -381,6 +393,9 @@ public class SimpleHttpConnector implements HttpConnector
     public Response doPUT(String url, Map<?,?> headers, Map<?,?> parameters, String charset) 
     throws IOException
     {
+        if(parameters==null)
+            return send(PUT, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
@@ -399,6 +414,9 @@ public class SimpleHttpConnector implements HttpConnector
     public Response doPUT(String url, Map<?,?> headers, Iterable<Parameter> parameters, String charset) 
     throws IOException
     {
+        if(parameters==null)
+            return send(PUT, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
@@ -416,7 +434,10 @@ public class SimpleHttpConnector implements HttpConnector
     
     public Response doPUT(String url, Iterable<Parameter> headers, Map<?,?> parameters, String charset) 
     throws IOException
-    {       
+    {
+        if(parameters==null)
+            return send(PUT, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
@@ -434,7 +455,10 @@ public class SimpleHttpConnector implements HttpConnector
     
     public Response doPUT(String url, Iterable<Parameter> headers, Iterable<Parameter> parameters, String charset) 
     throws IOException
-    {       
+    {
+        if(parameters==null)
+            return send(PUT, getConnection(url, headers));
+        
         byte[] data = null;
         String contentType = null;
         if(charset==null)
