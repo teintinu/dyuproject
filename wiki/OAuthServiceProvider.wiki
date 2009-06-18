@@ -1,9 +1,10 @@
 #labels oauth,service,provider
 = OAuthServiceProvider =
 
-Demo can be found at [http://dyuproject.googlecode.com/svn/trunk/modules/demos/oauth-serviceprovider-servlet]
+*For reference, you can refer to this example -  [http://dyuproject.googlecode.com/svn/trunk/modules/demos/oauth-serviceprovider-servlet]*
 
-First off, you define the store of your tokens.
+The first thing about being a {{{ServiceProvider}}} is that you must store/persist 
+the tokens of your consumers.
 
 There is a built-in {{{PropertiesHashStore}}} which would contain the consumer_key/consumer_secret key-value pairs
 
