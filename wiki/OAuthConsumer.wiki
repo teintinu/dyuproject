@@ -176,7 +176,6 @@ api.login.yahoo.com.authorization_url = /oauth/v2/request_auth
 api.login.yahoo.com.access_token_url = /oauth/v2/get_token
 api.login.yahoo.com.signature_method = HMAC-SHA1
 api.login.yahoo.com.transport_name = Authorization
-api.login.yahoo.com.application_id = 7CFMVw44
 }}}
 
 {{{GoogleContactsServlet.java}}}
