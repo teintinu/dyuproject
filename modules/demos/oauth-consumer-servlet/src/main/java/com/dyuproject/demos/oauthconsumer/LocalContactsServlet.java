@@ -78,9 +78,8 @@ public class LocalContactsServlet extends HttpServlet
                 {
                     // unauthorized request token
                     _consumer.saveToken(token, request, response);
-                    StringBuilder urlBuffer = Transport.buildAuthUrl(_localEndpoint.getAuthorizationUrl(), 
-                            token, null);
-                    Transport.appendToUrl("hd", "default", urlBuffer);
+                    StringBuilder urlBuffer = Transport.buildAuthUrl(
+                            _localEndpoint.getAuthorizationUrl(), token);
                     response.sendRedirect(urlBuffer.toString());
                 }
                 break;
