@@ -79,8 +79,8 @@ public class GoogleContactsServlet extends HttpServlet
                 {
                     // unauthorized request token
                     _consumer.saveToken(token, request, response);
-                    StringBuilder urlBuffer = Transport.buildAuthUrl(_googleEndpoint.getAuthorizationUrl(), 
-                            token, null);
+                    StringBuilder urlBuffer = Transport.buildAuthUrl(
+                            _googleEndpoint.getAuthorizationUrl(), token);
                     Transport.appendToUrl("hd", "default", urlBuffer);
                     response.sendRedirect(urlBuffer.toString());
                 }

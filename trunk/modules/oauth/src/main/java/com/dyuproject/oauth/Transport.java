@@ -89,6 +89,17 @@ public abstract class Transport implements Signature.Listener
         urlBuffer.append('&').append(key).append('=').append(Signature.encode(value));
     }
     
+    public static StringBuilder buildAuthUrl(String authUrl, Token token)
+    {
+        char separator = authUrl.indexOf('?')==-1 ? '?' : '&';
+        return new StringBuilder()
+            .append(authUrl)
+            .append(separator)
+            .append(Constants.OAUTH_TOKEN)
+            .append('=')
+            .append(Signature.encode(token.getKey()));
+    }
+    
     public static StringBuilder buildAuthUrl(String authUrl, Token token, String callbackUrl)
     {
         char separator = authUrl.indexOf('?')==-1 ? '?' : '&';
@@ -102,6 +113,11 @@ public abstract class Transport implements Signature.Listener
             .append(Constants.OAUTH_CALLBACK)
             .append('=')
             .append(callbackUrl==null ? Constants.OOB : Signature.encode(callbackUrl));
+    }
+    
+    public static String getAuthUrl(String authUrl, Token token)
+    {
+        return buildAuthUrl(authUrl, token).toString();
     }
     
     public static String getAuthUrl(String authUrl, Token token, String callbackUrl)
