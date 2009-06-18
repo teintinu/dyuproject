@@ -39,7 +39,7 @@ public class ContextListener implements ServletContextListener
         URL resource = ClassLoaderUtil.getResource("consumers.properties", 
                 AuthorizeTokenServlet.class);
         if(resource==null)
-            throw new IllegalStateException("consumer.properties not found in classpath.");
+            throw new IllegalStateException("consumers.properties not found in classpath.");
         try
         {
             consumers.load(resource.openStream());
