@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ openid: Use POST (was GET) on association request.  Other sites except LiveJournal accept either GET or POST.
 
 dyuproject-1.1.4 2009-06-17
 + oauth: implementation for the latest oauth spec 1.0a - http://oauth.googlecode.com/svn/spec/core/1.0a/drafts/3/oauth-core-1_0a.html
