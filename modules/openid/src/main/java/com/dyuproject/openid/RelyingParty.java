@@ -414,7 +414,7 @@ public class RelyingParty
                 response, trustRoot, realm, returnTo);
     }
     
-    boolean authenticate(OpenIdUser user, HttpServletRequest request, HttpServletResponse response,
+    public boolean authenticate(OpenIdUser user, HttpServletRequest request, HttpServletResponse response,
             String trustRoot, String realm, String returnTo) throws IOException
     {
         UrlEncodedParameterMap params = getAuthUrlMap(user, trustRoot, realm, returnTo);
