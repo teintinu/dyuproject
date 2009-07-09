@@ -77,7 +77,7 @@ function handleOpenIDResponse(openid_args) {
 
 $(function(){
   $("#login").click(function(e){
-    var w = window.open("filtered.jsp?popup=true", "openid_popup", "width=450,height=500,location=1,status=1,resizable=yes");
+    var w = window.open("home/?popup=true", "openid_popup", "width=450,height=500,location=1,status=1,resizable=yes");
     var coords = getCenteredCoords(450,500);
     w.moveTo(coords[0],coords[1]);
   });
