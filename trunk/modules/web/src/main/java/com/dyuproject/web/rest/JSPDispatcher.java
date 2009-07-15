@@ -67,8 +67,7 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
         else if(_fileExtension.charAt(0)=='.')
             _fileExtension = _fileExtension.substring(1);
         
-        if(_jsp==null)
-            _jsp = getWebContext().getServletContext().getNamedDispatcher(_fileExtension);
+        _jsp = getWebContext().getServletContext().getNamedDispatcher(DEFAULT_FILE_EXTENSION);
         
         _jetty = getWebContext().getServletContext().getClass().getName().startsWith("org.mortbay.jetty");
         
