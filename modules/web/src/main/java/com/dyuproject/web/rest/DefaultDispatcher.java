@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dyuproject.util.Delim;
+
 
 /**
  * Dispatches to the container's default servlet
@@ -35,14 +37,27 @@ import org.slf4j.LoggerFactory;
 public class DefaultDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {
     
+    static final String[] NAMES = Delim.COMMA.split(System.getProperty("web.default_dispatcher_name", "default,_ah_default"));
+    
     private static final Logger log = LoggerFactory.getLogger(DefaultDispatcher.class);
     
     RequestDispatcher _default;
     
     protected void init()
     {
-        _default = getWebContext().getServletContext().getNamedDispatcher("default");
-        log.info("initialized.");   
+        for(String s : NAMES)
+        {
+            if((_default=getWebContext().getServletContext().getNamedDispatcher(s))!=null)
+            {
+                log.info("dispatcher name: {}", s);
+                break;
+            }
+        }
+        
+        if(_default==null)
+            log.warn("default dispatcher not resolved");
+        
+        log.info("initialized.");
     }
 
     public void dispatch(String uri, HttpServletRequest request,
