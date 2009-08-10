@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.dyuproject.util.Delim;
+
 
 /**
  * Efficiently dispatches to the jsp servlet.
@@ -38,6 +40,8 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
     public static final String JSP = JSPDispatcher.class.getName();
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/jsp/";
     public static final String DEFAULT_FILE_EXTENSION = "jsp";
+    
+    static final String[] NAMES = Delim.COMMA.split(System.getProperty("web.jsp_dispatcher_name", "jsp,_ah_jsp"));
     
     static final String INCLUDE_ATTR = "javax.servlet.include.servlet_path";
     
@@ -67,9 +71,19 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
         else if(_fileExtension.charAt(0)=='.')
             _fileExtension = _fileExtension.substring(1);
         
-        _jsp = getWebContext().getServletContext().getNamedDispatcher(DEFAULT_FILE_EXTENSION);
+        for(String s : NAMES)
+        {
+            if((_jsp=getWebContext().getServletContext().getNamedDispatcher(s))!=null)
+            {
+                log.info("dispatcher name: {}", s);
+                break;
+            }
+        }
         
-        _jetty = getWebContext().getServletContext().getClass().getName().startsWith("org.mortbay.jetty");
+        if(_jsp==null)
+            log.warn("jsp dispatcher not resolved");
+        else
+            _jetty = _jsp.getClass().getName().startsWith("org.mortbay.jetty");
         
         log.info("baseDir: " + _baseDir);
         log.info("fileExtension: " + _fileExtension);    
