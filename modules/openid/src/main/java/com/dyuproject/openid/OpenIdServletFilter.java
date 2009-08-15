@@ -27,6 +27,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.util.ClassLoaderUtil;
+
 /**
  * An openid servlet filter that can work with hardly any configuration.
  * The only thing required is the init-parameter "forwardUri".
@@ -39,29 +41,30 @@ public class OpenIdServletFilter implements Filter
 {
     
     public static final String ERROR_MSG_ATTR = "openid_servlet_filter_msg";    
-    public static final String DEFAULT_ERROR_MSG = "Your openid could not be resolved.";
-    public static final String ID_NOT_FOUND_MSG = "Your openid does not exist.";
+    public static final String DEFAULT_ERROR_MSG = System.getProperty("openid.servlet_filter.default_error_msg", "Your openid could not be resolved.");
+    public static final String ID_NOT_FOUND_MSG = System.getProperty("openid.servlet_filter.id_not_found_msg", "Your openid does not exist.");
+    
+    public static final ForwardUriHandler DEFAULT_FORWARD_URI_HANDLER = new ForwardUriHandler()
+    {
+        public void handle(String forwardUri, HttpServletRequest request, 
+                HttpServletResponse response) throws IOException, ServletException
+        {
+            request.getRequestDispatcher(forwardUri).forward(request, response);
+        }
+    };
+    
     static final String SLASH = "/";
 
     protected String _forwardUri;    
     protected RelyingParty _relyingParty;
     
-    protected String _defaultErrorMsg = DEFAULT_ERROR_MSG;
-    protected String _idNotFoundMsg = ID_NOT_FOUND_MSG;
+    protected ForwardUriHandler _forwardHandler;
     
     public void init(FilterConfig config) throws ServletException
     {
         _forwardUri = config.getInitParameter("forwardUri");
         if(_forwardUri==null)
-            throw new ServletException("forwardUri must not be null.");
-        
-        String defaultErrorMsg = config.getInitParameter("defaultErrorMsg");
-        if(defaultErrorMsg!=null)
-            _defaultErrorMsg = defaultErrorMsg;
-        
-        String idNotFoundMsg = config.getInitParameter("idNotFoundMsg");
-        if(idNotFoundMsg!=null)
-            _idNotFoundMsg = idNotFoundMsg;        
+            throw new ServletException("forwardUri must not be null.");      
         
         // resolve from ServletContext
         _relyingParty = (RelyingParty)config.getServletContext().getAttribute(
@@ -70,6 +73,22 @@ public class OpenIdServletFilter implements Filter
         //default config if null
         if(_relyingParty==null)
             _relyingParty = RelyingParty.getInstance();
+        
+        String forwardUriHandlerParam = config.getInitParameter("forwardUriHandler");
+        if(forwardUriHandlerParam!=null)
+        {
+            try
+            {
+                _forwardHandler = (ForwardUriHandler)ClassLoaderUtil.newInstance(
+                        forwardUriHandlerParam, OpenIdServletFilter.class);
+            }
+            catch (Exception e)
+            {
+                throw new ServletException(e);
+            }
+        }
+        else
+            _forwardHandler = DEFAULT_FORWARD_URI_HANDLER;
     }
     
     public String getForwardUri()
@@ -97,10 +116,17 @@ public class OpenIdServletFilter implements Filter
     public boolean handle(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
     {
+        return handle(request, response, _relyingParty, _forwardHandler, _forwardUri);
+    }
+    
+    public static boolean handle(HttpServletRequest request, HttpServletResponse response,
+            RelyingParty relyingParty, ForwardUriHandler forwardUriHandler, String forwardUri)
+            throws IOException, ServletException
+    {
         String errorMsg = DEFAULT_ERROR_MSG;
         try
         {
-            OpenIdUser user = _relyingParty.discover(request);
+            OpenIdUser user = relyingParty.discover(request);
             if(user==null)
             {                
                 if(RelyingParty.isAuthResponse(request))
@@ -111,7 +137,7 @@ public class OpenIdServletFilter implements Filter
                 else
                 {
                     // new user
-                    request.getRequestDispatcher(_forwardUri).forward(request, response);
+                    forwardUriHandler.handle(forwardUri, request, response);
                 }
                 return false;
             }
@@ -126,7 +152,7 @@ public class OpenIdServletFilter implements Filter
             if(user.isAssociated() && RelyingParty.isAuthResponse(request))
             {
                 // verify authentication
-                if(_relyingParty.verifyAuth(user, request, response))
+                if(relyingParty.verifyAuth(user, request, response))
                 {
                     // authenticated                    
                     // redirect to home to remove the query params instead of doing:
@@ -136,7 +162,7 @@ public class OpenIdServletFilter implements Filter
                 else
                 {
                     // failed verification
-                    request.getRequestDispatcher(_forwardUri).forward(request, response);
+                    forwardUriHandler.handle(forwardUri, request, response);
                 }
                 return false;
             }
@@ -146,7 +172,7 @@ public class OpenIdServletFilter implements Filter
             String trustRoot = url.substring(0, url.indexOf(SLASH, 9));
             String realm = url.substring(0, url.lastIndexOf(SLASH));
             String returnTo = url.toString();            
-            if(_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
+            if(relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
                     returnTo))
             {
                 // user is associated and then redirected to his openid provider for authentication                
@@ -167,8 +193,14 @@ public class OpenIdServletFilter implements Filter
             errorMsg = DEFAULT_ERROR_MSG;
         }
         request.setAttribute(ERROR_MSG_ATTR, errorMsg);
-        request.getRequestDispatcher(_forwardUri).forward(request, response);
+        forwardUriHandler.handle(forwardUri, request, response);
         return false;
+    }
+    
+    public interface ForwardUriHandler
+    {
+        public void handle(String forwardUri, HttpServletRequest request, HttpServletResponse response) 
+        throws IOException, ServletException;        
     }
 
 }
