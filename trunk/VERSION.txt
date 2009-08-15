@@ -1,5 +1,6 @@
 dyuproject-1.1-SNAPSHOT
 + openid: Use POST (was GET) on association request.
++ openid: make openid servlet filter more reusable via the static method "handle"
 
 + web: allow system properties to specify the configured name of default dispatcher and jsp dispatcher.
 
