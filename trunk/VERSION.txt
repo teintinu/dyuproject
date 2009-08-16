@@ -1,4 +1,6 @@
 dyuproject-1.1-SNAPSHOT
++ oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
+
 + openid: Use POST (was GET) on association request.
 + openid: make openid servlet filter more reusable via the static method "handle"
 
