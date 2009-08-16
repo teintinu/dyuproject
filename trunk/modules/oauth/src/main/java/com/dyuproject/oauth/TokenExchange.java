@@ -56,10 +56,13 @@ public abstract class TokenExchange
             
             if(__version!=null && !params.containsKey(Constants.OAUTH_VERSION))
                 params.put(Constants.OAUTH_VERSION, Constants.CURRENT_VERSION);
-            
-            params.add(Constants.OAUTH_CONSUMER_KEY, ep.getConsumerKey())
-                .add(Constants.OAUTH_TOKEN, token.getKey())
-                .add(Constants.OAUTH_VERIFIER, token.getAttribute(Constants.OAUTH_VERIFIER).toString());
+
+            params.put(Constants.OAUTH_CONSUMER_KEY, ep.getConsumerKey());
+            params.put(Constants.OAUTH_TOKEN, token.getKey());
+            // allow for oauth+openid hybrid
+            String verifier = (String)token.getAttribute(Constants.OAUTH_VERIFIER);
+            if(verifier!=null)
+                params.add(Constants.OAUTH_VERIFIER, verifier);
         }  
     };
 

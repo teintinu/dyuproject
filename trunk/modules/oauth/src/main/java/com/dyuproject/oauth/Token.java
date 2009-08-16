@@ -53,9 +53,15 @@ public final class Token implements Serializable, JSON.Convertible
     
     public Token(String ck, String key, String secret)
     {
+        this(ck, key, secret, UNITIALIZED);
+    }
+    
+    public Token(String ck, String key, String secret, int state)
+    {
         _ck = ck;
         _key = key;
         _secret = secret;
+        _state = state;
     }
     
     public int getState()
@@ -104,10 +110,12 @@ public final class Token implements Serializable, JSON.Convertible
     {
         if(_state<AUTHORIZED)
         {            
-            if(_state>UNITIALIZED && _key!=null && _key.equals(key) && verifier!=null)
+            if(_state>UNITIALIZED && _key!=null && _key.equals(key))
             {
                 _state = AUTHORIZED;
-                setAttribute(Constants.OAUTH_VERIFIER, verifier);
+                // allow for oauth+openid hybrid
+                if(verifier!=null)
+                    setAttribute(Constants.OAUTH_VERIFIER, verifier);
                 return true;
             }
             return false;
@@ -119,16 +127,6 @@ public final class Token implements Serializable, JSON.Convertible
     {
         return _state == ACCESS_TOKEN;
     }
-    
-    public Token get(String id)
-    {
-        return this;
-    }
-    
-    public Token add(Token token)
-    {
-        return this;
-    }    
     
     public Map<String,Object> getAttributes()
     {

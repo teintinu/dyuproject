@@ -118,7 +118,18 @@ public abstract class HashStore implements ServiceToken.Store
             String base = _crypto.decryptDecode(requestToken);
             String[] tokens = Delim.AMPER.split(base);
             if(tokens.length!=3)
+            {
+                if(tokens.length==1)
+                {
+                    // generated
+                    // allow for oauth+openid hybrid
+                    if((System.currentTimeMillis()-Long.parseLong(base.substring(0, 13))) > _exchangeTimeout)
+                        return null;
+                    
+                    return new SimpleServiceToken(consumerSecret, requestToken, null, base.substring(13));
+                }
                 return null;
+            }
 
             if((System.currentTimeMillis() - Long.parseLong(tokens[0])) > _exchangeTimeout)
                 return null;
@@ -134,7 +145,7 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    public String getAuthCallbackOrVerifier(String requestToken, String accessId)
+    public String getAuthCallbackOrVerifier(String requestToken, String id)
     {
         try
         {
@@ -146,7 +157,7 @@ public abstract class HashStore implements ServiceToken.Store
                 return null;
             
             //String consumerKey = base[1];
-            String verifier = _crypto.encryptEncode(requestToken + accessId);
+            String verifier = _crypto.encryptEncode(requestToken + id);
             
             String callback = tokens[2];
             // check if oob .. return verifier
@@ -172,9 +183,36 @@ public abstract class HashStore implements ServiceToken.Store
             return null;
         }
     }
-
+    
+    protected String sign(String base)
+    {
+        return Signature.getMacSignature(_macSecretKey, base, _macAlgorithm);
+    }
+    
+    public ServiceToken newHybridRequestToken(String consumerKey, String id)
+    {
+        String consumerSecret = getConsumerSecret(consumerKey);
+        return consumerSecret==null ? null : generateToken(consumerKey, consumerSecret, 
+                id);
+    }
+    
+    public ServiceToken generateToken(String consumerKey, String consumerSecret, 
+            String id)
+    {
+        try
+        {
+            String base = System.currentTimeMillis() + id;
+            String keyToken = _crypto.encryptEncode(base);
+            return new SimpleServiceToken(consumerSecret, keyToken, sign(base));
+        }
+        catch(Exception e)
+        {
+            return null;
+        }
+    }
+    
     public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken)
-    {        
+    {
         try
         {
             String vBase = _crypto.decryptDecode(verifier);
@@ -185,8 +223,8 @@ public abstract class HashStore implements ServiceToken.Store
             if(consumerSecret==null)
                 return null;
             
-            String accessId = vBase.substring(requestToken.length());            
-            return generateAccessToken(consumerKey, consumerSecret, accessId);
+            String id = vBase.substring(requestToken.length());            
+            return generateToken(consumerKey, consumerSecret, id);
         }
         catch(Exception e)
         {
@@ -194,19 +232,23 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    protected String sign(String base)
-    {
-        return Signature.getMacSignature(_macSecretKey, base, _macAlgorithm);
-    }
-    
-    protected ServiceToken generateAccessToken(String consumerKey, String consumerSecret, 
-            String accessId)
+    public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken, 
+            ServiceToken verifiedRequestToken)
     {
         try
         {
-            String base = System.currentTimeMillis() + accessId;
-            String accessToken = _crypto.encryptEncode(base);
-            return new SimpleServiceToken(consumerSecret, accessToken, sign(base));
+            if(verifiedRequestToken.getId()!=null)
+            {
+                return generateToken(consumerKey, verifiedRequestToken.getConsumerSecret(), 
+                        verifiedRequestToken.getId());
+            }
+            
+            String vBase = _crypto.decryptDecode(verifier);
+            if(!vBase.startsWith(requestToken))
+                return null;
+            
+            String id = vBase.substring(requestToken.length());            
+            return generateToken(consumerKey, verifiedRequestToken.getConsumerSecret(), id);
         }
         catch(Exception e)
         {
