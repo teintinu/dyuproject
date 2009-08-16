@@ -40,11 +40,16 @@ public interface ServiceToken extends Serializable
         
         public ServiceToken getRequestToken(String consumerKey, String requestToken);
         
-        // url with oauth_token and oauth_verifier param
-        public String getAuthCallbackOrVerifier(String requestToken, String accessId);
+        // useful for hybrid oauth+openid
+        public ServiceToken newHybridRequestToken(String consumerKey, String id);
         
+        // url with oauth_token and oauth_verifier param
+        public String getAuthCallbackOrVerifier(String requestToken, String id);
         
         public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken);
+
+        public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken, 
+                ServiceToken verifiedRequestToken);
         
         public ServiceToken getAccessToken(String consumerKey, String accessToken);
     }

@@ -221,14 +221,7 @@ public class ServiceProvider
     boolean handleTokenExchange(UrlEncodedParameterMap params, String consumerKey, 
             String requestToken, HttpServletRequest request, HttpServletResponse response) 
             throws IOException
-    {        
-        String verifier = params.get(Constants.OAUTH_VERIFIER);
-        if(verifier==null)
-        {
-            response.setStatus(400);
-            return false;
-        }
-        
+    {
         ServiceToken st = _store.getRequestToken(consumerKey, requestToken);
         if(st==null)
         {
@@ -236,11 +229,18 @@ public class ServiceProvider
             return false;
         }
         
+        String verifier = params.get(Constants.OAUTH_VERIFIER);
+        if(verifier==null && st.getId()==null)
+        {
+            response.setStatus(400);
+            return false;
+        }
+        
         int status = 200;
         if((status=verifySignature(st.getConsumerSecret(), st.getSecret(), request, 
                 params))==200)
         {
-            ServiceToken ast = _store.newAccessToken(consumerKey, verifier, requestToken);
+            ServiceToken ast = _store.newAccessToken(consumerKey, verifier, requestToken, st);
             if(ast==null)
             {
                 response.setStatus(401);
