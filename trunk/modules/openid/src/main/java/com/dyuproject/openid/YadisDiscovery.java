@@ -32,7 +32,7 @@ import com.dyuproject.util.xml.XMLParser;
 
 public class YadisDiscovery implements Discovery
 {
-    static final String IDENTIFIER_SELECT = "http://specs.openid.net/auth/2.0/identifier_select";
+    public static final String IDENTIFIER_SELECT = "http://specs.openid.net/auth/2.0/identifier_select";
     static final String XRDS_CONTENT_TYPE = "application/xrds+xml";
     static final String X_XRDS_LOCATION = "X-XRDS-Location";
     static final String NS_PREFIX = "http://specs.openid.net/auth/2.0/";
