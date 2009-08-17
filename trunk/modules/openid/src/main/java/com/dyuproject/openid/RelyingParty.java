@@ -313,6 +313,11 @@ public class RelyingParty
         return _context;
     }
     
+    public String getIdentifierParameter()
+    {
+        return _identifierParameter;
+    }
+    
     public boolean isDestroyed()
     {
         return _destroyed;

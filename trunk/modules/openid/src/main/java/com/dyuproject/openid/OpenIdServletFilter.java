@@ -136,6 +136,10 @@ public class OpenIdServletFilter implements Filter
                 }
                 else
                 {
+                    // set error msg if the openid_identifier is not resolved.
+                    if(request.getParameter(relyingParty.getIdentifierParameter())!=null)
+                        request.setAttribute(ERROR_MSG_ATTR, errorMsg);
+                    
                     // new user
                     forwardUriHandler.handle(forwardUri, request, response);
                 }
