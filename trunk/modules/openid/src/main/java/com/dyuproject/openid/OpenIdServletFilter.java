@@ -120,6 +120,13 @@ public class OpenIdServletFilter implements Filter
     }
     
     public static boolean handle(HttpServletRequest request, HttpServletResponse response,
+            String forwardUri) throws IOException, ServletException
+    {
+        return handle(request, response, RelyingParty.getInstance(), 
+                DEFAULT_FORWARD_URI_HANDLER, forwardUri);
+    }
+    
+    public static boolean handle(HttpServletRequest request, HttpServletResponse response,
             RelyingParty relyingParty, ForwardUriHandler forwardUriHandler, String forwardUri)
             throws IOException, ServletException
     {
