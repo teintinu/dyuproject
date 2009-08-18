@@ -1,7 +1,4 @@
-#summary JSON serialization and deserialization
 #labels json,ioc,application,context,serialization,deserialization
-= Introduction =
-
 = Pojo serialization/deserialization =
 
 Here's a sample pojo:
