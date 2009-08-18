@@ -1,10 +1,9 @@
-#summary One-sentence summary of this page.
 #labels hybrid,openid,oauth
-
 = Hybrid openid + oauth =
 
 The source code is directly from the example on [http://dyuproject.appspot.com]
 
+The goal of the hybrid protocol is to enhance the user experience by authenticating your users with openid and allowing the user to authorize the requested oauth services *at the same time*!
 
 {{{HybridGoogleService.java}}}
 {{{
