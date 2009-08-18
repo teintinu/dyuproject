@@ -1,6 +1,7 @@
 dyuproject-1.1-SNAPSHOT
 + oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
 
++ openid: introduce caching for users on discovery to speed up the openid process.
 + openid: set default error msg on OpenIdServletFilter if discovery using the openid_identifier returns null.
 + openid: use POST (was GET) on association request.
 + openid: make openid servlet filter more reusable via the static method "handle"
