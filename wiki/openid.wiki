@@ -42,8 +42,10 @@ If you're using maven2, you could put this in src/main/resources.
 #openid.user.manager.cookie.security_type = md5Signed (default: encrypted)
 #openid.user.manager.cookie.max_age = 900 (default: 600 seconds) 
 #openid.user.manager.cookie.login_timeout = 90 (default: 60 seconds)
-This could be done programmatically as well:
+
 }}}
+
+This could be done programmatically as well:
 
 {{{
 Properties props = new Properties();
