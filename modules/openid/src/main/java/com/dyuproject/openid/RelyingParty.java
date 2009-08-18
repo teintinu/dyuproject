@@ -164,6 +164,14 @@ public class RelyingParty
         relyingParty._userCache = userCacheParam==null ? new IdentifierSelectUserCache() : 
             (UserCache)newObjectInstance(userCacheParam);
         
+        // openid automatic redirect
+        // when the user is redirected to his provider and he somehow navigates away from his
+        // provider and returns to your site ... the relying party will do an automatic redirect
+        // back to his provider for authentication (if set to true)
+        String automaticRedirectParam = properties.getProperty("openid.automatic_redirect");
+        if(automaticRedirectParam!=null)
+            relyingParty._automaticRedirect = Boolean.parseBoolean(automaticRedirectParam);
+        
         return relyingParty;
     }    
     
@@ -282,6 +290,7 @@ public class RelyingParty
     private UserCache _userCache;
     
     private boolean _destroyed = false;
+    private boolean _automaticRedirect = true;
     
     public RelyingParty()
     {
@@ -339,6 +348,16 @@ public class RelyingParty
         return _destroyed;
     }
     
+    public boolean isAutomaticRedirect()
+    {
+        return _automaticRedirect;
+    }
+    
+    public void setAutomaticRedirect(boolean automaticRedirect)
+    {
+        _automaticRedirect = automaticRedirect;
+    }
+    
     public AuthRedirection getAuthRedirection()
     {
         return _authRedirection;
@@ -380,7 +399,7 @@ public class RelyingParty
                     return user;
                 }
                 if((id=request.getParameter(_identifierParameter))==null)
-                    return isAuthCancel(request) ? null : user;
+                    return (user.isAssociated() && !_automaticRedirect) || isAuthCancel(request) ? null : user;
                 else if((id=id.trim()).length()!=0)
                 {
                     Identifier identifier = Identifier.getIdentifier(id, _resolver, _context);
