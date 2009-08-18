@@ -157,6 +157,12 @@ public class ServiceProvider
         return _store.getAuthCallbackOrVerifier(requestToken, accessId);
     }
     
+    // for hybrid openid+oauth requests
+    public ServiceToken newHybridRequestToken(String consumerKey, String id)
+    {
+        return _store.newHybridRequestToken(consumerKey, id);
+    }
+    
     // access validity
     public ServiceToken getAccessToken(HttpServletRequest request)
     {
