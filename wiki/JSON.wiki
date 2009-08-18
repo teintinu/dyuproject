@@ -154,7 +154,7 @@ Let us test:
 
 = JSON IOC =
 
-One advantage of using ApplicationContext is that you can import configuration files and reference those pojos.
+One advantage of using {{{ApplicationContext}}} is that you can import configuration files and reference those pojos.
 
 Using the pojo Person.java from above, here's an example:
 
