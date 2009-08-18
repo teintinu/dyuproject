@@ -33,6 +33,23 @@ public class OpenIdUser implements Serializable, JSON.Convertible
     
     public static final String ATTR_NAME = "openid_user";
     
+    public static OpenIdUser populate(OpenIdUser user)
+    {
+        return new OpenIdUser(user.getIdentifier(), user.getClaimedId(), user.getOpenIdServer(), 
+                user.getOpenIdDelegate());
+    }
+    
+    public static OpenIdUser populate(String identifier, String claimedId, String openIdServer)
+    {
+        return new OpenIdUser(identifier, claimedId, openIdServer, null);
+    }
+    
+    public static OpenIdUser populate(String identifier, String claimedId, String openIdServer, 
+            String openIdDelegate)
+    {
+        return new OpenIdUser(identifier, claimedId, openIdServer, openIdDelegate);
+    }
+    
     private String _identifier;
     private String _claimedId;
     private String _identity;
@@ -202,10 +219,15 @@ public class OpenIdUser implements Serializable, JSON.Convertible
         }
         else
         {
-            out.add("c", _assocHandle);
-            out.add("d", _associationData);
+            if(_assocHandle!=null)
+                out.add("c", _assocHandle);
+            if(_associationData!=null)
+                out.add("d", _associationData);
+            
             out.add("e" ,_openIdServer);
-            out.add("f" ,_openIdDelegate);            
+            
+            if(_openIdDelegate!=null)
+                out.add("f" ,_openIdDelegate);            
         }
         
         if(_attributes!=null)

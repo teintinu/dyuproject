@@ -26,5 +26,17 @@ public interface Discovery
     
     public OpenIdUser discover(Identifier identifier, OpenIdContext context) 
     throws Exception;
+    
+    
+    /**
+     * The cached user objects used by relyingParty will be filled with data.
+     * The relying party always gets from the cache with clone set to true.
+     *
+     */
+    public interface UserCache
+    {
+        public OpenIdUser get(String key, boolean clone);
+        public void put(String key, OpenIdUser user);
+    }
 
 }

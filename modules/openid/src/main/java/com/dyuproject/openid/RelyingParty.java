@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.dyuproject.openid.Discovery.UserCache;
 import com.dyuproject.openid.Identifier.Resolver;
 import com.dyuproject.openid.Identifier.ResolverCollection;
 import com.dyuproject.openid.manager.HttpSessionUserManager;
@@ -158,6 +159,11 @@ public class RelyingParty
                 relyingParty.addResolver((Resolver)newObjectInstance(tokenizer.nextToken().trim()));
         }
         
+        // openid user cache
+        String userCacheParam = properties.getProperty("openid.user.cache");
+        relyingParty._userCache = userCacheParam==null ? new IdentifierSelectUserCache() : 
+            (UserCache)newObjectInstance(userCacheParam);
+        
         return relyingParty;
     }    
     
@@ -273,6 +279,7 @@ public class RelyingParty
     private AuthRedirection _authRedirection = SimpleRedirection.DEFAULT_INSTANCE;
     private ListenerCollection _listener = new ListenerCollection();
     private ResolverCollection _resolver = new ResolverCollection();
+    private UserCache _userCache;
     
     private boolean _destroyed = false;
     
@@ -285,6 +292,15 @@ public class RelyingParty
     {
         _context = context;
         _manager = manager;
+    }
+    
+    public RelyingParty(OpenIdContext context, OpenIdUserManager manager, 
+            AuthRedirection authRedirection, UserCache userCache)
+    {
+        _context = context;
+        _manager = manager;
+        _authRedirection = authRedirection;
+        _userCache = userCache;
     }
     
     public void setOpenIdUserManager(OpenIdUserManager manager)
@@ -330,7 +346,21 @@ public class RelyingParty
     
     public void setAuthRedirection(AuthRedirection authRedirection)
     {
-        _authRedirection = authRedirection;
+        if(authRedirection!=null)
+            _authRedirection = authRedirection;
+    }
+    
+    public UserCache getUserCache()
+    {
+        return _userCache;
+    }
+    
+    public void setUserCache(UserCache userCache)
+    {
+        if(_userCache!=null)
+            throw new IllegalArgumentException("userCache already set.");
+        
+        _userCache = userCache;
     }
     
     public OpenIdUser discover(HttpServletRequest request) 
@@ -378,12 +408,17 @@ public class RelyingParty
     protected OpenIdUser discover(Identifier identifier, HttpServletRequest request) 
     throws Exception
     {
-        OpenIdUser user = _context.getDiscovery().discover(identifier, _context);
-        if(user!=null)
+        OpenIdUser user = _userCache.get(identifier.getUrl(), true);
+        if(user==null)
         {
-            _listener.onDiscovery(user, request);
-            request.setAttribute(OpenIdUser.ATTR_NAME, user);            
+            if((user=_context.getDiscovery().discover(identifier, _context))==null)
+                return null;
+            
+            _userCache.put(identifier.getUrl(), user);
         }
+        
+        _listener.onDiscovery(user, request);
+        request.setAttribute(OpenIdUser.ATTR_NAME, user);   
         return user;
     }
     
