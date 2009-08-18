@@ -108,6 +108,10 @@ public class HomeServlet extends HttpServlet
                 }
                 else
                 {
+                    // set error msg if the openid_identifier is not resolved.
+                    if(request.getParameter(_relyingParty.getIdentifierParameter())!=null)
+                        request.setAttribute(OpenIdServletFilter.ERROR_MSG_ATTR, errorMsg);
+                    
                     // new user
                     request.getRequestDispatcher("/login.jsp").forward(request, response);
                 }
