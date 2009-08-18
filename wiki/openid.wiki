@@ -1,4 +1,4 @@
-#labels openid,relyingparty,consumer,configurate,usage,setup
+#labels openid,relyingparty,consumer,configuration,usage,setup
 openid relying party howto
 
 See the [QuickStartOpenid Quick Start Guide], [OpenIdServletFilter] and [SampleOpenIdServlet].
