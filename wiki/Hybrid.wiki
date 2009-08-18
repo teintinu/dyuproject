@@ -7,7 +7,7 @@ See [http://step2.googlecode.com/svn/spec/openid_oauth_extension/latest/openid_o
 
 ====A mechanism to combine an OpenID authentication request with the approval of an OAuth request token====
 
-The source code is directly from the example on [http://dyuproject.appspot.com]
+The source code is directly from the example on [http://dyuproject.appspot.com] (dyuproject-1.1.5)
 
 {{{HybridGoogleService.java}}}
 {{{
