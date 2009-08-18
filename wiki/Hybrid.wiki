@@ -5,6 +5,8 @@ The source code is directly from the example on [http://dyuproject.appspot.com]
 
 The goal of the hybrid protocol is to enhance the user experience by authenticating your users with openid and allowing the user to authorize the requested oauth services *at the same time*!
 
+====A mechanism to combine an OpenID authentication request with the approval of an OAuth request token====
+
 {{{HybridGoogleService.java}}}
 {{{
 
