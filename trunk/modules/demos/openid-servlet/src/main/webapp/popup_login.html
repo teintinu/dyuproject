@@ -28,7 +28,7 @@
 <script type="text/javascript">
 //<!--
 function getCenteredCoords(width, height) {
-  return [$(window).width()/2-width/2, $(window).height()/2-height/2];
+  return {x: $(window).width()/2-width/2, y: $(window).height()/2-height/2};
 }
 
 function handleOpenIDResponse(openid_args) {
@@ -66,7 +66,7 @@ $(function(){
   $("#login").click(function(e){
     var w = window.open("home/?popup=true", "openid_popup", "width=450,height=500,location=1,status=1,resizable=yes");
     var coords = getCenteredCoords(450,500);
-    w.moveTo(coords[0],coords[1]);
+    w.moveTo(coords.x, coords.y);
   });
   $("#logout").click(function(e){
     $.ajax({
