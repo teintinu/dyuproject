@@ -1,4 +1,5 @@
-#summary JSON serialize and deserialize
+#summary JSON serialization and deserialization
+#labels json,ioc,application,context,serialization,deserialization
 = Introduction =
 
 = Pojo serialization/deserialization =
@@ -91,8 +92,9 @@ public class Employee extends Person
 
 }}}
 
-Here's a sample configuration: "employee.json"
+Here's a sample config:
 
+{{{employee.json}}}
 {{{
 
 {
@@ -129,7 +131,7 @@ Here's a sample configuration: "employee.json"
 }}}
 
 
-Let's parse that shall we
+Let us test:
 {{{
     public void testParse() throws Exception
     {
@@ -150,4 +152,78 @@ Let's parse that shall we
 
 }}}
 
+= JSON IOC =
 
+One advantage of using ApplicationContext is that you can import configuration files and reference those pojos.
+
+Using the pojo Person.java from above, here's an example:
+
+{{{basic.json}}}
+{{{
+
+{
+  "person":
+  {
+    "class": "com.dyuproject.ioc.test.Person",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john_doe@email.com",
+    "age": 20,
+    "username": "john_doe",
+    "password": "some_password"
+  }
+}
+
+}}}
+
+{{{import_basic.json}}}
+{{{
+
+{
+  "import":
+  {
+    "class": "com.dyuproject.ioc.config.Import",
+    "resources": 
+    [
+      "classpath:com/dyuproject/ioc/test/basic.json"
+    ]  
+  },
+  "person1":
+  {
+    "class": "com.dyuproject.ioc.test.Person",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john_doe1@email.com",
+    "age": 21,
+    "username": "john_doe1",
+    "password": "some_password1"
+  }
+}
+
+}}}
+
+Let us test:
+{{{
+    public void testBasic() throws Exception
+    {        
+        String resource = "src/test/resources/com/dyuproject/ioc/test/basic.json";
+        ApplicationContext ac = ApplicationContext.load(resource);
+        Person person = (Person)ac.findPojo("person");
+        assertTrue("John".equals(person.getFirstName()));
+        assertTrue(20==person.getAge());
+    }
+    
+    public void testImportBasic() throws Exception
+    {
+        String resource = "src/test/resources/com/dyuproject/ioc/test/import_basic.json";
+        ApplicationContext ac = ApplicationContext.load(resource);
+        assertTrue(ac.getPojo("person")==null);
+        Person person = (Person)ac.findPojo("person");
+        assertTrue("John".equals(person.getFirstName()));
+        assertTrue(20==person.getAge());
+        
+        Person person1 = (Person)ac.getPojo("person1");
+        assertTrue("John".equals(person1.getFirstName()));
+        assertTrue(21==person1.getAge());
+    }
+}}}
