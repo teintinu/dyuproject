@@ -3,6 +3,7 @@ dyuproject-1.1-SNAPSHOT
 
 + openid: add configurable openid.automatic_redirect when a user navigates away from his provider and back to the rp's site
 + openid: introduce caching for users on discovery to speed up the openid process.
++ openid: allow bypass of discovery for an expected provider via OpenidUser.populate method and storing the user on the request attribute
 + openid: set default error msg on OpenIdServletFilter if discovery using the openid_identifier returns null.
 + openid: use POST (was GET) on association request.
 + openid: make openid servlet filter more reusable via the static method "handle"
