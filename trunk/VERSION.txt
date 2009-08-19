@@ -9,7 +9,7 @@ dyuproject-1.1-SNAPSHOT
 
 + web: allow system properties to specify the configured name of default dispatcher and jsp dispatcher.
 
-+ misc: update jetty to 6.1.19
++ misc: update jetty-util to 6.1.19
 
 dyuproject-1.1.4 2009-06-17
 + oauth: implementation for the latest oauth spec 1.0a - http://oauth.googlecode.com/svn/spec/core/1.0a/drafts/3/oauth-core-1_0a.html
