@@ -131,7 +131,7 @@ public class HybridGoogleService extends AbstractService
         OpenIdUser user = RelyingParty.getInstance().getOpenIdUserManager().getUser(rc.getRequest());
         if(user==null || user.getAttribute("google_scope")==null)
         {
-            // we know its google so we skip discovery to speed up the openid process
+            // we expect it to be google so skip discovery to speed up the openid process
             user = OpenIdUser.populate(GOOGLE_IDENTIFIER, YadisDiscovery.IDENTIFIER_SELECT, 
                     GOOGLE_OPENID_SERVER);
             user.setAttribute("google_scope", module.getScope());
