@@ -1,4 +1,4 @@
-dyuproject-1.1-SNAPSHOT
+dyuproject-1.1.5 2009-08-21
 + oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
 
 + openid: add configurable openid.automatic_redirect when a user navigates away from his provider and back to the rp's site
