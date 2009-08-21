@@ -42,7 +42,7 @@ RelyingParty.getInstance().setUserCache(cache);
 }}}
 
 If not configured, {{{IdentifierSelectUserCache}}} will be used by default.
-Simply add {{{identifier_select.properties}}} to you classpath.
+Simply add {{{identifier_select.properties}}} to your classpath.
 
 {{{identifier_select.properties}}}
 
@@ -54,7 +54,7 @@ google.openid_server = https://www.google.com/accounts/o8/ud
 google.identifier.0 = https://google.com/accounts/o8/id
 google.identifier.1 = https://www.google.com/accounts/o8/id
 
-# an added mapping just in-case someone enters google.com 
+# an added mapping just in-case someone enters "google.com"
 google.identifier.2 = http://www.google.com/
 google.identifier.3 = http://google.com/
 
@@ -64,7 +64,7 @@ yahoo.identifier.1 = http://yahoo.com/
 
 }}}
 
-With this configuration, the discovery process (1-2 roundtrips) will be skipped when a user uses google/yahoo to login to your site.
+With this configuration, the discovery process (1-2 http roundtrips) will be skipped when a user uses google/yahoo to login to your site.
 
 
 The RelyingParty will call UserCache.put(openid_identifier, OpenIdUser) for every discovery.
