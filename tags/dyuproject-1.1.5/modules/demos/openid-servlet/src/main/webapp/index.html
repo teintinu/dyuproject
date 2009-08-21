@@ -1,0 +1,7 @@
+<script type="text/javascript">
+var path = new String(document.location).replace(/http:\/\/[^\/]*/, "");
+var idx = path.lastIndexOf("/");
+if(path.length>1 && path.length-1!=idx)
+    path = path.substring(0, idx+1);
+window.location = path+"home/";
+</script>

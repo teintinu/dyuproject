@@ -1,0 +1,75 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <parent>
+    <artifactId>project</artifactId>
+    <groupId>com.dyuproject</groupId>
+    <version>1.1.5</version>
+    <relativePath>../../pom.xml</relativePath>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.dyuproject.demos</groupId>
+  <artifactId>project</artifactId>
+  <packaging>pom</packaging>
+  <name>demos</name>
+  
+  <build>
+    <defaultGoal>install</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>clean</id>
+            <phase>clean</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <delete file="../../../dist/demos/${project.build.finalName}.${project.packaging}"/>
+              </tasks>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copyjar</id>
+            <phase>install</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <copy failonerror="false" file="target/${project.build.finalName}.${project.packaging}" tofile="../../../dist/demos/${project.build.finalName}.${project.packaging}" />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+  
+  <modules>
+    <module>oauth-consumer-servlet</module>
+    <module>oauth-serviceprovider-servlet</module>
+    <module>openid-servlet</module>
+    <module>helloworld</module>
+    <module>todo-list</module>
+  </modules>
+  
+  <profiles>
+    <profile>
+      <activation>
+        <property>
+          <name>slf4j-jdk14</name>
+        </property>
+      </activation>
+    <dependencies>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>${slf4j-version}</version>
+      </dependency>
+    </dependencies>
+    </profile>
+  </profiles>
+  
+</project>
