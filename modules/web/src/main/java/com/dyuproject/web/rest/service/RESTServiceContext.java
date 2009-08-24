@@ -225,8 +225,7 @@ public class RESTServiceContext extends WebContext
             
             int len = m.getParameterTypes().length;
             if(len==0 || (len==1 && RequestContext.class.isAssignableFrom(m.getParameterTypes()[0])))
-            {
-                m.setAccessible(true);            
+            {          
                 PathHandler ph = mapResource(location, new AnnotatedMethodResource(service, m, httpMethod));
                 if(c!=null && ph!=null)
                     mapConsumer(location, httpMethod, ph, c);

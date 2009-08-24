@@ -17,6 +17,7 @@ package com.dyuproject.web.rest.service;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,7 +67,9 @@ public class AnnotatedMethodResource implements Resource
         _service = service;
         _serviceMethod = serviceMethod;
         _httpMethod = httpMethod;
-        _len = serviceMethod.getParameterTypes().length;;
+        _len = serviceMethod.getParameterTypes().length;
+        if(!Modifier.isPublic(_serviceMethod.getModifiers()))
+            _serviceMethod.setAccessible(true);
     }
     
     public void init(WebContext webContext)
