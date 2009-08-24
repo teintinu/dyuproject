@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ web: make non-public service methods accessible from AnnotatedResourceMethod
 
 dyuproject-1.1.5 2009-08-21
 + oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
