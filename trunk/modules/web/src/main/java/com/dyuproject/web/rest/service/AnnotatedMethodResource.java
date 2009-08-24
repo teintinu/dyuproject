@@ -103,12 +103,12 @@ public class AnnotatedMethodResource implements Resource
         catch (IllegalArgumentException e)
         {            
             log.warn(e.getMessage(), e);
-            WebContext.getCurrentRequestContext().getResponse().sendError(404);
+            rc.getResponse().sendError(404);
         } 
         catch (IllegalAccessException e)
         {            
             log.warn(e.getMessage(), e);
-            WebContext.getCurrentRequestContext().getResponse().sendError(404);
+            rc.getResponse().sendError(404);
         } 
         catch (InvocationTargetException e)
         {            
@@ -121,7 +121,7 @@ public class AnnotatedMethodResource implements Resource
                 throw (RuntimeException)cause;
             
             log.info(cause.getMessage(), cause);
-            WebContext.getCurrentRequestContext().getResponse().sendError(500);
+            rc.getResponse().sendError(500);
         }
     }
     
