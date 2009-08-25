@@ -19,9 +19,17 @@
   <scm>
     <connection>scm:svn:https://dyuproject.googlecode.com/svn/trunk</connection>
     <developerConnection>scm:svn:https://dyuproject.googlecode.com/svn/trunk</developerConnection>    
-  </scm>  
-  <build>    
-    <plugins>  
+  </scm>
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <build>
+    <plugins>
       <plugin>
         <inherited>true</inherited>
         <groupId>org.apache.maven.plugins</groupId>
