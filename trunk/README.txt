@@ -6,7 +6,6 @@ Requirements:
 
 Build Requirements:
 - maven 2.0.7 or higher
-- ant 1.6.5 or higher
 
 Building:
 - $ mvn install
