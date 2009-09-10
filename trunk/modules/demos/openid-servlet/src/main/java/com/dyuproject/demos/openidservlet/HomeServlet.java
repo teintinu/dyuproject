@@ -148,10 +148,8 @@ public class HomeServlet extends HttpServlet
             
             if(user.isAuthenticated())
             {
-                // user already authenticated                
-                request.setAttribute(OpenIdUser.ATTR_NAME, user);
+                // user already authenticated
                 request.getRequestDispatcher("/home.jsp").forward(request, response);
-                
                 return;
             }
             
