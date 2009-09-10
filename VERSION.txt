@@ -1,6 +1,8 @@
 dyuproject-1.1-SNAPSHOT
 + web: make non-public service methods accessible from AnnotatedResourceMethod
 
++ openid: fixed duplicate set(OpenIdUser) on request attribute in OpenIdServletFilter
+
 dyuproject-1.1.5 2009-08-21
 + oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
 

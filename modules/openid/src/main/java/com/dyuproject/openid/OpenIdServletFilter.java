@@ -155,8 +155,7 @@ public class OpenIdServletFilter implements Filter
             
             if(user.isAuthenticated())
             {
-                // user already authenticated
-                request.setAttribute(OpenIdUser.ATTR_NAME, user);                                
+                // user already authenticated                            
                 return true;
             }
             
