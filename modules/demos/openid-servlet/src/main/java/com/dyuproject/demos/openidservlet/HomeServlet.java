@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.openid.OpenIdServletFilter;
 import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.RelyingParty;
+import com.dyuproject.openid.YadisDiscovery;
 import com.dyuproject.openid.ext.AxSchemaExtension;
 import com.dyuproject.openid.ext.SRegExtension;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
@@ -99,6 +100,29 @@ public class HomeServlet extends HttpServlet
     public void doPost(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
     {
+        String loginWith = request.getParameter("loginWith");
+        if(loginWith!=null)
+        {
+            // If the ui supplies a LoginWithGoogle or LoginWithYahoo link/button, 
+            // this will speed up the openid process by skipping discovery. 
+            // The override is done by adding the OpenIdUser to the request attribute.
+            if(loginWith.equals("google"))
+            {
+                OpenIdUser user = OpenIdUser.populate("https://www.google.com/accounts/o8/id", 
+                        YadisDiscovery.IDENTIFIER_SELECT, 
+                        "https://www.google.com/accounts/o8/ud");
+                request.setAttribute(OpenIdUser.ATTR_NAME, user);
+                
+            }
+            else if(loginWith.equals("yahoo"))
+            {
+                OpenIdUser user = OpenIdUser.populate("http://yahoo.com/", 
+                        YadisDiscovery.IDENTIFIER_SELECT, 
+                        "https://open.login.yahooapis.com/openid/op/auth");
+                request.setAttribute(OpenIdUser.ATTR_NAME, user);
+            }
+        }
+        
         String errorMsg = OpenIdServletFilter.DEFAULT_ERROR_MSG;
         try
         {
