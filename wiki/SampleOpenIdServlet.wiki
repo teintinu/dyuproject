@@ -1,7 +1,5 @@
-#labels sample,openid,servlet
+#labels sample,openid,servlet,example,sreg,axschema
 A sample openid servlet using dyuproject-openid
-
-=dyuproject-1.1.1(+)=
 
 It is recommended that you use the [OpenIdServletFilter] instead and just add
 your custom *{{{RelyingParty.Listener}}}*
@@ -10,39 +8,27 @@ your custom *{{{RelyingParty.Listener}}}*
 
 *{{{HomeServlet.java}}}*
 {{{
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.UnknownHostException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.dyuproject.openid.OpenIdServletFilter;
-import com.dyuproject.openid.OpenIdUser;
-import com.dyuproject.openid.RelyingParty;
-import com.dyuproject.openid.UrlEncodedParameterMap;
-import com.dyuproject.openid.ext.SReg;
-import com.dyuproject.openid.ext.SRegConfigListener;
-
 /**
  * Home Servlet. If authenticated, goes to the home page. If not, goes to the login page.
  * 
- * @author David Yu
  */
 @SuppressWarnings("serial")
 public class HomeServlet extends HttpServlet
 {
-
-    RelyingParty _relyingParty = RelyingParty.getInstance();
-    
-    public void init()
+    static
     {
-        // enable sreg
-        _relyingParty.addListener(new SRegConfigListener());
-        // custom listener
-        _relyingParty.addListener(new RelyingParty.Listener()
+        RelyingParty.getInstance()
+        .addListener(new SRegExtension()
+            .addExchange("email")
+            .addExchange("country")
+            .addExchange("language")
+        )
+        .addListener(new AxSchemaExtension()
+            .addExchange("email")
+            .addExchange("country")
+            .addExchange("language")
+        )
+        .addListener(new RelyingParty.Listener()
         {
             public void onDiscovery(OpenIdUser user, HttpServletRequest request)
             {
@@ -55,23 +41,29 @@ public class HomeServlet extends HttpServlet
             }            
             public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
             {
-
-                System.err.print("newly authenticated user: " + user.getIdentity());
-                SReg sreg = SReg.get(user);
-                if(sreg!=null)
-                    System.err.print(" aka " + sreg.getNickname());
-                System.err.print("\n");            
+                System.err.println("newly authenticated user: " + user.getIdentity());
+                Map<String,String> sreg = SRegExtension.remove(user);
+                Map<String,String> axschema = AxSchemaExtension.remove(user);
+                if(sreg!=null && !sreg.isEmpty())
+                {
+                    System.err.println("sreg: " + sreg);
+                    user.setAttribute("info", sreg);
+                }
+                else if(axschema!=null && !axschema.isEmpty())
+                {                    
+                    System.err.println("axschema: " + axschema);
+                    user.setAttribute("info", axschema);
+                }          
             }            
             public void onAccess(OpenIdUser user, HttpServletRequest request)
             {        
-                System.err.print("user access: " + user.getIdentity());
-                SReg sreg = SReg.get(user);
-                if(sreg!=null)
-                    System.err.print(" aka " + sreg.getNickname());
-                System.err.print("\n");
-            }            
+                System.err.println("user access: " + user.getIdentity());
+                System.err.println("info: " + user.getAttribute("info"));
+            }   
         });
-    }    
+    }
+
+    RelyingParty _relyingParty = RelyingParty.getInstance();
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
@@ -95,6 +87,10 @@ public class HomeServlet extends HttpServlet
                 }
                 else
                 {
+                    // set error msg if the openid_identifier is not resolved.
+                    if(request.getParameter(_relyingParty.getIdentifierParameter())!=null)
+                        request.setAttribute(OpenIdServletFilter.ERROR_MSG_ATTR, errorMsg);
+                    
                     // new user
                     request.getRequestDispatcher("/login.jsp").forward(request, response);
                 }
@@ -118,7 +114,7 @@ public class HomeServlet extends HttpServlet
                     // authenticated                    
                     // redirect to home to remove the query params instead of doing:
                     // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
-                    response.sendRedirect("/home/");
+                    response.sendRedirect(request.getContextPath() + "/home/");
                 }
                 else
                 {
@@ -158,114 +154,4 @@ public class HomeServlet extends HttpServlet
         request.setAttribute(OpenIdServletFilter.ERROR_MSG_ATTR, errorMsg);
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
-
-}}}
-
-----
-
-=dyuproject-1.0.x=
-
-*{{{HomeServlet.java}}}*
-{{{
-
-package com.dyuproject.demos.openidservlet;
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import com.dyuproject.openid.OpenIdUser;
-import com.dyuproject.openid.RelyingParty;
-
-/**
- * Home Servlet. If authenticated, goes to the home page. If not, goes to the login page.
- * 
- * @author David Yu
- */
-@SuppressWarnings("serial")
-public class HomeServlet extends HttpServlet
-{
-    
-    RelyingParty _relyingParty;
-    
-    public void init()
-    {
-        _relyingParty = RelyingParty.getInstance();
-    }    
-    
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException
-    {
-        doPost(request, response);
-    }
-    
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws IOException, ServletException
-    {        
-        try
-        {
-            OpenIdUser user = _relyingParty.discover(request);
-            if(user==null)
-            {
-                // new user                
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
-                return;
-            }
-            
-            if(user.isAuthenticated())
-            {
-                // user already authenticated                
-                request.setAttribute("user", user);
-                request.getRequestDispatcher("/home.jsp").forward(request, response);
-                
-                return;
-            }
-            
-            if(user.isAssociated() && RelyingParty.isAuthResponse(request))
-            {
-                // verify authentication
-                if(_relyingParty.verifyAuth(user, request, response))
-                {
-                    // authenticated                    
-                    // redirect to home to remove the query params instead of doing:
-                    // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
-                    response.sendRedirect("/home/");
-                }
-                else
-                {
-                    // failed verification ... re-authenticate
-                    request.getRequestDispatcher("/login.jsp").forward(request, response);
-                }
-                return;
-            }
-            
-            // associate user
-            if(_relyingParty.associate(user, request, response))
-            {
-                // authenticate user to his/her openid provider
-                StringBuffer url = request.getRequestURL();
-                String trustRoot = url.substring(0, url.indexOf("/", 9));
-                String realm = url.substring(0, url.lastIndexOf("/"));
-                String returnTo = url.toString();
-                response.sendRedirect(RelyingParty.getAuthUrlString(user, trustRoot, realm, 
-                        returnTo)); 
-            }
-            else
-            {
-                // failed association
-                request.getRequestDispatcher("/login.jsp").forward(request, response);
-            }           
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-            response.sendError(401);
-        }
-    }
-
-}
-
 }}}
