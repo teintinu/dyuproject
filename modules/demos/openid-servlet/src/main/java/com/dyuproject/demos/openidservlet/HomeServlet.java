@@ -40,8 +40,9 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 @SuppressWarnings("serial")
 public class HomeServlet extends HttpServlet
 {
-
-    RelyingParty _relyingParty = RelyingParty.getInstance()
+    static
+    {
+        RelyingParty.getInstance()
         .addListener(new SRegExtension()
             .addExchange("email")
             .addExchange("country")
@@ -85,6 +86,9 @@ public class HomeServlet extends HttpServlet
                 System.err.println("info: " + user.getAttribute("info"));
             }   
         });
+    }
+
+    RelyingParty _relyingParty = RelyingParty.getInstance();
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
