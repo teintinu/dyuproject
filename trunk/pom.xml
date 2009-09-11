@@ -87,7 +87,7 @@
         <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
             <configuration>
-              <excludePackageNames>org.apache.*:org.codehaus.*:javax.*:com.sun.*</excludePackageNames>
+              <excludePackageNames>org.apache.*:org.codehaus.*:javax.*:com.sun.*:com.dyuproject.web.rest.annotation.*</excludePackageNames>
               <aggregate>true</aggregate>
               <debug>false</debug>              
               <links>
