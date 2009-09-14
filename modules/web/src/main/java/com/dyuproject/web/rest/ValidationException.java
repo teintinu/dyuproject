@@ -23,13 +23,12 @@ package com.dyuproject.web.rest;
 public class ValidationException extends IllegalArgumentException
 {
     
-    private String _field;
-    private Object _pojo;
+    private final String _field;
+    private final Object _pojo;
     
     public ValidationException(String message, String field)
     {
-        super(message);
-        _field = field;        
+        this(message, field, null);
     }
     
     public ValidationException(String message, String field, Object pojo)

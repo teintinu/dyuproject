@@ -79,12 +79,12 @@ public class JSONDispatcher extends StandardJSON implements ViewDispatcher
         public static final String MSG = "msg";
         public static final String ERROR = "error";
         
-        protected String _msg;
-        protected boolean _error;
+        protected final String _msg;
+        protected final boolean _error;
         
         public SimpleResponse(String msg)
         {
-            _msg = msg;
+            this(msg, false);
         }
         
         public SimpleResponse(String msg, boolean error)

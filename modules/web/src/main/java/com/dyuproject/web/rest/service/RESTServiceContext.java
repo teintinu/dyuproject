@@ -54,10 +54,10 @@ public class RESTServiceContext extends WebContext
     
     private static final Logger log = LoggerFactory.getLogger(RESTServiceContext.class);
     
-    private PathHandler _pathHandler = new PathHandler();
-    private List<Service> _services = new ArrayList<Service>();
-    private List<Resource> _resources = new ArrayList<Resource>();
-    private Map<String,Interceptor> _interceptors = new HashMap<String,Interceptor>();
+    private final PathHandler _pathHandler = new PathHandler();
+    private final List<Service> _services = new ArrayList<Service>();
+    private final List<Resource> _resources = new ArrayList<Resource>();
+    private final Map<String,Interceptor> _interceptors = new HashMap<String,Interceptor>();
     
     public void addService(Service service)
     {

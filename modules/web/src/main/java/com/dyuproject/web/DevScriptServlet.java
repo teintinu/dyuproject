@@ -46,7 +46,7 @@ public class DevScriptServlet extends HttpServlet
     
     private static final Logger log = LoggerFactory.getLogger(DevScriptServlet.class);
     private byte[] _scriptBytes;
-    private Object _lock = new Object();
+    private final Object _lock = new Object();
     private File _scriptFile;
     private long _lastModified = 0;
     private long _interval = 5000;
