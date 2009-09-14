@@ -52,7 +52,7 @@ public class CookieSessionManager
     private String _secretKey, _cookieName, _cookiePath, _cookieDomain;
     private int _maxAge = 3600, _updateMs = 3600*500;
     private boolean _started = false, _includeRemoteAddr = false;
-    private StandardJSON _json = new StandardJSON();
+    private final StandardJSON _json = new StandardJSON();
     private Cryptography _crypto;
     
     public static CookieSession getCurrentSession()

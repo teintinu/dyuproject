@@ -28,7 +28,7 @@ import javax.servlet.ServletException;
 public class ConsumerInterceptor extends AbstractLifeCycle implements Interceptor
 {
     
-    private Map<String,ValidatingConsumer> _consumers = new HashMap<String,ValidatingConsumer>(3);
+    private final Map<String,ValidatingConsumer> _consumers = new HashMap<String,ValidatingConsumer>(3);
     
     protected void init()
     {        

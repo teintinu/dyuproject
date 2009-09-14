@@ -57,10 +57,10 @@ public class AnnotatedMethodResource implements Resource
         return __httpMethods.get(clazz);
     }
     
-    private Service _service;
-    private Method _serviceMethod;
-    private String _httpMethod;
-    private int _len = 0;
+    private final Service _service;
+    private final Method _serviceMethod;
+    private final String _httpMethod;
+    private final int _len;
     
     public AnnotatedMethodResource(Service service, Method serviceMethod, String httpMethod)
     {

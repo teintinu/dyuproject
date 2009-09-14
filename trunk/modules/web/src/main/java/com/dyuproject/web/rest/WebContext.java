@@ -64,13 +64,14 @@ public abstract class WebContext
     private boolean _initialized = false, _destroyed = false, _sessionEnabled = false;
     private ServletContext _servletContext;
     
-    private DefaultDispatcher _defaultDispatcher = new DefaultDispatcher();
-    private JSPDispatcher _jspDispatcher = new JSPDispatcher();
-    private Map<String,ViewDispatcher> _viewDispatchers = new HashMap<String,ViewDispatcher>();
+    private final DefaultDispatcher _defaultDispatcher = new DefaultDispatcher();
+    private final JSPDispatcher _jspDispatcher = new JSPDispatcher();
+    private final Map<String,ViewDispatcher> _viewDispatchers = new HashMap<String,ViewDispatcher>();
     
-    private Map<String,Object> _attributes = new HashMap<String,Object>();
+    private final Map<String,Object> _attributes = new HashMap<String,Object>();
     
-    private Properties _mime, _env = new Properties();
+    private Properties _mime;
+    private final Properties _env = new Properties();
     private CookieSessionManager _cookieSessionManager;
     
     private static final RequestContext.Local __currentContext = new RequestContext.Local();    

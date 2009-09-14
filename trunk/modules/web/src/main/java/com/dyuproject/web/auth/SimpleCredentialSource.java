@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 public class SimpleCredentialSource implements CredentialSource
 {
     
-    private Properties _properties = new Properties();
+    private final Properties _properties = new Properties();
     
     public SimpleCredentialSource()
     {
