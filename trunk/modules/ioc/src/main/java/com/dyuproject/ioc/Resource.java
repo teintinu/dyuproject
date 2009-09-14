@@ -30,7 +30,7 @@ public class Resource
     
     private String _path, _type;
     private Reader _reader;    
-    private ReaderSource _source = new ReaderSource(null);
+    private final ReaderSource _source = new ReaderSource(null);
     private File _file;
     
     public Resource(String path)
