@@ -36,7 +36,7 @@ public class EmailResolver implements Identifier.Resolver
     
     public static final String DEFAULT_RESOURCE_LOCATION = "email_resolver.properties";
     
-    private Properties _urls = new Properties();
+    private final Properties _urls = new Properties();
     
     public EmailResolver()
     {

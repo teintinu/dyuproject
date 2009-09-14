@@ -27,7 +27,7 @@ import java.util.List;
 public class ChainedDiscovery implements Discovery
 {
     
-    private List<Discovery> _chained = new ArrayList<Discovery>();
+    private final List<Discovery> _chained = new ArrayList<Discovery>();
     
     public ChainedDiscovery add(Discovery discovery)
     {

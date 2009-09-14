@@ -67,7 +67,7 @@ public class AxSchemaExtension extends AbstractExtension
         }
     }
     
-    private Map<String,Exchange> _exchanges = new HashMap<String,Exchange>();    
+    private final Map<String,Exchange> _exchanges = new HashMap<String,Exchange>();    
     
     public AxSchemaExtension()
     {
@@ -165,7 +165,7 @@ public class AxSchemaExtension extends AbstractExtension
     public static class SimpleExchange extends AbstractExchange
     {
         
-        private String _namespace;
+        private final String _namespace;
         
         public SimpleExchange(String alias, String namespace)
         {

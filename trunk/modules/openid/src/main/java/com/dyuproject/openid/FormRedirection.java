@@ -32,7 +32,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public class FormRedirection implements AuthRedirection
 {
     
-    private String _title;
+    private final String _title;
     
     public FormRedirection()
     {

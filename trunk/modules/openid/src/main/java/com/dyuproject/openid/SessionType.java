@@ -43,10 +43,10 @@ public final class SessionType
         return HMAC_SHA1;
     }
     
-    private String _sessionType;
-    private String _associationType;
-    private String _digestType;
-    private String _algorithm;
+    private final String _sessionType;
+    private final String _associationType;
+    private final String _digestType;
+    private final String _algorithm;
     
     private SessionType(String sessionType, String associationType, String digestType, 
             String algorithm)
