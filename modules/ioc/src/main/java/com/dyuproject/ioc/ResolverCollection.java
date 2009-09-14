@@ -31,7 +31,7 @@ public class ResolverCollection implements Resolver
     
     public static final String TYPE = "collection";
     
-    protected Map<String,Resolver> _resolvers;
+    protected final Map<String,Resolver> _resolvers;
     
     public ResolverCollection()
     {
