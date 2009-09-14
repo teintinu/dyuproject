@@ -27,7 +27,7 @@ public class PropertiesHashStore extends HashStore
 {
 
     
-    private Properties _consumers;
+    private final Properties _consumers;
     
     public PropertiesHashStore(String secret, String macSecretKey, Properties consumers)
     {
