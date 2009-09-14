@@ -34,7 +34,7 @@ public class DiffieHellman
     
     private static final long __loadTime = System.currentTimeMillis();
     
-    private BigInteger _base;
+    private final BigInteger _base;
     
     private DiffieHellman(BigInteger base)
     {

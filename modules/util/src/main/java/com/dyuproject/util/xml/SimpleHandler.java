@@ -30,13 +30,13 @@ public class SimpleHandler implements LazyHandler
     private static final boolean __trimText = !"false".equals(System.getProperty(
             "simplehandler.trimText"));
 
-    private Stack<Node> _stack = new Stack<Node>();
+    private final Stack<Node> _stack = new Stack<Node>();
     private Node _root;
-    private boolean _trimText = __trimText;
+    private final boolean _trimText;
     
     public SimpleHandler()
     {
-        
+        this(__trimText);
     }
     
     public SimpleHandler(boolean trimText)

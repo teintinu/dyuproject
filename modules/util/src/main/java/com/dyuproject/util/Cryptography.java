@@ -128,8 +128,8 @@ public class Cryptography
         return new Cryptography(KeyGenerator.getInstance(algorithm).generateKey());
     }
     
-    private Cipher _encrypt, _decrypt;
-    private Key _key;
+    private final Cipher _encrypt, _decrypt;
+    private final Key _key;
     
     private Cryptography(Key key) throws Exception
     {

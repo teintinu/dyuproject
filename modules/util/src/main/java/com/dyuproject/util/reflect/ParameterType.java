@@ -311,9 +311,9 @@ public abstract class ParameterType
     
     public static class SimpleField
     {
-        private String _name;
-        private Method _method;
-        private ParameterType _type;
+        private final String _name;
+        private final Method _method;
+        private final ParameterType _type;
         
         SimpleField(String name, Method method, ParameterType type)
         {
