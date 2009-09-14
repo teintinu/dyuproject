@@ -31,7 +31,7 @@ public class ConsumerContext
     
     private HttpConnector _httpConnector;
     private NonceAndTimestamp _nonceAndTimestamp;
-    private Map<String,Endpoint> _endpoints = new HashMap<String,Endpoint>();
+    private final Map<String,Endpoint> _endpoints = new HashMap<String,Endpoint>();
     
     public ConsumerContext()
     {

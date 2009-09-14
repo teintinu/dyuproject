@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentMap;
 public class ConcurrentMapHashStore extends HashStore
 {
     
-    private ConcurrentMap<String,String> _consumers = new ConcurrentHashMap<String,String>();
+    private final ConcurrentMap<String,String> _consumers = new ConcurrentHashMap<String,String>();
     
     public ConcurrentMapHashStore(String secretKey, String macSecretKey)
     {
