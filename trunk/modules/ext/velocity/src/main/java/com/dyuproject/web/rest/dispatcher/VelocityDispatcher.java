@@ -53,7 +53,7 @@ public class VelocityDispatcher extends AbstractLifeCycle implements ViewDispatc
     
     private VelocityEngine _engine;
     private String _baseDir, _fileExtension, _suffix;    
-    private Properties _properties = new Properties();
+    private final Properties _properties = new Properties();
     
     public VelocityDispatcher()
     {

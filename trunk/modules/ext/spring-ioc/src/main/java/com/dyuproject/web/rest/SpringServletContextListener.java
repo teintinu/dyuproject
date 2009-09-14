@@ -54,7 +54,7 @@ public class SpringServletContextListener implements ServletContextListener
     
     private static class ApplicationContext extends AbstractXmlApplicationContext
     {        
-        ServletContext _servletContext;
+        final ServletContext _servletContext;
         
         ApplicationContext(ServletContext servletContext)
         {
