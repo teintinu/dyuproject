@@ -233,7 +233,7 @@ public abstract class Signature
             StringBuilder requestBuffer);
     
     
-    public static Signature PLAINTEXT = new Signature()
+    public static final Signature PLAINTEXT = new Signature()
     {
         
         public String getMethod()
@@ -275,7 +275,7 @@ public abstract class Signature
         
     };
     
-    public static Signature HMACSHA1 = new Signature()
+    public static final Signature HMACSHA1 = new Signature()
     {
 
         public String getMethod()
