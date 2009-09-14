@@ -42,7 +42,7 @@ public class StandardConvertorCache implements ConvertorCache
         }        
     };
     
-    private ConcurrentMap<String,Convertor> _convertors = new ConcurrentHashMap<String,Convertor>();
+    private final ConcurrentMap<String,Convertor> _convertors = new ConcurrentHashMap<String,Convertor>();
     
     public StandardConvertorCache()
     {

@@ -80,7 +80,7 @@ public class StandardJSON extends JSON
         return getResource(path, StandardConvertorCache.class, __checkParents);
     }
     
-    protected ConvertorCache _convertorCache;
+    protected final ConvertorCache _convertorCache;
     protected boolean _addClass = true;
     
     public StandardJSON()
