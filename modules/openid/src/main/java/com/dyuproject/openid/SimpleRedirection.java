@@ -29,7 +29,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public class SimpleRedirection implements AuthRedirection
 {
     
-    public static SimpleRedirection DEFAULT_INSTANCE = new SimpleRedirection();
+    public static final SimpleRedirection DEFAULT_INSTANCE = new SimpleRedirection();
 
     public void redirect(UrlEncodedParameterMap params, HttpServletRequest request, 
             HttpServletResponse response) throws IOException

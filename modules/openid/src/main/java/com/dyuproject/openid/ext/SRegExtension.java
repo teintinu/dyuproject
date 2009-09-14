@@ -53,7 +53,7 @@ public class SRegExtension extends AbstractExtension
     }
     
     private static final Properties __sregConfig = new Properties();
-    private static String __optional;
+    private static final String __optional;
     
     static
     {
@@ -69,7 +69,7 @@ public class SRegExtension extends AbstractExtension
         }
     }
     
-    private Map<String,Exchange> _exchanges = new HashMap<String,Exchange>();
+    private final Map<String,Exchange> _exchanges = new HashMap<String,Exchange>();
     private String _checkKey;
     
     public SRegExtension()

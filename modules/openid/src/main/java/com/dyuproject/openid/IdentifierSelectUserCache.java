@@ -71,24 +71,23 @@ public class IdentifierSelectUserCache implements Discovery.UserCache
         }
     }
     
-    private Map<String,String> _mappings = new HashMap<String, String>();
+    private final Map<String,String> _mappings;
     
     public IdentifierSelectUserCache()
     {
+        this(new HashMap<String,String>());
         load(DEFAULT_RESOURCE_LOCATION, _mappings);
     }
     
     public IdentifierSelectUserCache(String resourceLoc)
     {
+        this(new HashMap<String,String>());
         load(resourceLoc, _mappings);
     }
     
     public IdentifierSelectUserCache(Map<String,String> mappings)
     {
-        if(_mappings.isEmpty())
-            _mappings = mappings;
-        else
-            _mappings.putAll(mappings);
+        _mappings = mappings;
     }
 
     public OpenIdUser get(String key, boolean clone)

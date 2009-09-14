@@ -285,8 +285,8 @@ public class RelyingParty
     private OpenIdContext _context;
     private String _identifierParameter = DEFAULT_IDENTIFIER_PARAMETER;
     private AuthRedirection _authRedirection = SimpleRedirection.DEFAULT_INSTANCE;
-    private ListenerCollection _listener = new ListenerCollection();
-    private ResolverCollection _resolver = new ResolverCollection();
+    private final ListenerCollection _listener = new ListenerCollection();
+    private final ResolverCollection _resolver = new ResolverCollection();
     private UserCache _userCache;
     
     private boolean _destroyed = false;
