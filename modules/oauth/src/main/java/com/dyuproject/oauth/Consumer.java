@@ -188,10 +188,16 @@ public class Consumer
         return _manager.saveToken(token, request, response);
     }
     
+    public boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
+    throws IOException
+    {
+        return _manager.invalidate(consumerKey, request, response);
+    }
+    
     public boolean invalidate(Token token, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
-        return _manager.invalidate(token, request, response);
+        return _manager.invalidate(token.getCk(), request, response);
     }
 
     public Response fetchToken(Endpoint ep, Token token)

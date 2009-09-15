@@ -38,7 +38,7 @@ public interface TokenManager
     public boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response)
     throws IOException;
     
-    public boolean invalidate(Token token, HttpServletRequest request, HttpServletResponse response) 
+    public boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
     throws IOException;
 
 }

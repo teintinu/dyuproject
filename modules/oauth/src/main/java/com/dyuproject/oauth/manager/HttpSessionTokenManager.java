@@ -52,12 +52,12 @@ public class HttpSessionTokenManager implements TokenManager
         return session==null ? null: (Token)session.getAttribute(ck);
     }
 
-    public boolean invalidate(Token token, HttpServletRequest request,
+    public boolean invalidate(String consumerKey, HttpServletRequest request,
             HttpServletResponse response) throws IOException
     {
         HttpSession session = request.getSession(false);
         if(session!=null)
-            session.removeAttribute(token.getCk());
+            session.removeAttribute(consumerKey);
         return true;
     }
 
