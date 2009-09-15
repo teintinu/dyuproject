@@ -217,10 +217,10 @@ public class CookieBasedTokenManager implements TokenManager
     }
  
     
-    public boolean invalidate(Token token, HttpServletRequest request, 
+    public boolean invalidate(String consumerKey, HttpServletRequest request, 
             HttpServletResponse response) throws IOException
     {
-        return write(token.getCk(), "0", 0, response);
+        return write(consumerKey, "0", 0, response);
     }
     
     private boolean write(String name, String value, int maxAge, HttpServletResponse response) 

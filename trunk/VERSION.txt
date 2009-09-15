@@ -1,4 +1,7 @@
 dyuproject-1.1-SNAPSHOT
++ oauth: slight api change in TokenManager (the first arg of the method "invalidate" is changed from Token to String).
+         This avoids creating a new Token for invalidation.  The Consumer api accepts String or Token for invalidation.
+
 + openid: fixed duplicate set(OpenIdUser) on request attribute in OpenIdServletFilter
 
 + web: make non-public service methods accessible from AnnotatedResourceMethod
