@@ -8,7 +8,7 @@
   <resources>
     <resource>modules/server/src/main/java/HelloServlet.java</resource>
     <resource>modules/client/src/main/java/Application.java</resource>
-    <resource>modules/client/src/main/resources/application.gwt.xml</resource>
+    <resource>modules/client/src/main/resources/Application.gwt.xml</resource>
     <resource>modules/server/pom.xml</resource>
     <resource>modules/client/pom.xml</resource>
     
