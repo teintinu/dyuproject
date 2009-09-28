@@ -14,7 +14,7 @@ public class Application implements EntryPoint
 
     public void onModuleLoad()
     {
-        RootPanel.get().add(new Label("${artifactId}! from gwt-jetty-maven archetype"));
+        RootPanel.get().add(new Label("Hello from ${rootArtifactId} gwt client!"));
         
     }
 
