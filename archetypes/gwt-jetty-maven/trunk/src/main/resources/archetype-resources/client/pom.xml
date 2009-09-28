@@ -9,7 +9,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
-  <name>${rootArtifactId} :: ${artifactId}</name>
+  <name>${rootArtifactId} :: client</name>
   <packaging>war</packaging>
 
   <build>

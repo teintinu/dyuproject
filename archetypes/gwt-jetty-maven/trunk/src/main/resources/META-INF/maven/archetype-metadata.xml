@@ -5,11 +5,12 @@
       <directory></directory>
       <includes>
         <include>pom.xml</include>
+        <include>README.txt</include>
       </includes>
     </fileSet>
   </fileSets>
   <modules>
-    <module name="server" id="${rootArtifactId}-server" dir="server">
+    <module name="${rootArtifactId}-server" id="${rootArtifactId}-server" dir="server">
       <fileSets>
         <fileSet filtered="true" packaged="true" encoding="UTF-8">
           <directory>src/main/java</directory>
@@ -49,7 +50,7 @@
         </fileSet>
       </fileSets>
     </module>
-    <module name="client" id="${rootArtifactId}-client" dir="client">
+    <module name="${rootArtifactId}-client" id="${rootArtifactId}-client" dir="client">
       <fileSets>
         <fileSet filtered="true" packaged="true" encoding="UTF-8">
           <directory>src/main/java</directory>
