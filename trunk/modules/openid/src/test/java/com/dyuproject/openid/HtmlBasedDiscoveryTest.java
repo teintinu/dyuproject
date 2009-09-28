@@ -33,7 +33,7 @@ public class HtmlBasedDiscoveryTest extends TestCase
     
     public void testDiscovery2() throws Exception
     {
-        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://davidyuftw.blogspot.com");
+        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://techmusicbox.blogspot.com");
     }
     
     public void testDiscovery3() throws Exception
@@ -48,7 +48,7 @@ public class HtmlBasedDiscoveryTest extends TestCase
     
     public void testRegexDiscovery2() throws Exception
     {
-        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://davidyuftw.blogspot.com");
+        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://techmusicbox.blogspot.com");
     }
     
     public void testRegexDiscovery3() throws Exception

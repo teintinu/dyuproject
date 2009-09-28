@@ -31,7 +31,7 @@ public class DefaultDiscoveryTest extends TestCase
         OpenIdContext context = new OpenIdContext();
         context.setHttpConnector(new SimpleHttpConnector());
         context.setDiscovery(new DefaultDiscovery());
-        Identifier identifier = Identifier.getIdentifier("http://davidyuftw.blogspot.com", null, context);
+        Identifier identifier = Identifier.getIdentifier("http://techmusicbox.blogspot.com", null, context);
         OpenIdUser user = context.getDiscovery().discover(identifier, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
         System.err.println(user.getOpenIdServer());
