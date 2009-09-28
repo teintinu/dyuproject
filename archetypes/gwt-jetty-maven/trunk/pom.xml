@@ -5,7 +5,7 @@
   <groupId>com.dyuproject.archetype</groupId>
   <artifactId>gwt-jetty-maven</artifactId>
   <version>1.0-SNAPSHOT</version>
-  <packaging>maven-plugin</packaging>
+  <packaging>jar</packaging>
   <name>gwt-jetty-maven archetype</name>
   <description>A template for creating a maven application that uses gwt and jetty (and eclipse) for rapid deployment </description>
 
@@ -24,7 +24,5 @@
       <distribution>repo</distribution>
     </license>
   </licenses>
-
-
   
 </project>
