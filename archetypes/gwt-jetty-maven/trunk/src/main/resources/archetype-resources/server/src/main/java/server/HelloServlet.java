@@ -27,7 +27,7 @@ public class HelloServlet extends HttpServlet
     throws IOException, ServletException
     {
         response.setContentType("text/json");
-        String message = "hello from ${artifactId}-server @ " + System.currentTimeMillis();
+        String message = "hello from ${artifactId} @ " + System.currentTimeMillis();
         PrintWriter pw = response.getWriter();
         pw.write("{\"msg\":\"" + message + "\"}");
         pw.close();
