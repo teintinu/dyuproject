@@ -81,7 +81,7 @@
     <!--<google.webtoolkit.home>${env.GWT_HOME}</google.webtoolkit.home>-->
     <gwt.version>1.7.0</gwt.version>
     <gwt.mojo.version>1.1</gwt.mojo.version>
-    <server.module>../server</server.module>
+    <server.module>${basedir}/../server</server.module>
   </properties>
   
 </project>

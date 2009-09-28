@@ -9,6 +9,8 @@
     <resource>modules/server/src/main/java/HelloServlet.java</resource>
     <resource>modules/client/src/main/java/Application.java</resource>
     <resource>modules/client/src/main/resources/application.gwt.xml</resource>
+    <resource>modules/server/pom.xml</resource>
+    <resource>modules/client/pom.xml</resource>
     
     <resource>modules/server/src/main/webapp/WEB-INF/web.xml</resource>
     <resource>modules/client/war/application.html</resource>
