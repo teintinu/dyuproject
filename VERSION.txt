@@ -3,6 +3,7 @@ dyuproject-1.1-SNAPSHOT
          This avoids creating a new Token for invalidation.  The Consumer api accepts String or Token for invalidation.
 
 + openid: fixed YadisDiscovery bug where the service type is http://specs.openid.net/auth/2.0/signon
++ openid: fixed Identifier bug when a url contains a port (E.g http://example.com:8080/foo/)
 + openid: fixed duplicate set(OpenIdUser) on request attribute in OpenIdServletFilter
 
 + web: make non-public service methods accessible from AnnotatedResourceMethod

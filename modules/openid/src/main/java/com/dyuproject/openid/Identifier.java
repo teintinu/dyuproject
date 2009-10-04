@@ -145,7 +145,7 @@ public class Identifier implements Serializable
         if(colon!=-1)
         {
             // port validation
-            int portsLen = end-colon+1;
+            int portsLen = end-colon-1;
             if(portsLen<1 && portsLen>5)
                 return;
             
