@@ -40,6 +40,65 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
  * An implementation of RelyingParty.Listener will enable you to listen to events 
  * during a user's authentication lifecycle.
  * 
+ * <blockquote>
+ * <pre>
+ *   OpenIdUser user = _relyingParty.discover(request);
+ *   if(user==null)
+ *   {                
+ *       if(RelyingParty.isAuthResponse(request))
+ *       {
+ *           // authentication timeout                    
+ *           response.sendRedirect(request.getRequestURI());
+ *       }
+ *       else
+ *       {
+ *           // set error msg if the openid_identifier is not resolved.
+ *           if(request.getParameter(_relyingParty.getIdentifierParameter())!=null)
+ *               request.setAttribute(OpenIdServletFilter.ERROR_MSG_ATTR, errorMsg);
+ *           
+ *           // new user
+ *           request.getRequestDispatcher("/login.jsp").forward(request, response);
+ *       }
+ *       return;
+ *   }
+ *   
+ *   if(user.isAuthenticated())
+ *   {
+ *       // user already authenticated
+ *       request.getRequestDispatcher("/home.jsp").forward(request, response);
+ *       return;
+ *   }
+ *   
+ *   if(user.isAssociated() && RelyingParty.isAuthResponse(request))
+ *   {
+ *       // verify authentication
+ *       if(_relyingParty.verifyAuth(user, request, response))
+ *       {
+ *           // authenticated                    
+ *          // redirect to home to remove the query params instead of doing:
+ *           // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
+ *           response.sendRedirect(request.getContextPath() + "/home/");
+ *       }
+ *       else
+ *       {
+ *           // failed verification
+ *           request.getRequestDispatcher("/login.jsp").forward(request, response);
+ *       }
+ *       return;
+ *   }
+ *   
+ *   StringBuffer url = request.getRequestURL();
+ *   String trustRoot = url.substring(0, url.indexOf("/", 9));
+ *   String realm = url.substring(0, url.lastIndexOf("/"));
+ *   String returnTo = url.toString();            
+ *   if(_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, returnTo))
+ *   {
+ *       // successful association
+ *       return;
+ *   } 
+ * </pre>
+ * </blockquote>
+ * 
  * @author David Yu
  * @created Sep 21, 2008
  */
