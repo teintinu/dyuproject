@@ -39,19 +39,14 @@ public class DiffieHellmanAssociation implements Association
     
     static final String CLIENT_PRIVATE_KEY_ATTR = "client.privateKey";
     
-    private SessionType _type;
+    private final SessionType _type;
     
     public DiffieHellmanAssociation()
     {
-        setSessionAssociationType(SessionType.getDefault());
+        this(SessionType.getDefault());
     }
     
     public DiffieHellmanAssociation(SessionType type)
-    {
-        setSessionAssociationType(type);
-    }
-    
-    public void setSessionAssociationType(SessionType type)
     {
         _type = type;
     }
@@ -77,16 +72,14 @@ public class DiffieHellmanAssociation implements Association
         associationData.put(Constants.OPENID_ASSOC_TYPE, _type.getAssociationType());
         associationData.put(Constants.OPENID_SESSION_TYPE, _type.getSessionType());
         
-        BigInteger[] keys = DiffieHellman.BASE_2.generateRandomKeys(Constants.DIFFIE_HELLMAN_MODULUS);
-        BigInteger privateKey = keys[0];
-        BigInteger publicKey = keys[1];
+        BigInteger[] keys = DiffieHellman.BASE_2.generateRandomKeys(Constants.DIFFIE_HELLMAN_MODULUS); 
         
-        associationData.put(CLIENT_PRIVATE_KEY_ATTR, privateKey.toString());        
-        
-        String publicKeyString = new String(B64Code.encode(publicKey.toByteArray()));
+        String publicKeyString = new String(B64Code.encode(keys[1].toByteArray()));
         associationData.put(Constants.OPENID_DH_CONSUMER_PUBLIC, publicKeyString);
         Response response = context.getHttpConnector().doPOST(user.getOpenIdServer(), (Map<?,?>)null,
                 associationData, Constants.DEFAULT_ENCODING);
+        
+        associationData.put(CLIENT_PRIVATE_KEY_ATTR, keys[0].toString());
         BufferedReader br = null;        
         try
         {            

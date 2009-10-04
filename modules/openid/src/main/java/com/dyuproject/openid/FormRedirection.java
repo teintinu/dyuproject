@@ -32,11 +32,13 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public class FormRedirection implements AuthRedirection
 {
     
+    public static final String DEFAULT_TITLE = System.getProperty("fr.title","");
+    
     private final String _title;
     
     public FormRedirection()
     {
-        this(System.getProperty("fr.title",""));
+        this(DEFAULT_TITLE);
     }
     
     public FormRedirection(String title)
