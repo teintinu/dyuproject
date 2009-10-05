@@ -135,7 +135,7 @@ public class RelyingParty
                 }
             }
         }
-        return __instance;
+        return instance;
     }
     
     public static RelyingParty newInstance(String resourceLoc)
