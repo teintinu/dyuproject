@@ -36,6 +36,7 @@ import com.dyuproject.json.test.Task;
 public class StandardPojoConvertorTest extends TestCase
 {
     
+    @SuppressWarnings("unchecked")
     public void testCollection() throws Exception
     {
         String resource = "src/test/resources/com/dyuproject/json/test/employee.json";
