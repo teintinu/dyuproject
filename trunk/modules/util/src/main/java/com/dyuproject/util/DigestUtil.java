@@ -24,7 +24,7 @@ import java.security.MessageDigest;
  * @created Sep 7, 2008
  */
 
-public abstract class DigestUtil
+public final class DigestUtil
 {
     
     public static final String MD5 = "MD5";

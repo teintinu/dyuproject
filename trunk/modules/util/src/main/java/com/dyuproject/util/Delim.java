@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * @author David Yu
  */
 
-public abstract class Delim
+public final class Delim
 {
     
     public static final Pattern COMMA = Pattern.compile(",");

@@ -29,7 +29,7 @@ import org.mortbay.util.UrlEncoded;
  * @created Sep 11, 2008
  */
 @SuppressWarnings("serial")
-public class UrlEncodedParameterMap extends HashMap<String,String>
+public final class UrlEncodedParameterMap extends HashMap<String,String>
 {
     
     private String _url;
