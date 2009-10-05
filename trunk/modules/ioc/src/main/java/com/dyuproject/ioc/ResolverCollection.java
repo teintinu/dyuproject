@@ -31,44 +31,46 @@ public class ResolverCollection implements Resolver
     
     public static final String TYPE = "collection";
     
+    protected final String _type;
     protected final Map<String,Resolver> _resolvers;
     
     public ResolverCollection()
     {
-        this(new HashMap<String,Resolver>());
+        this(new HashMap<String,Resolver>(), TYPE);
     }
     
     public ResolverCollection(int size)
     {
-        this(new HashMap<String,Resolver>(size));
+        this(new HashMap<String,Resolver>(size), TYPE);
     }
     
-    public ResolverCollection(Map<String,Resolver> resolvers)
+    public ResolverCollection(int size, String type)
+    {
+        this(new HashMap<String,Resolver>(size), type);
+    }
+    
+    public ResolverCollection(Map<String,Resolver> resolvers, String type)
     {
         _resolvers = resolvers;
+        _type = type;
     }
 
-    public String getType()
+    public final String getType()
     {        
-        return TYPE;
+        return _type;
     }
     
-    public Map<String,Resolver> getResolvers()
-    {
-        return _resolvers;
-    }
-    
-    public Resolver getResolver(String type)
+    public final Resolver getResolver(String type)
     {
         return _resolvers.get(type);
     }
     
-    public Resolver putResolver(Resolver resolver)
+    public final Resolver putResolver(Resolver resolver)
     {
         return _resolvers.put(resolver.getType(), resolver);
     }
 
-    public void resolve(Resource resource, Context context) throws IOException
+    public final void resolve(Resource resource, Context context) throws IOException
     {
         Resolver resolver = getResolver(resource.getType());
         if(resolver==null)

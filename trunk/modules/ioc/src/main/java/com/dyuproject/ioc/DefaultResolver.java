@@ -40,13 +40,8 @@ public class DefaultResolver extends ResolverCollection
     
     private DefaultResolver()
     {
-        super(5);
-        putDefaultResolvers(getResolvers());
-    }
-    
-    public String getType()
-    {
-        return TYPE;
+        super(5, TYPE);
+        putDefaultResolvers(_resolvers);
     }
     
     /*public void resolve(Resource resource, Context context) throws IOException

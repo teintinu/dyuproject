@@ -20,7 +20,7 @@ package com.dyuproject.ioc.config;
  * @created Feb 20, 2009
  */
 
-public class OverrideReferences extends References
+public final class OverrideReferences extends References
 {
 
 }

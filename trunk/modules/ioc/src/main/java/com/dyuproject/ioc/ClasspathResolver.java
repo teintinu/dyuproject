@@ -23,7 +23,7 @@ import java.net.URL;
  * @created Feb 23, 2009
  */
 
-public class ClasspathResolver extends AbstractResolver
+public final class ClasspathResolver extends AbstractResolver
 {
     
     public static final String TYPE = generateTypeFromClass(ClasspathResolver.class);

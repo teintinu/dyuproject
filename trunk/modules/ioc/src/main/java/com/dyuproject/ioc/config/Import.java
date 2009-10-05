@@ -31,7 +31,7 @@ import com.dyuproject.ioc.Resource;
  * @created Feb 21, 2009
  */
 
-public class Import implements Convertible
+public final class Import implements Convertible
 {
     
     static void importResources(Map<?,?> resources) throws IOException

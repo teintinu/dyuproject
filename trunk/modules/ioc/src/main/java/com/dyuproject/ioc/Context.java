@@ -19,7 +19,7 @@ package com.dyuproject.ioc;
  * @created Feb 23, 2009
  */
 
-public class Context
+public final class Context
 {
     
     private static final ThreadLocal<Context> __current = new ThreadLocal<Context>();
