@@ -23,16 +23,21 @@ import java.util.Properties;
  * @created Jun 8, 2009
  */
 
-public class PropertiesHashStore extends HashStore
+public final class PropertiesHashStore extends HashStore
 {
-
     
     private final Properties _consumers;
     
-    public PropertiesHashStore(String secret, String macSecretKey, Properties consumers)
+    public PropertiesHashStore(Properties consumers, String secretKey, String macSecretKey)
     {
-        setSecretKey(secret);
-        setMacSecretKey(macSecretKey);
+        super(secretKey, macSecretKey);
+        _consumers = consumers;
+    }
+    
+    public PropertiesHashStore(Properties consumers, String secretKey, String macSecretKey, 
+            String macAlgorithm, long accessTimeout, long exchangeTimeout, long loginTimeout)
+    {
+        super(secretKey, macSecretKey, macAlgorithm, accessTimeout, exchangeTimeout, loginTimeout);
         _consumers = consumers;
     }
 

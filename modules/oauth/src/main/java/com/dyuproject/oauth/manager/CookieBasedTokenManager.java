@@ -35,7 +35,7 @@ import com.dyuproject.util.Cryptography;
  * @created May 30, 2009
  */
 
-public class CookieBasedTokenManager implements TokenManager
+public final class CookieBasedTokenManager implements TokenManager
 {
     private boolean _initialized = false;
     

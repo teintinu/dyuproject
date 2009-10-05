@@ -49,7 +49,7 @@ public class ContextListener implements ServletContextListener
             throw new RuntimeException(ioe);
         }
         
-        PropertiesHashStore store = new PropertiesHashStore("secret", "macSecret", consumers);
+        PropertiesHashStore store = new PropertiesHashStore(consumers, "secret", "macSecret");
         ServiceProvider serviceProvider = new ServiceProvider(store);
         event.getServletContext().setAttribute(ServiceProvider.class.getName(), serviceProvider);
         System.err.println("ServiceProvider initialized.");

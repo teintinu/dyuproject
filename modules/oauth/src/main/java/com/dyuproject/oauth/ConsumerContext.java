@@ -14,7 +14,6 @@
 
 package com.dyuproject.oauth;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.dyuproject.util.http.HttpConnector;
@@ -26,75 +25,40 @@ import com.dyuproject.util.http.HttpConnector;
  * @created May 29, 2009
  */
 
-public class ConsumerContext
+public final class ConsumerContext
 {
     
-    private HttpConnector _httpConnector;
-    private NonceAndTimestamp _nonceAndTimestamp;
-    private final Map<String,Endpoint> _endpoints = new HashMap<String,Endpoint>();
+    private final HttpConnector _httpConnector;
+    private final NonceAndTimestamp _nonceAndTimestamp;
+    private final Map<String,Endpoint> _endpoints;
     
-    public ConsumerContext()
-    {
-        
-    }
-    
-    public ConsumerContext(HttpConnector httpConnector, NonceAndTimestamp nonceAndTimestamp)
+    public ConsumerContext(HttpConnector httpConnector, NonceAndTimestamp nonceAndTimestamp, 
+            Map<String,Endpoint> endpoints)
     {
         _httpConnector = httpConnector;
         _nonceAndTimestamp = nonceAndTimestamp;
+        _endpoints = endpoints;
     }
     
-    public HttpConnector getHttpConnector()
+    public final HttpConnector getHttpConnector()
     {
         return _httpConnector;
     }
-
-    public void setHttpConnector(HttpConnector httpConnector)
-    {
-        _httpConnector = httpConnector;
-    }
     
-    public NonceAndTimestamp getNonceAndTimestamp()
+    public final NonceAndTimestamp getNonceAndTimestamp()
     {
         return _nonceAndTimestamp;
     }
     
-    public void setNonceAndTimestamp(NonceAndTimestamp nonceAndTimestamp)
-    {
-        _nonceAndTimestamp = nonceAndTimestamp;
-    }
-    
-    public ConsumerContext addEndpoint(Endpoint ep)
+    public final ConsumerContext addEndpoint(Endpoint ep)
     {
         _endpoints.put(ep.getDomain(), ep);
         return this;
     }
     
-    public Endpoint getEndpoint(String domain)
+    public final Endpoint getEndpoint(String domain)
     {
         return _endpoints.get(domain);
-    }
-    
-    public Map<String,Endpoint> getEndpoints()
-    {
-        return _endpoints;
-    }
-    
-    public void setEndpoints(Map<String,Endpoint> endpoints)
-    {
-        _endpoints.putAll(endpoints);
-    }
-    
-    public void addEndpoints(Endpoint[] endpoints)
-    {
-        for(Endpoint ep : endpoints)
-            _endpoints.put(ep.getDomain(), ep);
-    }
-    
-    public void addEndpoints(Iterable<Endpoint> endpoints)
-    {
-        for(Endpoint ep : endpoints)
-            _endpoints.put(ep.getDomain(), ep);
     }
 
 

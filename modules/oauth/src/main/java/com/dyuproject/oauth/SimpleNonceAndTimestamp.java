@@ -23,17 +23,12 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
  * @created Jun 1, 2009
  */
 
-public class SimpleNonceAndTimestamp implements NonceAndTimestamp
+public final class SimpleNonceAndTimestamp implements NonceAndTimestamp
 {
     
-    private static final SimpleNonceAndTimestamp __default = new SimpleNonceAndTimestamp();
-    
-    public static SimpleNonceAndTimestamp getDefault()
-    {
-        return __default;
-    }
+    public static final SimpleNonceAndTimestamp DEFAULT = new SimpleNonceAndTimestamp();
 
-    public void put(UrlEncodedParameterMap params, String consumerKey)
+    public final void put(UrlEncodedParameterMap params, String consumerKey)
     {
         long ts = System.currentTimeMillis();
         params.put(Constants.OAUTH_TIMESTAMP, String.valueOf(ts/1000));

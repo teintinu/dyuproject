@@ -23,15 +23,20 @@ import java.util.concurrent.ConcurrentMap;
  * @created Jun 8, 2009
  */
 
-public class ConcurrentMapHashStore extends HashStore
+public final class ConcurrentMapHashStore extends HashStore
 {
     
     private final ConcurrentMap<String,String> _consumers = new ConcurrentHashMap<String,String>();
     
     public ConcurrentMapHashStore(String secretKey, String macSecretKey)
     {
-        setSecretKey(secretKey);
-        setMacSecretKey(macSecretKey);
+        super(secretKey, macSecretKey);
+    }
+    
+    public ConcurrentMapHashStore(String secretKey, String macSecretKey, String macAlgorithm, 
+            long accessTimeout, long exchangeTimeout, long loginTimeout)
+    {
+        super(secretKey, macSecretKey, macAlgorithm, accessTimeout, exchangeTimeout, loginTimeout);
     }
 
     protected String getConsumerSecret(String consumerKey)

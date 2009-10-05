@@ -36,7 +36,7 @@ public class SignatureTest extends TestCase
     {
         
         TokenExchange.REQUEST_TOKEN.put(params, ep, token);
-        SimpleNonceAndTimestamp.getDefault().put(params, ep.getConsumerKey());
+        SimpleNonceAndTimestamp.DEFAULT.put(params, ep.getConsumerKey());
         params.put(Constants.OAUTH_SIGNATURE_METHOD, signature.getMethod());
         return signature.sign(ep.getConsumerSecret(), token.getSecret(), 
                 Signature.getBase(params, ep.getTransport().getMethod()));
