@@ -10,6 +10,7 @@ dyuproject-1.1-SNAPSHOT
 + openid: fixed duplicate set(OpenIdUser) on request attribute in OpenIdServletFilter
 
 + web: make non-public service methods accessible from AnnotatedResourceMethod
++ web: allow override of the default "/WEB-INF/application.json" location via context init-param "appcontext.resource_location"
 
 dyuproject-1.1.5 2009-08-21
 + oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
