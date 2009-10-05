@@ -19,8 +19,6 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.dyuproject.util.Singleton;
-
 
 /**
  * Util for java reflections
@@ -104,11 +102,6 @@ public final class ReflectUtil
     public static String toField(int start, String methodName)
     {
         return toProperty(start, methodName);
-    }
-    
-    public static Object getSingleton(Class<?> clazz)
-    {
-        return Singleton.class.isAssignableFrom(clazz) ? getInstance(clazz) : null;
     }
     
     public static Object getInstance(Class<?> clazz)
