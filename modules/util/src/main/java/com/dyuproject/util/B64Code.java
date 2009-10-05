@@ -41,7 +41,7 @@ import java.io.UnsupportedEncodingException;
  * @author Brett Sealey (bretts)
  * @author Greg Wilkins (gregw)
  */
-public abstract class B64Code
+public final class B64Code
 {
     // ------------------------------------------------------------------
     static final char pad='=';

@@ -33,7 +33,7 @@ import org.mortbay.util.UrlEncoded;
  * @created Sep 8, 2008
  */
 
-public class SimpleHttpConnector implements HttpConnector
+public final class SimpleHttpConnector implements HttpConnector
 {
     
     private static int __bufferSize = Integer.getInteger("shc.buffer_size", 4096).intValue();

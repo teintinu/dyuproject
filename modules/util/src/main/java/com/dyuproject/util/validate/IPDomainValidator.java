@@ -19,7 +19,7 @@ package com.dyuproject.util.validate;
  * @created Jan 10, 2009
  */
 
-public abstract class IPDomainValidator
+public final class IPDomainValidator
 {
     
     public static final int INVALID = 0;

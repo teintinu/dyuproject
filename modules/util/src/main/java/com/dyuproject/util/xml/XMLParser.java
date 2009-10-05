@@ -24,7 +24,7 @@ import java.io.InputStreamReader;
  * @created Sep 17, 2008
  */
 
-public class XMLParser
+public final class XMLParser
 {    
     
     private static final int STATE_EL_STARTING = 1;

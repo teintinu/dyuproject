@@ -28,7 +28,7 @@ import java.util.jar.JarInputStream;
  * @created Feb 25, 2008
  */
 
-public abstract class ArchiveUtil
+public final class ArchiveUtil
 {
     
     public static final String[] SUPPORTED_FILES = new String[]{

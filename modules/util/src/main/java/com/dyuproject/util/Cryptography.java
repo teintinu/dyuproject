@@ -27,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
  * @created Sep 12, 2008
  */
 
-public class Cryptography
+public final class Cryptography
 {
     
     public static final String DES = "DES";

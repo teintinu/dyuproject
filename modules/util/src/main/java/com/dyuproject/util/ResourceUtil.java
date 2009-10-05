@@ -33,7 +33,7 @@ import java.util.List;
  * @author David Yu
  */
 
-public abstract class ResourceUtil
+public final class ResourceUtil
 {
     
     public static int __copyBufferSize = 4096;

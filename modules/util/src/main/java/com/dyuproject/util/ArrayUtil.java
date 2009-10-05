@@ -21,7 +21,7 @@ import java.lang.reflect.Array;
  * @created Jan 16, 2009
  */
 
-public abstract class ArrayUtil
+public final class ArrayUtil
 {
     
     public static Object[] append(Object[] oldArray, Object toAppend)

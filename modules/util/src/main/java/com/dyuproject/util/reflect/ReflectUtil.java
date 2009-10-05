@@ -29,7 +29,7 @@ import com.dyuproject.util.Singleton;
  * @created Mar 14, 2008
  */
 
-public abstract class ReflectUtil
+public final class ReflectUtil
 {    
     static final String GET = "get";
     static final String IS = "is";

@@ -26,7 +26,7 @@ import java.math.BigInteger;
  * @created Sep 7, 2008
  */
 
-public class DiffieHellman
+public final class DiffieHellman
 {
     
     public static final DiffieHellman BASE_2 = new DiffieHellman(BigInteger.valueOf(2));

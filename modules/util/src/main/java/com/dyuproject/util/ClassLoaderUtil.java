@@ -24,7 +24,7 @@ import java.net.URL;
  * @created Jan 20, 2009
  */
 
-public abstract class ClassLoaderUtil
+public final class ClassLoaderUtil
 {
     
     public static Class<?> loadClass(String className, Class<?> context)
