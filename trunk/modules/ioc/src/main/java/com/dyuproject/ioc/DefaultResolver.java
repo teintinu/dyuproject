@@ -29,28 +29,13 @@ public class DefaultResolver extends ResolverCollection
     
     public static final String TYPE = AbstractResolver.generateTypeFromClass(DefaultResolver.class);
     
-    private static DefaultResolver __instance;
-    
-    public static DefaultResolver getInstance()
-    {
-        DefaultResolver instance = __instance;
-        if(instance==null)
-        {
-            synchronized(DefaultResolver.class)
-            {
-                instance = __instance;
-                if(instance==null)
-                    __instance = instance = new DefaultResolver();
-            }
-        }
-        return instance;
-    }
+    public static DefaultResolver DEFAULT = new DefaultResolver();
     
     public static void putDefaultResolvers(Map<String,Resolver> resolvers)
     {
-        resolvers.put(FileResolver.getDefault().getType(), FileResolver.getDefault());
-        resolvers.put(URLResolver.getDefault().getType(), URLResolver.getDefault());
-        resolvers.put(ClasspathResolver.getDefault().getType(), ClasspathResolver.getDefault());
+        resolvers.put(FileResolver.DEFAULT.getType(), FileResolver.DEFAULT);
+        resolvers.put(URLResolver.DEFAULT.getType(), URLResolver.DEFAULT);
+        resolvers.put(ClasspathResolver.DEFAULT.getType(), ClasspathResolver.DEFAULT);
     }
     
     private DefaultResolver()
@@ -79,27 +64,27 @@ public class DefaultResolver extends ResolverCollection
         switch(idx)
         {
             case -1:
-                FileResolver.getDefault().resolve(resource, context);
+                FileResolver.DEFAULT.resolve(resource, context);
                 return;
             //case 0:
             //    throw new IOException("invalid resource: " + path);
             case 1:
                 // windows drive letter
-                FileResolver.getDefault().resolve(resource, context);
+                FileResolver.DEFAULT.resolve(resource, context);
                 return;
             case 4:
             case 5:
                 if(path.charAt(0)=='h')
                 {
                     // http(s) url
-                    URLResolver.getDefault().resolve(resource, context);
+                    URLResolver.DEFAULT.resolve(resource, context);
                     return;
                 }
         }
         String type = path.substring(0, idx).trim();
         Resolver resolver = getResolver(type);
         if(resolver==null)
-            FileResolver.getDefault().resolve(resource, context);
+            FileResolver.DEFAULT.resolve(resource, context);
         else
         {
             path = path.substring(idx+1).trim();

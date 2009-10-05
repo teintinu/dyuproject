@@ -29,37 +29,19 @@ import com.dyuproject.json.StandardJSON;
 public abstract class Parser extends StandardJSON
 {
     
-    private static Parser __default;
+    public static final Parser DEFAULT = new DefaultParser();
+
+    protected final Resolver _resolver;
     
-    public static Parser getDefault()
-    {
-        // TODO support pluggable parse handlers
-        if(__default==null)
-        {
-            synchronized(Parser.class)
-            {
-                if(__default==null)
-                    __default = new DefaultParser();
-            }
-        }
-        return __default;
-    }
-    
-    protected Resolver _resolver;
-    
-    protected Parser(ConvertorCache convertorCache)
+    protected Parser(ConvertorCache convertorCache, Resolver resolver)
     {
         super(convertorCache);
+        _resolver = resolver;
     }
 
     public Resolver getResolver()
     {
         return _resolver;
-    }
-    
-    protected void setResolver(Resolver resolver)
-    {
-        _resolver = resolver;
     }
     
     public abstract void parse(Resource resource, ApplicationContext appContext);

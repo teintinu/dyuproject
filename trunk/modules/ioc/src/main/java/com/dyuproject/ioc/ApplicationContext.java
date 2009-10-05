@@ -45,7 +45,7 @@ public class ApplicationContext
     {
         try
         {
-            Parser parser = Parser.getDefault();
+            Parser parser = Parser.DEFAULT;
             return load(parser.getResolver().createResource(resource), parser);
         }
         catch(IOException e)
@@ -58,7 +58,7 @@ public class ApplicationContext
     {
         try
         {
-            return load(FileResolver.getDefault().createResource(resource), Parser.getDefault());
+            return load(FileResolver.DEFAULT.createResource(resource), Parser.DEFAULT);
         }
         catch(IOException e)
         {
@@ -70,7 +70,7 @@ public class ApplicationContext
     {
         try
         {
-            return load(URLResolver.getDefault().createResource(resource), Parser.getDefault());
+            return load(URLResolver.DEFAULT.createResource(resource), Parser.DEFAULT);
         }
         catch(IOException e)
         {
@@ -82,8 +82,8 @@ public class ApplicationContext
     {
         try
         {
-            return load(new Resource(URLResolver.getDefault().newReader(resource)), 
-                    Parser.getDefault());
+            return load(new Resource(URLResolver.DEFAULT.newReader(resource)), 
+                    Parser.DEFAULT);
         }
         catch(IOException e)
         {
@@ -93,7 +93,7 @@ public class ApplicationContext
     
     public static ApplicationContext load(Reader resource)
     {
-        return load(new Resource(resource), Parser.getDefault());
+        return load(new Resource(resource), Parser.DEFAULT);
     }
     
     public static ApplicationContext load(Resource resource, Parser parser)
@@ -108,7 +108,7 @@ public class ApplicationContext
         try
         {
             ApplicationContext ac = null;
-            Parser parser = Parser.getDefault();
+            Parser parser = Parser.DEFAULT;
             for(String r : resources)
             {
                 ac = new ApplicationContext(ac);

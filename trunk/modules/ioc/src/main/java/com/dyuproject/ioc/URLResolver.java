@@ -28,20 +28,7 @@ public class URLResolver extends AbstractResolver
     
     public static final String TYPE = generateTypeFromClass(URLResolver.class);
     
-    private static URLResolver __default;
-    
-    public static URLResolver getDefault()
-    {
-        if(__default==null)
-        {
-            synchronized(URLResolver.class)
-            {
-                if(__default==null)
-                    __default = new URLResolver();  
-            }
-        }
-        return __default;
-    }
+    public static final URLResolver DEFAULT = new URLResolver();
     
     public URLResolver()
     {

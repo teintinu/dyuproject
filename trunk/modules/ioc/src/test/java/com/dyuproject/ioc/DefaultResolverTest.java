@@ -27,7 +27,7 @@ public class DefaultResolverTest extends TestCase
     public void testClasspath() throws Exception
     {
         Resource resource = new Resource("classpath:com/dyuproject/ioc/test/basic.json");
-        DefaultResolver.getInstance().resolve(resource, null);
+        DefaultResolver.DEFAULT.resolve(resource, null);
         assertTrue(resource.isResolved());
     }
 
