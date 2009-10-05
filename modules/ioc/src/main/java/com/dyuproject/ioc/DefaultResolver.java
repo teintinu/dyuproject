@@ -33,15 +33,17 @@ public class DefaultResolver extends ResolverCollection
     
     public static DefaultResolver getInstance()
     {
-        if(__instance==null)
+        DefaultResolver instance = __instance;
+        if(instance==null)
         {
             synchronized(DefaultResolver.class)
             {
-                if(__instance==null)
-                    __instance = new DefaultResolver();
+                instance = __instance;
+                if(instance==null)
+                    __instance = instance = new DefaultResolver();
             }
         }
-        return __instance;
+        return instance;
     }
     
     public static void putDefaultResolvers(Map<String,Resolver> resolvers)
