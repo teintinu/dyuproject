@@ -141,27 +141,27 @@ public final class Consumer
         _manager = manager;
     }
     
-    public final ConsumerContext getConsumerContext()
+    public ConsumerContext getConsumerContext()
     {
         return _context;
     }
     
-    public final TokenManager getTokenManager()
+    public TokenManager getTokenManager()
     {
         return _manager;
     }
     
-    public final Endpoint getEndpoint(String domain)
+    public Endpoint getEndpoint(String domain)
     {
         return _context.getEndpoint(domain);
     }
     
-    public final void addEndpoint(Endpoint ep)
+    public void addEndpoint(Endpoint ep)
     {
         _context.addEndpoint(ep);
     }    
     
-    public final Token getToken(String consumerKey, HttpServletRequest request)
+    public Token getToken(String consumerKey, HttpServletRequest request)
     throws IOException
     {
         Token token = (Token)request.getAttribute(consumerKey);
@@ -175,37 +175,37 @@ public final class Consumer
         return token;
     }
     
-    public final boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response) 
+    public boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.saveToken(token, request, response);
     }
     
-    public final boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
+    public boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.invalidate(consumerKey, request, response);
     }
     
-    public final boolean invalidate(Token token, HttpServletRequest request, HttpServletResponse response) 
+    public boolean invalidate(Token token, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.invalidate(token.getCk(), request, response);
     }
 
-    public final Response fetchToken(Endpoint ep, Token token)
+    public Response fetchToken(Endpoint ep, Token token)
     throws IOException
     {
         return fetchToken(ep, new UrlEncodedParameterMap(), TokenExchange.getExchange(token), token);
     }
     
-    public final Response fetchToken(Endpoint ep, TokenExchange exchange, Token token)
+    public Response fetchToken(Endpoint ep, TokenExchange exchange, Token token)
     throws IOException
     {
         return fetchToken(ep, new UrlEncodedParameterMap(), exchange, token);
     }
     
-    public final Response fetchToken(Endpoint ep, UrlEncodedParameterMap params, TokenExchange exchange, 
+    public Response fetchToken(Endpoint ep, UrlEncodedParameterMap params, TokenExchange exchange, 
             Token token) throws IOException
     {
         return ep.getTransport().send(params, ep, token, exchange, _context.getNonceAndTimestamp(), 

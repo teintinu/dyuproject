@@ -40,23 +40,23 @@ public final class ConsumerContext
         _endpoints = endpoints;
     }
     
-    public final HttpConnector getHttpConnector()
+    public HttpConnector getHttpConnector()
     {
         return _httpConnector;
     }
     
-    public final NonceAndTimestamp getNonceAndTimestamp()
+    public NonceAndTimestamp getNonceAndTimestamp()
     {
         return _nonceAndTimestamp;
     }
     
-    public final ConsumerContext addEndpoint(Endpoint ep)
+    public ConsumerContext addEndpoint(Endpoint ep)
     {
         _endpoints.put(ep.getDomain(), ep);
         return this;
     }
     
-    public final Endpoint getEndpoint(String domain)
+    public Endpoint getEndpoint(String domain)
     {
         return _endpoints.get(domain);
     }

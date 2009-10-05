@@ -164,52 +164,52 @@ public final class Endpoint implements Serializable
         _transport = transport==null ? HttpAuthTransport.DEFAULT : transport;
     }
     
-    public final String getConsumerKey()
+    public String getConsumerKey()
     {
         return _consumerKey;
     }
     
-    public final String getConsumerSecret()
+    public String getConsumerSecret()
     {
         return _consumerSecret;
     }
     
-    public final String getDomain()
+    public String getDomain()
     {
         return _domain;
     }
     
-    public final String getRoot()
+    public String getRoot()
     {
         return _root;
     }
     
-    public final boolean isSecure()
+    public boolean isSecure()
     {
         return _secure;
     }
     
-    public final String getRequestTokenUrl()
+    public String getRequestTokenUrl()
     {
         return _requestTokenUrl;
     }
     
-    public final String getAuthorizationUrl()
+    public String getAuthorizationUrl()
     {
         return _authorizationUrl;
     }
     
-    public final String getAccessTokenUrl()
+    public String getAccessTokenUrl()
     {
         return _accessTokenUrl;
     }
     
-    public final Signature getSignature()
+    public Signature getSignature()
     {
         return _signature;
     }
     
-    public final Transport getTransport()
+    public Transport getTransport()
     {
         return _transport;
     }

@@ -40,22 +40,22 @@ public final class SimpleServiceToken implements ServiceToken
         _id = id;
     }
 
-    public final String getConsumerSecret()
+    public String getConsumerSecret()
     {
         return _consumerSecret;
     }
 
-    public final String getKey()
+    public String getKey()
     {
         return _key;
     }
 
-    public final String getSecret()
+    public String getSecret()
     {
         return _secret;
     }
     
-    public final String getId()
+    public String getId()
     {
         return _id;
     }

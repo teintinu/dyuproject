@@ -48,22 +48,22 @@ public final class HttpAuthTransport extends Transport
         }        
     };
     
-    public final String getName()
+    public String getName()
     {
         return NAME;
     }    
     
-    public final String getMethod()
+    public String getMethod()
     {
         return HttpConnector.GET;
     }
     
-    public final void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         buffer.append(',').append(key).append('=').append('"').append(value).append('"');
     }
 
-    public final Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
+    public Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature, 
             HttpConnector connector) throws IOException
     {

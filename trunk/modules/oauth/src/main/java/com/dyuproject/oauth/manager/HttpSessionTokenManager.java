@@ -34,18 +34,18 @@ import com.dyuproject.oauth.TokenManager;
 public final class HttpSessionTokenManager implements TokenManager
 {
     
-    public final void init(Properties properties)
+    public void init(Properties properties)
     {
         
     }
     
-    public final Token getToken(String ck, HttpServletRequest request) throws IOException
+    public Token getToken(String ck, HttpServletRequest request) throws IOException
     {
         HttpSession session = request.getSession(false);
         return session==null ? null: (Token)session.getAttribute(ck);
     }
 
-    public final boolean invalidate(String consumerKey, HttpServletRequest request,
+    public boolean invalidate(String consumerKey, HttpServletRequest request,
             HttpServletResponse response) throws IOException
     {
         HttpSession session = request.getSession(false);
@@ -54,7 +54,7 @@ public final class HttpSessionTokenManager implements TokenManager
         return true;
     }
 
-    public final boolean saveToken(Token token, HttpServletRequest request,
+    public boolean saveToken(Token token, HttpServletRequest request,
             HttpServletResponse response) throws IOException
     {
         request.getSession().setAttribute(token.getCk(), token);

@@ -132,30 +132,30 @@ public final class ServiceProvider
         _checkTimestamp = checkTimestamp;
     }
     
-    public final Store getStore()
+    public Store getStore()
     {
         return _store;
     }
     
-    public final boolean isCheckTimestamp()
+    public boolean isCheckTimestamp()
     {
         return _checkTimestamp;
     }
     
     // authorization
-    public final String getAuthCallbackOrVerifier(String requestToken, String accessId)
+    public String getAuthCallbackOrVerifier(String requestToken, String accessId)
     {
         return _store.getAuthCallbackOrVerifier(requestToken, accessId);
     }
     
     // for hybrid openid+oauth requests
-    public final ServiceToken newHybridRequestToken(String consumerKey, String id)
+    public ServiceToken newHybridRequestToken(String consumerKey, String id)
     {
         return _store.newHybridRequestToken(consumerKey, id);
     }
     
     // access validity
-    public final ServiceToken getAccessToken(HttpServletRequest request)
+    public ServiceToken getAccessToken(HttpServletRequest request)
     {
         UrlEncodedParameterMap params = new UrlEncodedParameterMap();
         if(parse(request, params)!=200)
@@ -174,7 +174,7 @@ public final class ServiceProvider
                 params)==200 ? ast : null;
     }
     
-    final boolean handleTokenRequest(UrlEncodedParameterMap params, String consumerKey, 
+    boolean handleTokenRequest(UrlEncodedParameterMap params, String consumerKey, 
             HttpServletRequest request, HttpServletResponse response) throws IOException
     {        
         String callback = params.get(Constants.OAUTH_CALLBACK);
@@ -215,7 +215,7 @@ public final class ServiceProvider
         return false;
     }    
     
-    final boolean handleTokenExchange(UrlEncodedParameterMap params, String consumerKey, 
+    boolean handleTokenExchange(UrlEncodedParameterMap params, String consumerKey, 
             String requestToken, HttpServletRequest request, HttpServletResponse response) 
             throws IOException
     {
@@ -260,7 +260,7 @@ public final class ServiceProvider
         return false;
     }
     
-    public final boolean handle(HttpServletRequest request, HttpServletResponse response)
+    public boolean handle(HttpServletRequest request, HttpServletResponse response)
     throws IOException
     {
         UrlEncodedParameterMap params = new UrlEncodedParameterMap();
@@ -301,7 +301,7 @@ public final class ServiceProvider
         return false;
     }
     
-    public final boolean handleTokenRequest(HttpServletRequest request, HttpServletResponse response)
+    public boolean handleTokenRequest(HttpServletRequest request, HttpServletResponse response)
     throws IOException
     {
         UrlEncodedParameterMap params = new UrlEncodedParameterMap();
@@ -340,7 +340,7 @@ public final class ServiceProvider
         return false;
     }
     
-    public final boolean handleTokenExchange(HttpServletRequest request, HttpServletResponse response)
+    public boolean handleTokenExchange(HttpServletRequest request, HttpServletResponse response)
     throws IOException
     {
         UrlEncodedParameterMap params = new UrlEncodedParameterMap();
