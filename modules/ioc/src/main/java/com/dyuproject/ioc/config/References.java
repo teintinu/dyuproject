@@ -68,12 +68,12 @@ public class References implements Convertible
         _map = map;
     }
     
-    public void addRefs(References refs)
+    public final void addRefs(References refs)
     {
         wrapRefs(refs, this);
     }
     
-    public Object put(String key, Object value)
+    public final Object put(String key, Object value)
     {
         if(_map==null)
             _map = new HashMap<String,Object>();
@@ -81,12 +81,12 @@ public class References implements Convertible
         return _map.put(key, value);
     }
     
-    public Object get(String key)
+    public final Object get(String key)
     {
         return key==null ? null : getRef(key, this);
     }
     
-    public void putAll(Map<String,Object> map)
+    public final void putAll(Map<String,Object> map)
     {
         if(_map==null)
             _map = map;
@@ -95,7 +95,7 @@ public class References implements Convertible
     }
     
     @SuppressWarnings("unchecked")
-    public void fromJSON(Map map)
+    public final void fromJSON(Map map)
     {
         map.remove("class");
         if(_map==null)
@@ -104,7 +104,7 @@ public class References implements Convertible
             _map.putAll((Map<String,Object>)map);
     }
 
-    public void toJSON(Output out)
+    public final void toJSON(Output out)
     {
         if(_map==null || _map.isEmpty())
             return;
@@ -113,7 +113,7 @@ public class References implements Convertible
             out.add(entry.getKey(), entry.getValue());
     }
     
-    public void destroy()
+    public final void destroy()
     {
         if(_refs!=null)
             _refs.destroy();

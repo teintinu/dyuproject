@@ -27,7 +27,7 @@ import com.dyuproject.ioc.Context;
  * @created Feb 20, 2009
  */
 
-public class Reference
+public final class Reference
 {
     
     static boolean setProps(Object ref, Map<String,Object> props)

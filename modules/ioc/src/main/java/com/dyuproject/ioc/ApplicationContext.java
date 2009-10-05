@@ -31,7 +31,7 @@ import com.dyuproject.ioc.config.References;
  * @created Feb 20, 2009
  */
 
-public class ApplicationContext
+public final class ApplicationContext
 {
     
     public static final String DEFAULT_RESOURCE_LOCATION = "application.json";
