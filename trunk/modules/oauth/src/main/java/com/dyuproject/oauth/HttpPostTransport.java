@@ -28,32 +28,27 @@ import com.dyuproject.util.http.HttpConnector.Response;
  * @created Jun 1, 2009
  */
 
-public class HttpPostTransport extends Transport
+public final class HttpPostTransport extends Transport
 {
     
-    static final HttpPostTransport __default = new HttpPostTransport();
+    public static final HttpPostTransport DEFAULT = new HttpPostTransport();
     
-    public static HttpPostTransport getDefault()
-    {
-        return __default;
-    }
-    
-    public String getName()
+    public final String getName()
     {
         return HttpConnector.POST;
     }
     
-    public String getMethod()
+    public final String getMethod()
     {
         return HttpConnector.POST;
     }
     
-    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public final void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         handleRequestParameter(key, value, buffer);
     }
     
-    public Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
+    public final Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature, 
             HttpConnector connector) throws IOException
     {

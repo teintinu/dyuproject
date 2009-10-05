@@ -17,6 +17,7 @@ package com.dyuproject.oauth;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
@@ -37,7 +38,7 @@ import com.dyuproject.util.http.HttpConnector.Response;
  * @created May 29, 2009
  */
 
-public class Consumer
+public final class Consumer
 {
     public static final String DEFAULT_RESOURCE_PATH = "oauth_consumer.properties";
     
@@ -92,21 +93,26 @@ public class Consumer
             (HttpConnector)newObjectInstance(httpConnectorParam);
         
         String ntsParam = props.getProperty("oauth.consumer.nonce_and_timestamp");
-        NonceAndTimestamp nonceAndTimestamp = ntsParam==null ? SimpleNonceAndTimestamp.getDefault() : 
+        NonceAndTimestamp nonceAndTimestamp = ntsParam==null ? SimpleNonceAndTimestamp.DEFAULT : 
             (NonceAndTimestamp)newObjectInstance(ntsParam);
-
-        ConsumerContext context = new ConsumerContext(httpConnector, nonceAndTimestamp);
         
         String domains = props.getProperty("oauth.consumer.endpoint.domains");
         if(domains==null)
             throw new IllegalStateException("oauth.consumer.endpoint.domains not found.");
         
+        HashMap<String,Endpoint> endpoints = new HashMap<String,Endpoint>();
+        
         StringTokenizer tokenizer = new StringTokenizer(domains, ",;");
         while(tokenizer.hasMoreTokens())
-            context.addEndpoint(Endpoint.load(props, tokenizer.nextToken().trim()));
+        {
+            Endpoint ep = Endpoint.load(props, tokenizer.nextToken().trim());
+            endpoints.put(ep.getDomain(), ep);
+        }
+        
+        ConsumerContext context = new ConsumerContext(httpConnector, nonceAndTimestamp, endpoints);
         
         String tokenManagerParam = props.getProperty("oauth.consumer.token.manager");
-        TokenManager tokenManager = tokenManagerParam==null ? HttpSessionTokenManager.getDefault() : 
+        TokenManager tokenManager = tokenManagerParam==null ? new HttpSessionTokenManager() : 
             (TokenManager)newObjectInstance(tokenManagerParam);
             
         tokenManager.init(props);
@@ -126,13 +132,8 @@ public class Consumer
         }
     }
     
-    private ConsumerContext _context;
-    private TokenManager _manager;
-    
-    public Consumer()
-    {
-        
-    }
+    private final ConsumerContext _context;
+    private final TokenManager _manager;
     
     public Consumer(ConsumerContext context, TokenManager manager)
     {
@@ -140,37 +141,27 @@ public class Consumer
         _manager = manager;
     }
     
-    public ConsumerContext getConsumerContext()
+    public final ConsumerContext getConsumerContext()
     {
         return _context;
     }
     
-    public void setConsumerContext(ConsumerContext context)
-    {
-        _context = context;
-    }
-    
-    public TokenManager getTokenManager()
+    public final TokenManager getTokenManager()
     {
         return _manager;
     }
     
-    public void setTokenManager(TokenManager manager)
-    {
-        _manager = manager;
-    }
-    
-    public Endpoint getEndpoint(String domain)
+    public final Endpoint getEndpoint(String domain)
     {
         return _context.getEndpoint(domain);
     }
     
-    public void addEndpoint(Endpoint ep)
+    public final void addEndpoint(Endpoint ep)
     {
         _context.addEndpoint(ep);
     }    
     
-    public Token getToken(String consumerKey, HttpServletRequest request)
+    public final Token getToken(String consumerKey, HttpServletRequest request)
     throws IOException
     {
         Token token = (Token)request.getAttribute(consumerKey);
@@ -184,37 +175,37 @@ public class Consumer
         return token;
     }
     
-    public boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response) 
+    public final boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.saveToken(token, request, response);
     }
     
-    public boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
+    public final boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.invalidate(consumerKey, request, response);
     }
     
-    public boolean invalidate(Token token, HttpServletRequest request, HttpServletResponse response) 
+    public final boolean invalidate(Token token, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.invalidate(token.getCk(), request, response);
     }
 
-    public Response fetchToken(Endpoint ep, Token token)
+    public final Response fetchToken(Endpoint ep, Token token)
     throws IOException
     {
         return fetchToken(ep, new UrlEncodedParameterMap(), TokenExchange.getExchange(token), token);
     }
     
-    public Response fetchToken(Endpoint ep, TokenExchange exchange, Token token)
+    public final Response fetchToken(Endpoint ep, TokenExchange exchange, Token token)
     throws IOException
     {
         return fetchToken(ep, new UrlEncodedParameterMap(), exchange, token);
     }
     
-    public Response fetchToken(Endpoint ep, UrlEncodedParameterMap params, TokenExchange exchange, 
+    public final Response fetchToken(Endpoint ep, UrlEncodedParameterMap params, TokenExchange exchange, 
             Token token) throws IOException
     {
         return ep.getTransport().send(params, ep, token, exchange, _context.getNonceAndTimestamp(), 

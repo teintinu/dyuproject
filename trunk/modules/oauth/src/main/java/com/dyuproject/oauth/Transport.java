@@ -38,17 +38,7 @@ public abstract class Transport implements Signature.Listener
 {
     
     private static final Map<String,Transport> __defaults = new HashMap<String,Transport>(5);
-    private static int __inputBuffer = Integer.getInteger("tranport.input_buffer", 128);
-    
-    public static void setInputBuffer(int inputBuffer)
-    {
-        __inputBuffer = inputBuffer;
-    }
-    
-    public static int getInputBuffer()
-    {
-        return __inputBuffer;
-    }
+    private static final int __inputBuffer = Integer.getInteger("tranport.input_buffer", 128);
     
     public static void register(Transport transport)
     {
@@ -62,9 +52,9 @@ public abstract class Transport implements Signature.Listener
     
     static
     {
-        register(HttpAuthTransport.__default);
-        register(HttpPostTransport.__default);
-        register(HttpGetTransport.__default);
+        register(HttpAuthTransport.DEFAULT);
+        register(HttpPostTransport.DEFAULT);
+        register(HttpGetTransport.DEFAULT);
         String ext = System.getProperty("oauth.transports.ext");
         if(ext!=null)
         {
@@ -177,12 +167,12 @@ public abstract class Transport implements Signature.Listener
     public abstract String getName();
     public abstract String getMethod();
     
-    public void handleRequestParameter(String key, String value, StringBuilder buffer)
+    public final void handleRequestParameter(String key, String value, StringBuilder buffer)
     {
         buffer.append('&').append(key).append('=').append(value);
     }
     
-    public void putDefaults(UrlEncodedParameterMap params, Endpoint ep, Token token, 
+    public final void putDefaults(UrlEncodedParameterMap params, Endpoint ep, Token token, 
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature,  
             StringBuilder oauthBuffer, StringBuilder requestBuffer)
     {

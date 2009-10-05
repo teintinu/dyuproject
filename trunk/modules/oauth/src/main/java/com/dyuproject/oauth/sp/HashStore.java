@@ -30,57 +30,55 @@ import com.dyuproject.util.validate.IPDomainValidator;
 public abstract class HashStore implements ServiceToken.Store
 {
     
+    public static final long DEFAULT_ACCESS_TIMEOUT = 
+        Long.getLong("hashstore.access_timeout", 60*60*1000); // defaults to 1 hr  
+    
+    public static final long DEFAULT_EXCHANGE_TIMEOUT = 
+        Long.getLong("hashstore.exchange_timeout", 60*10*1000); // defaults to 10 mins
+    
+    public static final long DEFAULT_LOGIN_TIMEOUT = 
+        Long.getLong("hashstore.login_timeout", DEFAULT_EXCHANGE_TIMEOUT/2);
+    
+    public static final String DEFAULT_MAC_ALGORITHM = "HMACSHA1";
+    
     public static final String CHECKED_PREFIX = "http";
     public static final String ASSIGNED_PREFIX = "http://";    
     
-    private Cryptography _crypto;
-    private String _secretKey;
-    private String _macSecretKey;
-    private String _macAlgorithm = "HMACSHA1";
+    private final Cryptography _crypto;
+    private final String _secretKey;
+    private final String _macSecretKey;
+    private final String _macAlgorithm;
     
-    private long _accessTimeout = 60*60*1000; // defaults to 1 hr    
-    private long _exchangeTimeout = 60*10*1000; // defaults to 10 mins
-    private long _loginTimeout = _exchangeTimeout/2;    
+    private final long _accessTimeout;
+    private final long _exchangeTimeout;
+    private final long _loginTimeout;
     
-    public void setSecretKey(String secretKey)
+    public HashStore(String secretKey, String macSecretKey)
     {
-        if(_crypto==null)
+        this(secretKey, macSecretKey, DEFAULT_MAC_ALGORITHM, DEFAULT_ACCESS_TIMEOUT, 
+                DEFAULT_EXCHANGE_TIMEOUT, DEFAULT_LOGIN_TIMEOUT);
+    }
+    
+    public HashStore(String secretKey, String macSecretKey, String macAlgorithm, 
+            long accessTimeout, long exchangeTimeout, long loginTimeout)
+    {
+        _secretKey = secretKey;
+        _macSecretKey = macSecretKey;
+        _macAlgorithm = macAlgorithm;
+        _accessTimeout = accessTimeout;
+        _exchangeTimeout = exchangeTimeout;
+        _loginTimeout = loginTimeout;
+        try
         {
-            _secretKey = Cryptography.pad(secretKey, '.');
-            try
-            {
-                _crypto = _secretKey.length()==24 ? Cryptography.createDESede(_secretKey) : 
-                    Cryptography.createDES(_secretKey);
-            }
-            catch(Exception e)
-            {
-                throw new RuntimeException(e);
-            }
+            _crypto = Cryptography.create(_secretKey, '.');
+        }
+        catch(Exception e)
+        {
+            throw new RuntimeException(e);
         }
     }
     
-    public void setMacSecretKey(String macSecretKey)
-    {
-        _macSecretKey = macSecretKey;
-    }
-    
-    public void setMacAlgorithm(String macAlgorithm)
-    {
-        _macAlgorithm = macAlgorithm;
-    }
-    
-    public void setExchangeTimeout(long timeout)
-    {
-        _exchangeTimeout = timeout;
-        _loginTimeout = _exchangeTimeout/2;
-    }
-    
-    public void setAccessTimeout(long timeout)
-    {
-        _accessTimeout = timeout;
-    }
-    
-    public ServiceToken newRequestToken(String consumerKey, String callback)
+    public final ServiceToken newRequestToken(String consumerKey, String callback)
     {   
         if(!Constants.OOB.equals(callback) && (callback=validateCallbackUrl(callback))==null)
             return null;
@@ -99,7 +97,8 @@ public abstract class HashStore implements ServiceToken.Store
                 .append(callback);
             String base = buffer.toString();
             String requestToken = _crypto.encryptEncode(base);
-            return new SimpleServiceToken(consumerSecret, requestToken, sign(base));
+            return new SimpleServiceToken(consumerSecret, requestToken, 
+                    Signature.getMacSignature(_macSecretKey, base, _macAlgorithm));
         }
         catch(Exception e)
         {
@@ -107,7 +106,7 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    public ServiceToken getRequestToken(String consumerKey, String requestToken)
+    public final ServiceToken getRequestToken(String consumerKey, String requestToken)
     {
         String consumerSecret = getConsumerSecret(consumerKey);
         if(consumerSecret==null)
@@ -137,7 +136,8 @@ public abstract class HashStore implements ServiceToken.Store
             if(!consumerKey.equals(tokens[1]))
                 return null;
 
-            return new SimpleServiceToken(consumerSecret, requestToken, sign(base));
+            return new SimpleServiceToken(consumerSecret, requestToken, 
+                    Signature.getMacSignature(_macSecretKey, base, _macAlgorithm));
         }
         catch(Exception e)
         {
@@ -145,7 +145,7 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    public String getAuthCallbackOrVerifier(String requestToken, String id)
+    public final String getAuthCallbackOrVerifier(String requestToken, String id)
     {
         try
         {
@@ -184,26 +184,22 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    protected String sign(String base)
-    {
-        return Signature.getMacSignature(_macSecretKey, base, _macAlgorithm);
-    }
-    
-    public ServiceToken newHybridRequestToken(String consumerKey, String id)
+    public final ServiceToken newHybridRequestToken(String consumerKey, String id)
     {
         String consumerSecret = getConsumerSecret(consumerKey);
         return consumerSecret==null ? null : generateToken(consumerKey, consumerSecret, 
                 id);
     }
     
-    public ServiceToken generateToken(String consumerKey, String consumerSecret, 
+    public final ServiceToken generateToken(String consumerKey, String consumerSecret, 
             String id)
     {
         try
         {
             String base = System.currentTimeMillis() + id;
             String keyToken = _crypto.encryptEncode(base);
-            return new SimpleServiceToken(consumerSecret, keyToken, sign(base));
+            return new SimpleServiceToken(consumerSecret, keyToken, 
+                    Signature.getMacSignature(_macSecretKey, base, _macAlgorithm));
         }
         catch(Exception e)
         {
@@ -211,7 +207,7 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken)
+    public final ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken)
     {
         try
         {
@@ -232,7 +228,7 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    public ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken, 
+    public final ServiceToken newAccessToken(String consumerKey, String verifier, String requestToken, 
             ServiceToken verifiedRequestToken)
     {
         try
@@ -256,7 +252,7 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
-    public ServiceToken getAccessToken(String consumerKey, String accessToken)
+    public final ServiceToken getAccessToken(String consumerKey, String accessToken)
     {
         try
         {
@@ -268,7 +264,8 @@ public abstract class HashStore implements ServiceToken.Store
             if(consumerSecret==null)
                 return null;
             
-            return new SimpleServiceToken(consumerSecret, accessToken, sign(base), 
+            return new SimpleServiceToken(consumerSecret, accessToken, 
+                    Signature.getMacSignature(_macSecretKey, base, _macAlgorithm), 
                     base.substring(13));
         }
         catch(Exception e)
@@ -318,7 +315,7 @@ public abstract class HashStore implements ServiceToken.Store
         if(colon!=-1)
         {
             // port validation
-            int portsLen = end-colon+1;
+            int portsLen = end-colon-1;
             if(portsLen<1 && portsLen>5)
                 return null;
             

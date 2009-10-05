@@ -26,7 +26,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public abstract class TokenExchange
 {
     
-    private static String __version = System.getProperty("oauth.tokenexchange.send_version");
+    private static final String __version = System.getProperty("oauth.tokenexchange.send_version");
     
     public static TokenExchange getExchange(Token token)
     {

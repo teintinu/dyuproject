@@ -22,40 +22,40 @@ package com.dyuproject.oauth.sp;
  */
 
 @SuppressWarnings("serial")
-public class SimpleServiceToken implements ServiceToken
+public final class SimpleServiceToken implements ServiceToken
 {
     
-    private String _consumerSecret, _key, _secret, _id;
+    private final String _consumerSecret, _key, _secret, _id;
     
     public SimpleServiceToken(String consumerSecret, String key, String secret)
     {
-        _consumerSecret = consumerSecret;
-        _key = key;
-        _secret = secret;
+        this(consumerSecret, key, secret, null);
     }
     
     public SimpleServiceToken(String consumerSecret, String key, String secret, String id)
     {
-        this(consumerSecret, key, secret);
+        _consumerSecret = consumerSecret;
+        _key = key;
+        _secret = secret;
         _id = id;
     }
 
-    public String getConsumerSecret()
+    public final String getConsumerSecret()
     {
         return _consumerSecret;
     }
 
-    public String getKey()
+    public final String getKey()
     {
         return _key;
     }
 
-    public String getSecret()
+    public final String getSecret()
     {
         return _secret;
     }
     
-    public String getId()
+    public final String getId()
     {
         return _id;
     }

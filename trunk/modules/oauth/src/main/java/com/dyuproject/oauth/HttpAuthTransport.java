@@ -28,13 +28,14 @@ import com.dyuproject.util.http.HttpConnector.Response;
  * @created Jun 1, 2009
  */
 
-public class HttpAuthTransport extends Transport
+public final class HttpAuthTransport extends Transport
 {
     
     public static final String NAME = "Authorization";
     public static final String WWW_AUTHENTICATE= "WWW-Authenticate";
     
-    static final HttpAuthTransport __default = new HttpAuthTransport();
+    public static final HttpAuthTransport DEFAULT = new HttpAuthTransport();
+    
     static final Signature.Listener __authHeaderListener = new Signature.Listener()
     {
         public void handleOAuthParameter(String key, String value, StringBuilder oauthBuffer)
@@ -47,27 +48,22 @@ public class HttpAuthTransport extends Transport
         }        
     };
     
-    public static HttpAuthTransport getDefault()
-    {
-        return __default;
-    }
-    
-    public String getName()
+    public final String getName()
     {
         return NAME;
     }    
     
-    public String getMethod()
+    public final String getMethod()
     {
         return HttpConnector.GET;
     }
     
-    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public final void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         buffer.append(',').append(key).append('=').append('"').append(value).append('"');
     }
 
-    public Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
+    public final Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature, 
             HttpConnector connector) throws IOException
     {
@@ -98,7 +94,7 @@ public class HttpAuthTransport extends Transport
         params.put(Constants.OAUTH_CONSUMER_KEY, ep.getConsumerKey());
         params.put(Constants.OAUTH_TOKEN, token.getKey());
         nts.put(params, ep.getConsumerKey());
-        signature.generate(params, ep.getConsumerSecret(), token, __default.getMethod(), 
+        signature.generate(params, ep.getConsumerSecret(), token, DEFAULT.getMethod(), 
                 __authHeaderListener, oauthBuffer, null);
         
         oauthBuffer.setCharAt(0, ' ');

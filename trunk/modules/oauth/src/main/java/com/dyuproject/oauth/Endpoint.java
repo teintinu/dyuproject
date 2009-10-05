@@ -30,7 +30,7 @@ import com.dyuproject.util.ClassLoaderUtil;
  */
 
 @SuppressWarnings("serial")
-public class Endpoint implements Serializable
+public final class Endpoint implements Serializable
 {
     
     public static Endpoint load(String resource) throws IOException
@@ -116,16 +116,16 @@ public class Endpoint implements Serializable
                 authorizationUrl, accessTokenUrl, signatureMethod, transportName);
     }
 
-    private boolean _secure = false;
-    private String _consumerKey;
-    private String _consumerSecret;
-    private String _domain;
-    private String _root;
-    private String _requestTokenUrl;
-    private String _authorizationUrl;
-    private String _accessTokenUrl;
-    private Signature _signature;
-    private Transport _transport;
+    private final boolean _secure;
+    private final String _consumerKey;
+    private final String _consumerSecret;
+    private final String _domain;
+    private final String _root;
+    private final String _requestTokenUrl;
+    private final String _authorizationUrl;
+    private final String _accessTokenUrl;
+    private final Signature _signature;
+    private final Transport _transport;
     
     public Endpoint(String consumerKey, String consumerSecret, boolean secure, String domain,
             String requestTokenUrl, String authorizationUrl, String accessTokenUrl, 
@@ -161,55 +161,55 @@ public class Endpoint implements Serializable
         _signature = signature==null ? (_secure ? Signature.PLAINTEXT : Signature.HMACSHA1) : 
                 signature;
         
-        _transport = transport==null ? HttpAuthTransport.__default : transport;
+        _transport = transport==null ? HttpAuthTransport.DEFAULT : transport;
     }
     
-    public String getConsumerKey()
+    public final String getConsumerKey()
     {
         return _consumerKey;
     }
     
-    public String getConsumerSecret()
+    public final String getConsumerSecret()
     {
         return _consumerSecret;
     }
     
-    public String getDomain()
+    public final String getDomain()
     {
         return _domain;
     }
     
-    public String getRoot()
+    public final String getRoot()
     {
         return _root;
     }
     
-    public boolean isSecure()
+    public final boolean isSecure()
     {
         return _secure;
     }
     
-    public String getRequestTokenUrl()
+    public final String getRequestTokenUrl()
     {
         return _requestTokenUrl;
     }
     
-    public String getAuthorizationUrl()
+    public final String getAuthorizationUrl()
     {
         return _authorizationUrl;
     }
     
-    public String getAccessTokenUrl()
+    public final String getAccessTokenUrl()
     {
         return _accessTokenUrl;
     }
     
-    public Signature getSignature()
+    public final Signature getSignature()
     {
         return _signature;
     }
     
-    public Transport getTransport()
+    public final Transport getTransport()
     {
         return _transport;
     }

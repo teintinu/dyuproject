@@ -63,12 +63,12 @@ public abstract class Signature
     
     public static String encode(String value)
     {
-        return UrlEncodedParameterMap.encodeRFC3986(value, Constants.ENCODING);
+        return UrlEncodedParameterMap.encodeRFC3986(value, Constants.ENCODING.name());
     }
     
     public static String decode(String value)
     {
-        return UrlEncodedParameterMap.decode(value, Constants.ENCODING);
+        return UrlEncodedParameterMap.decode(value, Constants.ENCODING.name());
     }
     
     public static String getKey(String consumerSecret, String secret)
@@ -130,7 +130,7 @@ public abstract class Signature
         return getMethod().hashCode();
     }
     
-    protected String getBaseAndPutDefaults(UrlEncodedParameterMap params, String httpMethod, 
+    protected final String getBaseAndPutDefaults(UrlEncodedParameterMap params, String httpMethod, 
             Listener listener, StringBuilder oauthBuffer, StringBuilder requestBuffer)
     {        
         String url = params.getUrl();
@@ -146,7 +146,7 @@ public abstract class Signature
                 else
                 {
                     params.put(pair.substring(0, eq), UrlEncodedParameterMap.decode(
-                            pair.substring(eq+1), Constants.ENCODING));
+                            pair.substring(eq+1), Constants.ENCODING.name()));
                 }
             }
             params.setUrl(url.substring(0, idx));
@@ -236,17 +236,17 @@ public abstract class Signature
     public static final Signature PLAINTEXT = new Signature()
     {
         
-        public String getMethod()
+        public final String getMethod()
         {
             return "PLAINTEXT";
         }
         
-        public String sign(String consumerSecret, String tokenSecret, String base)
+        public final String sign(String consumerSecret, String tokenSecret, String base)
         {
             return getKey(consumerSecret, tokenSecret);
         }
 
-        public boolean verify(String consumerSecret, String tokenSecret, String method, 
+        public final boolean verify(String consumerSecret, String tokenSecret, String method, 
                 UrlEncodedParameterMap params)
         {
             String sig = params.get(Constants.OAUTH_SIGNATURE);
@@ -261,7 +261,7 @@ public abstract class Signature
                     tokenSecret.equals(sig.substring(idx+1)));     
         }
         
-        public void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
+        public final void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
                 String httpMethod, Listener listener, StringBuilder oauthBuffer, 
                 StringBuilder requestBuffer)
         {
@@ -278,24 +278,24 @@ public abstract class Signature
     public static final Signature HMACSHA1 = new Signature()
     {
 
-        public String getMethod()
+        public final String getMethod()
         {
             return "HMAC-SHA1";
         }
         
-        public String sign(String consumerSecret, String tokenSecret, String base)
+        public final String sign(String consumerSecret, String tokenSecret, String base)
         {
             return getMacSignature(getKey(consumerSecret, tokenSecret), base, "HMACSHA1");
         }
 
-        public boolean verify(String consumerSecret, String tokenSecret, String method, 
+        public final boolean verify(String consumerSecret, String tokenSecret, String method, 
                 UrlEncodedParameterMap params)
         {            
             String sig = params.remove(Constants.OAUTH_SIGNATURE);        
             return sig!=null && sig.equals(sign(consumerSecret, tokenSecret, getBase(params, method)));
         }
         
-        public void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
+        public final void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
                 String httpMethod, Listener listener, StringBuilder oauthBuffer, 
                 StringBuilder requestBuffer)
         {
