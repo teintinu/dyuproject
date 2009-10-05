@@ -59,5 +59,10 @@ public abstract class AbstractExtension implements Extension
     {       
         
     }
+    
+    public boolean equals(Object another)
+    {
+        return another!=null && getClass()==another.getClass();
+    }
 
 }
