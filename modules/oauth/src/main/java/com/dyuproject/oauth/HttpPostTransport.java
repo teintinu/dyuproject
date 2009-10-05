@@ -33,22 +33,22 @@ public final class HttpPostTransport extends Transport
     
     public static final HttpPostTransport DEFAULT = new HttpPostTransport();
     
-    public final String getName()
+    public String getName()
     {
         return HttpConnector.POST;
     }
     
-    public final String getMethod()
+    public String getMethod()
     {
         return HttpConnector.POST;
     }
     
-    public final void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         handleRequestParameter(key, value, buffer);
     }
     
-    public final Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
+    public Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature, 
             HttpConnector connector) throws IOException
     {

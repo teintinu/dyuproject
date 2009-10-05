@@ -33,22 +33,22 @@ public final class HttpGetTransport extends Transport
 
     public static final HttpGetTransport DEFAULT = new HttpGetTransport();
     
-    public final String getName()
+    public String getName()
     {
         return HttpConnector.GET;
     }
     
-    public final String getMethod()
+    public String getMethod()
     {
         return HttpConnector.GET;
     }
     
-    public final void handleOAuthParameter(String key, String value, StringBuilder buffer)
+    public void handleOAuthParameter(String key, String value, StringBuilder buffer)
     {
         handleRequestParameter(key, value, buffer);
     }
     
-    public final Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
+    public Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature, 
             HttpConnector connector) throws IOException
     {

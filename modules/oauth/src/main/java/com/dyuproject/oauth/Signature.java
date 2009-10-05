@@ -236,17 +236,17 @@ public abstract class Signature
     public static final Signature PLAINTEXT = new Signature()
     {
         
-        public final String getMethod()
+        public String getMethod()
         {
             return "PLAINTEXT";
         }
         
-        public final String sign(String consumerSecret, String tokenSecret, String base)
+        public String sign(String consumerSecret, String tokenSecret, String base)
         {
             return getKey(consumerSecret, tokenSecret);
         }
 
-        public final boolean verify(String consumerSecret, String tokenSecret, String method, 
+        public boolean verify(String consumerSecret, String tokenSecret, String method, 
                 UrlEncodedParameterMap params)
         {
             String sig = params.get(Constants.OAUTH_SIGNATURE);
@@ -261,7 +261,7 @@ public abstract class Signature
                     tokenSecret.equals(sig.substring(idx+1)));     
         }
         
-        public final void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
+        public void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
                 String httpMethod, Listener listener, StringBuilder oauthBuffer, 
                 StringBuilder requestBuffer)
         {
@@ -278,24 +278,24 @@ public abstract class Signature
     public static final Signature HMACSHA1 = new Signature()
     {
 
-        public final String getMethod()
+        public String getMethod()
         {
             return "HMAC-SHA1";
         }
         
-        public final String sign(String consumerSecret, String tokenSecret, String base)
+        public String sign(String consumerSecret, String tokenSecret, String base)
         {
             return getMacSignature(getKey(consumerSecret, tokenSecret), base, "HMACSHA1");
         }
 
-        public final boolean verify(String consumerSecret, String tokenSecret, String method, 
+        public boolean verify(String consumerSecret, String tokenSecret, String method, 
                 UrlEncodedParameterMap params)
         {            
             String sig = params.remove(Constants.OAUTH_SIGNATURE);        
             return sig!=null && sig.equals(sign(consumerSecret, tokenSecret, getBase(params, method)));
         }
         
-        public final void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
+        public void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
                 String httpMethod, Listener listener, StringBuilder oauthBuffer, 
                 StringBuilder requestBuffer)
         {

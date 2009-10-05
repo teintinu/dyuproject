@@ -28,7 +28,7 @@ public final class SimpleNonceAndTimestamp implements NonceAndTimestamp
     
     public static final SimpleNonceAndTimestamp DEFAULT = new SimpleNonceAndTimestamp();
 
-    public final void put(UrlEncodedParameterMap params, String consumerKey)
+    public void put(UrlEncodedParameterMap params, String consumerKey)
     {
         long ts = System.currentTimeMillis();
         params.put(Constants.OAUTH_TIMESTAMP, String.valueOf(ts/1000));
