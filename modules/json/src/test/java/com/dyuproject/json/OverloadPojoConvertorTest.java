@@ -39,6 +39,7 @@ import com.dyuproject.json.test.Task;
 public class OverloadPojoConvertorTest extends TestCase
 {
     
+    @SuppressWarnings("unchecked")
     public void testOverloadTask() throws Exception
     {
         String resource = "src/test/resources/com/dyuproject/json/test/overload_task.json";
@@ -62,6 +63,7 @@ public class OverloadPojoConvertorTest extends TestCase
         assertTrue("7.5".equals(otask1.getStatusPojo().getId()));
     }
     
+    @SuppressWarnings("unchecked")
     public void testCollection() throws Exception
     {
         String resource = "src/test/resources/com/dyuproject/json/test/employees.json";
