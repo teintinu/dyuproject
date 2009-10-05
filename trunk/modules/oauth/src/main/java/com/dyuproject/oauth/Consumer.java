@@ -45,15 +45,17 @@ public class Consumer
     
     public static Consumer getInstance()
     {
-        if(__instance==null)
+        Consumer instance = __instance;
+        if(instance==null)
         {
             synchronized(Consumer.class)
             {
-                if(__instance==null)
-                    __instance = newInstance(DEFAULT_RESOURCE_PATH);
+                instance = __instance;
+                if(instance==null)
+                    __instance = instance = newInstance(DEFAULT_RESOURCE_PATH);
             }
         }
-        return __instance;
+        return instance;
     }
     
     public static Consumer newInstance(String resourceLoc)

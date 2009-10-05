@@ -113,17 +113,19 @@ public class RelyingParty
     
     public static RelyingParty getInstance()
     {
-        if(__instance==null)
+        RelyingParty instance = __instance;
+        if(instance==null)
         {
             synchronized(RelyingParty.class)
             {
-                if(__instance==null)
+                instance = __instance;
+                if(instance==null)
                 {
                     URL resource = getResource(DEFAULT_RESOURCE_PATH);
                     try
                     {                        
                         // configure defaults if openid.properties is not available
-                        __instance = resource==null ? newInstance(new Properties()) : 
+                        __instance = instance = resource==null ? newInstance(new Properties()) : 
                             newInstance(resource);
                     }
                     catch(IOException e)
