@@ -30,20 +30,7 @@ public class ClasspathResolver extends AbstractResolver
     
     private static boolean __checkParents = Boolean.getBoolean("classpathresolver.check_parents");
     
-    private static ClasspathResolver __default;
-    
-    public static ClasspathResolver getDefault()
-    {
-        if(__default==null)
-        {
-            synchronized(ClasspathResolver.class)
-            {
-                if(__default==null)
-                    __default = new ClasspathResolver();  
-            }
-        }
-        return __default;
-    }    
+    public static final ClasspathResolver DEFAULT = new ClasspathResolver(); 
     
     public static boolean isCheckParents()
     {

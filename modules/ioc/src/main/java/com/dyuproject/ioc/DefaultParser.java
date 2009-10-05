@@ -32,18 +32,17 @@ public class DefaultParser extends Parser
     
     public DefaultParser()
     {
-        this(new DefaultConvertorCache(), DefaultResolver.getInstance());
+        this(new DefaultConvertorCache(), DefaultResolver.DEFAULT);
     }
     
     public DefaultParser(ConvertorCache convertorCache)
     {
-        this(convertorCache, DefaultResolver.getInstance());
+        this(convertorCache, DefaultResolver.DEFAULT);
     }
     
     public DefaultParser(ConvertorCache convertorCache, Resolver resolver)
     {
-        super(convertorCache);
-        setResolver(resolver);
+        super(convertorCache, resolver);
     }
     
     public DefaultParser(Resolver resolver)

@@ -30,20 +30,7 @@ public class FileResolver extends AbstractResolver
     
     public static final String TYPE = generateTypeFromClass(FileResolver.class);
     
-    private static FileResolver __default;
-    
-    public static FileResolver getDefault()
-    {
-        if(__default==null)
-        {
-            synchronized(FileResolver.class)
-            {
-                if(__default==null)
-                    __default = new FileResolver();
-            }
-        }
-        return __default;
-    }
+    public static final FileResolver DEFAULT = new FileResolver();
     
     public FileResolver()
     {

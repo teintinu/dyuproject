@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.Charset;
 
 import com.dyuproject.ioc.Resource.Resolver;
 
@@ -31,6 +32,7 @@ import com.dyuproject.ioc.Resource.Resolver;
 public abstract class AbstractResolver implements Resolver
 {
     
+    public static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
     public static final int DEFAULT_BUFFER_SIZE = Integer.getInteger("resolver.default_buffer_size", 
             4096).intValue();
     
@@ -40,33 +42,34 @@ public abstract class AbstractResolver implements Resolver
         return sn.substring(0, sn.lastIndexOf(Resolver.class.getSimpleName())).toLowerCase();
     }
 
-    protected int _bufferSize = DEFAULT_BUFFER_SIZE;
-    protected String _encoding;
+    protected final int _bufferSize;
+    protected final Charset _encoding;
     
-    public int getBufferSize()
+    public AbstractResolver()
+    {
+        this(DEFAULT_ENCODING, DEFAULT_BUFFER_SIZE);
+    }
+    
+    public AbstractResolver(Charset encoding, int bufferSize)
+    {
+        _encoding = encoding;
+        _bufferSize = bufferSize;
+    }
+    
+    public final int getBufferSize()
     {
         return _bufferSize;
     }
     
-    public void setBufferSize(int bufferSize)
-    {
-        _bufferSize = bufferSize;
-    }
-    
-    public String getEncoding()
+    public final Charset getEncoding()
     {
         return _encoding;
-    }
-    
-    public void setEncoding(String encoding)
-    {
-        _encoding = encoding;
     }
 
     protected Reader newReader(InputStream in) throws IOException
     { 
-        return getEncoding()==null ? new BufferedReader(new InputStreamReader(in), getBufferSize()) : 
-            new BufferedReader(new InputStreamReader(in, getEncoding()), getBufferSize());
+        return getEncoding()==null ? new BufferedReader(new InputStreamReader(in), _bufferSize) : 
+            new BufferedReader(new InputStreamReader(in, _encoding), _bufferSize);
     }
 
 }
