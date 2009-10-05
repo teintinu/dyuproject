@@ -32,7 +32,8 @@ import com.dyuproject.ioc.ApplicationContext;
 public class ApplicationServletContextListener implements ServletContextListener
 {
     
-    public static final String RESOURCE_LOCATION = "/WEB-INF/application.json";
+    public static final String CONTEXT_PARAM_RESOURCE_LOCATION = "appcontext.resource_location";
+    public static final String DEFAULT_RESOURCE_LOCATION = "/WEB-INF/application.json";
     public static final String WEBCONTEXT_KEY = "webContext";
     
     private static final Logger log = LoggerFactory.getLogger(ApplicationServletContextListener.class);
@@ -58,7 +59,10 @@ public class ApplicationServletContextListener implements ServletContextListener
     {
         if(_appContext==null)
         {
-            File file = new File(event.getServletContext().getRealPath(RESOURCE_LOCATION));
+            String resource = event.getServletContext().getInitParameter(
+                    CONTEXT_PARAM_RESOURCE_LOCATION);
+            File file = new File(event.getServletContext().getRealPath(resource==null ? 
+                    DEFAULT_RESOURCE_LOCATION : resource));
             if(file.exists())
             {
                 _appContext = ApplicationContext.load(file);
@@ -67,7 +71,7 @@ public class ApplicationServletContextListener implements ServletContextListener
             else
             {
                 _appContext = ApplicationContext.load(event.getServletContext().getResourceAsStream(
-                        RESOURCE_LOCATION));
+                        DEFAULT_RESOURCE_LOCATION));
             }
             WebContext webContext = (WebContext)_appContext.findPojo(WEBCONTEXT_KEY);
             if(webContext==null)
