@@ -37,7 +37,7 @@ import com.dyuproject.web.rest.RequestContext;
  * @created Aug 30, 2008
  */
 
-public class EntityManagerManager extends AbstractLifeCycle implements Interceptor, Filter
+public final class EntityManagerManager extends AbstractLifeCycle implements Interceptor, Filter
 {
     
     private static final ContextLocal __context = new ContextLocal();

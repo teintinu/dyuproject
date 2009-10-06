@@ -15,14 +15,12 @@
 package com.dyuproject.ext.stringtemplate;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.antlr.stringtemplate.AutoIndentWriter;
 import org.antlr.stringtemplate.StringTemplate;
 import org.antlr.stringtemplate.StringTemplateWriter;
 
@@ -31,7 +29,7 @@ import org.antlr.stringtemplate.StringTemplateWriter;
  * @created Jan 15, 2009
  */
 
-public class CustomTemplate extends StringTemplate
+public final class CustomTemplate extends StringTemplate
 {
 
     HttpServletRequest _request;
@@ -121,15 +119,6 @@ public class CustomTemplate extends StringTemplate
 
         return o;
     }
-    
-    class TemplateWriter extends AutoIndentWriter
-    {
 
-        public TemplateWriter(Writer writer, String newLine)
-        {
-            super(writer, newLine);
-        }
-        
-    }
 
 }

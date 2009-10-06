@@ -38,7 +38,7 @@ import com.dyuproject.web.rest.ViewDispatcher;
  * @created Jun 15, 2008
  */
 
-public class VelocityDispatcher extends AbstractLifeCycle implements ViewDispatcher
+public final class VelocityDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {
 
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/velocity/";

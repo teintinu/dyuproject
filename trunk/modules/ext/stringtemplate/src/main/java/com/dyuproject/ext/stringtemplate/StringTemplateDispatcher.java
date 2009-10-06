@@ -33,7 +33,7 @@ import com.dyuproject.web.rest.ViewDispatcher;
  * @created Jan 15, 2009
  */
 
-public class StringTemplateDispatcher extends AbstractLifeCycle implements ViewDispatcher, StringTemplateErrorListener
+public final class StringTemplateDispatcher extends AbstractLifeCycle implements ViewDispatcher, StringTemplateErrorListener
 {
     
     public static final String DEFAULT_BASE_DIR = "/WEB-INF/views/stringtemplate/";
