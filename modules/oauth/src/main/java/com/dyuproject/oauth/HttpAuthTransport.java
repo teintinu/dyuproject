@@ -36,6 +36,11 @@ public final class HttpAuthTransport extends Transport
     
     public static final HttpAuthTransport DEFAULT = new HttpAuthTransport();
     
+    public static HttpAuthTransport getDefault()
+    {
+        return DEFAULT;
+    }
+    
     static final Signature.Listener __authHeaderListener = new Signature.Listener()
     {
         public void handleOAuthParameter(String key, String value, StringBuilder oauthBuffer)

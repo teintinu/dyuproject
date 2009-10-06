@@ -30,6 +30,11 @@ public abstract class Parser extends StandardJSON
 {
     
     public static final Parser DEFAULT = new DefaultParser();
+    
+    public static Parser getDefault()
+    {
+        return DEFAULT;
+    }
 
     protected final Resolver _resolver;
     

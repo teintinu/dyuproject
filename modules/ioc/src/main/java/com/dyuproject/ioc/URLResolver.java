@@ -30,6 +30,11 @@ public final class URLResolver extends AbstractResolver
     
     public static final URLResolver DEFAULT = new URLResolver();
     
+    public static URLResolver getDefault()
+    {
+        return DEFAULT;
+    }
+    
     public URLResolver()
     {
         

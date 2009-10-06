@@ -33,6 +33,11 @@ public final class HttpGetTransport extends Transport
 
     public static final HttpGetTransport DEFAULT = new HttpGetTransport();
     
+    public static HttpGetTransport getDefault()
+    {
+        return DEFAULT;
+    }
+    
     public String getName()
     {
         return HttpConnector.GET;
