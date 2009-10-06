@@ -24,14 +24,14 @@ import com.dyuproject.web.rest.ValidatingConsumer.FieldValidator;
 public abstract class AbstractValidator implements FieldValidator
 {
     
-    private String _errorMsg;
+    protected String _errorMsg;
     
     public void setErrorMsg(String errorMsg)
     {
         _errorMsg = errorMsg;
     }
     
-    public String getErrorMsg()
+    public final String getErrorMsg()
     {
         return _errorMsg;
     }

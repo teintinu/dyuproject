@@ -35,12 +35,12 @@ public abstract class AbstractLifeCycle implements LifeCycle
         init();
     }
     
-    public boolean isInitialized()
+    public final boolean isInitialized()
     {
         return _initialized;
     }
     
-    public boolean isDestroyed()
+    public final boolean isDestroyed()
     {
         return _destroyed;
     }
@@ -59,7 +59,7 @@ public abstract class AbstractLifeCycle implements LifeCycle
     protected void destroy()
     {}
     
-    public WebContext getWebContext()
+    public final WebContext getWebContext()
     {
         return _webContext;
     }

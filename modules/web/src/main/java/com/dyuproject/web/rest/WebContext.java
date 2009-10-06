@@ -61,7 +61,7 @@ public abstract class WebContext
     
     private static final Logger log = LoggerFactory.getLogger(WebContext.class);   
     
-    private boolean _initialized = false, _destroyed = false, _sessionEnabled = false;
+    private boolean _initialized, _destroyed, _sessionEnabled;
     private ServletContext _servletContext;
     
     private final DefaultDispatcher _defaultDispatcher = new DefaultDispatcher();
@@ -70,7 +70,7 @@ public abstract class WebContext
     
     private final Map<String,Object> _attributes = new HashMap<String,Object>();
     
-    private Properties _mime;
+    private final Properties _mime = new Properties();
     private final Properties _env = new Properties();
     private CookieSessionManager _cookieSessionManager;
     
@@ -160,27 +160,22 @@ public abstract class WebContext
             //ignore
         }
         
-        if(_mime==null)
+        try
         {
-            try
+            URL resource = _servletContext.getResource(DEFAULT_MIME_LOCATION);
+            if(resource!=null)
             {
-                URL resource = _servletContext.getResource(DEFAULT_MIME_LOCATION);
-                if(resource!=null)
-                {
-                    setMime(resource.openStream());
-                    log.info("loaded: " + DEFAULT_MIME_LOCATION);
-                }
+                setMime(resource.openStream());
+                log.info("loaded: " + DEFAULT_MIME_LOCATION);
             }
-            catch(Exception e)
-            {                
-                //ignore
-            }
-            if(_mime==null)
-            {
+            else
                 log.warn("no mime.properties found");
-                _mime = new Properties();
-            }
         }
+        catch(Exception e)
+        {                
+            //ignore
+        }
+        
         _sessionEnabled = Boolean.parseBoolean(_env.getProperty(SESSION_ENABLED, "false"));
         if(_sessionEnabled)
         {
@@ -244,18 +239,17 @@ public abstract class WebContext
     
     public void setMime(Properties mimes)
     {
-        if(_mime!=null)
-            throw new IllegalStateException("mime already set");
+        if(_initialized)
+            throw new IllegalStateException("already initialized");
         
-        _mime = mimes;
+        _mime.putAll(mimes);
     }
     
     public void setMime(InputStream stream)
     {
-        if(_mime!=null)
-            throw new IllegalStateException("mime already set");
+        if(_initialized)
+            throw new IllegalStateException("already initialized");
         
-        _mime = new Properties();
         try
         {            
             _mime.load(stream);

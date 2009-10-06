@@ -34,7 +34,7 @@ import com.dyuproject.util.Delim;
  * @author David Yu
  */
 
-public abstract class RequestUtil
+public final class RequestUtil
 {
     
     public static final String URL_FORM_ENCODED = "application/x-www-form-urlencoded";

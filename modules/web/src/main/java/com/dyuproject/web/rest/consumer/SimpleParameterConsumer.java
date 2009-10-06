@@ -32,7 +32,7 @@ import com.dyuproject.web.rest.ValidationException;
  * @created Jan 18, 2009
  */
 
-public class SimpleParameterConsumer extends AbstractConsumer
+public final class SimpleParameterConsumer extends AbstractConsumer
 {
     
     public static final String DEFAULT_CONTENT_TYPE = "application/x-www-form-urlencoded";
@@ -246,13 +246,13 @@ public class SimpleParameterConsumer extends AbstractConsumer
         return pojo;
     }
     
-    static class Included
+    static final class Included
     {
         
-        private SimpleField _simpleField;        
-        private boolean _required;
-        private FieldValidator _validator;
-        private String _errorMsg;
+        private final SimpleField _simpleField;        
+        private final boolean _required;
+        private final FieldValidator _validator;
+        private final String _errorMsg;
         
         Included(SimpleField simpleField, boolean required, FieldValidator validator, 
                 String errorMsg)
@@ -285,7 +285,7 @@ public class SimpleParameterConsumer extends AbstractConsumer
         
     }
     
-    static class CacheEntry
+    static final class CacheEntry
     {
         Map<String,SimpleField> _simpleFields;
         Map<String,Included> _includedFields;

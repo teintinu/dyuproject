@@ -39,7 +39,7 @@ import com.dyuproject.util.ResourceUtil;
  */
 
 @SuppressWarnings("serial")
-public class DevScriptServlet extends HttpServlet 
+public final class DevScriptServlet extends HttpServlet 
 {
     
     public static final String CONTENT_TYPE = "application/x-javascript";

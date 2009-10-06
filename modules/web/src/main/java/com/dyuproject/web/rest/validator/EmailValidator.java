@@ -22,7 +22,7 @@ import com.dyuproject.util.validate.IPDomainValidator;
  * @created Jan 20, 2009
  */
 
-public class EmailValidator extends AbstractValidator
+public final class EmailValidator extends AbstractValidator
 {
     
     public EmailValidator()

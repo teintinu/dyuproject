@@ -34,7 +34,7 @@ import com.dyuproject.util.Delim;
  * @created May 16, 2008
  */
 
-public class DefaultDispatcher extends AbstractLifeCycle implements ViewDispatcher
+public final class DefaultDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {
     
     static final String[] NAMES = Delim.COMMA.split(System.getProperty("web.default_dispatcher_name", "default,_ah_default"));

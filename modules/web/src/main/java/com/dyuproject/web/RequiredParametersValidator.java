@@ -21,22 +21,12 @@ import javax.servlet.http.HttpServletRequest;
  * @created Jun 8, 2008
  */
 
-public class RequiredParametersValidator
+public final class RequiredParametersValidator
 {
     
-    private String[] _requiredParams;
-    
-    public RequiredParametersValidator()
-    {
-        
-    }
+    private final String[] _requiredParams;
     
     public RequiredParametersValidator(String[] requiredParams)
-    {
-        _requiredParams = requiredParams;
-    }
-    
-    public void setRequiredParams(String[] requiredParams)
     {
         _requiredParams = requiredParams;
     }

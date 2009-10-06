@@ -182,7 +182,7 @@ public class DigestAuthentication extends Authentication
                 .append(System.currentTimeMillis()).toString());
     }
     
-    private static String encode(byte[] data)
+    static String encode(byte[] data)
     {
         StringBuilder buffer = new StringBuilder();
         for (int i=0; i<data.length; i++) 

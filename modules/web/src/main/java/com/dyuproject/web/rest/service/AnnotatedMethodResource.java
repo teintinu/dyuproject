@@ -36,7 +36,7 @@ import com.dyuproject.web.rest.WebContext;
  * @created Dec 3, 2008
  */
 
-public class AnnotatedMethodResource implements Resource
+public final class AnnotatedMethodResource implements Resource
 {    
     
     private static final Object[] __arg = new Object[]{};

@@ -49,7 +49,7 @@ import com.dyuproject.web.rest.annotation.Consume;
  * @created Dec 4, 2008
  */
 
-public class RESTServiceContext extends WebContext
+public final class RESTServiceContext extends WebContext
 {
     
     private static final Logger log = LoggerFactory.getLogger(RESTServiceContext.class);

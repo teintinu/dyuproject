@@ -32,23 +32,23 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
     protected Class<?> _pojoClass;
     protected Map<?,?> _fieldParams;    
     
-    public Class<?> getPojoClass()
+    public final Class<?> getPojoClass()
     {
         return _pojoClass;
     }
     
-    public Map<?,?> getFieldParams()
+    public final Map<?,?> getFieldParams()
     {
         return _fieldParams;
     }
 
     
-    public String getHttpMethod()
+    public final String getHttpMethod()
     {
         return _httpMethod;
     }
     
-    public String getContentType()
+    public final String getContentType()
     {
         return _contentType;
     }
@@ -75,7 +75,7 @@ public abstract class AbstractConsumer extends AbstractLifeCycle implements Vali
             _contentType = getDefaultContentType();
     }
     
-    protected String getFieldParam(String name)
+    protected final String getFieldParam(String name)
     {
         return (String)_fieldParams.get(name);
     }

@@ -34,7 +34,7 @@ import com.dyuproject.util.Delim;
  * @created May 16, 2008
  */
 
-public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
+public final class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
 {    
      
     public static final String JSP = JSPDispatcher.class.getName();
@@ -47,7 +47,7 @@ public class JSPDispatcher extends AbstractLifeCycle implements ViewDispatcher
     
     private static final Logger log = LoggerFactory.getLogger(JSPDispatcher.class);
     
-    private boolean _jetty = false;
+    private boolean _jetty;
     private String _baseDir, _fileExtension, _suffix;
     RequestDispatcher _jsp;
     

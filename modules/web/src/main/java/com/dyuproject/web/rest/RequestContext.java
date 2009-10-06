@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  * @created Dec 4, 2008
  */
 
-public class RequestContext
+public final class RequestContext
 {
     private HttpServletRequest _request;
     private HttpServletResponse _response;
@@ -86,7 +86,7 @@ public class RequestContext
         _mime = null;
     }
     
-    public static class Local extends ThreadLocal<RequestContext>
+    public static final class Local extends ThreadLocal<RequestContext>
     {
         protected RequestContext initialValue()
         {
