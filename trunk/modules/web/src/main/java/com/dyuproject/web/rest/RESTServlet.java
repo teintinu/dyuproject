@@ -31,9 +31,10 @@ import com.dyuproject.util.ClassLoaderUtil;
  * @created May 10, 2008
  */
 
-@SuppressWarnings("serial")
 public final class RESTServlet extends HttpServlet
 {
+    
+    private static final long serialVersionUID = 2009100680L;
     
     private WebContext _webContext;
     

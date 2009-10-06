@@ -28,10 +28,11 @@ import org.mortbay.util.ajax.JSON.Output;
  * @created May 19, 2008
  */
 
-@SuppressWarnings("serial")
 public final class CookieSession implements Serializable, JSON.Convertible
 {
     
+    private static final long serialVersionUID = 2009100634L;
+
     public static final String ATTR_NAME = "cs";
     
     private Map<String,Object> _attributes;

@@ -24,9 +24,11 @@ import com.dyuproject.util.validate.IPDomainValidator;
  * @author David Yu
  * @created Jan 10, 2009
  */
-@SuppressWarnings("serial")
+
 public final class Identifier implements Serializable
 {
+    
+    private static final long serialVersionUID = 2009100698L;
     
     public static final String CHECKED_PREFIX = "http";
     public static final String ASSIGNED_PREFIX = "http://";    

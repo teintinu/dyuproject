@@ -28,9 +28,11 @@ import org.mortbay.util.UrlEncoded;
  * @author David Yu
  * @created Sep 11, 2008
  */
-@SuppressWarnings("serial")
+
 public final class UrlEncodedParameterMap extends HashMap<String,String>
 {
+    
+    private static final long serialVersionUID = 2009100616L;
     
     private String _url;
     

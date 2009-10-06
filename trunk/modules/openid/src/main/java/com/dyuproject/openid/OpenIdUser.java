@@ -27,9 +27,11 @@ import org.mortbay.util.ajax.JSON.Output;
  * @author David Yu
  * @created Sep 10, 2008
  */
-@SuppressWarnings("serial")
+
 public final class OpenIdUser implements Serializable, JSON.Convertible
 {
+    
+    private static final long serialVersionUID = 2009100658L;
     
     public static final String ATTR_NAME = "openid_user";
     
