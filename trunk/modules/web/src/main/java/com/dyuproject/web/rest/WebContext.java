@@ -341,7 +341,7 @@ public abstract class WebContext
         return _env.getProperty(name);
     }    
     
-    public static <T> T newObjectInstance(String className) throws Exception
+    public static Object newObjectInstance(String className) throws Exception
     {
         return ClassLoaderUtil.newInstance(className, WebContext.class);
     }
