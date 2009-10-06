@@ -63,12 +63,12 @@ public abstract class Signature
     
     public static String encode(String value)
     {
-        return UrlEncodedParameterMap.encodeRFC3986(value, Constants.ENCODING.name());
+        return UrlEncodedParameterMap.encodeRFC3986(value, Constants.ENCODING);
     }
     
     public static String decode(String value)
     {
-        return UrlEncodedParameterMap.decode(value, Constants.ENCODING.name());
+        return UrlEncodedParameterMap.decode(value, Constants.ENCODING);
     }
     
     public static String getKey(String consumerSecret, String secret)
@@ -146,7 +146,7 @@ public abstract class Signature
                 else
                 {
                     params.put(pair.substring(0, eq), UrlEncodedParameterMap.decode(
-                            pair.substring(eq+1), Constants.ENCODING.name()));
+                            pair.substring(eq+1), Constants.ENCODING));
                 }
             }
             params.setUrl(url.substring(0, idx));

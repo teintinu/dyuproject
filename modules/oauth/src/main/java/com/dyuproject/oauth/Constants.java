@@ -14,7 +14,6 @@
 
 package com.dyuproject.oauth;
 
-import java.nio.charset.Charset;
 
 /**
  * OAuth constants
@@ -26,7 +25,7 @@ import java.nio.charset.Charset;
 public final class Constants
 {
     
-    public static final Charset ENCODING = Charset.forName("UTF-8");
+    public static final String ENCODING = "UTF-8";
     
     public static final String OAUTH_CONSUMER_KEY = "oauth_consumer_key";
     
