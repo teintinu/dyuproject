@@ -26,8 +26,7 @@ public class ArrayUtilTest extends TestCase
     
     public static class Foo
     {
-        int _id;
-
+        final int _id;
         
         public Foo(int id)
         {
@@ -43,29 +42,82 @@ public class ArrayUtilTest extends TestCase
     public void testAppend()
     {
         Foo[] foos = new Foo[0];
-        foos = (Foo[])ArrayUtil.append(foos, new Foo(1));
-        foos = (Foo[])ArrayUtil.append(foos, new Foo(2));
-        foos = (Foo[])ArrayUtil.append(foos, new Foo(3));
-        foos = (Foo[])ArrayUtil.append(foos, new Foo(4));
-        foos = (Foo[])ArrayUtil.append(foos, new Foo(5));
+        foos = ArrayUtil.append(foos, new Foo(1));
+        foos = ArrayUtil.append(foos, new Foo(2));
+        foos = ArrayUtil.append(foos, new Foo(3));
+        foos = ArrayUtil.append(foos, new Foo(4));
+        foos = ArrayUtil.append(foos, new Foo(5));
         assertTrue(foos.length==5);
         System.err.println("len: " + foos.length);
-        foos = (Foo[])ArrayUtil.append(foos, foos);
+        
+        foos = ArrayUtil.append(foos, foos);
         assertTrue(foos.length==10);
         System.err.println("len: " + foos.length);
-        foos = (Foo[])ArrayUtil.append(foos, foos, foos);
+        
+        foos = ArrayUtil.append(foos, foos, foos);
         assertTrue(foos.length==30);
         System.err.println("len: " + foos.length);
         Foo _100 = new Foo(100);
-        foos = (Foo[])ArrayUtil.append(foos, foos, _100);
+        
+        foos = ArrayUtil.append(foos, foos, _100);
         assertTrue(foos.length==61);
         assertTrue(_100==foos[60]);
         System.err.println("len: " + foos.length);
         Foo _200 = new Foo(200);
-        foos = (Foo[])ArrayUtil.append(foos, _200, foos);
+        
+        foos = ArrayUtil.append(foos, _200, foos);
         assertTrue(foos.length==123);
         System.err.println("len: " + foos.length);
         assertTrue(_200==foos[61]);
+    }
+    
+    public void testRemove()
+    {
+        Foo[] foos = new Foo[0];
+        foos = ArrayUtil.append(foos, new Foo(1));
+        foos = ArrayUtil.append(foos, new Foo(2));
+        foos = ArrayUtil.append(foos, new Foo(3));
+        foos = ArrayUtil.append(foos, new Foo(4));
+        foos = ArrayUtil.append(foos, new Foo(5));
+        
+        print(foos);
+        assertTrue(foos.length==5);
+        assertTrue(foos[2]._id==3);
+        
+        // remove mid
+        foos = ArrayUtil.remove(foos, 2);
+        print(foos);
+        assertTrue(foos.length==4);
+        assertTrue(foos[0]._id==1);
+        assertTrue(foos[1]._id==2);
+        assertTrue(foos[2]._id==4);
+        assertTrue(foos[3]._id==5);
+        
+        // remove first
+        foos = ArrayUtil.remove(foos, 0);
+        print(foos);
+        assertTrue(foos.length==3);
+        assertTrue(foos[0]._id==2);
+        assertTrue(foos[1]._id==4);
+        assertTrue(foos[2]._id==5);
+        
+        // remove last
+        foos = ArrayUtil.remove(foos, 2);
+        print(foos);
+        assertTrue(foos.length==2);
+        assertTrue(foos[0]._id==2);
+        assertTrue(foos[1]._id==4);
+        
+    }
+    
+    static void print(Foo[] foos)
+    {
+        System.err.print('[');
+        for(int i=0; i<foos.length; i++)
+        {
+            System.err.print(foos[i]);
+        }
+        System.err.println(']');
     }
     
     

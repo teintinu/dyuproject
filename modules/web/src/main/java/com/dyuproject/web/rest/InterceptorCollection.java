@@ -22,7 +22,8 @@ import com.dyuproject.util.ArrayUtil;
 
 
 /**
- * Wraps an arry of interceptors and does the handle chain.
+ * Wraps an array of interceptors and does the handle chain.
+ * Interceptors can be added/removed at runtime.
  * 
  * @author David Yu
  * @created May 18, 2008
@@ -42,14 +43,33 @@ public final class InterceptorCollection extends AbstractLifeCycle implements In
         {
             if(interceptor instanceof InterceptorCollection)
             {
-                _interceptors = (Interceptor[])ArrayUtil.append(_interceptors, 
+                _interceptors = ArrayUtil.append(_interceptors, 
                         ((InterceptorCollection)interceptor).getInterceptors());
             }
             else
-                _interceptors = (Interceptor[])ArrayUtil.append(_interceptors, interceptor);
+                _interceptors = ArrayUtil.append(_interceptors, interceptor);
         }
         
         return this;
+    }
+    
+    public boolean add(Interceptor interceptor)
+    {
+        if(interceptor==null || indexOf(interceptor)!=-1)
+            return false;
+        
+        synchronized(this)
+        {
+            if(interceptor instanceof InterceptorCollection)
+            {
+                _interceptors = ArrayUtil.append(_interceptors, 
+                        ((InterceptorCollection)interceptor).getInterceptors());
+            }
+            else
+                _interceptors = ArrayUtil.append(_interceptors, interceptor);
+        }
+        
+        return true;
     }
     
     public int indexOf(Interceptor interceptor)
@@ -66,9 +86,38 @@ public final class InterceptorCollection extends AbstractLifeCycle implements In
         return -1;
     }
     
+    public boolean remove(Interceptor interceptor)
+    {
+        synchronized(this)
+        {
+            Interceptor[] interceptors = _interceptors;
+            for(int i=0; i<interceptors.length; i++)
+            {
+                if(interceptors[i].equals(interceptor))
+                {
+                    _interceptors = ArrayUtil.remove(interceptors, i);
+                    return true;
+                }
+            }            
+        }
+        return false;
+    }
+    
+    public boolean remove(int idx)
+    {
+        synchronized(this)
+        {
+            _interceptors = ArrayUtil.remove(_interceptors, idx);
+        }
+        return true;
+    }
+    
     public void setInterceptors(Interceptor[] interceptors)
     {
-        _interceptors = interceptors;
+        synchronized(this)
+        {
+            _interceptors = interceptors;
+        }        
     }
     
     public Interceptor[] getInterceptors()

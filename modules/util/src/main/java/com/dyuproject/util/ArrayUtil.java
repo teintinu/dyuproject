@@ -24,55 +24,78 @@ import java.lang.reflect.Array;
 public final class ArrayUtil
 {
     
-    public static Object[] append(Object[] oldArray, Object toAppend)
+    @SuppressWarnings("unchecked")
+    public static <T> T[] append(T[] oldArray, T toAppend)
     {
         Class<?> component = oldArray.getClass().getComponentType();
-        Object[] array = (Object[])Array.newInstance(component, Array.getLength(oldArray)+1);
+        T[] array = (T[])Array.newInstance(component, oldArray.length+1);
         System.arraycopy(oldArray, 0, array, 0, oldArray.length);
         array[oldArray.length] = toAppend;
         return array;
     }    
     
-    public static Object[] append(Object[] oldArray, Object toAppend1, Object[] toAppend2)
+    @SuppressWarnings("unchecked")
+    public static <T> T[] append(T[] oldArray, T toAppend1, T[] toAppend2)
     {
         Class<?> component = oldArray.getClass().getComponentType();
-        Object[] array = (Object[])Array.newInstance(component, 
-                Array.getLength(oldArray) + 1 + Array.getLength(toAppend2));
+        T[] array = (T[])Array.newInstance(component, 
+                oldArray.length + 1 + toAppend2.length);
         System.arraycopy(oldArray, 0, array, 0, oldArray.length);
         array[oldArray.length] = toAppend1;
         System.arraycopy(toAppend2, 0, array, oldArray.length+1, toAppend2.length);
         return array;
     }
     
-    public static Object[] append(Object[] oldArray, Object[] toAppend)
+    @SuppressWarnings("unchecked")
+    public static <T> T[] append(T[] oldArray, T[] toAppend)
     {
         Class<?> component = oldArray.getClass().getComponentType();
-        Object[] array = (Object[])Array.newInstance(component, 
-                Array.getLength(oldArray) + Array.getLength(toAppend));
+        T[] array = (T[])Array.newInstance(component, 
+                oldArray.length + toAppend.length);
         System.arraycopy(oldArray, 0, array, 0, oldArray.length);
         System.arraycopy(toAppend, 0, array, oldArray.length, toAppend.length);
         return array;
     }
     
-    public static Object[] append(Object[] oldArray, Object[] toAppend1, Object toAppend2)
+    @SuppressWarnings("unchecked")
+    public static <T> T[] append(T[] oldArray, T[] toAppend1, T toAppend2)
     {
         Class<?> component = oldArray.getClass().getComponentType();
-        Object[] array = (Object[])Array.newInstance(component, 
-                Array.getLength(oldArray) + Array.getLength(toAppend1) + 1);
+        T[] array = (T[])Array.newInstance(component, 
+                oldArray.length + toAppend1.length + 1);
         System.arraycopy(oldArray, 0, array, 0, oldArray.length);
         System.arraycopy(toAppend1, 0, array, oldArray.length, toAppend1.length);
         array[array.length-1] = toAppend2;
         return array;
     }
     
-    public static Object[] append(Object[] oldArray, Object[] toAppend1, Object[] toAppend2)
+    @SuppressWarnings("unchecked")
+    public static <T> T[] append(T[] oldArray, T[] toAppend1, T[] toAppend2)
     {
         Class<?> component = oldArray.getClass().getComponentType();
-        Object[] array = (Object[])Array.newInstance(component, 
-                Array.getLength(oldArray) + Array.getLength(toAppend1) + Array.getLength(toAppend2));
+        T[] array = (T[])Array.newInstance(component, 
+                oldArray.length + toAppend1.length + toAppend2.length);
         System.arraycopy(oldArray, 0, array, 0, oldArray.length);
         System.arraycopy(toAppend1, 0, array, oldArray.length, toAppend1.length);
         System.arraycopy(toAppend2, 0, array, oldArray.length + toAppend1.length, toAppend2.length);
+        return array;
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> T[] remove(T[] oldArray, int idx)
+    {
+        if(idx<0 || idx>=oldArray.length)
+            throw new IllegalArgumentException("array index " + idx + " out of bounds");
+        
+        Class<?> component = oldArray.getClass().getComponentType();
+        T[] array = (T[])Array.newInstance(component, oldArray.length-1);
+        if(idx==0)
+            System.arraycopy(oldArray, 1, array, 0, array.length);
+        else
+        {
+            System.arraycopy(oldArray, 0, array, 0, idx);
+            System.arraycopy(oldArray, idx+1, array, idx, array.length-idx);
+        }
         return array;
     }
 
