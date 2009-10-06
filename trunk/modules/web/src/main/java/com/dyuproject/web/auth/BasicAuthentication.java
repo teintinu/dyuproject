@@ -67,7 +67,7 @@ public class BasicAuthentication extends Authentication
         return false;
     }
     
-    private void sendChallenge(String realm, HttpServletRequest request,
+    protected void sendChallenge(String realm, HttpServletRequest request,
             HttpServletResponse response) throws ServletException, IOException
     {
         response.setHeader(WWW_AUTHENTICATE, "Basic realm=\"" + realm + ("\""));

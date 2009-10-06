@@ -37,7 +37,7 @@ import com.dyuproject.web.rest.ValidationException;
  */
 
 @SuppressWarnings("unchecked")
-public class SimpleJSONConsumer extends AbstractConsumer
+public final class SimpleJSONConsumer extends AbstractConsumer
 {   
     
     public static final String DEFAULT_DISPATCHER_NAME = "json";
@@ -97,21 +97,21 @@ public class SimpleJSONConsumer extends AbstractConsumer
             _pojoConvertor = new ValidatingPojoConvertor(_pojoClass, _fieldParams);
     }
     
-    public boolean merge(Object pojo, RequestContext rc) throws IOException, ValidationException
+    public final boolean merge(Object pojo, RequestContext rc) throws IOException, ValidationException
     {
         Map<?,?> props = (Map<?,?>)__json.parse(new ReaderSource(rc.getRequest().getReader()));
         return props!=null && !props.isEmpty() && _pojoConvertor.setProps(pojo, props)!=0;
     }
     
-    public Object consume(RequestContext rc) throws IOException, ValidationException
+    public final Object consume(RequestContext rc) throws IOException, ValidationException
     {
         Map<?,?> props = (Map<?,?>)__json.parse(new ReaderSource(rc.getRequest().getReader()));
         return props==null || props.isEmpty() ? null : _pojoConvertor.fromJSON(props);
     }
 
-    public static class ValidatingPojoConvertor extends StandardPojoConvertor
+    public static final class ValidatingPojoConvertor extends StandardPojoConvertor
     {        
-        private Map<?,?> _fieldParams;
+        private final Map<?,?> _fieldParams;
 
         public ValidatingPojoConvertor(Class<?> pojoClass, Map<?,?> fieldParams)
         {
@@ -196,11 +196,11 @@ public class SimpleJSONConsumer extends AbstractConsumer
         
     }
     
-    public static class ValidatingSetter extends StandardSetter
+    public static final class ValidatingSetter extends StandardSetter
     {
-        protected boolean _required;
-        protected FieldValidator _validator;
-        protected String _errorMsg;
+        protected final boolean _required;
+        protected final FieldValidator _validator;
+        protected final String _errorMsg;
 
         public ValidatingSetter(String propertyName, Method method, boolean required, 
                 FieldValidator validator, String errorMsg)

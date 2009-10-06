@@ -25,7 +25,7 @@ import javax.servlet.ServletException;
  * @created Jan 18, 2009
  */
 
-public class ConsumerInterceptor extends AbstractLifeCycle implements Interceptor
+public final class ConsumerInterceptor extends AbstractLifeCycle implements Interceptor
 {
     
     private final Map<String,ValidatingConsumer> _consumers = new HashMap<String,ValidatingConsumer>(3);

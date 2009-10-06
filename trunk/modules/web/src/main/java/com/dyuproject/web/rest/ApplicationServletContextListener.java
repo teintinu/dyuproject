@@ -29,7 +29,7 @@ import com.dyuproject.ioc.ApplicationContext;
  * @created Feb 25, 2009
  */
 
-public class ApplicationServletContextListener implements ServletContextListener
+public final class ApplicationServletContextListener implements ServletContextListener
 {
     
     public static final String CONTEXT_PARAM_RESOURCE_LOCATION = "appcontext.resource_location";

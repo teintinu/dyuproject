@@ -30,8 +30,8 @@ import com.dyuproject.util.DigestUtil;
 public class SmartDigestAuthentication extends DigestAuthentication
 {
     
-    private String _secretKey;
-    private int _maxAge;
+    private final String _secretKey;
+    private final int _maxAge;
     
     public SmartDigestAuthentication(CredentialSource credentialSource, String secretKey)
     {
@@ -42,18 +42,8 @@ public class SmartDigestAuthentication extends DigestAuthentication
             int maxAgeSeconds)
     {
         super(credentialSource);
-        setSecretKey(secretKey);
-        setMaxAge(maxAgeSeconds);
-    }
-    
-    public void setSecretKey(String secretKey)
-    {
         _secretKey = secretKey;
-    }
-    
-    public void setMaxAge(int maxAge)
-    {
-        _maxAge = maxAge;
+        _maxAge = maxAgeSeconds;
     }
     
     protected String newNonce(HttpServletRequest request)

@@ -39,7 +39,7 @@ import com.dyuproject.web.rest.WebContext;
  * @created Dec 3, 2008
  */
 
-public class PathHandler extends AbstractLifeCycle
+public final class PathHandler extends AbstractLifeCycle
 {
     
     public static final String ROOT = "/", PARAM = "$";
@@ -52,15 +52,16 @@ public class PathHandler extends AbstractLifeCycle
         return first=='$' || first=='{';
     }
     
-    private String _id;
-    private PathHandler _parent, _parameterHandler;
-    private Map<String,PathHandler> _pathHandlers = new HashMap<String,PathHandler>(3);
-    private Map<String,Resource> _resources = new HashMap<String,Resource>(3);
+    private final String _id;
+    private final Map<String,PathHandler> _pathHandlers = new HashMap<String,PathHandler>(3);
+    private final Map<String,Resource> _resources = new HashMap<String,Resource>(3);
     
     // /path/   /path/* and  /path/**
+
+    private final Interceptor[] _mappedInterceptors = new Interceptor[3];
     
     private Interceptor _interceptor;
-    private Interceptor[] _mappedInterceptors = new Interceptor[3];
+    private PathHandler _parent, _parameterHandler;
     
     public PathHandler()
     {
@@ -121,13 +122,11 @@ public class PathHandler extends AbstractLifeCycle
         
         _resources.clear();        
         _pathHandlers.clear();
-        _resources = null;
-        _pathHandlers = null;
         _parent = null;
         _parameterHandler = null;
-        _id = null;
-        _mappedInterceptors = null;
         _interceptor = null;
+        for(int i=0; i<_mappedInterceptors.length; i++)
+            _mappedInterceptors[i]=null;
     }
     
     static void loadInterceptors(PathHandler toConfigure, PathHandler pathHandler)
@@ -199,9 +198,11 @@ public class PathHandler extends AbstractLifeCycle
         {
             rc.getResponse().sendError(405);
             return;
-        }        
+        }
         
-        if(_interceptor==null)
+        // cache to local copy
+        Interceptor interceptor = _interceptor;
+        if(interceptor==null)
         {
             resource.handle(rc);
             return;
@@ -210,7 +211,7 @@ public class PathHandler extends AbstractLifeCycle
         boolean success = false;
         try
         {
-            success = _interceptor.preHandle(rc);
+            success = interceptor.preHandle(rc);
         }
         finally
         {            
@@ -222,11 +223,11 @@ public class PathHandler extends AbstractLifeCycle
                 }
                 finally
                 {
-                    _interceptor.postHandle(true, rc);
+                    interceptor.postHandle(true, rc);
                 }
             }
             else
-                _interceptor.postHandle(false, rc);
+                interceptor.postHandle(false, rc);
         }      
     }    
     
@@ -380,12 +381,14 @@ public class PathHandler extends AbstractLifeCycle
         PathHandler pathHandler = parentHandler._pathHandlers.get(id);
         if(pathHandler==null)
         {
-            if(parentHandler._parameterHandler==null)
+            // cache to local copy
+            PathHandler parentParamHandler = parentHandler._parameterHandler;
+            if(parentParamHandler==null)
                 WebContext.getCurrentRequestContext().getResponse().sendError(404);
             else if(index==pathInfo.length)
-                parentHandler._parameterHandler.resourceHandle(rc);
+                parentParamHandler.resourceHandle(rc);
             else
-                handle(parentHandler._parameterHandler, index, pathInfo, rc);            
+                handle(parentParamHandler, index, pathInfo, rc);            
         }
         else if(index==pathInfo.length)
             pathHandler.resourceHandle(rc);

@@ -27,7 +27,7 @@ import com.dyuproject.json.StandardJSON;
  * @created Feb 13, 2009
  */
 
-public class JSONDispatcher extends StandardJSON implements ViewDispatcher
+public final class JSONDispatcher extends StandardJSON implements ViewDispatcher
 {
     
     public static final String JSON_DATA = "json_data";

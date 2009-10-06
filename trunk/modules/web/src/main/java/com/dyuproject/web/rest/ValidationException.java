@@ -20,7 +20,7 @@ package com.dyuproject.web.rest;
  */
 
 @SuppressWarnings("serial")
-public class ValidationException extends IllegalArgumentException
+public final class ValidationException extends IllegalArgumentException
 {
     
     private final String _field;

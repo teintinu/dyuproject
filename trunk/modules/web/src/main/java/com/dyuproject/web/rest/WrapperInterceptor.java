@@ -33,7 +33,8 @@ public class WrapperInterceptor extends AbstractLifeCycle implements Interceptor
     
     public void setInterceptor(Interceptor interceptor)
     {
-        _interceptor = interceptor;
+        if(_interceptor==null)
+            _interceptor = interceptor;
     }
     
     public Interceptor getInterceptor()

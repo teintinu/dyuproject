@@ -37,7 +37,7 @@ import com.dyuproject.util.Cryptography;
  * @created Jun 2, 2008
  */
 
-public class CookieSessionManager
+public final class CookieSessionManager
 {
     
     public static final String SESSION_COOKIE_SECURITY_SECRET_KEY = "session.cookie.security.secret_key";

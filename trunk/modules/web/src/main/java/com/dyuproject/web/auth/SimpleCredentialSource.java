@@ -35,45 +35,28 @@ import javax.servlet.http.HttpServletResponse;
 public class SimpleCredentialSource implements CredentialSource
 {
     
-    private final Properties _properties = new Properties();
-    
-    public SimpleCredentialSource()
+    public static SimpleCredentialSource newInstance(File file) throws IOException
     {
-        
+        return newInstance(new FileInputStream(file));
     }
+    
+    public static SimpleCredentialSource newInstance(URL url) throws IOException
+    {
+        return newInstance(url.openStream());
+    }
+    
+    public static SimpleCredentialSource newInstance(InputStream stream) throws IOException
+    {        
+        Properties properties = new Properties();
+        properties.load(stream);
+        return new SimpleCredentialSource(properties);
+    }
+    
+    private final Properties _properties;
     
     public SimpleCredentialSource(Properties properties)
     {
-        setProperties(properties);
-    }
-    
-    public void setProperties(Properties properties)
-    {        
-        _properties.putAll(properties);        
-    }
-    
-    public void setProperties(InputStream stream)
-    {        
-        Properties properties = new Properties();
-        try
-        {            
-            properties.load(stream);
-            _properties.putAll(properties);
-        }
-        catch(Exception e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-    
-    public void setProperties(File location) throws IOException
-    {
-        setProperties(new FileInputStream(location));
-    }
-    
-    public void setProperties(URL location) throws IOException
-    {
-        setProperties(location.openStream());
+        _properties = properties;
     }
 
     public String getPassword(String realm, String username,

@@ -36,14 +36,9 @@ public abstract class Authentication
     public static final String PASSWORD = "password";
     public static final String REALM = "realm";
     
-    private CredentialSource _credentialSource;
+    private final CredentialSource _credentialSource;
     
     public Authentication(CredentialSource credentialSource)
-    {
-        setCredentialSource(credentialSource);
-    }
-    
-    public void setCredentialSource(CredentialSource credentialSource)
     {
         _credentialSource = credentialSource;
     }

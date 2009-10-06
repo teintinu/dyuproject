@@ -29,7 +29,7 @@ import org.mortbay.util.ajax.JSON.Output;
  */
 
 @SuppressWarnings("serial")
-public class CookieSession implements Serializable, JSON.Convertible
+public final class CookieSession implements Serializable, JSON.Convertible
 {
     
     public static final String ATTR_NAME = "cs";

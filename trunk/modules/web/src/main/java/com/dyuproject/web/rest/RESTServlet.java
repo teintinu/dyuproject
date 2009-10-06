@@ -32,7 +32,7 @@ import com.dyuproject.util.ClassLoaderUtil;
  */
 
 @SuppressWarnings("serial")
-public class RESTServlet extends HttpServlet
+public final class RESTServlet extends HttpServlet
 {
     
     private WebContext _webContext;
