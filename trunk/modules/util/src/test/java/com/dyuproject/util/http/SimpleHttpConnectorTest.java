@@ -31,14 +31,14 @@ public class SimpleHttpConnectorTest extends TestCase
     
     public void test1() throws Exception
     {
-        HttpConnector connector = new SimpleHttpConnector();
+        SimpleHttpConnector connector = new SimpleHttpConnector();
         Response response = connector.doGET("http://dyuproject.googlecode.com/svn/trunk/README.txt", 
                 (Map<?,?>)null);
         assertTrue(response.getStatus()==200);
         InputStream is = response.getInputStream();
         try
         {
-            byte[] buf = new byte[SimpleHttpConnector.getBufferSize()];
+            byte[] buf = new byte[connector.getBufferSize()];
             for(int len=0; (len=is.read(buf))!=-1;)
                 System.err.print(new String(buf, 0, len));
         }        

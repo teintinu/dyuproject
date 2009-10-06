@@ -36,92 +36,46 @@ import org.mortbay.util.UrlEncoded;
 public final class SimpleHttpConnector implements HttpConnector
 {
     
-    private static int __bufferSize = Integer.getInteger("shc.buffer_size", 4096).intValue();
-    private static int __connectTimeout = Integer.getInteger("shc.connect_timeout", 10000).intValue();
-    private static boolean __followRedirects = !"false".equals(System.getProperty("shc.follow_redirects"));
+    public static int DEFAULT_BUFFER_SIZE = Integer.getInteger("shc.buffer_size", 4096).intValue();
+    public static int DEFAULT_CONNECT_TIMEOUT = Integer.getInteger("shc.connect_timeout", 10000).intValue();
+    public static boolean DEFAULT_FOLLOW_REDIRECT = !"false".equals(System.getProperty("shc.follow_redirects"));
     
-    private static final SimpleHttpConnector __default = new SimpleHttpConnector();
+    private static final SimpleHttpConnector DEFAULT = new SimpleHttpConnector();
     
     public static SimpleHttpConnector getDefault()
     {
-        return __default;
+        return DEFAULT;
     }
     
-    public static void setBufferSize(int bufferSize)
-    {
-        __bufferSize = bufferSize;
-    }
-    
-    public static int getBufferSize()
-    {
-        return __bufferSize;
-    }
-    
-    public static void setConnectTimeout(int connectTimeout)
-    {
-        if(connectTimeout>0)
-            __connectTimeout = connectTimeout;
-    }
-    
-    public static int getConnectTimeout()
-    {
-        return __connectTimeout;
-    }
-    
-    public static void setFollowRedirects(boolean followRedirects)
-    {
-        __followRedirects = followRedirects;
-    }
-    
-    public static boolean isFollowRedirects()
-    {
-        return __followRedirects;
-    }
-    
-    private int _instanceBufferSize = __bufferSize;
-    private int _instanceConnectTimeout = __connectTimeout;
-    private boolean _instanceFollowRedirects = __followRedirects;
+    private final int _bufferSize;
+    private final int _connectTimeout;
+    private final boolean _followRedirects;
     
     public SimpleHttpConnector()
     {
-        
+        this(DEFAULT_BUFFER_SIZE, DEFAULT_CONNECT_TIMEOUT, DEFAULT_FOLLOW_REDIRECT);
     }
     
     public SimpleHttpConnector(int bufferSize, int connectTimeout, boolean followRedirects)
     {
-        _instanceBufferSize = bufferSize;
-        _instanceConnectTimeout = connectTimeout;
-        _instanceFollowRedirects = followRedirects;
+        _bufferSize = bufferSize;
+        _connectTimeout = connectTimeout;
+        _followRedirects = followRedirects;
     }
     
-    public int getInstanceBufferSize()
+    public int getBufferSize()
     {
-        return _instanceBufferSize;
+        return _bufferSize;
     }
     
-    public void setInstanceBufferSize(int bufferSize)
+    public int getConnectTimeout()
     {
-        _instanceBufferSize = bufferSize;
+        return _connectTimeout;
     }
-    
-    public int getInstanceConnectTimeout()
+
+    public boolean isFollowRedirects()
     {
-        return _instanceConnectTimeout;
-    }
-    
-    public void setInstanceConnectTimeout(int instanceConnectTimeout)
-    {
-        _instanceConnectTimeout = instanceConnectTimeout;
-    }
-    
-    public boolean isInstanceFollowRedirects()
-    {
-        return _instanceFollowRedirects;
-    }
-    
-    public void setInstanceFollowRedirects(boolean instanceFollowRedirects)
-    {
-        _instanceFollowRedirects = instanceFollowRedirects;
+        return _followRedirects;
     }
     
     static HttpURLConnection getConnection(String url, Map<?,?> headers) throws IOException
@@ -273,8 +227,8 @@ public final class SimpleHttpConnector implements HttpConnector
     throws IOException
     {
         connection.setRequestMethod(method);
-        connection.setConnectTimeout(_instanceConnectTimeout);
-        connection.setInstanceFollowRedirects(_instanceFollowRedirects);
+        connection.setConnectTimeout(_connectTimeout);
+        connection.setInstanceFollowRedirects(_followRedirects);
         connection.setDoInput(true);        
         connection.connect();
         return new HttpURLConnectionWrapper(connection);
@@ -504,8 +458,8 @@ public final class SimpleHttpConnector implements HttpConnector
         connection.setRequestMethod(method);
         connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);
         connection.setRequestProperty(CONTENT_LENGTH_HEADER, String.valueOf(data.length));
-        connection.setConnectTimeout(_instanceConnectTimeout);
-        connection.setInstanceFollowRedirects(_instanceFollowRedirects);
+        connection.setConnectTimeout(_connectTimeout);
+        connection.setInstanceFollowRedirects(_followRedirects);
         connection.setDoInput(true);        
         connection.setDoOutput(true); 
         OutputStream out = null;
@@ -527,15 +481,15 @@ public final class SimpleHttpConnector implements HttpConnector
     {
         connection.setRequestMethod(method);
         connection.setRequestProperty(CONTENT_TYPE_HEADER, contentType);        
-        connection.setConnectTimeout(_instanceConnectTimeout);
-        connection.setInstanceFollowRedirects(_instanceFollowRedirects);
+        connection.setConnectTimeout(_connectTimeout);
+        connection.setInstanceFollowRedirects(_followRedirects);
         connection.setDoInput(true);        
         connection.setDoOutput(true); 
         OutputStreamWriter out = null;
         try
         {
             out = new OutputStreamWriter(connection.getOutputStream(), reader.getEncoding());            
-            char[] buf = new char[_instanceBufferSize];
+            char[] buf = new char[_bufferSize];
             for(int len=0; (len=reader.read(buf))!=-1;)
                 out.write(buf, 0, len);
         }
