@@ -21,9 +21,10 @@ package com.dyuproject.oauth.sp;
  * @created Jun 8, 2009
  */
 
-@SuppressWarnings("serial")
 public final class SimpleServiceToken implements ServiceToken
 {
+    
+    private static final long serialVersionUID = 2009100694L;
     
     private final String _consumerSecret, _key, _secret, _id;
     

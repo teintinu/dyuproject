@@ -28,9 +28,10 @@ import org.mortbay.util.ajax.JSON.Output;
  * @created May 30, 2009
  */
 
-@SuppressWarnings("serial")
 public final class Token implements Serializable, JSON.Convertible
 {
+    
+    private static final long serialVersionUID = 2009100604L;
     
     public static final int UNITIALIZED = 0;
     public static final int UNAUTHORIZED = 1;

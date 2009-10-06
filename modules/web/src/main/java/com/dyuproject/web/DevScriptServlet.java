@@ -38,10 +38,11 @@ import com.dyuproject.util.ResourceUtil;
  * @created Feb 14, 2008
  */
 
-@SuppressWarnings("serial")
 public final class DevScriptServlet extends HttpServlet 
 {
     
+    private static final long serialVersionUID = 2009100640L;
+
     public static final String CONTENT_TYPE = "application/x-javascript";
     
     private static final Logger log = LoggerFactory.getLogger(DevScriptServlet.class);
