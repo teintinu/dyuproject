@@ -26,7 +26,7 @@ import org.apache.velocity.context.Context;
  * @created Jun 15, 2008
  */
 
-public class LocalizedVelocityContext implements Context
+public final class LocalizedVelocityContext implements Context
 {
     
     private static final Local __current = new Local();
@@ -84,7 +84,7 @@ public class LocalizedVelocityContext implements Context
         return value;
     }
     
-    static class Local extends ThreadLocal<LocalizedVelocityContext>
+    static final class Local extends ThreadLocal<LocalizedVelocityContext>
     {        
         protected LocalizedVelocityContext initialValue()
         {

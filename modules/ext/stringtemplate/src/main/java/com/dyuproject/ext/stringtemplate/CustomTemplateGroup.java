@@ -27,7 +27,7 @@ import org.antlr.stringtemplate.StringTemplateWriter;
  * @created Jan 15, 2009
  */
 
-public class CustomTemplateGroup extends StringTemplateGroup
+public final class CustomTemplateGroup extends StringTemplateGroup
 {
     
     public CustomTemplateGroup(String name, String rootDir, StringTemplateErrorListener listener)
