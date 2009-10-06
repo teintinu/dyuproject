@@ -81,7 +81,7 @@ public final class JSPDispatcher extends AbstractLifeCycle implements ViewDispat
         }
         
         if(_jsp==null)
-            log.warn("jsp dispatcher not resolved");
+            log.info("jsp named dispatcher not resolved, using request.getRequestDispatcher(uri) instead");
         else
             _jetty = _jsp.getClass().getName().startsWith("org.mortbay.jetty");
         
