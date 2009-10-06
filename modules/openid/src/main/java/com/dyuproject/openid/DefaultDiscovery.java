@@ -23,12 +23,12 @@ package com.dyuproject.openid;
  * @created Sep 23, 2008
  */
 
-public class DefaultDiscovery extends ChainedDiscovery
+public final class DefaultDiscovery extends ChainedDiscovery
 {
     
     public DefaultDiscovery()
     {
-        add(new YadisDiscovery()).add(new HtmlBasedDiscovery());
+        super(new Discovery[]{new YadisDiscovery(), new HtmlBasedDiscovery()});
     }
 
 }

@@ -28,26 +28,22 @@ import com.dyuproject.openid.OpenIdUser;
 public abstract class AbstractExtension implements Extension
 {
     
-    private String _alias, _namespace;
+    protected final String _alias, _namespace;
     
-    public String getAlias()
+    public AbstractExtension(String alias, String namespace)
+    {
+        _alias = alias;
+        _namespace = namespace;
+    }
+    
+    public final String getAlias()
     {
         return _alias;
     }
     
-    protected void setAlias(String alias)
-    {
-        _alias = alias;
-    }
-    
-    public String getNamespace()
+    public final String getNamespace()
     {
         return _namespace;
-    }
-    
-    protected void setNamespace(String namespace)
-    {
-        _namespace = namespace;
     }
 
     public void onDiscovery(OpenIdUser user, HttpServletRequest request)

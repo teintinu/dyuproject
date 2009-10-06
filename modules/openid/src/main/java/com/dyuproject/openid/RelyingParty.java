@@ -103,11 +103,12 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
  * @created Sep 21, 2008
  */
 
-public class RelyingParty
+public final class RelyingParty
 {
     
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
     public static final String DEFAULT_IDENTIFIER_PARAMETER = "openid_identifier";
+    static final boolean DEFAULT_AUTOMATIC_REDIRECT = true;
     
     private static RelyingParty __instance = null;
     
@@ -122,15 +123,21 @@ public class RelyingParty
                 if(instance==null)
                 {
                     URL resource = getResource(DEFAULT_RESOURCE_PATH);
-                    try
-                    {                        
-                        // configure defaults if openid.properties is not available
-                        __instance = instance = resource==null ? newInstance(new Properties()) : 
-                            newInstance(resource);
-                    }
-                    catch(IOException e)
+                    if(resource==null)
                     {
-                        throw new RuntimeException(e);
+                        // default setting
+                        __instance = instance = new RelyingParty();
+                    }
+                    else
+                    {
+                        try
+                        {                        
+                            __instance = instance = newInstance(resource);
+                        }
+                        catch(IOException e)
+                        {
+                            throw new RuntimeException(e);
+                        }
                     }    
                 }
             }
@@ -182,25 +189,37 @@ public class RelyingParty
         HttpConnector httpConnector = httpConnectorParam==null ? SimpleHttpConnector.getDefault() : 
             (HttpConnector)newObjectInstance(httpConnectorParam);       
         
-        // auth redirection
-        String authRedirectionParam = properties.getProperty("openid.authredirection");
-        AuthRedirection authRedirection = authRedirectionParam==null ? SimpleRedirection.DEFAULT_INSTANCE : 
-            (AuthRedirection)newObjectInstance(authRedirectionParam);
-        
         // user manager
         String managerParam = properties.getProperty("openid.user.manager");            
         OpenIdUserManager manager = managerParam == null ? HttpSessionUserManager.getDefault() :
             (OpenIdUserManager)newObjectInstance(managerParam);        
-        manager.init(properties);        
+        manager.init(properties);
         
-        OpenIdContext context = new OpenIdContext(discovery, association, httpConnector);        
-        RelyingParty relyingParty = new RelyingParty(context, manager);
-        relyingParty.setAuthRedirection(authRedirection);
+        // openid user cache
+        String userCacheParam = properties.getProperty("openid.user.cache");
+        UserCache userCache = userCacheParam==null ? new IdentifierSelectUserCache() : 
+            (UserCache)newObjectInstance(userCacheParam);
+        
+        // openid automatic redirect
+        // when the user is redirected to his provider and he somehow navigates away from his
+        // provider and returns to your site ... the relying party will do an automatic redirect
+        // back to his provider for authentication (if set to true)
+        String automaticRedirectParam = properties.getProperty("openid.automatic_redirect");
+        boolean automaticRedirect = automaticRedirectParam==null ? DEFAULT_AUTOMATIC_REDIRECT : 
+            Boolean.parseBoolean(automaticRedirectParam);
+        
+        // auth redirection
+        String authRedirectionParam = properties.getProperty("openid.authredirection");
+        AuthRedirection authRedirection = authRedirectionParam==null ? new SimpleRedirection() : 
+            (AuthRedirection)newObjectInstance(authRedirectionParam);
         
         // identifier parameter (default is openid_identifier)
-        String identifierParameter = properties.getProperty("openid.identifier.parameter");
-        if(identifierParameter!=null)
-            relyingParty._identifierParameter = identifierParameter;
+        String identifierParameter = properties.getProperty("openid.identifier.parameter", 
+                DEFAULT_IDENTIFIER_PARAMETER);
+        
+        RelyingParty relyingParty = new RelyingParty(
+                new OpenIdContext(discovery, association, httpConnector), 
+                manager, userCache, automaticRedirect, authRedirection, identifierParameter);
         
         // relying party listeners
         String listenersParam = properties.getProperty("openid.relyingparty.listeners");
@@ -219,19 +238,6 @@ public class RelyingParty
             while(tokenizer.hasMoreTokens())
                 relyingParty.addResolver((Resolver)newObjectInstance(tokenizer.nextToken().trim()));
         }
-        
-        // openid user cache
-        String userCacheParam = properties.getProperty("openid.user.cache");
-        relyingParty._userCache = userCacheParam==null ? new IdentifierSelectUserCache() : 
-            (UserCache)newObjectInstance(userCacheParam);
-        
-        // openid automatic redirect
-        // when the user is redirected to his provider and he somehow navigates away from his
-        // provider and returns to your site ... the relying party will do an automatic redirect
-        // back to his provider for authentication (if set to true)
-        String automaticRedirectParam = properties.getProperty("openid.automatic_redirect");
-        if(automaticRedirectParam!=null)
-            relyingParty._automaticRedirect = Boolean.parseBoolean(automaticRedirectParam);
         
         return relyingParty;
     }    
@@ -342,56 +348,57 @@ public class RelyingParty
         return getAuthUrlBuffer(user, trustRoot, realm, returnTo).toString();
     }
     
-    private OpenIdUserManager _manager;
-    private OpenIdContext _context;
-    private String _identifierParameter = DEFAULT_IDENTIFIER_PARAMETER;
-    private AuthRedirection _authRedirection = SimpleRedirection.DEFAULT_INSTANCE;
+    private final OpenIdContext _context;
+    private final OpenIdUserManager _manager;
+    private final UserCache _userCache;    
+    private final boolean _automaticRedirect;
+    private final AuthRedirection _authRedirection;
+    private final String _identifierParameter;
     private final ListenerCollection _listener = new ListenerCollection();
     private final ResolverCollection _resolver = new ResolverCollection();
-    private UserCache _userCache;
-    
-    private boolean _destroyed = false;
-    private boolean _automaticRedirect = true;
     
     public RelyingParty()
     {
-        
-    }    
+        this(DEFAULT_AUTOMATIC_REDIRECT);
+    }
+    
+    public RelyingParty(boolean automaticRedirect)
+    {
+        this(new OpenIdContext(new DefaultDiscovery(), new DiffieHellmanAssociation(), 
+                new SimpleHttpConnector()), new HttpSessionUserManager(), automaticRedirect);
+    }
 
     public RelyingParty(OpenIdContext context, OpenIdUserManager manager)
     {
-        _context = context;
-        _manager = manager;
+        this(context, manager, DEFAULT_AUTOMATIC_REDIRECT);
     }
     
-    public RelyingParty(OpenIdContext context, OpenIdUserManager manager, 
-            AuthRedirection authRedirection, UserCache userCache)
+    public RelyingParty(OpenIdContext context, OpenIdUserManager manager, boolean automaticRedirect)
+    {
+        this(context, manager, new IdentifierSelectUserCache(), automaticRedirect);
+    }
+    
+    public RelyingParty(OpenIdContext context, OpenIdUserManager manager, UserCache userCache, 
+            boolean automaticRedirect)
+    {
+        this(context, manager, userCache, automaticRedirect, new SimpleRedirection(), 
+                DEFAULT_IDENTIFIER_PARAMETER);
+    }
+    
+    public RelyingParty(OpenIdContext context, OpenIdUserManager manager, UserCache userCache, 
+            boolean automaticRedirect, AuthRedirection authRedirection, String identifierParameter)
     {
         _context = context;
-        _manager = manager;
-        _authRedirection = authRedirection;
+        _manager = manager;        
         _userCache = userCache;
-    }
-    
-    public void setOpenIdUserManager(OpenIdUserManager manager)
-    {
-        if(_manager!=null)
-            throw new IllegalArgumentException("manager already set.");
-        
-        _manager = manager;            
+        _automaticRedirect = automaticRedirect;
+        _authRedirection = authRedirection;
+        _identifierParameter = identifierParameter;        
     }
     
     public OpenIdUserManager getOpenIdUserManager()
     {
         return _manager;
-    }
-    
-    public void setOpenIdContext(OpenIdContext context)
-    {
-        if(_context!=null)
-            throw new IllegalArgumentException("context already set.");
-        
-        _context = context;    
     }
     
     public OpenIdContext getOpenIdContext()
@@ -404,43 +411,19 @@ public class RelyingParty
         return _identifierParameter;
     }
     
-    public boolean isDestroyed()
-    {
-        return _destroyed;
-    }
-    
     public boolean isAutomaticRedirect()
     {
         return _automaticRedirect;
-    }
-    
-    public void setAutomaticRedirect(boolean automaticRedirect)
-    {
-        _automaticRedirect = automaticRedirect;
     }
     
     public AuthRedirection getAuthRedirection()
     {
         return _authRedirection;
     }     
-    
-    public void setAuthRedirection(AuthRedirection authRedirection)
-    {
-        if(authRedirection!=null)
-            _authRedirection = authRedirection;
-    }
-    
+
     public UserCache getUserCache()
     {
         return _userCache;
-    }
-    
-    public void setUserCache(UserCache userCache)
-    {
-        if(_userCache!=null)
-            throw new IllegalArgumentException("userCache already set.");
-        
-        _userCache = userCache;
     }
     
     public OpenIdUser discover(HttpServletRequest request) 
@@ -564,17 +547,7 @@ public class RelyingParty
     {
         _resolver.addResolver(resolver);
         return this;
-    }
-    
-    public void destroy()
-    {
-        if(_destroyed)
-            return;
-        
-        _destroyed = true;
-        // TODO
-    }
-    
+    }    
     
     public interface Listener
     {
@@ -589,8 +562,8 @@ public class RelyingParty
         public void onAccess(OpenIdUser user, HttpServletRequest request);
     }
     
-    public static class ListenerCollection implements Listener
-    {      
+    public static final class ListenerCollection implements Listener
+    {
 
         private Listener[] _listeners = new Listener[]{};
         
@@ -624,35 +597,34 @@ public class RelyingParty
             }
             return -1;
         }
-        
-        public Listener[] getListeners()
-        {
-            return _listeners;
-        }
 
         public void onDiscovery(OpenIdUser user, HttpServletRequest request)
-        {            
-            for(Listener l : getListeners())
-                l.onDiscovery(user, request);       
+        {
+            Listener[] listeners = _listeners;
+            for(int i=0,len=listeners.length; i<len; i++)
+                listeners[i].onDiscovery(user, request);    
         }
         
         public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request, 
                 UrlEncodedParameterMap params)
         {
-            for(Listener l : getListeners())
-                l.onPreAuthenticate(user, request, params);
+            Listener[] listeners = _listeners;
+            for(int i=0,len=listeners.length; i<len; i++)
+                listeners[i].onPreAuthenticate(user, request, params); 
         }
         
         public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
         {
-            for(Listener l : getListeners())
-                l.onAuthenticate(user, request);
+            Listener[] listeners = _listeners;
+            for(int i=0,len=listeners.length; i<len; i++)
+                listeners[i].onAuthenticate(user, request); 
         }
         
         public void onAccess(OpenIdUser user, HttpServletRequest request)
         {
-            for(Listener l : getListeners())
-                l.onAccess(user, request);
+            Listener[] listeners = _listeners;
+            for(int i=0,len=listeners.length; i<len; i++)
+                listeners[i].onAccess(user, request); 
         }
         
     }

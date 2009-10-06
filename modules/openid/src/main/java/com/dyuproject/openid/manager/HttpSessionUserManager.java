@@ -31,7 +31,7 @@ import com.dyuproject.openid.OpenIdUserManager;
  * @created Jan 5, 2009
  */
 
-public class HttpSessionUserManager implements OpenIdUserManager
+public final class HttpSessionUserManager implements OpenIdUserManager
 {
     
     private static final HttpSessionUserManager __default = new HttpSessionUserManager();

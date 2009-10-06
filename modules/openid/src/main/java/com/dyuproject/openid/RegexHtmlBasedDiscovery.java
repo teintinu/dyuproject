@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
  * @created May 26, 2009
  */
 
-public class RegexHtmlBasedDiscovery implements Discovery
+public final class RegexHtmlBasedDiscovery implements Discovery
 {
     
     static final Pattern __pattern = Pattern.compile("rel=['\"]openid2?\\.(\\w+)['\"]");

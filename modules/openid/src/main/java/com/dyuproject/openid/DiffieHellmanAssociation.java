@@ -34,7 +34,7 @@ import com.dyuproject.util.http.HttpConnector.Response;
  * @created Sep 8, 2008
  */
 
-public class DiffieHellmanAssociation implements Association
+public final class DiffieHellmanAssociation implements Association
 {
     
     static final String CLIENT_PRIVATE_KEY_ATTR = "client.privateKey";

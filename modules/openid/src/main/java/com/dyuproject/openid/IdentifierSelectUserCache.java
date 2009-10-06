@@ -31,7 +31,7 @@ import com.dyuproject.util.Delim;
  * @created Aug 18, 2009
  */
 
-public class IdentifierSelectUserCache implements Discovery.UserCache
+public final class IdentifierSelectUserCache implements Discovery.UserCache
 {
     
     public static final String DEFAULT_RESOURCE_LOCATION = "identifier_select.properties";

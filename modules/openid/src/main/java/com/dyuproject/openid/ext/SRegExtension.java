@@ -32,7 +32,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
  * @created May 27, 2009
  */
 
-public class SRegExtension extends AbstractExtension
+public final class SRegExtension extends AbstractExtension
 {
     
     public static final String NS_KEY = "openid.ns.sreg";
@@ -74,8 +74,7 @@ public class SRegExtension extends AbstractExtension
     
     public SRegExtension()
     {
-        setAlias("sreg");
-        setNamespace(NAMESPACE);
+        super("sreg", NAMESPACE);
     }
     
     public SRegExtension addExchange(String alias)
@@ -121,10 +120,10 @@ public class SRegExtension extends AbstractExtension
         }
     }
     
-    public static class SimpleExchange implements Exchange
+    public static final class SimpleExchange implements Exchange
     {
         
-        private String _alias, _key;
+        private final String _alias, _key;
         
         public SimpleExchange(String alias)
         {
@@ -138,13 +137,13 @@ public class SRegExtension extends AbstractExtension
         }
 
         public void put(OpenIdUser user, HttpServletRequest request,
-                UrlEncodedParameterMap params, String alias)
+                UrlEncodedParameterMap params, String extensionAlias)
         {
             
         }        
 
         public void parseAndPut(OpenIdUser user, HttpServletRequest request,
-                Map<String, String> attributes, String alias)
+                Map<String, String> attributes, String extensionAlias)
         {
             String value = request.getParameter(_key);
             if(value!=null)

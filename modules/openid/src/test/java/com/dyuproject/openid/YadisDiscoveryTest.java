@@ -27,10 +27,9 @@ public class YadisDiscoveryTest extends TestCase
 {
     
     public void testDiscovery() throws Exception
-    {        
-        OpenIdContext context = new OpenIdContext();
-        context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(new HtmlBasedDiscovery());
+    {
+        OpenIdContext context = new OpenIdContext(new YadisDiscovery(), 
+                new DiffieHellmanAssociation(), SimpleHttpConnector.getDefault());
         Identifier identifier = Identifier.getIdentifier("http://davidyu.myopenid.com", null, context);
         OpenIdUser user = context.getDiscovery().discover(identifier, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);

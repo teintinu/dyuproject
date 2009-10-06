@@ -39,12 +39,12 @@ import com.dyuproject.util.DigestUtil;
  * @created Jan 5, 2009
  */
 
-public class CookieBasedUserManager implements OpenIdUserManager
+public final class CookieBasedUserManager implements OpenIdUserManager
 {
     
     private boolean _initialized = false;
     
-    private StandardJSON _json = new StandardJSON();
+    private final StandardJSON _json = new StandardJSON();
     
     private String _secretKey;
     private String _cookieName;    

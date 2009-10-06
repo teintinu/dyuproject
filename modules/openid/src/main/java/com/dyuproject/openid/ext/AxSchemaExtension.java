@@ -32,7 +32,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
  * @created May 27, 2009
  */
 
-public class AxSchemaExtension extends AbstractExtension
+public final class AxSchemaExtension extends AbstractExtension
 {
     
     public static final String NAMESPACE = "http://openid.net/srv/ax/1.0";
@@ -67,7 +67,8 @@ public class AxSchemaExtension extends AbstractExtension
         }
     }
     
-    private final Map<String,Exchange> _exchanges = new HashMap<String,Exchange>();    
+    private final Map<String,Exchange> _exchanges = new HashMap<String,Exchange>();
+    private final String _reqKeyNs, _reqKeyMode, _reqKeyRequired;
     
     public AxSchemaExtension()
     {
@@ -76,8 +77,10 @@ public class AxSchemaExtension extends AbstractExtension
     
     public AxSchemaExtension(String alias)
     {
-        setAlias(alias);
-        setNamespace(NAMESPACE);
+        super(alias, NAMESPACE);
+        _reqKeyNs = "openid.ns." + alias;
+        _reqKeyMode = "openid." + alias + ".mode";
+        _reqKeyRequired = "openid." + alias + ".required";
     }
     
     public AxSchemaExtension addExchange(String alias)
@@ -104,16 +107,16 @@ public class AxSchemaExtension extends AbstractExtension
     public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
             UrlEncodedParameterMap params)
     {
-        params.put("openid.ns." + getAlias(), getNamespace());
-        params.put("openid." + getAlias() + ".mode", MODE_REQUEST);
+        params.put(_reqKeyNs, getNamespace());
+        params.put(_reqKeyMode, MODE_REQUEST);
         
         StringBuilder required = new StringBuilder();
         for(Exchange e : _exchanges.values())
         {
             required.append(e.getAlias()).append(',');
-            e.put(user, request, params, getAlias());
+            e.put(user, request, params, _alias);
         }
-        params.put("openid." + getAlias() + ".required", required.substring(0, required.length()-1));
+        params.put(_reqKeyRequired, required.substring(0, required.length()-1));
     }
 
     public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
@@ -131,28 +134,28 @@ public class AxSchemaExtension extends AbstractExtension
     public static abstract class AbstractExchange implements Exchange
     {
         
-        private String _alias;
+        protected final String _alias;
         
-        public String getAlias()
-        {
-            return _alias;
-        }
-        
-        public void setAlias(String alias)
+        public AbstractExchange(String alias)
         {
             _alias = alias;
         }
         
-        public void put(OpenIdUser user, HttpServletRequest request,
-                UrlEncodedParameterMap params, String alias)
+        public final String getAlias()
         {
-            params.put("openid." + alias + ".type." + getAlias(), getNamespace());
+            return _alias;
+        }
+        
+        public void put(OpenIdUser user, HttpServletRequest request,
+                UrlEncodedParameterMap params, String extensionAlias)
+        {
+            params.put("openid." + extensionAlias + ".type." + _alias, getNamespace());
         }
         
         public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
-                Map<String,String> attributes, String alias)
+                Map<String,String> attributes, String extensionAlias)
         {
-            String value = request.getParameter("openid." + alias + ".value." + getAlias());
+            String value = request.getParameter("openid." + extensionAlias + ".value." + _alias);
             if(value!=null)
                 attributes.put(getAlias(), value);
         }
@@ -162,14 +165,14 @@ public class AxSchemaExtension extends AbstractExtension
         
     }
     
-    public static class SimpleExchange extends AbstractExchange
+    public static final class SimpleExchange extends AbstractExchange
     {
         
         private final String _namespace;
         
         public SimpleExchange(String alias, String namespace)
         {
-            setAlias(alias);
+            super(alias);
             _namespace = namespace;
         }
 

@@ -29,7 +29,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
  * @created Mar 17, 2009
  */
 
-public class FormRedirection implements AuthRedirection
+public final class FormRedirection implements AuthRedirection
 {
     
     public static final String DEFAULT_TITLE = System.getProperty("fr.title","");
