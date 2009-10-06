@@ -36,7 +36,7 @@ public final class DiffieHellman
     
     private final BigInteger _base;
     
-    private DiffieHellman(BigInteger base)
+    public DiffieHellman(BigInteger base)
     {
         _base = base;
     }
