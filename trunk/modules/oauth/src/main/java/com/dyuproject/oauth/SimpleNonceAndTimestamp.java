@@ -27,6 +27,11 @@ public final class SimpleNonceAndTimestamp implements NonceAndTimestamp
 {
     
     public static final SimpleNonceAndTimestamp DEFAULT = new SimpleNonceAndTimestamp();
+    
+    public SimpleNonceAndTimestamp getDefault()
+    {
+        return DEFAULT;
+    }
 
     public void put(UrlEncodedParameterMap params, String consumerKey)
     {

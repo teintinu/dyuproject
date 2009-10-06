@@ -33,6 +33,11 @@ public final class HttpPostTransport extends Transport
     
     public static final HttpPostTransport DEFAULT = new HttpPostTransport();
     
+    public static HttpPostTransport getDefault()
+    {
+        return DEFAULT;
+    }
+    
     public String getName()
     {
         return HttpConnector.POST;

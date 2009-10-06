@@ -31,6 +31,11 @@ public class DefaultResolver extends ResolverCollection
     
     public static DefaultResolver DEFAULT = new DefaultResolver();
     
+    public static DefaultResolver getDefault()
+    {
+        return DEFAULT;
+    }
+    
     public static void putDefaultResolvers(Map<String,Resolver> resolvers)
     {
         resolvers.put(FileResolver.DEFAULT.getType(), FileResolver.DEFAULT);
