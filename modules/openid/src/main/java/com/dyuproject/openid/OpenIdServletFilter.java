@@ -79,7 +79,7 @@ public class OpenIdServletFilter implements Filter
         {
             try
             {
-                _forwardHandler = (ForwardUriHandler)ClassLoaderUtil.newInstance(
+                _forwardHandler = ClassLoaderUtil.newInstance(
                         forwardUriHandlerParam, OpenIdServletFilter.class);
             }
             catch (Exception e)
