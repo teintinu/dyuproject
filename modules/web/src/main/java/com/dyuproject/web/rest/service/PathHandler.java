@@ -57,7 +57,6 @@ public final class PathHandler extends AbstractLifeCycle
     private final Map<String,Resource> _resources = new HashMap<String,Resource>(3);
     
     // /path/   /path/* and  /path/**
-
     private final Interceptor[] _mappedInterceptors = new Interceptor[3];
     
     private Interceptor _interceptor;
@@ -106,7 +105,10 @@ public final class PathHandler extends AbstractLifeCycle
         if(_interceptor!=null)
             _interceptor.init(getWebContext());
         
-        
+        // clear configured interceptors
+        _mappedInterceptors[2] = null;
+        _mappedInterceptors[1] = null;
+        _mappedInterceptors[0] = null;
     }
     
     protected void destroy()
@@ -125,8 +127,6 @@ public final class PathHandler extends AbstractLifeCycle
         _parent = null;
         _parameterHandler = null;
         _interceptor = null;
-        for(int i=0; i<_mappedInterceptors.length; i++)
-            _mappedInterceptors[i]=null;
     }
     
     static void loadInterceptors(PathHandler toConfigure, PathHandler pathHandler)
