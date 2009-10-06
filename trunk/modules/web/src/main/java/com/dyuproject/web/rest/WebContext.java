@@ -169,7 +169,7 @@ public abstract class WebContext
                 log.info("loaded: " + DEFAULT_MIME_LOCATION);
             }
             else
-                log.warn("no mime.properties found");
+                log.info("no mime.properties found ... request uris trailing with .* will be handled by the default servlet");
         }
         catch(Exception e)
         {                
