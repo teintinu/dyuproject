@@ -29,7 +29,7 @@ import com.dyuproject.util.xml.XMLParser;
  * @created Sep 15, 2008
  */
 
-public class HtmlBasedDiscovery implements Discovery
+public final class HtmlBasedDiscovery implements Discovery
 {
     
     static final String CHECKED_PREFIX = "openid";

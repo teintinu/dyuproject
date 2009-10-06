@@ -23,7 +23,7 @@ import java.math.BigInteger;
  * @created Sep 8, 2008
  */
 
-public abstract class Constants
+public final class Constants
 {
     
     public static final String DEFAULT_ENCODING = "UTF-8";

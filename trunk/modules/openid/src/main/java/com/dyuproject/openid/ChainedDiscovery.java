@@ -14,7 +14,6 @@
 
 package com.dyuproject.openid;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -27,30 +26,30 @@ import java.util.List;
 public class ChainedDiscovery implements Discovery
 {
     
-    private final List<Discovery> _chained = new ArrayList<Discovery>();
+    private final Discovery[] _chained;
     
-    public ChainedDiscovery add(Discovery discovery)
+    public ChainedDiscovery(Discovery[] discoveries)
     {
-        _chained.add(discovery);
-        return this;
+        _chained = discoveries;
     }
     
-    public ChainedDiscovery set(List<Discovery> chained)
-    {
-        _chained.addAll(chained);
-        return this;
+    public ChainedDiscovery(List<Discovery> discoveries)
+    {        
+        this(discoveries.toArray(new Discovery[discoveries.size()]));
     }
 
-    public OpenIdUser discover(Identifier identifier, OpenIdContext context)
+    public final OpenIdUser discover(Identifier identifier, OpenIdContext context)
             throws Exception
     {
-        OpenIdUser user = null;
-        for(Discovery d : _chained)
+        // cache to local copy
+        Discovery[] chained = _chained;
+        for(int i=0,len=chained.length; i<len; i++)
         {
-            if((user=d.discover(identifier, context))!=null)
-                break;
+            OpenIdUser user = chained[i].discover(identifier, context);
+            if(user!=null)
+                return user;
         }
-        return user;
+        return null;
     }
 
 }

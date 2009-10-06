@@ -26,42 +26,43 @@ import com.dyuproject.util.http.SimpleHttpConnector;
 public class HtmlBasedDiscoveryTest extends TestCase
 {
     
+    static final OpenIdContext CONTEXT_HTML_BASED = newContext(new HtmlBasedDiscovery());
+    static final OpenIdContext CONTEXT_REGEX_HTML_BASED = newContext(new RegexHtmlBasedDiscovery());
+    
+    static OpenIdContext newContext(Discovery discovery)
+    {
+       return new OpenIdContext(discovery, 
+                new DiffieHellmanAssociation(), SimpleHttpConnector.getDefault());
+    }
+    
     public void testDiscovery1() throws Exception
     {
-        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://davidyu.myopenid.com");
+        doDiscovery(CONTEXT_HTML_BASED, "http://davidyu.myopenid.com");
     }
     
     public void testDiscovery2() throws Exception
     {
-        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://techmusicbox.blogspot.com");
+        doDiscovery(CONTEXT_HTML_BASED, "http://techmusicbox.blogspot.com");
     }
     
     public void testDiscovery3() throws Exception
     {
-        doDiscovery(newContext(new HtmlBasedDiscovery()), "http://ct15.wordpress.com");
+        doDiscovery(CONTEXT_HTML_BASED, "http://ct15.wordpress.com");
     }
     
     public void testRegexDiscovery1() throws Exception
     {
-        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://davidyu.myopenid.com");
+        doDiscovery(CONTEXT_REGEX_HTML_BASED, "http://davidyu.myopenid.com");
     }
     
     public void testRegexDiscovery2() throws Exception
     {
-        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://techmusicbox.blogspot.com");
+        doDiscovery(CONTEXT_REGEX_HTML_BASED, "http://techmusicbox.blogspot.com");
     }
     
     public void testRegexDiscovery3() throws Exception
     {
-        doDiscovery(newContext(new RegexHtmlBasedDiscovery()), "http://ct15.wordpress.com");
-    }
-    
-    static OpenIdContext newContext(Discovery discovery)
-    {
-        OpenIdContext context = new OpenIdContext();
-        context.setHttpConnector(new SimpleHttpConnector());
-        context.setDiscovery(discovery);
-        return context;
+        doDiscovery(CONTEXT_REGEX_HTML_BASED, "http://ct15.wordpress.com");
     }
     
     static void doDiscovery(OpenIdContext context, String url) throws Exception

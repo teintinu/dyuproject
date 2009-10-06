@@ -42,10 +42,10 @@ public interface Extension extends RelyingParty.Listener
         public String getAlias();
         
         public void put(OpenIdUser user, HttpServletRequest request,
-                UrlEncodedParameterMap params, String alias);
+                UrlEncodedParameterMap params, String extensionAlias);
         
         public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
-                Map<String,String> attributes, String alias);
+                Map<String,String> attributes, String extensionAlias);
         
     }
 

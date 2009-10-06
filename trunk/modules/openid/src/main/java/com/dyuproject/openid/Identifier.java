@@ -25,7 +25,7 @@ import com.dyuproject.util.validate.IPDomainValidator;
  * @created Jan 10, 2009
  */
 @SuppressWarnings("serial")
-public class Identifier implements Serializable
+public final class Identifier implements Serializable
 {
     
     public static final String CHECKED_PREFIX = "http";

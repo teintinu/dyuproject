@@ -23,20 +23,15 @@ import com.dyuproject.util.http.HttpConnector;
  * @created Sep 8, 2008
  */
 
-public class OpenIdContext
-{    
+public final class OpenIdContext
+{
     
     public static final String OPENID_NS = "http://specs.openid.net/auth/2.0";
 
-    private Association _association;
-    private Discovery _discovery;
-    private HttpConnector _httpConnector;
-    
-    public OpenIdContext()
-    {
-        
-    }
-    
+    private final Association _association;
+    private final Discovery _discovery;
+    private final HttpConnector _httpConnector;
+
     public OpenIdContext(Discovery discovery, Association association, HttpConnector httpConnector)
     {
         _discovery = discovery;
@@ -44,29 +39,14 @@ public class OpenIdContext
         _httpConnector = httpConnector;
     }
     
-    public void setAssociation(Association association)
-    {
-        _association = association;
-    }
-    
     public Association getAssociation()
     {
         return _association;
     }
     
-    public void setDiscovery(Discovery discovery)
-    {
-        _discovery = discovery;
-    }
-    
     public Discovery getDiscovery()
     {
         return _discovery;
-    }
-    
-    public void setHttpConnector(HttpConnector httpConnector)
-    {
-        _httpConnector = httpConnector;
     }
     
     public HttpConnector getHttpConnector()

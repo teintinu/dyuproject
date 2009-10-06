@@ -31,7 +31,7 @@ import com.dyuproject.util.validate.IPDomainValidator;
  * @created Jan 11, 2009
  */
 
-public class EmailResolver implements Identifier.Resolver
+public final class EmailResolver implements Identifier.Resolver
 {
     
     public static final String DEFAULT_RESOURCE_LOCATION = "email_resolver.properties";
