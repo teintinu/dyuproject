@@ -47,7 +47,7 @@ public final class RESTServlet extends HttpServlet
                 throw new ServletException("*webContext* is missing from the servlet context's attributes/init-parameter");
             try
             {
-                _webContext = (WebContext)ClassLoaderUtil.newInstance(webContextClass, RESTServlet.class);                
+                _webContext = ClassLoaderUtil.newInstance(webContextClass, RESTServlet.class);                
             }
             catch(Exception e)
             {

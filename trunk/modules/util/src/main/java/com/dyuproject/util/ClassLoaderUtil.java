@@ -61,15 +61,21 @@ public final class ClassLoaderUtil
         return clazz;
     }
     
-    public static Object newInstance(String className, Class<?> context) throws Exception
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(String className, Class<?> context) throws Exception
     {
-        return newInstance(className, context, false);
+        Class<T> clazz = (Class<T>)loadClass(className, context, false);
+        if(clazz==null)
+            throw new Exception(className + " not found in the classpath.");
+        
+        return clazz.newInstance();
     }
     
-    public static Object newInstance(String className, Class<?> context, boolean checkParent) 
+    @SuppressWarnings("unchecked")
+    public static <T> T newInstance(String className, Class<?> context, boolean checkParent) 
     throws Exception
     {
-        Class<?> clazz = loadClass(className, context, checkParent);
+        Class<T> clazz = (Class<T>)loadClass(className, context, checkParent);
         if(clazz==null)
             throw new Exception(className + " not found in the classpath.");
         
