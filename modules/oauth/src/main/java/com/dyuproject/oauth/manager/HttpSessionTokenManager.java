@@ -39,10 +39,10 @@ public final class HttpSessionTokenManager implements TokenManager
         
     }
     
-    public Token getToken(String ck, HttpServletRequest request) throws IOException
+    public Token getToken(String consumerKey, HttpServletRequest request) throws IOException
     {
         HttpSession session = request.getSession(false);
-        return session==null ? null: (Token)session.getAttribute(ck);
+        return session==null ? null: (Token)session.getAttribute(consumerKey);
     }
 
     public boolean invalidate(String consumerKey, HttpServletRequest request,

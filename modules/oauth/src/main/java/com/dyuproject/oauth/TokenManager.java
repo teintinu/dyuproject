@@ -32,7 +32,7 @@ public interface TokenManager
     
     public void init(Properties properties);
     
-    public Token getToken(String ck, HttpServletRequest request)
+    public Token getToken(String consumerKey, HttpServletRequest request)
     throws IOException;
     
     public boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response)
