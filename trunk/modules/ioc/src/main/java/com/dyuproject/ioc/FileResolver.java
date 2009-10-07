@@ -32,7 +32,7 @@ public class FileResolver extends AbstractResolver
     
     public static final FileResolver DEFAULT = new FileResolver();
     
-    public FileResolver getDefault()
+    public static FileResolver getDefault()
     {
         return DEFAULT;
     }
