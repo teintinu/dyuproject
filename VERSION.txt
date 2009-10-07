@@ -15,6 +15,7 @@ dyuproject-1.1-SNAPSHOT
 + web: allow override of the default "/WEB-INF/application.json" location via context init-param "appcontext.resource_location"
 
 + all: improved overall performance of the immutable objects by marking them final.  If extending the components, favor Composition over Inheritance.
++ all: generated serial version UIDs for all Serializable objects - was @SuppressWarnings("serial") tsk tsk.
 
 dyuproject-1.1.5 2009-08-21
 + oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
