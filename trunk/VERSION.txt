@@ -3,14 +3,18 @@ dyuproject-1.1-SNAPSHOT
          This avoids creating a new Token for invalidation.  The Consumer api accepts String or Token for invalidation.
 + oauth: fixed a validation bug when the callback url contains a port
 
++ openid: fixed a security issue/bug that can get exploited by phishing attacks.
 + openid: fixed YadisDiscovery bug where the service type is http://specs.openid.net/auth/2.0/signon
 + openid: fixed Identifier bug when a url contains a port (E.g http://example.com:8080/foo/)
 + openid: fixed duplicate extensions being registered especially on default RelyingParty instance
           Custom listeners should either implement the equals() method or be registered statically against the default RelyingParty instance.
 + openid: fixed duplicate set(OpenIdUser) on request attribute in OpenIdServletFilter
++ openid: improved the AxschemaExtension by caching the axschema keys
 
 + web: make non-public service methods accessible from AnnotatedResourceMethod
 + web: allow override of the default "/WEB-INF/application.json" location via context init-param "appcontext.resource_location"
+
++ all: improved overall performance of the immutable objects by marking them final.  If extending the components, favor Composition over Inheritance.
 
 dyuproject-1.1.5 2009-08-21
 + oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
