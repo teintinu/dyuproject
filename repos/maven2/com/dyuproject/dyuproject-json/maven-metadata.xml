@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?><metadata>
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
   <groupId>com.dyuproject</groupId>
   <artifactId>dyuproject-json</artifactId>
   <version>1.1.2</version>
@@ -8,7 +9,8 @@
       <version>1.1.3</version>
       <version>1.1.4</version>
       <version>1.1.5</version>
+      <version>1.1.6</version>
     </versions>
-    <lastUpdated>20090821060641</lastUpdated>
+    <lastUpdated>20091007191636</lastUpdated>
   </versioning>
 </metadata>
