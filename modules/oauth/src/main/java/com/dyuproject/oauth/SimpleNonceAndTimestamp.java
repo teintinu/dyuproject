@@ -28,7 +28,7 @@ public final class SimpleNonceAndTimestamp implements NonceAndTimestamp
     
     public static final SimpleNonceAndTimestamp DEFAULT = new SimpleNonceAndTimestamp();
     
-    public SimpleNonceAndTimestamp getDefault()
+    public static SimpleNonceAndTimestamp getDefault()
     {
         return DEFAULT;
     }
