@@ -168,7 +168,7 @@ public final class CookieBasedTokenManager implements TokenManager
         }
     }
     
-    public Token getToken(String ck, HttpServletRequest request) 
+    public Token getToken(String consumerKey, HttpServletRequest request) 
     throws IOException
     {
         Cookie[] cookies = request.getCookies();
@@ -177,7 +177,7 @@ public final class CookieBasedTokenManager implements TokenManager
         
         for(Cookie c : cookies)
         {
-            if(ck.equals(c.getName()))
+            if(consumerKey.equals(c.getName()))
                 return getToken(c);
         }        
         return null;
