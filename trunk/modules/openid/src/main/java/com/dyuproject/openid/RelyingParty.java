@@ -449,7 +449,18 @@ public final class RelyingParty
                     return user;
                 }
                 if((id=request.getParameter(_identifierParameter))==null)
-                    return (user.isAssociated() && !_automaticRedirect) || isAuthCancel(request) ? null : user;
+                {                    
+                    if(user.isAssociated())
+                    {
+                        String mode = request.getParameter(Constants.OPENID_MODE);
+                        if(mode==null)
+                            return _automaticRedirect ? user : null;
+                        
+                        return Constants.Mode.CANCEL.equals(mode) ? null : user;
+                    }
+                            
+                    return user;
+                }
                 else if((id=id.trim()).length()!=0)
                 {
                     Identifier identifier = Identifier.getIdentifier(id, _resolver, _context);

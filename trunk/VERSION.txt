@@ -6,6 +6,7 @@ dyuproject-1.1-SNAPSHOT
 + openid: fixed a security issue/bug that can get exploited by phishing attacks.
 + openid: fixed YadisDiscovery bug where the service type is http://specs.openid.net/auth/2.0/signon
 + openid: fixed Identifier bug when a url contains a port (E.g http://example.com:8080/foo/)
++ openid: fixed a bug that prevents the user from authenticating when the automatic_redirect flag is false
 + openid: fixed duplicate extensions being registered especially on default RelyingParty instance
           Custom listeners should either implement the equals() method or be registered statically against the default RelyingParty instance.
 + openid: fixed duplicate set(OpenIdUser) on request attribute in OpenIdServletFilter
