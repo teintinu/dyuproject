@@ -186,12 +186,12 @@ public final class RelyingParty
         
         // http connector
         String httpConnectorParam = properties.getProperty("openid.httpconnector");
-        HttpConnector httpConnector = httpConnectorParam==null ? SimpleHttpConnector.getDefault() : 
+        HttpConnector httpConnector = httpConnectorParam==null ? new SimpleHttpConnector() : 
             (HttpConnector)newObjectInstance(httpConnectorParam);       
         
         // user manager
-        String managerParam = properties.getProperty("openid.user.manager");            
-        OpenIdUserManager manager = managerParam == null ? HttpSessionUserManager.getDefault() :
+        String managerParam = properties.getProperty("openid.user.manager");
+        OpenIdUserManager manager = managerParam == null ? new HttpSessionUserManager() :
             (OpenIdUserManager)newObjectInstance(managerParam);        
         manager.init(properties);
         

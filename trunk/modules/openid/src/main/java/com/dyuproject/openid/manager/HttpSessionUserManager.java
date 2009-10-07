@@ -34,13 +34,6 @@ import com.dyuproject.openid.OpenIdUserManager;
 public final class HttpSessionUserManager implements OpenIdUserManager
 {
     
-    private static final HttpSessionUserManager __default = new HttpSessionUserManager();
-    
-    public static HttpSessionUserManager getDefault()
-    {
-        return __default;
-    }
-    
     public void init(Properties properties)
     {
         
