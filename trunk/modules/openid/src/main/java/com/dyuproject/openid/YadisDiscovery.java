@@ -30,7 +30,7 @@ import com.dyuproject.util.xml.XMLParser;
  * @created Sep 25, 2008
  */
 
-public class YadisDiscovery implements Discovery
+public final class YadisDiscovery implements Discovery
 {
     public static final String IDENTIFIER_SELECT = "http://specs.openid.net/auth/2.0/identifier_select";
     static final String XRDS_CONTENT_TYPE = "application/xrds+xml";
@@ -116,7 +116,7 @@ public class YadisDiscovery implements Discovery
                     IDENTIFIER_SELECT, handler._openIdServer, null);
     }    
     
-    static class XmlHandler implements LazyHandler
+    static final class XmlHandler implements LazyHandler
     {
         
         private int _stack = 0;
