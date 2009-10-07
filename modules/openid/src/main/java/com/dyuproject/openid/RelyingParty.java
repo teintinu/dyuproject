@@ -373,6 +373,12 @@ public final class RelyingParty
         this(context, manager, DEFAULT_AUTOMATIC_REDIRECT);
     }
     
+    public RelyingParty(OpenIdUserManager manager, UserCache userCache)
+    {
+        this(new OpenIdContext(new DefaultDiscovery(), new DiffieHellmanAssociation(), 
+                new SimpleHttpConnector()), manager, DEFAULT_AUTOMATIC_REDIRECT);
+    }
+    
     public RelyingParty(OpenIdContext context, OpenIdUserManager manager, boolean automaticRedirect)
     {
         this(context, manager, new IdentifierSelectUserCache(), automaticRedirect);
