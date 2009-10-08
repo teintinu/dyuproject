@@ -1,5 +1,5 @@
 #labels openid,relyingparty,consumer,configuration,usage,setup
-openid relying party howto
+openid relying party configuration
 
 See the [QuickStartOpenid Quick Start Guide], [OpenIdServletFilter] and [SampleOpenIdServlet].
 
@@ -7,147 +7,98 @@ For extensions, see [OpenIdAttributeExchange] and [OpenIdSimpleRegistration]
 
 ----
 
-= dyuproject-1.1.1(+) configuration  =
-
 ===_openid.properties_===
-This will be used by {{{RelyingParty.getInstance();}}} if its available in the classpath.
-
-If you're using maven2, you could put this in src/main/resources.
 {{{
 #defaults (No extra configuration)
-#openid.identifier.parameter = openid_identifier
-#openid.discovery = com.dyuproject.openid.DefaultDiscovery
-#openid.assocation = com.dyuproject.openid.DiffieHellmanAssociation
-#openid.httpconnector = com.dyuproject.openid.SimpleHttpConnector
-#openid.user.manager = com.dyuproject.openid.manager.HttpSessionUserManager
-}}}
-{{{
-#optional (comma-or-semicolon-separated values)
-#openid.relyingparty.listeners = com.dyuproject.openid.ext.SRegConfigListener
-#openid.identifier.resolvers = com.dyuproject.openid.ext.EmailResolver
-}}}
-{{{
-#if this is used:
-#openid.user.manager = com.dyuproject.openid.manager.CookieBasedUserManager
-}}}
-{{{
-#then these are required:
-#openid.user.manager.cookie.name = openidservlet1
-#openid.user.manager.cookie.security.secret_key = secret
-}}}
-{{{
-#and these are optional:
-#openid.user.manager.cookie.path = /
-#openid.user.manager.cookie.domain = http://www.example.com
-#openid.user.manager.cookie.security_type = md5Signed (default: encrypted)
-#openid.user.manager.cookie.max_age = 900 (default: 600 seconds) 
-#openid.user.manager.cookie.login_timeout = 90 (default: 60 seconds)
+openid.identifier.parameter = openid_identifier
+openid.discovery = com.dyuproject.openid.DefaultDiscovery
+openid.assocation = com.dyuproject.openid.DiffieHellmanAssociation
+openid.httpconnector = com.dyuproject.openid.SimpleHttpConnector
+openid.authredirection = com.dyuproject.openid.SimpleRedirection
+openid.user.manager = com.dyuproject.openid.manager.HttpSessionUserManager
 
+# when the user is redirected to his provider and he somehow navigates away from his
+# provider and returns to your site ... the relying party will do an automatic redirect
+# back to his provider for authentication
+openid.automatic_redirect = true
+
+# if identifier_select.properties is found in classpath, it will be loaded to the cache
+# this is especially usefull for google, yahoo where there is a generic id.
+# this cache bypasses the discovery w/c will make the openid process faster.
+openid.user.cache = com.dyuproject.openid.IdentifierSelectUserCache
 }}}
 
-This could be done programmatically as well:
+=If you are working directly with the {{{RelyingParty}}} api=
+You would write your servlet/filter to something like this:
 
 {{{
-Properties props = new Properties();
-// set your custom properties...
-RelyingParty relyingParty = RelyingParty.newInstance(props);
-}}}
-
-===_usage_===
-The best way to use the api is through providing a custom *{{{RelyingParty.Listener}}}*
-and using the [OpenIdServletFilter] (can be easily subclassed if needed)
-
-{{{
-    RelyingParty _relyingParty = RelyingParty.getInstance();
+    final RelyingParty _relyingParty = RelyingParty.getInstance();
     
-    public void init()
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException
     {
-        // custom listener
-        _relyingParty.addListener(new RelyingParty.Listener()
-        {
-            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
+        doPost(request, response);
+    }
+    
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException
+    {
+            OpenIdUser user = _relyingParty.discover(request);
+            if(user==null)
+            {                
+                if(RelyingParty.isAuthResponse(request))
+                {
+                    // authentication timeout                    
+                    response.sendRedirect(request.getRequestURI());
+                }
+                else
+                {
+                    // set error msg if the openid_identifier is not resolved.
+                    if(request.getParameter(_relyingParty.getIdentifierParameter())!=null)
+                        request.setAttribute(OpenIdServletFilter.ERROR_MSG_ATTR, errorMsg);
+                    
+                    // new user
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
+                }
+                return;
+            }
+            
+            if(user.isAuthenticated())
             {
-                System.err.println("discovered user: " + user.getClaimedId());
-            }            
-            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
-                    UrlEncodedParameterMap params)
+                // user already authenticated
+                request.getRequestDispatcher("/home.jsp").forward(request, response);
+                return;
+            }
+            
+            if(user.isAssociated() && RelyingParty.isAuthResponse(request))
             {
-                System.err.println("pre-authenticate user: " + user.getClaimedId());
-            }            
-            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
+                // verify authentication
+                if(_relyingParty.verifyAuth(user, request, response))
+                {
+                    // authenticated                    
+                    // redirect to home to remove the query params instead of doing:
+                    // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
+                    response.sendRedirect(request.getContextPath() + "/home/");
+                }
+                else
+                {
+                    // failed verification
+                    request.getRequestDispatcher("/login.jsp").forward(request, response);
+                }
+                return;
+            }
+            
+            // associate and authenticate user
+            StringBuffer url = request.getRequestURL();
+            String trustRoot = url.substring(0, url.indexOf("/", 9));
+            String realm = url.substring(0, url.lastIndexOf("/"));
+            String returnTo = url.toString();            
+            if(_relyingParty.associateAndAuthenticate(user, request, response, trustRoot, realm, 
+                    returnTo))
             {
-
-                System.err.println("newly authenticated user: " + user.getIdentity());
-            }            
-            public void onAccess(OpenIdUser user, HttpServletRequest request)
-            {        
-                System.err.println("user access: " + user.getIdentity());
-            }            
-        });
+                // successful association
+                return;
+            }   
     }
 
-}}}
-
-----
-
-=dyuproject-1.0.x configuration=
-
-===_openid.properties_===
-{{{
-#required
-
-openid.cookie.name=your_app_name
-openid.cookie.security.secretKey=your_secret_key
-
-#optional
-
-openid.cookie.path=/
-
-#openid.parameter=some_parameter
-#default value is "openid_identifier"
-
-
-
-#openid.cookie.domain=http://www.example.com
-
-#openid.coookie.security.type=md5Signed
-#default type is "encrypted"
-
-#openid.coodie.maxAge=600
-#maxAge in seconds, default to 600(10 mins)
-}}}
-
-
-===_usage_===
-{{{
-RelyingParty _relyingParty = RelyingParty.getInstance();
-}}}
-
-{{{
-OpenIdUser user = _relyingParty.discover(request);
-}}}
-
-{{{
-if(_relyingParty.associate(user, request, response))
-{
-    // authenticate user to his/her openid provider
-    StringBuffer url = request.getRequestURL();
-    String trustRoot = url.substring(0, url.indexOf("/", 9));
-    String realm = url.substring(0, url.lastIndexOf("/"));
-    String returnTo = url.toString();
-    response.sendRedirect(RelyingParty.getAuthUrlString(user, trustRoot, realm, 
-        returnTo)); 
-}
-}}}
-
-{{{
-if(user.isAssociated() && RelyingParty.isAuthResponse(request))
-{
-    // verify authentication
-    if(_relyingParty.verifyAuth(user, request, response))
-    {
-        // authenticated
-        response.sendRedirect("/home/");
-    }
-}
 }}}
