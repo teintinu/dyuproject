@@ -1,5 +1,5 @@
 #labels REST,configuration,services,resources,interceptors,web.xml,ioc
-*dyuproject.1.1.x configuration:*
+*REST Configuration*
 
 For a sample REST service, see [HelloWorldService]
 
@@ -78,14 +78,6 @@ WEB-INF/application.json
   "webContext":
   {
     "class": "com.dyuproject.web.rest.service.RESTServiceContext",
-    "viewDispatchers":
-    {
-      "json":
-      {
-        "class": "com.dyuproject.web.rest.JSONDispatcher",
-        "addClass": false
-      }
-    },
     "interceptors":
     {
       "/overview": $loginInterceptor,
@@ -208,135 +200,19 @@ json=text/plain
 
 }}}
 
-----
 
-*Configuration for dyuproject.1.0.x (Controllers are deprecated since 1.1.x)*
 
-You can find a sample controller [HelloWorldController here].
-
-*_web.xml_*
-
+=={{{MainService.java}}}==
 {{{
-
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<web-app 
-   xmlns="http://java.sun.com/xml/ns/javaee" 
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
-   version="2.5" metadata-complete="true">
-   
-    <servlet>
-        <servlet-name>rest</servlet-name>
-        <servlet-class>com.dyuproject.web.mvc.RESTfulMVCServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>        
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>rest</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping>
-
+public class MainService
+{
+    @HttpResource(location="/")
+    @Get
+    public void root(RequestContext rc) throws IOException, ServletException
+    {
+        rc.getResponse().setContentType("text/html");
+        getWebContext().getJSPDispatcher().dispatch("index.jsp", rc.getRequest(), rc.getResponse());
+    }
     
-</web-app>
-
-}}}
-
-*_2 ways to setup the controllers_*
-
-*1.* Through the servlet's init-param:
-
-{{{
-	<servlet>
-		<servlet-name>rest</servlet-name>
-		<servlet-class>com.dyuproject.web.mvc.RESTfulMVCServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
-		<init-param>
-		  <param-name>defaultController</param-name>
-		  <param-value>com.acme.MyDefaultController</param-value>
-		</init-param>
-		<!-- separated by comma or semi colon -->
-		<init-param>
-		  <param-name>controllers</param-name>
-		  <param-value>
-                       com.acme.HelloWorldController,
-                       com.acme.FooController,
-                       com.acme.BarController
-                  </param-value>
-		</init-param>		
-	</servlet>
-
-}}}
-
-*2.* Through Spring IOC
-
-{{{
-
-    <dependency>
-        <groupId>com.dyuproject.ext</groupId>
-        <artifactId>dyuproject-spring-ioc</artifactId>
-        <version>1.0.5</version>
-    </dependency>  
-
-}}}
-
-WEB-INF/web.xml
-{{{
-
-    <listener>
-      <listener-class>com.dyuproject.web.mvc.SpringServletContextListener</listener-class>
-    </listener>
-
-   <servlet>
-        <servlet-name>rest</servlet-name>
-        <servlet-class>com.dyuproject.web.mvc.RESTfulMVCServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>        
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>rest</servlet-name>
-        <url-pattern>/*</url-pattern>
-    </servlet-mapping> 
-
-}}}
-
-
-WEB-INF/webContext.xml
-
-{{{
-
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
-
-
-<beans>  
-  <bean id="authFilter" class="com.acme.AuthFilter"/>
-  
-  <!-- note that the id must be "webContext" -->
-  <bean id="webContext" class="com.dyuproject.web.mvc.WebContext">
-    
-    <property name="defaultController">
-      <bean class="com.acme.MyDefaultController">
-        <property name="filter" ref="authFilter"/>
-      </bean>    
-    </property>
-    
-    <property name="controllers">    
-      <list>
-        <bean class="com.acme.HelloWorldController"/>
-        
-        <bean class="com.acme.FooController">
-          <property name="filter" ref="authFilter"/>
-        </bean>
-        
-        <bean class="com.acme.BarController">
-          <property name="filter" ref="authFilter"/>
-        </bean>
-        
-      </list>
-    </property>
-  
-  </bean>
-
-</beans>
-
+}
 }}}
