@@ -1,8 +1,6 @@
 #labels openid,servlet,filter,out-of-the-box
 A servlet filter that fits your needs out-of-the-box.
 
-=dyuproject-1.1.1(+)=
-
 {{{
   <filter>
     <filter-name>openid-filter</filter-name>
