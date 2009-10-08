@@ -76,8 +76,8 @@ To combine it with your own cache, you can do:
 public class MyCustomCache implements Discovery.UserCache
 {
     
-    private StandardJSON _json = new StandardJSON();
-    private Discovery.UserCache _wrapped;
+    private final StandardJSON _json = new StandardJSON();
+    private final Discovery.UserCache _wrapped;
     
     public MyCustomCache(Discovery.UserCache cache)
     {
@@ -109,7 +109,6 @@ public class MyCustomCache implements Discovery.UserCache
 
 Then configure the RelyingParty via:
 {{{
-RelyingParty rp = RelyingParty.getInstance();
-rp.setUserCache(new MyCustomCache(rp.getUserCache());
+RelyingParty rp = new RelyingParty(new HttpSessionUserManager(), new MyCustomCache(new IdentifierSelectUserCache());
 }}}
  
