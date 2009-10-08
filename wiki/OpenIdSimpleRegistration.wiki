@@ -5,126 +5,27 @@ Simple Registration Extension
 
 See [http://openid.net/specs/openid-simple-registration-extension-1_1-01.html]
 
-==dyuproject-1.1.4(+)==
-
 {{{
-
-    RelyingParty _relyingParty = RelyingParty.getInstance()
+    static
+    {
+        RelyingParty.getInstance()
         .addListener(new SRegExtension()
             .addExchange("email")
             .addExchange("country")
             .addExchange("language")
         )
-        .addListener(new RelyingParty.Listener()
-        {         
-            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
-            {
-                System.err.println("newly authenticated user: " + user.getIdentity());
-                Map<String,String> sreg = SRegExtension.get(user);
-                f(sreg!=null && !sreg.isEmpty())
-                {                    
-                    System.err.println("sreg: " + sreg);
-                    System.err.println(sreg.get("email") + " | " + sreg.get("country") + " | " + sreg.get("language"));
-                }          
-            }            
-            public void onAccess(OpenIdUser user, HttpServletRequest request)
-            {        
-            }   
-            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
-            {
-            }            
-            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
-                    UrlEncodedParameterMap params)
-            {
-            }  
-        });
-
-}}}
-
-==dyuproject-1.1.1(+)==
-
-{{{
-        RelyingParty _relyingParty = RelyingParty.getInstance();
-        _relyingParty.addListener(new SRegConfigListener());
-
-}}}
-
-{{{
-        // finally, you could add a custom RelyingParty.Listener
-
-        _relyingParty.addListener(new RelyingParty.Listener()
-        {
-            public void onDiscovery(OpenIdUser user, HttpServletRequest request)
-            {                
-            }            
-            public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
-                    UrlEncodedParameterMap params)
-            {                
-            }            
-            public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
-            {
-                SReg sreg = SReg.get(user);
-                if(sreg!=null)
-                    System.err.println("email: " + sreg.getEmail());             
-            }            
-            public void onAccess(OpenIdUser user, HttpServletRequest request)
-            {
-            }            
-        });
-}}}
-
-----
-==dyuproject-1.0.x==
-
-It is a matter of adding the extra parameters(encoded):
-{{{
-openid.ns.sreg = http://openid.net/extensions/sreg/1.1
-openid.sreg.optional = nickname,email,fullname,dob,gender,postcode,country,language,timezone
-}}}
-
-
-A snippet from [SampleOpenIdServlet] but with sreg enabled:
-{{{
-            if(user.isAssociated() && RelyingParty.isAuthResponse(request))
-            {
-                // verify authentication
-                if(_relyingParty.verifyAuth(user, request, response))
-                {
-                    // authenticated                    
-                    // redirect to home to remove the query params instead of doing:
-                    // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
-                    System.err.println(request.getParameter("openid.sreg.nickname"));
-                    System.err.println(request.getParameter("openid.sreg.email"));
-                    System.err.println(request.getParameter("openid.sreg.fullname"));
-                    System.err.println(request.getParameter("openid.sreg.dob"));
-                    System.err.println(request.getParameter("openid.sreg.gender"));
-                    System.err.println(request.getParameter("openid.sreg.postcode"));
-                    System.err.println(request.getParameter("openid.sreg.country"));
-                    System.err.println(request.getParameter("openid.sreg.language"));
-                    System.err.println(request.getParameter("openid.sreg.timezone"));
-                    response.sendRedirect("/home/");
-                }
-                else
-                {
-                    // failed verification ... re-authenticate
-                    request.getRequestDispatcher("/login.jsp").forward(request, response);
-                }
-                return;
-            }
-            
-            // associate user
-            if(_relyingParty.associate(user, request, response))
-            {
-                // authenticate user to his/her openid provider
-                StringBuffer url = request.getRequestURL();
-                String trustRoot = url.substring(0, url.indexOf("/", 9));
-                String realm = url.substring(0, url.lastIndexOf("/"));
-                String returnTo = url.toString();
-                StringBuilder authUrl = RelyingParty.getAuthUrlBuffer(user, trustRoot, realm, returnTo);
-                authUrl.append('&').append("openid.ns.sreg").append('=');
-                authUrl.append(UrlEncodedParameterMap.encode("http://openid.net/extensions/sreg/1.1"));
-                authUrl.append('&').append("openid.sreg.optional").append('=');
-                authUrl.append(UrlEncodedParameterMap.encode("nickname,email,fullname,dob,gender,postcode,country,language,timezone"));
-                response.sendRedirect(authUrl.toString());
-            }
+    }
+    
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException
+    {
+        // we assume that the request has been successfully handled by the OpenIdServletFilter
+        OpenIdUser user = (OpenIdUser)request.getAttribute(OpenIdUser.ATTR_NAME);
+        Map<String,String> sreg= SRegExtension.get(user);
+        String email = sreg.get("email");
+        String country = sreg.get("country");
+        String language = sreg.get("language");
+        
+        // do something with your user's data
+    }
 }}}
