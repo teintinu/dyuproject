@@ -1,8 +1,6 @@
 #labels openid,relyingparty,quickstart,guide
 ={{{Openid RelyingParty QuickStart Guide}}}=
 
-=== dyuproject-1.1.1(+)===
-
 Let us learn by example ... this will help you create/deploy asap.
 For extensions, see [OpenIdAttributeExchange] and [OpenIdSimpleRegistration]
 
@@ -15,10 +13,6 @@ For extensions, see [OpenIdAttributeExchange] and [OpenIdSimpleRegistration]
    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
    version="2.5" metadata-complete="true">
-   
-  <listener>
-    <listener-class>com.example.openid.MyContextListener</listener-class>
-  </listener>
   
   <filter>
     <filter-name>openid-filter</filter-name>
@@ -28,84 +22,53 @@ For extensions, see [OpenIdAttributeExchange] and [OpenIdSimpleRegistration]
         <param-name>forwardUri</param-name>
         <param-value>/WEB-INF/views/jsp/login.jsp</param-value> <!-- login page when user is not authenticated-->
       </init-param>
-  </filter>
-
+  </filter> 
 
   <filter-mapping>
     <filter-name>openid-filter</filter-name>
     <url-pattern>/account/*</url-pattern>
-  </filter-mapping>  
+  </filter-mapping>
+
+  <servlet>
+    <servlet-name>home-servlet</servlet-name>
+    <servlet-class>com.example.openid.HomeServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>home-servlet</servlet-name>
+    <url-pattern>/account/home/</url-pattern>
+  </servlet-mapping>
     
 </web-app>
 }}}
 
-*The listener that would contain your application logic:*
+==={{{HomeServlet.java}}}===
 
 {{{
-package com.example.openid;
-
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.http.HttpServletRequest;
-
-import com.dyuproject.openid.OpenIdUser;
-import com.dyuproject.openid.RelyingParty;
-import com.dyuproject.openid.UrlEncodedParameterMap;
-import com.dyuproject.openid.ext.SReg;
-import com.dyuproject.openid.ext.SRegConfigListener;
-
-/**
- * @author David Yu
- * @created Jan 8, 2009
- */
-
-public class MyContextListener implements ServletContextListener, RelyingParty.Listener
+public class HomeServlet extends HttpServlet
 {
-    
-    private RelyingParty _relyingParty;
-
-    public void contextDestroyed(ServletContextEvent event)
-    {        
-        
-    }
-
-    public void contextInitialized(ServletContextEvent event)
+    static
     {
-        // use default. See the http://code.google.com/p/dyuproject/wiki/openid for more info.
-        _relyingParty = RelyingParty.getInstance();
-        
-        // listen to the authentication events
-        _relyingParty.addListener(this);
-        
-        // this relying party will be used by OpenIdServletFilter
-        event.getServletContext().setAttribute(RelyingParty.class.getName(), _relyingParty);   
+        RelyingParty.getInstance()
+        .addListener(new AxSchemaExtension()
+            .addExchange("email")
+            .addExchange("country")
+            .addExchange("language")
+        )
     }
     
-    public void onDiscovery(OpenIdUser user, HttpServletRequest request)
-    {        
-        System.err.println("discovered user: " + user.getClaimedId());
-    }
-
-    public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request,
-            UrlEncodedParameterMap params)
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+    throws IOException, ServletException
     {
-        System.err.println("pre-authenticate user: " + user.getClaimedId());      
+        OpenIdUser user = (OpenIdUser)request.getAttribute(OpenIdUser.ATTR_NAME);
+        Map<String,String> axschema = AxSchemaExtension.get(user);
+        String email = axschema.get("email");
+        String country = axschema.get("country");
+        String language = axschema.get("language");
+        
+        // do something with your user's data
     }
-    
-    public void onAuthenticate(OpenIdUser user, HttpServletRequest request)
-    {
-        System.err.println("newly authenticated user: " + user.getIdentity());  
-    }
-
-    public void onAccess(OpenIdUser user, HttpServletRequest request)
-    {
-        System.err.print("user access: " + user.getIdentity());
-    }
-
-
-
-
-
 }
 }}}
 
