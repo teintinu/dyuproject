@@ -109,6 +109,6 @@ public class MyCustomCache implements Discovery.UserCache
 
 Then configure the RelyingParty via:
 {{{
-RelyingParty rp = new RelyingParty(new HttpSessionUserManager(), new MyCustomCache(new IdentifierSelectUserCache());
+RelyingParty rp = new RelyingParty(new HttpSessionUserManager(), new MyCustomCache(new IdentifierSelectUserCache()));
 }}}
  
