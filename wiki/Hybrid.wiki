@@ -7,12 +7,12 @@ See [http://step2.googlecode.com/svn/spec/openid_oauth_extension/latest/openid_o
 
 ====A mechanism to combine an OpenID authentication request with the approval of an OAuth request token====
 
-The source code is directly from the example on [http://dyuproject.appspot.com] (dyuproject-1.1.5)
+The source code is directly from the example on [http://dyuproject.appspot.com]
 
 {{{HybridGoogleService.java}}}
 {{{
 
-public class HybridGoogleService extends AbstractService
+public final class HybridGoogleService extends AbstractService
 {
     
     static final String GOOGLE_IDENTIFIER = "https://www.google.com/accounts/o8/id";
@@ -70,6 +70,12 @@ public class HybridGoogleService extends AbstractService
         });
     }
     
+    static void invalidate(HttpServletRequest request, HttpServletResponse response) 
+    throws IOException
+    {
+        RelyingParty.getInstance().getOpenIdUserManager().invalidate(request, response);
+    }
+    
     public static Response fetchToken(TokenExchange exchange, UrlEncodedParameterMap params,
             Endpoint endpoint, Token token) 
     throws IOException
@@ -120,8 +126,9 @@ public class HybridGoogleService extends AbstractService
     @HttpResource(location="/hybrid/google/$")
     @Get
     public void service(RequestContext rc) throws IOException, ServletException
-    {        
-        GoogleModule module = GoogleModule.get(rc.getPathElement(2));
+    {
+        String type = rc.getPathElement(2);
+        GoogleModule module = GoogleModule.get(type);
         if(module==null)
         {
             rc.getResponse().sendRedirect("/hybrid/google");
@@ -129,13 +136,15 @@ public class HybridGoogleService extends AbstractService
         }
         
         OpenIdUser user = RelyingParty.getInstance().getOpenIdUserManager().getUser(rc.getRequest());
-        if(user==null || user.getAttribute("google_scope")==null)
+        if(user==null || !type.equals(user.getAttribute("google_type")))
         {
             // we expect it to be google so skip discovery to speed up the openid process
             user = OpenIdUser.populate(GOOGLE_IDENTIFIER, YadisDiscovery.IDENTIFIER_SELECT, 
                     GOOGLE_OPENID_SERVER);
             user.setAttribute("google_scope", module.getScope());
+            user.setAttribute("google_type", type);
         }
+        
         rc.getRequest().setAttribute(OpenIdUser.ATTR_NAME, user);
         
         if(!_interceptor.preHandle(rc))
@@ -156,6 +165,8 @@ public class HybridGoogleService extends AbstractService
         for(String line=null; (line=br.readLine())!=null;)
             pw.append(line);
     }    
+
 }
+
 
 }}}
