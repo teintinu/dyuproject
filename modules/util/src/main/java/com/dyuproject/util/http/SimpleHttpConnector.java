@@ -502,9 +502,9 @@ public final class SimpleHttpConnector implements HttpConnector
     }
 
     
-    static class HttpURLConnectionWrapper implements Response
+    static final class HttpURLConnectionWrapper implements Response
     {
-        private HttpURLConnection _connection;
+        private final HttpURLConnection _connection;
         
         HttpURLConnectionWrapper(HttpURLConnection connection)
         {
