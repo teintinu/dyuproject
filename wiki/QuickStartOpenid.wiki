@@ -36,7 +36,7 @@ For extensions, see [OpenIdAttributeExchange] and [OpenIdSimpleRegistration]
 
   <servlet-mapping>
     <servlet-name>home-servlet</servlet-name>
-    <url-pattern>/account/home/</url-pattern>
+    <url-pattern>/user/home/</url-pattern>
   </servlet-mapping>
     
 </web-app>
