@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import ${package}.model.Model.User;
+import ${package}.json.ModelJSON;
+
 /**
  * HelloServlet
  * 
@@ -16,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
 @SuppressWarnings("serial")
 public class HelloServlet extends HttpServlet
 {
+
+    final ModelJSON json = new ModelJSON();
     
     public void doGet(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
@@ -27,10 +32,8 @@ public class HelloServlet extends HttpServlet
     throws IOException, ServletException
     {
         response.setContentType("text/json");
-        String message = "hello from ${artifactId} @ " + System.currentTimeMillis();
-        PrintWriter pw = response.getWriter();
-        pw.write("{\"msg\":\"" + message + "\"}");
-        pw.close();
+        User johndoe =  User.newBuilder().setId(1).setEmail("johndoe@email.com").build();
+        json.writeTo(response.getOutputStream(), johndoe);
     }
 
 }
