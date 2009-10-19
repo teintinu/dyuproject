@@ -19,26 +19,17 @@
         <groupId>com.dyuproject.protostuff</groupId>
         <artifactId>protostuff-maven-plugin</artifactId>
         <version>${protostuff.version}</version>
-        <executions>
-          <execution>
-            <id>generate-sources</id>
-            <phase>generate-sources</phase>
-            <configuration>
-              <modules>
-                <module>
-                  <fullClassname>${package}.model.Model</fullClassname>
-                  <outputPackage>${package}.client</outputPackage>
-                  <outputDir>src/main/java</outputDir>
-                  <generator>gwt_json</generator>
-                  <encoding>UTF-8</encoding>
-                </module>
-              </modules>
-            </configuration>
-            <goals>
-              <goal>codegen</goal>
-            </goals>
-          </execution>
-        </executions>
+        <configuration>
+          <modules>
+            <module>
+              <fullClassname>${package}.model.Model</fullClassname>
+              <outputPackage>${package}.client</outputPackage>
+              <outputDir>src/main/java</outputDir>
+              <generator>gwt_json</generator>
+              <encoding>UTF-8</encoding>
+            </module>
+          </modules>
+        </configuration>
         <dependencies>
           <dependency>
             <groupId>${groupId}</groupId>
@@ -46,6 +37,15 @@
             <version>${project.version}</version>
           </dependency>
         </dependencies>
+        <executions>
+          <execution>
+            <id>generate-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>codegen</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.mortbay.jetty</groupId>
