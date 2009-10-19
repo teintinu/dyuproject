@@ -1,0 +1,10 @@
+package ${rootArtifactId};
+
+option optimize_for = LITE_RUNTIME;
+option java_package = "${package}.model";
+option java_outer_classname = "Model";
+
+message User {
+  optional int32 id = 1;
+  optional string email = 2;
+}

@@ -105,7 +105,7 @@
     <jetty.version>6.1.19</jetty.version>
     <protobuf.version>2.2.0</protobuf.version>
     <jackson.version>1.2.1</jackson.version>
-    <protostuff.version>1.0.0</protostuff.version>
+    <protostuff.version>1.0-SNAPSHOT</protostuff.version>
     
     <!--<google.webtoolkit.home>${env.GWT_HOME}</google.webtoolkit.home>-->
     <gwt.version>1.7.1</gwt.version>
