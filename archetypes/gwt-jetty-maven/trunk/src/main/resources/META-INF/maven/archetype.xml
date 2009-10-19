@@ -1,11 +1,7 @@
 <archetype>
   <id>gwt-jetty-maven</id>
-  <!--<sources>
-    <source>modules/server/src/main/java/HelloServlet.java</source>
-    <source>modules/client/src/main/java/Application.java</source>
-    <source>modules/client/src/main/resources/application.gwt.xml</source>
-  </sources>-->
   <resources>
+    <resource>modules/model/src/main/resources/Model.proto</resource>
     <resource>modules/server/src/main/java/HelloServlet.java</resource>
     <resource>modules/client/src/main/java/Application.java</resource>
     <resource>modules/client/src/main/resources/Application.gwt.xml</resource>
