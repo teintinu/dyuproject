@@ -1,20 +1,23 @@
 package ${package}.client;
 
 import com.google.gwt.core.client.EntryPoint;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-
+import com.google.gwt.event.dom.client.KeyPressEvent;
+import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.http.client.Request;
 import com.google.gwt.http.client.RequestBuilder;
 import com.google.gwt.http.client.RequestCallback;
 import com.google.gwt.http.client.RequestException;
 import com.google.gwt.http.client.Response;
-
+import com.google.gwt.json.client.JSONObject;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.VerticalPanel;
 
 
 
@@ -27,24 +30,46 @@ public class Application implements EntryPoint
 {
 
     static final String JSON_URL = "/hello/";
+    
+    private VerticalPanel vp = new VerticalPanel();
 
     public void onModuleLoad()
     {
-        Button button = new Button("Click me", new ClickHandler() {
+        final TextBox tb = new TextBox();
+        tb.setTitle("Enter your username");
+        tb.addKeyPressHandler(new KeyPressHandler() {
+            public void onKeyPress(KeyPressEvent event)
+            {                
+                if(event.getCharCode()==13)
+                {
+                    sendRequest(tb.getText());
+                }
+            }            
+        });
+        Button button = new Button("Send", new ClickHandler() {
             public void onClick(ClickEvent event) 
             {
-                sendRequest();
+                sendRequest(tb.getText());
             }
         });
-        RootPanel.get().add(button);
+        FlowPanel fp = new FlowPanel();
+        fp.add(tb);
+        fp.add(button);
+        
+        vp.setSpacing(5);
+        vp.add(fp);
+        RootPanel.get().add(vp);
     }
     
-    static void sendRequest()
+    void sendRequest(String name)
     {
-        RequestBuilder builder = new RequestBuilder(RequestBuilder.GET, JSON_URL);
+        Greet greet = Greet.create();
+        greet.setName(name);
+        RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, JSON_URL);
         try 
         {
-            Request request = builder.sendRequest(null, new RequestCallback() {
+            builder.setHeader("Content-Type", "application/json");
+            builder.sendRequest(new JSONObject(greet).toString(), new RequestCallback() {
                 public void onError(Request request, Throwable exception) 
                 {
                     displayError("Couldn't retrieve JSON");
@@ -52,7 +77,7 @@ public class Application implements EntryPoint
                 public void onResponseReceived(Request request, Response response) 
                 {
                     if (response.getStatusCode() == 200)
-                        showUser(User.parse(response.getText()));
+                        showGreet(Greet.parse(response.getText()));
                     else
                         displayError("Couldn't retrieve JSON");
                 }
@@ -61,12 +86,12 @@ public class Application implements EntryPoint
         catch (RequestException e) 
         {
             displayError("Couldn't retrieve JSON");
-        } 
+        }
     }
     
-    static void showUser(User user)
+    void showGreet(Greet greet)
     {
-        RootPanel.get().add(new Label(user.getId() + " " + user.getEmail()));
+        vp.add(new Label("Greet #" + greet.getId() + ": " + greet.getMessage()));
     }
     
     static void displayError(String error)
