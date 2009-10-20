@@ -26,6 +26,22 @@
         </fileSet>
       </fileSets>
     </module>
+    <module name="${rootArtifactId}-gwt-model" id="${rootArtifactId}-gwt-model" dir="gwt-model">
+      <fileSets>
+        <fileSet filtered="true" packaged="true" encoding="UTF-8">
+          <directory>src/main/java</directory>
+          <includes>
+            <include>**/*</include>
+          </includes>
+        </fileSet>
+        <fileSet filtered="true" packaged="true" encoding="UTF-8">
+          <directory>src/main/resources</directory>
+          <includes>
+            <include>**/*</include>
+          </includes>
+        </fileSet>
+      </fileSets>
+    </module>
     <module name="${rootArtifactId}-json" id="${rootArtifactId}-json" dir="json">
       <fileSets>
         <fileSet filtered="true" packaged="true" encoding="UTF-8">
@@ -76,7 +92,7 @@
         </fileSet>
       </fileSets>
     </module>
-    <module name="${rootArtifactId}-client" id="${rootArtifactId}-client" dir="client">
+    <module name="${rootArtifactId}-gwt-client" id="${rootArtifactId}-gwt-client" dir="gwt-client">
       <fileSets>
         <fileSet filtered="true" packaged="true" encoding="UTF-8">
           <directory>src/main/java</directory>
