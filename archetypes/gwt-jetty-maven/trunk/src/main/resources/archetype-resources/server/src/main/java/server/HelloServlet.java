@@ -37,6 +37,7 @@ public class HelloServlet extends HttpServlet
             greet.setName("Anonymous");
        
         greet.setId(greetCount.incrementAndGet())
+            .setStatus(Greet.Status.ACKNOWLEDGED)
             .setMessage("Hello " + greet.getName() + " from server @ " + new Date());
         
         json.writeTo(response.getOutputStream(), greet.build());

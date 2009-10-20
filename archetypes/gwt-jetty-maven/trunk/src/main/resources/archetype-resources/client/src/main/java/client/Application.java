@@ -65,6 +65,7 @@ public class Application implements EntryPoint
     {
         Greet greet = Greet.create();
         greet.setName(name);
+        greet.setStatus(Greet.Status.NEW);
         RequestBuilder builder = new RequestBuilder(RequestBuilder.POST, JSON_URL);
         try 
         {
@@ -91,7 +92,7 @@ public class Application implements EntryPoint
     
     void showGreet(Greet greet)
     {
-        vp.add(new Label("Greet #" + greet.getId() + ": " + greet.getMessage()));
+        vp.add(new Label("Greet #" + greet.getId() + ": " + greet.getMessage() + " | " + greet.getStatus().name()));
     }
     
     static void displayError(String error)
