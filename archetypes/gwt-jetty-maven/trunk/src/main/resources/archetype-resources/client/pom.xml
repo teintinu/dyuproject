@@ -54,13 +54,9 @@
         <configuration>
           <webAppConfig>
             <contextPath>/</contextPath>
-            <baseResource implementation="org.mortbay.resource.ResourceCollection">
-              <resourcesAsCSV>${server.module}/src/main/webapp,war</resourcesAsCSV>
-            </baseResource>
             <defaultsDescriptor>src/main/etc/webdefault.xml</defaultsDescriptor>
           </webAppConfig>
           <webAppSourceDirectory>war</webAppSourceDirectory>
-          <classesDirectory>${server.module}/target/classes</classesDirectory>
           <reload>manual</reload>
         </configuration>
       </plugin>
@@ -103,8 +99,9 @@
   <dependencies>
     <dependency>
       <groupId>${groupId}</groupId>
-      <artifactId>${rootArtifactId}-model</artifactId>
+      <artifactId>${rootArtifactId}-server</artifactId>
       <version>${project.version}</version>
+      <type>war</type>
     </dependency>
     <dependency>
       <groupId>com.google.gwt</groupId>
