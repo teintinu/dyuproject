@@ -1,6 +1,6 @@
 ==============================================================
  dyuproject
- Copyright 2007-2009 David Yu dyuproject@gmail.com
+ Copyright 2008-2009 David Yu dyuproject@gmail.com
 ==============================================================
 
 The jetty-util is Copyright Mort Bay Consulting Pty Ltd
