@@ -8,6 +8,7 @@
   <packaging>pom</packaging>
   <name>dyuproject</name>
   <url>http://code.google.com/p/dyuproject</url>
+  <inceptionYear>2008</inceptionYear>
   <developers>
     <developer>
       <id>dyu</id>
