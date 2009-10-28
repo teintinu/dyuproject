@@ -70,7 +70,7 @@ public class HtmlBasedDiscoveryTest extends TestCase
         Identifier identifier = Identifier.getIdentifier(url, null, context);
         OpenIdUser user = context.getDiscovery().discover(identifier, context);
         assertTrue(user!=null && user.getOpenIdServer()!=null);
-        System.err.println(user.getOpenIdServer() + " | " + user.getOpenIdDelegate());
+        System.err.println(context.getDiscovery().getClass().getSimpleName() + ": " + user.getOpenIdServer() + " | " + user.getOpenIdDelegate());
     }
 
 }

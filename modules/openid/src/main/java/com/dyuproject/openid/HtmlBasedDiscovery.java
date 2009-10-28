@@ -39,8 +39,10 @@ public final class HtmlBasedDiscovery implements Discovery
     static final String LOCAL_ID = ".local_id";
 
     static final int TYPE_IGNORE = 0;
-    static final int TYPE_SERVER = 1;
-    static final int TYPE_DELEGATE = 2;    
+    static final int TYPE_PROVIDER = 1;
+    static final int TYPE_SERVER = 2;
+    static final int TYPE_LOCAL_ID = 3;
+    static final int TYPE_DELEGATE = 4;
     
     static final String HTML = "html";
     static final String HEAD = "head";
@@ -86,8 +88,15 @@ public final class HtmlBasedDiscovery implements Discovery
     {
         XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, false);
-        return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
-                identifier.getId(), handler._openIdServer, handler._openIdDelegate);        
+        if(handler._openIdServer==null)
+            return null;
+        if(handler._twoDotX && handler._openIdDelegate==null)
+        {
+            return new OpenIdUser(identifier.getId(), YadisDiscovery.IDENTIFIER_SELECT, 
+                    handler._openIdServer, null);
+        }
+        return new OpenIdUser(identifier.getId(), identifier.getId(), handler._openIdServer, 
+                handler._openIdDelegate);        
     }
     
     static int check(String rel)
@@ -101,14 +110,14 @@ public final class HtmlBasedDiscovery implements Discovery
             if(rel.startsWith(PROVIDER, 7))
             {
                 if(rel.length()==16)
-                    return TYPE_SERVER;                
-                return Character.isWhitespace(rel.charAt(16)) ? TYPE_SERVER : TYPE_IGNORE;
+                    return TYPE_PROVIDER;                
+                return Character.isWhitespace(rel.charAt(16)) ? TYPE_PROVIDER : TYPE_IGNORE;
             }
             if(rel.startsWith(LOCAL_ID, 7))
             {
                 if(rel.length()==16)
-                    return TYPE_DELEGATE;
-                return Character.isWhitespace(rel.charAt(16)) ? TYPE_DELEGATE : TYPE_IGNORE;
+                    return TYPE_LOCAL_ID;
+                return Character.isWhitespace(rel.charAt(16)) ? TYPE_LOCAL_ID : TYPE_IGNORE;
             }
             return TYPE_IGNORE;
         }
@@ -132,7 +141,7 @@ public final class HtmlBasedDiscovery implements Discovery
         return TYPE_IGNORE;
     }
     
-    static class XmlHandler implements LazyHandler
+    static final class XmlHandler implements LazyHandler
     {
         
         String _openIdServer;
@@ -143,6 +152,7 @@ public final class HtmlBasedDiscovery implements Discovery
         boolean _headFound = false;
         boolean _link = false;        
         boolean _searching = true;
+        boolean _twoDotX = false;
         
         XmlHandler()
         {
@@ -185,12 +195,30 @@ public final class HtmlBasedDiscovery implements Discovery
                     {
                         switch(check(value))
                         {
-                            case TYPE_SERVER:
+                            case TYPE_IGNORE:
+                                break;
+                            case TYPE_PROVIDER:
                                 _openIdServer = _lastHref;
                                 _searching = _openIdDelegate==null;
+                                _twoDotX = true;
+                                break;
+                            case TYPE_SERVER:
+                                // prioritize 2.0 if previously parsed
+                                if(_openIdServer==null)
+                                    _openIdServer = _lastHref;
+                                
+                                _searching = _openIdDelegate==null;
+                                break;
+                            case TYPE_LOCAL_ID:
+                                _openIdDelegate = _lastHref;
+                                _searching = _openIdServer==null;
+                                _twoDotX = true;
                                 break;
                             case TYPE_DELEGATE:
-                                _openIdDelegate = _lastHref;
+                                // prioritize 2.0 if previously parsed
+                                if(_openIdDelegate==null)
+                                    _openIdDelegate = _lastHref;
+                                
                                 _searching = _openIdServer==null;
                                 break;
                         }  
@@ -206,13 +234,31 @@ public final class HtmlBasedDiscovery implements Discovery
                     {
                         switch(check(_lastRel))
                         {
-                            case TYPE_SERVER:
+                            case TYPE_IGNORE:
+                                break;
+                            case TYPE_PROVIDER:
                                 _openIdServer = value;
+                                _searching = _openIdDelegate==null;
+                                _twoDotX = true;
+                                break;
+                            case TYPE_SERVER:
+                                // prioritize 2.0 if previously parsed
+                                if(_openIdServer==null)
+                                    _openIdServer = value;
+                                
                                 _searching = _openIdDelegate==null;   
                                 break;
-                            case TYPE_DELEGATE:
+                            case TYPE_LOCAL_ID:
                                 _openIdDelegate = value;
-                                _searching = _openIdServer==null; 
+                                _searching = _openIdServer==null;
+                                _twoDotX = true;
+                                break;
+                            case TYPE_DELEGATE:
+                                // prioritize 2.0 if previously parsed
+                                if(_openIdDelegate==null)
+                                    _openIdDelegate = value;
+                                
+                                _searching = _openIdServer==null;
                                 break;
                         }
                         _lastRel = null;

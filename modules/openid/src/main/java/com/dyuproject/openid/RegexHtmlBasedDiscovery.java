@@ -34,7 +34,7 @@ public final class RegexHtmlBasedDiscovery implements Discovery
     
     static final Pattern __pattern = Pattern.compile("rel=['\"]openid2?\\.(\\w+)['\"]");
     
-    static final HashMap<String,Boolean> __suffixMap = new HashMap<String,Boolean>(6);
+    private static final HashMap<String,Integer> __suffixMap = new HashMap<String,Integer>(6);
     
     private static final String __lookup = "href=";
     
@@ -52,10 +52,10 @@ public final class RegexHtmlBasedDiscovery implements Discovery
     
     static
     {
-        __suffixMap.put("server", Boolean.TRUE);
-        __suffixMap.put("provider", Boolean.TRUE);
-        __suffixMap.put("delegate", Boolean.FALSE);
-        __suffixMap.put("local_id", Boolean.FALSE);
+        __suffixMap.put("provider", new Integer(1));
+        __suffixMap.put("server", new Integer(2));
+        __suffixMap.put("local_id", new Integer(3));
+        __suffixMap.put("delegate", new Integer(4));
     }
     
     public OpenIdUser discover(Identifier identifier, OpenIdContext context)
@@ -74,16 +74,16 @@ public final class RegexHtmlBasedDiscovery implements Discovery
 
     static OpenIdUser parse(Identifier identifier, BufferedReader br) throws Exception
     {
-        String line = null;
-        String openIdServer = null, openIdDelegate = null;
+        boolean twoDotX = false;
+        String line = null, openIdServer = null, openIdDelegate = null;
+        boolean parsedServer = false;
         while((line=br.readLine())!=null)
         {
             Matcher matcher = __pattern.matcher(line);
-            boolean parsedServer = false;
             if(matcher.find())
             {
-                Boolean isServer = __suffixMap.get(matcher.group(1).trim());
-                if(isServer!=null)
+                Integer type = __suffixMap.get(matcher.group(1).trim());
+                if(type!=null)
                 {
                     int idx = line.indexOf(__lookup);
                     if(idx!=-1)
@@ -93,24 +93,50 @@ public final class RegexHtmlBasedDiscovery implements Discovery
                         String value = line.substring(start, line.indexOf(c, start)).trim();
                         if(value.length()!=0)
                         {
-                            if(isServer.booleanValue())
+                            switch(type.intValue())
                             {
-                                openIdServer = value;
-                                parsedServer = true;
-                                if(openIdDelegate!=null)
-                                {
-                                    new OpenIdUser(identifier.getId(), identifier.getId(), 
-                                            openIdServer, openIdDelegate);
-                                }
-                            }
-                            else
-                            {
-                                openIdDelegate = value;
-                                if(openIdServer!=null)
-                                {
-                                    new OpenIdUser(identifier.getId(), identifier.getId(), 
-                                            openIdServer, openIdDelegate);
-                                }
+                                case 1:
+                                    if(openIdDelegate!=null)
+                                    {
+                                        return new OpenIdUser(identifier.getId(), identifier.getId(), 
+                                                value, openIdDelegate);
+                                    }
+                                    openIdServer = value;
+                                    parsedServer = true;
+                                    twoDotX = true;
+                                    break;
+                                case 2:
+                                    // prioritize 2.0 if previously parsed
+                                    if(openIdDelegate!=null && !twoDotX)
+                                    {
+                                        return new OpenIdUser(identifier.getId(), 
+                                                identifier.getId(), value, openIdDelegate);
+                                    }
+                                    else if(parsedServer)
+                                        break;
+                                    
+                                    openIdServer = value;
+                                    parsedServer = true;
+                                    break;
+                                case 3:
+                                    if(parsedServer)
+                                    {
+                                        return new OpenIdUser(identifier.getId(), 
+                                                identifier.getId(), openIdServer, value);
+                                    }
+                                    openIdDelegate = value;
+                                    twoDotX = true;
+                                    break;
+                                case 4:
+                                    // prioritize 2.0 if previously parsed
+                                    if(parsedServer && !twoDotX)
+                                    {
+                                        return new OpenIdUser(identifier.getId(), 
+                                                identifier.getId(), openIdServer, value);
+                                    }
+                                    else if(openIdDelegate==null)
+                                        openIdDelegate = value;
+                                    break;                                    
                             }
                         }                        
                     }
@@ -119,13 +145,26 @@ public final class RegexHtmlBasedDiscovery implements Discovery
             else if(parsedServer)
             {
                 // the <link rel='openid.suffix'> tags are expected to be next to each other.
-                return new OpenIdUser(identifier.getId(), identifier.getId(), 
-                        openIdServer, openIdDelegate);
+                if(twoDotX && openIdDelegate==null)
+                {
+                   return new OpenIdUser(identifier.getId(), YadisDiscovery.IDENTIFIER_SELECT, 
+                           openIdServer, null);
+                }
+                return new OpenIdUser(identifier.getId(), identifier.getId(), openIdServer, 
+                        openIdDelegate);
             }
                 
         }
-        return openIdServer==null ? null : new OpenIdUser(identifier.getId(), identifier.getId(), 
-                openIdServer, openIdDelegate);
+        if(!parsedServer)
+            return null;
+        
+        if(twoDotX && openIdDelegate==null)
+        {
+           return new OpenIdUser(identifier.getId(), YadisDiscovery.IDENTIFIER_SELECT, 
+                   openIdServer, null);
+        }
+        
+        return new OpenIdUser(identifier.getId(), identifier.getId(), openIdServer, openIdDelegate);
     }
 
 }
