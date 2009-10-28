@@ -166,7 +166,7 @@ public final class UrlEncodedParameterMap extends HashMap<String,String>
     
     /* From UrlEncoded snippet customized to skip {'-', '.', '_', '~'} */
     /** Perform URL encoding.
-     * @param string 
+     * @param value string to encode 
      * @return encoded string.
      */
     public static String encodeRFC3986(String value, String charset)

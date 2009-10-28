@@ -274,9 +274,9 @@ public final class RelyingParty
     
     /**
      * True if we have a positive response from the OpenID provider.
-     * If the user {@link #isAssociated is associated}
-     * and we have an auth response, then
-     * we can {@link verifyAuth verify} the user.
+     * If the user {@link OpenIdUser#isAssociated() is associated}
+     * and we have an auth response, then we can 
+     * {@link #verifyAuth(OpenIdUser, HttpServletRequest, HttpServletResponse) verify} the user.
      */
     public static boolean isAuthResponse(HttpServletRequest request)
     {
@@ -442,18 +442,18 @@ public final class RelyingParty
      * Return the current user,
      * either an already authenticated one,
      * or the one just discovered from the
-     * <i>openid.identifier.parameter<i>
+     * <i>openid.identifier.parameter</i>
      * (= "openid_identifier" by default).<br>
-     * Returns <code>null</code> if the {@link Constants.OPENID_MODE} associated
-     * with the request is set to {@link Constants.Mode.CANCEL}
+     * Returns <code>null</code> if the {@link Constants#OPENID_MODE} associated
+     * with the request is set to {@link Constants.Mode#CANCEL}
      * (in order to login under a different id),
      * or if the authentification is timed out.<br>
      * If returned user is <code>null</code>
-     * and {@link #isAuthResponse} is <code>true</code>
+     * and {@link #isAuthResponse(HttpServletRequest)} is <code>true</code>
      * then we have an authentification timeout.
      * 
-     * @param HttpServletRequest
-     * @return OpenIdUser
+     * @param request HttpServletRequest
+     * @return user OpenIdUser
      */
     public OpenIdUser discover(HttpServletRequest request) 
     throws Exception
