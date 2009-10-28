@@ -3,6 +3,8 @@ dyuproject-1.1-SNAPSHOT
 + openid: added specific handling for html-based discoveries on openid.server (1.x) and openid2.provider (2.0)
           If both are provided, preference/priority will be given to the latest version.
 
++ misc: updated pom.xml remove build encoding and javadoc warnings UTF-8 source encoding
+
 dyuproject-1.1.6 2009-10-08
 + oauth: slight api change in TokenManager (the first arg of the method "invalidate" is changed from Token to String).
          This avoids creating a new Token for invalidation.  The Consumer api accepts String or Token for invalidation.
