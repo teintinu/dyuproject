@@ -111,9 +111,15 @@ public final class YadisDiscovery implements Discovery
     {        
         XmlHandler handler = new XmlHandler();
         XMLParser.parse(reader, handler, true);
-        return handler._openIdServer==null ? null : new OpenIdUser(identifier.getId(), 
-                handler._signon && handler._openIdDelegate!=null ? handler._openIdDelegate : 
-                    IDENTIFIER_SELECT, handler._openIdServer, null);
+        if(handler._openIdServer==null)
+            return null;
+        if(handler._signon && handler._openIdDelegate!=null)
+        {
+            return new OpenIdUser(identifier.getId(), identifier.getId(), handler._openIdServer, 
+                    handler._openIdDelegate);   
+        }
+        return new OpenIdUser(identifier.getId(), YadisDiscovery.IDENTIFIER_SELECT, 
+                handler._openIdServer, null);
     }    
     
     static final class XmlHandler implements LazyHandler
