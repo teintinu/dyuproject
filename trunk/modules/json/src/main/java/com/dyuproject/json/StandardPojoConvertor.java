@@ -28,6 +28,9 @@ import org.mortbay.log.Log;
 import org.mortbay.util.ajax.JSONPojoConvertor;
 
 /**
+ * The standard pojo convertor. If overloading is needed, use
+ * {@link OverloadPojoConvertor} instead.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */
@@ -72,6 +75,10 @@ public class StandardPojoConvertor extends JSONPojoConvertor
         return new StandardSetter(name, method);
     }    
     
+    /**
+     * The standard setter.  If overloading is needed, use 
+     * {@link OverloadPojoConvertor.OverloadSetter} instead.
+     */
     public static class StandardSetter extends Setter
     {
         

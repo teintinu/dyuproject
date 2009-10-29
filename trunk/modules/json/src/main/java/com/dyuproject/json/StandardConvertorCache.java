@@ -22,6 +22,8 @@ import org.mortbay.util.ajax.JSON.Convertor;
 import org.mortbay.util.ajax.JSON.Output;
 
 /**
+ * The standard convertor cache.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */
@@ -30,6 +32,9 @@ import org.mortbay.util.ajax.JSON.Output;
 public class StandardConvertorCache implements ConvertorCache
 {
     
+    /**
+     * The convertor for classes that cannot be loaded/resolved.
+     */
     public static final Convertor UNRESOLVED_CONVERTOR = new Convertor()
     {
         public Object fromJSON(Map map)
