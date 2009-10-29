@@ -17,7 +17,7 @@ package com.dyuproject.oauth;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
- * SimpleNonceAndTimestamp
+ * A simple nonce and timestamp generator.
  * 
  * @author David Yu
  * @created Jun 1, 2009
@@ -26,8 +26,14 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public final class SimpleNonceAndTimestamp implements NonceAndTimestamp
 {
     
+    /**
+     * The default instance.
+     */
     public static final SimpleNonceAndTimestamp DEFAULT = new SimpleNonceAndTimestamp();
     
+    /**
+     * Gets the default instance.
+     */
     public static SimpleNonceAndTimestamp getDefault()
     {
         return DEFAULT;

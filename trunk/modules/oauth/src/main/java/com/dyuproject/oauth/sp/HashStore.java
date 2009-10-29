@@ -30,19 +30,34 @@ import com.dyuproject.util.validate.IPDomainValidator;
 public abstract class HashStore implements ServiceToken.Store
 {
     
+    /**
+     * the default access timeout (60*60*1000 or the defined 
+     * property "hashstore.access_timeout")
+     */
     public static final long DEFAULT_ACCESS_TIMEOUT = 
         Long.getLong("hashstore.access_timeout", 60*60*1000); // defaults to 1 hr  
     
+    /**
+     * the default exchange timeout (60*10*1000 or the defined 
+     * property "hashstore.exchange_timeout")
+     */
     public static final long DEFAULT_EXCHANGE_TIMEOUT = 
         Long.getLong("hashstore.exchange_timeout", 60*10*1000); // defaults to 10 mins
     
+    /**
+     * the default login timeout ({@link #DEFAULT_EXCHANGE_TIMEOUT}/2 or 
+     * the defined property "hashstore.login_timeout")
+     */
     public static final long DEFAULT_LOGIN_TIMEOUT = 
         Long.getLong("hashstore.login_timeout", DEFAULT_EXCHANGE_TIMEOUT/2);
     
+    /**
+     * the default mac algorithm ("HMACSHA1")
+     */
     public static final String DEFAULT_MAC_ALGORITHM = "HMACSHA1";
     
-    public static final String CHECKED_PREFIX = "http";
-    public static final String ASSIGNED_PREFIX = "http://";    
+    static final String CHECKED_PREFIX = "http";
+    static final String ASSIGNED_PREFIX = "http://";  
     
     private final Cryptography _crypto;
     private final String _secretKey;
@@ -106,6 +121,14 @@ public abstract class HashStore implements ServiceToken.Store
         }
     }
     
+    /**
+     * Gets the request token with secret to be verified by the caller; 
+     * Returns null if the request token is invalid.
+     * If the request token was obtained from {@link #newHybridRequestToken(String, String)}, 
+     * the token will be identified and a different request token will be returned that 
+     * is not associated with a secret key since we are relying on the security of the 
+     * openid protocol.
+     */
     public final ServiceToken getRequestToken(String consumerKey, String requestToken)
     {
         String consumerSecret = getConsumerSecret(consumerKey);
@@ -281,6 +304,9 @@ public abstract class HashStore implements ServiceToken.Store
         return callbackUrl.startsWith(CHECKED_PREFIX) ? callbackUrl : null;
     }
 
+    /**
+     * Returns null if the given {@code url} is invalid;  This is a utility method.
+     */
     public static String validateUrl(String url)
     {
         int start = 0, end = 0, len = url.length();

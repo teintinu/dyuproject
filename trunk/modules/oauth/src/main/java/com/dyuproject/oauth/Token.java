@@ -33,9 +33,22 @@ public final class Token implements Serializable, JSON.Convertible
     
     private static final long serialVersionUID = 2009100604L;
     
+    /**
+     * Uninitialized state.
+     */
     public static final int UNITIALIZED = 0;
+    /**
+     * Unauthorized state.
+     */
     public static final int UNAUTHORIZED = 1;
+    /**
+     * Authorized state.
+     */
     public static final int AUTHORIZED = 2;
+    /**
+     * Access token state.  The token can already be used to do query data 
+     * from the service provider.
+     */
     public static final int ACCESS_TOKEN = 3;
     
     private int _state;
@@ -65,6 +78,9 @@ public final class Token implements Serializable, JSON.Convertible
         _state = state;
     }
     
+    /**
+     * Gets the state of the token.
+     */
     public int getState()
     {
         return _state;
@@ -75,11 +91,17 @@ public final class Token implements Serializable, JSON.Convertible
         _state = state;
     }
     
+    /**
+     * Gets the consumer secret.
+     */
     public String getCk()
     {
         return _ck;
     }    
     
+    /**
+     * Gets the consumer key.
+     */
     public String getKey()
     {
         return _key;
@@ -90,6 +112,9 @@ public final class Token implements Serializable, JSON.Convertible
         _key = key;
     }
     
+    /**
+     * Gets the secret key; This is obtained from the exchanges (OAuth dance).
+     */
     public String getSecret()
     {
         return _secret;
@@ -107,6 +132,9 @@ public final class Token implements Serializable, JSON.Convertible
         _secret = secret;
     }
     
+    /**
+     * Checks whether the key and the verifier is authorized or not.
+     */
     public boolean authorize(String key, String verifier)
     {
         if(_state<AUTHORIZED)
@@ -124,21 +152,34 @@ public final class Token implements Serializable, JSON.Convertible
         return true;
     }
     
+    /**
+     * Checks whether the token is authentic (aka useable to make auth requests against 
+     * the service provider.
+     */
     public boolean isAuthentic()
     {
         return _state == ACCESS_TOKEN;
     }
     
+    /**
+     * Gets the attributes of this token.
+     */
     public Map<String,Object> getAttributes()
     {
         return _attributes;
     }
     
+    /**
+     * Gets an attribute based from the given key.
+     */
     public Object getAttribute(String key)
     {
         return _attributes==null ? null : _attributes.get(key);
     }
     
+    /**
+     * Sets an attribute based from the given key and value.
+     */
     public void setAttribute(String key, Object value)
     {
         if(_attributes==null)

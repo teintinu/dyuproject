@@ -40,10 +40,16 @@ import com.dyuproject.util.http.HttpConnector.Response;
 
 public final class Consumer
 {
+    /**
+     * The default resource path. ("oauth_consumer.properties")
+     */
     public static final String DEFAULT_RESOURCE_PATH = "oauth_consumer.properties";
     
     private static Consumer __instance;
     
+    /**
+     * Gets the instance configured from the default resource path {@link #DEFAULT_RESOURCE_PATH}.
+     */
     public static Consumer getInstance()
     {
         Consumer instance = __instance;
@@ -59,6 +65,9 @@ public final class Consumer
         return instance;
     }
     
+    /**
+     * Creates a new instance configured from the resource path {@code resourceLoc}.
+     */
     public static Consumer newInstance(String resourceLoc)
     {        
         URL resource = ClassLoaderUtil.getResource(resourceLoc, Consumer.class);
@@ -74,11 +83,17 @@ public final class Consumer
         }        
     }
     
+    /**
+     * Creates a new instance configured from the {@link URL} {@code resource}.
+     */
     public static Consumer newInstance(URL resource) throws IOException
     {
         return newInstance(resource.openStream());
     }
     
+    /**
+     * Creates a new instance configured from the {@link InputStream} {@code in}.
+     */
     public static Consumer newInstance(InputStream in) throws IOException
     {
         Properties props = new Properties();
@@ -86,6 +101,9 @@ public final class Consumer
         return newInstance(props);
     }
     
+    /**
+     * Creates a new instance configured form the {@link Properties} {@code props}.
+     */
     public static Consumer newInstance(Properties props) throws IOException
     {
         String httpConnectorParam = props.getProperty("oauth.consumer.httpconnector");
@@ -141,26 +159,44 @@ public final class Consumer
         _manager = manager;
     }
     
+    /**
+     * Gets the consumer context.
+     */
     public ConsumerContext getConsumerContext()
     {
         return _context;
     }
     
+    /**
+     * Gets the token manager.
+     */
     public TokenManager getTokenManager()
     {
         return _manager;
     }
     
+    /**
+     * Gets the endpoint from the given {@code domain}.
+     */
     public Endpoint getEndpoint(String domain)
     {
         return _context.getEndpoint(domain);
     }
     
+    /**
+     * Adds an endpoint {@code ep} which would also be added 
+     * to the wrapped {@link ConsumerContext}.
+     */
     public void addEndpoint(Endpoint ep)
     {
         _context.addEndpoint(ep);
     }    
     
+    /**
+     * Gets a token from the {@code request} and delegates to the wrapped 
+     * {@link TokenManager} if not found.  The new token will be set in the
+     * request attribute.
+     */
     public Token getToken(String consumerKey, HttpServletRequest request)
     throws IOException
     {
@@ -175,36 +211,57 @@ public final class Consumer
         return token;
     }
     
+    /**
+     * Saves the token; Delegates to the {@link TokenManager}.
+     */
     public boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.saveToken(token, request, response);
     }
     
+    /**
+     *Invalidates the token based from its key; Delegates to the {@link TokenManager}.
+     */
     public boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.invalidate(consumerKey, request, response);
     }
     
+    /**
+     *Invalidates the token.; Delegates to the {@link TokenManager}.
+     */
     public boolean invalidate(Token token, HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.invalidate(token.getCk(), request, response);
     }
 
+    /**
+     * Fetches the token using the given endpoint and token - and 
+     * returns the http response {@link Response}.
+     */
     public Response fetchToken(Endpoint ep, Token token)
     throws IOException
     {
         return fetchToken(ep, new UrlEncodedParameterMap(), TokenExchange.getExchange(token), token);
     }
     
+    /**
+     * Fetches the token using the given endpoint, exchange and token - and 
+     * returns the http response {@link Response}. 
+     */
     public Response fetchToken(Endpoint ep, TokenExchange exchange, Token token)
     throws IOException
     {
         return fetchToken(ep, new UrlEncodedParameterMap(), exchange, token);
     }
     
+    /**
+     * Fetches the token using the given endpoint, params, exchange and token - and
+     * returns the http response {@link Response}.
+     */
     public Response fetchToken(Endpoint ep, UrlEncodedParameterMap params, TokenExchange exchange, 
             Token token) throws IOException
     {

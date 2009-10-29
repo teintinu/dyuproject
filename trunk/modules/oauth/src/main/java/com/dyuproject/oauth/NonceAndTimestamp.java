@@ -26,6 +26,10 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public interface NonceAndTimestamp
 {
     
+    /**
+     * Puts the generated nonce and timestamp on the {@code params} which could optionally
+     * be derived from the {@code consumerKey}.
+     */
     public void put(UrlEncodedParameterMap params, String consumerKey);
 
 }

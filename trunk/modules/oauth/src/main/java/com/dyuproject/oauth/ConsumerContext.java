@@ -40,22 +40,34 @@ public final class ConsumerContext
         _endpoints = endpoints;
     }
     
+    /**
+     * Gets the http connector.
+     */
     public HttpConnector getHttpConnector()
     {
         return _httpConnector;
     }
     
+    /**
+     * Gets the nonce and timestamp generator.
+     */
     public NonceAndTimestamp getNonceAndTimestamp()
     {
         return _nonceAndTimestamp;
     }
     
+    /**
+     * Adds an Endpoint to this context.
+     */
     public ConsumerContext addEndpoint(Endpoint ep)
     {
         _endpoints.put(ep.getDomain(), ep);
         return this;
     }
     
+    /**
+     * Gets an endpoint from this context from the given {@code domain}.
+     */
     public Endpoint getEndpoint(String domain)
     {
         return _endpoints.get(domain);

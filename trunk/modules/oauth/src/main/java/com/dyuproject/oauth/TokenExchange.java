@@ -17,7 +17,8 @@ package com.dyuproject.oauth;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
- * TokenExchange
+ * Responsible for including certain oath request parameters based from the state 
+ * of the token.
  * 
  * @author David Yu
  * @created Jun 1, 2009
@@ -28,11 +29,17 @@ public abstract class TokenExchange
     
     private static final String __version = System.getProperty("oauth.tokenexchange.send_version");
     
+    /**
+     * Gets the appropriate exchange to use based on the given token.
+     */
     public static TokenExchange getExchange(Token token)
     {
         return token.getKey()==null ? REQUEST_TOKEN : ACCESS_TOKEN; 
     }
     
+    /**
+     * This is the initial step; basically obtains a request token from the service provider.
+     */
     public static final TokenExchange REQUEST_TOKEN = new TokenExchange()
     {
         public void put(UrlEncodedParameterMap params, Endpoint ep, Token token)
@@ -47,6 +54,9 @@ public abstract class TokenExchange
         }   
     };
     
+    /**
+     * Exchanges the request token for an access token from the service provider.
+     */
     public static final TokenExchange ACCESS_TOKEN = new TokenExchange()
     {
         public void put(UrlEncodedParameterMap params, Endpoint ep, Token token)
@@ -67,6 +77,10 @@ public abstract class TokenExchange
     };
 
     
+    /**
+     * Puts the necessary parameters on the request params based from the given 
+     * endpoint and token.
+     */
     public abstract void put(UrlEncodedParameterMap params, Endpoint ep, Token token);
 
 }
