@@ -21,6 +21,8 @@ import java.io.Reader;
 import org.mortbay.util.ajax.JSON.ReaderSource;
 
 /**
+ * An arbitrary resource where you can obtain a {@link Reader} to read data.
+ * 
  * @author David Yu
  * @created Feb 23, 2009
  */
@@ -55,48 +57,75 @@ public class Resource
         resolve(reader);
     }
     
+    /**
+     * Gets the path.
+     */
     public String getPath()
     {
         return _path;
     }
     
+    /**
+     * Sets the path.
+     */
     public void setPath(String path)
     {
         _path = path;
     }
     
+    /**
+     * Gets the type.
+     */
     public String getType()
     {
         return _type;
     }
     
+    /**
+     * Gets the reader
+     */
     public Reader getReader()
     {
         return _reader;
     }
     
+    /**
+     * Gets the reader source that can be used for parsing json.
+     */
     public ReaderSource getSource()
     {
         return _source;
-    }
+    }    
     
+    /**
+     * Gets the file if any.
+     */
     public File getFile()
     {
         return _file;
     }
 
+    /**
+     * Resolves the resource via setting the {@code reader}.
+     */
     public void resolve(Reader reader)
     {
         _reader = reader;
         _source.setReader(reader);
     }
     
+    /**
+     * Resolves the resource via setting the {@code reader}and {@code type}.
+     */
     public void resolve(Reader reader, String type)
     {
         resolve(reader);
         _type = type;
     }
     
+    /**
+     * Resolves the resource via setting the {@code reader}, {@code type} and {@code file}.
+     */
     public void resolve(Reader reader, String type, File file)
     {
         resolve(reader);
@@ -104,16 +133,36 @@ public class Resource
         _file = file;
     }
     
+    /**
+     * Checks if this resource is already resolved.
+     */
     public boolean isResolved()
     {
         return _reader!=null;
     }
     
+    /**
+     * A {@link Resource} resolver that basically allows it to be read 
+     * via {@link Resource#getReader()}.
+     */
     public interface Resolver
     {
+        /**
+         * Gets the type (id) of resolver
+         */
         public String getType();
-        public void resolve(Resource resource, Context context) throws IOException;     
+        
+        /**
+         * Resolves a resource by setting the {@link Reader} property of the {@link Resource}.
+         * That is done via {@link Resource#resolve(Reader)}.
+         */
+        public void resolve(Resource resource, Context context) throws IOException;
+        
+        /**
+         * Creates a resource from a given path string.
+         */
         public Resource createResource(String path) throws IOException;
+        
     }
 
 }

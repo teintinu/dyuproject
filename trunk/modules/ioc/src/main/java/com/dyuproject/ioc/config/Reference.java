@@ -23,6 +23,9 @@ import org.mortbay.util.ajax.JSON.Convertor;
 import com.dyuproject.ioc.Context;
 
 /**
+ * A configuration component from a json context file which allows a pojo to 
+ * be referenced by an id {@link String}.
+ * 
  * @author David Yu
  * @created Feb 20, 2009
  */
@@ -55,11 +58,17 @@ public final class Reference
         _ref = ref;
     }
     
+    /**
+     * Gets the object being referenced.
+     */
     public Object getRef()
     {
         return _ref;
     }
     
+    /**
+     * Sets the object to reference.
+     */
     public void setRef(Object ref)
     {
         if(ref!=null)
@@ -70,11 +79,18 @@ public final class Reference
         }        
     }
     
+    /**
+     * Gets the properties of a referenced object to be able to set or 
+     * override existing properties.
+     */
     public Map<String,Object> getProps()
     {
         return _props;
     }
     
+    /**
+     * Sets the properties of a reference object which can set or override existing properties.
+     */
     public void setProps(Map<String,Object> props)
     {
         if(props!=null)

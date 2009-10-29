@@ -27,6 +27,9 @@ import com.dyuproject.ioc.Context;
 import com.dyuproject.ioc.Resource;
 
 /**
+ * A configuration component from a json context file w/c imports and loads another 
+ * {@link ApplicationContext} into the current parsing context {@link Context}.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */

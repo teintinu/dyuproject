@@ -15,6 +15,8 @@
 package com.dyuproject.ioc;
 
 /**
+ * The parsing context
+ * 
  * @author David Yu
  * @created Feb 23, 2009
  */
@@ -24,11 +26,17 @@ public final class Context
     
     private static final ThreadLocal<Context> __current = new ThreadLocal<Context>();
     
+    /**
+     * Gets the current thread local context.
+     */
     public static Context getCurrent()
     {
         return __current.get();
     }
     
+    /**
+     * Sets the thread local context.
+     */
     public static void setCurrent(Context context)
     {
         __current.set(context);
@@ -45,16 +53,25 @@ public final class Context
         _parser = parser;
     }
     
+    /**
+     * Gets the {@link Resource} tied to this context.
+     */
     public Resource getResource()
     {
         return _resource;
     }        
     
+    /**
+     * Gets the {@link ApplicationContext} tied to this context.
+     */
     public ApplicationContext getAppContext()
     {
         return _appContext;
     }
     
+    /**
+     * Gets the {@link Parser} tied to this context.
+     */
     public Parser getParser()
     {
         return _parser;

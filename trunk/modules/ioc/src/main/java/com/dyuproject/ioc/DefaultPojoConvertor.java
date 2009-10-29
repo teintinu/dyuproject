@@ -23,6 +23,8 @@ import com.dyuproject.ioc.config.Reference;
 import com.dyuproject.json.OverloadPojoConvertor;
 
 /**
+ * The default pojo convertor trasparently handles a {@link Reference}.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */

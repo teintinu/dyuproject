@@ -16,6 +16,9 @@ package com.dyuproject.ioc.config;
 
 
 /**
+ * A configuration component from a json context file which marks the {@link References} 
+ * as overriden.
+ * 
  * @author David Yu
  * @created Feb 20, 2009
  */

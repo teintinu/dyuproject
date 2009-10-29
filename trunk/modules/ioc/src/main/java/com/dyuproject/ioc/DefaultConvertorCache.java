@@ -23,6 +23,8 @@ import com.dyuproject.ioc.config.Reference;
 import com.dyuproject.json.StandardConvertorCache;
 
 /**
+ * The default convertor cache which creates a {@link DefaultPojoConvertor} for a given pojo.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */
