@@ -50,7 +50,7 @@ public final class Endpoint implements Serializable
     }
     
     /**
-     * Loads an endpoint from the given {@link Inputstream} in.
+     * Loads an endpoint from the given {@link InputStream} in.
      */
     public static Endpoint load(InputStream in) throws IOException
     {
