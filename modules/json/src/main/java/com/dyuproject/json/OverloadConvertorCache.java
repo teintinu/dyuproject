@@ -17,6 +17,8 @@ package com.dyuproject.json;
 import org.mortbay.util.ajax.JSON.Convertor;
 
 /**
+ * A convertor cache that creates an {@link OverloadPojoConvertor} from a given class.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */

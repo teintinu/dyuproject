@@ -34,16 +34,28 @@ public class StandardJSON extends JSON
     
     private static boolean __checkParents = Boolean.getBoolean("standardjson.check_parents");
     
+    /**
+     * Checks whether classloading should check parent classloaders.
+     */
     public static boolean isCheckParents()
     {
         return __checkParents;
     }
     
+    /**
+     * Sets the {@code checkParents} to determine whether classloading 
+     * should check parent classloaders.
+     */
     public static void setCheckParents(boolean checkParents)
     {
         __checkParents = checkParents;
     }
     
+    /**
+     * Loads a class from the classloader;
+     * If not found, the classloader of the {@code context} class specified will be used along
+     * with its parent if the flag {@code checkParents} is true.
+     */
     public static Class<?> loadClass(String className, Class<?> context, boolean checkParents)
     {
         try
@@ -57,11 +69,19 @@ public class StandardJSON extends JSON
         }
     }
     
+    /**
+     * Loads a class from the classloader.
+     */
     public static Class<?> loadClass(String className)
     {
         return loadClass(className, StandardConvertorCache.class, __checkParents);
     }
     
+    /**
+     * Gets a {@link URL} resource from the classloader;
+     * If not found, the classloader of the {@code context} class specified will be used along
+     * with its parent if the flag {@code checkParents} is true.
+     */
     public static URL getResource(String path, Class<?> context, boolean checkParents)
     {
         try
@@ -75,6 +95,9 @@ public class StandardJSON extends JSON
         }  
     }
     
+    /**
+     * Gets a {@link URL} resource from the classloader.
+     */
     public static URL getResource(String path)
     {
         return getResource(path, StandardConvertorCache.class, __checkParents);
@@ -104,16 +127,26 @@ public class StandardJSON extends JSON
         this(new StandardConvertorCache(), addClass);
     }
     
+    /**
+     * Gets the convertor cache.
+     */
     public ConvertorCache getConvertorCache()
     {
         return _convertorCache;
     }
     
+    /**
+     * Checks whether the classname of a pojo is included upon serialization.
+     */
     public boolean isAddClass()
     {
         return _addClass;
     }
     
+    /**
+     * Sets the {@code addClass} to determine whether the classname of a pojo 
+     * is included upon serialization.
+     */
     public void setAddClass(boolean addClass)
     {
         _addClass = addClass;

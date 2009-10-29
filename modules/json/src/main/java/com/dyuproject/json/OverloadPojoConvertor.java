@@ -57,6 +57,9 @@ public class OverloadPojoConvertor extends JSONPojoConvertor
         return new OverloadSetter(name, method);
     }
     
+    /**
+     * A setter that handles overloading.
+     */
     public static class OverloadSetter extends StandardSetter
     {        
         protected OverloadSetter _next;
