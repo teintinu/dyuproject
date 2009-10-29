@@ -22,7 +22,8 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 import com.dyuproject.util.http.HttpConnector.Response;
 
 /**
- * Sends the request parameters via HTTP POST with application/x-www-form-urlencoded content type.
+ * Sends the oauth request parameters via HTTP POST with 
+ * application/x-www-form-urlencoded content type.
  * 
  * @author David Yu
  * @created Jun 1, 2009
@@ -31,8 +32,14 @@ import com.dyuproject.util.http.HttpConnector.Response;
 public final class HttpPostTransport extends Transport
 {
     
+    /**
+     * The default instance.
+     */
     public static final HttpPostTransport DEFAULT = new HttpPostTransport();
     
+    /**
+     * Gets the default instance.
+     */
     public static HttpPostTransport getDefault()
     {
         return DEFAULT;

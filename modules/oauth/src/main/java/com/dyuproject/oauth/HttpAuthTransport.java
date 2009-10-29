@@ -22,7 +22,7 @@ import com.dyuproject.util.http.HttpConnector.Parameter;
 import com.dyuproject.util.http.HttpConnector.Response;
 
 /**
- * Sends the request parameters via the HTTP Authorization header.
+ * Sends the oauth request parameters via the HTTP Authorization header.
  * 
  * @author David Yu
  * @created Jun 1, 2009
@@ -31,11 +31,24 @@ import com.dyuproject.util.http.HttpConnector.Response;
 public final class HttpAuthTransport extends Transport
 {
     
+    /**
+     * "Authorization"
+     */
     public static final String NAME = "Authorization";
+    
+    /**
+     * "WWW-Authenticate"
+     */
     public static final String WWW_AUTHENTICATE= "WWW-Authenticate";
     
+    /**
+     * The default instance.
+     */
     public static final HttpAuthTransport DEFAULT = new HttpAuthTransport();
     
+    /**
+     * Gets the default instance.
+     */
     public static HttpAuthTransport getDefault()
     {
         return DEFAULT;
@@ -92,6 +105,9 @@ public final class HttpAuthTransport extends Transport
         return parse(connector.doGET(url, new Parameter(NAME, oauthBuffer.toString())), token);
     }
     
+    /**
+     * Gets the computed value for the "Authorization" header.
+     */
     public static String getAuthHeaderValue(UrlEncodedParameterMap params, Endpoint ep, 
             Token token, NonceAndTimestamp nts, Signature signature)
     {

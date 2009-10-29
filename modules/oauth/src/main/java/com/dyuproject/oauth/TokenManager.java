@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * TokenManager
+ * Manages the token; Provides the ability to get, save or invalidate the token.
  * 
  * @author David Yu
  * @created Jun 2, 2009
@@ -30,14 +30,26 @@ import javax.servlet.http.HttpServletResponse;
 public interface TokenManager
 {
     
+    /**
+     * Initialize this manager based from the given properties.
+     */
     public void init(Properties properties);
     
+    /**
+     * Gets the token.
+     */
     public Token getToken(String consumerKey, HttpServletRequest request)
     throws IOException;
     
+    /**
+     * Saves the token.
+     */
     public boolean saveToken(Token token, HttpServletRequest request, HttpServletResponse response)
     throws IOException;
     
+    /**
+     * Invalidates the token.
+     */
     public boolean invalidate(String consumerKey, HttpServletRequest request, HttpServletResponse response) 
     throws IOException;
 

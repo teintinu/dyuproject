@@ -22,7 +22,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 import com.dyuproject.util.http.HttpConnector.Response;
 
 /**
- * Sends the request parameters using HTTP GET and appended with queryString
+ * Sends the oauth request parameters using HTTP GET and appended with queryString
  * 
  * @author David Yu
  * @created Jun 1, 2009
@@ -31,8 +31,14 @@ import com.dyuproject.util.http.HttpConnector.Response;
 public final class HttpGetTransport extends Transport
 {
 
+    /**
+     * The default instance.
+     */
     public static final HttpGetTransport DEFAULT = new HttpGetTransport();
     
+    /**
+     * Gets the default instance.
+     */
     public static HttpGetTransport getDefault()
     {
         return DEFAULT;

@@ -33,16 +33,25 @@ import com.dyuproject.util.ClassLoaderUtil;
 public final class Endpoint implements Serializable
 {
     
+    /**
+     * Loads an endpoint from the given {@code resource} from the classpath.
+     */
     public static Endpoint load(String resource) throws IOException
     {
         return load(ClassLoaderUtil.getResource(resource, Endpoint.class));
     }
     
+    /**
+     * Loads an endpoint from the given {@link URL} resource.
+     */
     public static Endpoint load(URL resource) throws IOException
     {
         return load(resource.openStream());
     }
     
+    /**
+     * Loads an endpoint from the given {@link Inputstream} in.
+     */
     public static Endpoint load(InputStream in) throws IOException
     {
         Properties props = new Properties();
@@ -50,6 +59,9 @@ public final class Endpoint implements Serializable
         return load(props);
     }
     
+    /**
+     * Loads an endpoint from the given {@link Properties} props.
+     */
     public static Endpoint load(Properties props)
     {
         String domain = props.getProperty("domain");
@@ -85,6 +97,10 @@ public final class Endpoint implements Serializable
                 authorizationUrl, accessTokenUrl, signatureMethod, transportName);
     }
     
+    /**
+     * Loads an endpoint from the given {@link Properties} props configured for 
+     * the given {@code domain}.
+     */
     public static Endpoint load(Properties props, String domain)
     {
         String consumerKey = props.getProperty(domain + ".consumer_key");
@@ -164,51 +180,83 @@ public final class Endpoint implements Serializable
         _transport = transport==null ? HttpAuthTransport.DEFAULT : transport;
     }
     
+    /**
+     * Gets the consumer key.
+     */
     public String getConsumerKey()
     {
         return _consumerKey;
     }
     
+    /**
+     * Gets the consumer secret.
+     */
     public String getConsumerSecret()
     {
         return _consumerSecret;
     }
     
+    /**
+     * Gets the domain.
+     */
     public String getDomain()
     {
         return _domain;
     }
     
+    /**
+     * Gets the root ("http://" or "https://")
+     */
     public String getRoot()
     {
         return _root;
     }
     
+    /**
+     * Checks whether this endpoint is secure. ("https")
+     */
     public boolean isSecure()
     {
         return _secure;
     }
     
+    /**
+     * Gets the url for obtaining the request token.
+     */
     public String getRequestTokenUrl()
     {
         return _requestTokenUrl;
     }
     
+    /**
+     * Gets the url for authorizing the request token.
+     */
     public String getAuthorizationUrl()
     {
         return _authorizationUrl;
     }
     
+    /**
+     * Gets the url for exchanging the request token with an access token.
+     */
     public String getAccessTokenUrl()
     {
         return _accessTokenUrl;
     }
     
+    /**
+     * Gets the signature used for this endpoint.
+     */
     public Signature getSignature()
     {
         return _signature;
     }
     
+    /**
+     * Gets the transport used for this endpoint;
+     * This could either be {@link HttpAuthTransport}, {@link HttpGetTransport} or 
+     * {@link HttpPostTransport}.
+     */
     public Transport getTransport()
     {
         return _transport;

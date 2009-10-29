@@ -39,6 +39,11 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public abstract class Signature
 {
     
+    /**
+     * The default headers to sign - {@link Constants#OAUTH_CONSUMER_KEY}, 
+     * {@link Constants#OAUTH_NONCE}, {@link Constants#OAUTH_TIMESTAMP}, 
+     * {@link Constants#OAUTH_SIGNATURE_METHOD}
+     */
     public static final String[] REQUIRED_OAUTH_HEADERS_TO_SIGN = new String[]{
         Constants.OAUTH_CONSUMER_KEY,
         Constants.OAUTH_NONCE,
@@ -51,26 +56,43 @@ public abstract class Signature
     
     private static final Map<String,Signature> __defaults = new HashMap<String,Signature>(5);
     
+    /**
+     * Registers a custom signature.
+     */
     public static void register(Signature sig)
     {
         __defaults.put(sig.getMethod(), sig);
     }
     
+    /**
+     * Gets a signature based from the given {@code method} name.
+     */
     public static Signature get(String method)
     {
         return __defaults.get(method);
     }
     
+    /**
+     * Encodes the string via the oauth encoding {@link Constants#ENCODING}; 
+     * The spec is RFC3986 which is basically a standard for URI encoding.
+     */
     public static String encode(String value)
     {
         return UrlEncodedParameterMap.encodeRFC3986(value, Constants.ENCODING);
     }
     
+    /**
+     * Decodes the string via the oauth encoding {@link Constants#ENCODING}; 
+     * The spec is RFC3986 which is basically a standard for URI encoding.
+     */
     public static String decode(String value)
     {
         return UrlEncodedParameterMap.decode(value, Constants.ENCODING);
     }
     
+    /**
+     * Gets the computed key based from the given secret keys.
+     */
     public static String getKey(String consumerSecret, String secret)
     {   
         StringBuilder buffer = new StringBuilder()
@@ -80,6 +102,10 @@ public abstract class Signature
         return secret==null ? buffer.toString() : buffer.append(encode(secret)).toString();
     }
     
+    /**
+     * Gets the computed base string to be signed - based from the given params 
+     * and http method.
+     */
     public static String getBase(UrlEncodedParameterMap params, String method)
     {
         List<String> base = new ArrayList<String>();
@@ -108,6 +134,9 @@ public abstract class Signature
         return buffer.substring(0, buffer.length()-ENCODED_AMP.length());
     }
     
+    /**
+     * Gets the computed mac signature from the given secret key, base string and algorithm.
+     */
     public static String getMacSignature(String secretKey, String base, String algorithm)
     {
         try
@@ -123,6 +152,9 @@ public abstract class Signature
         }            
     }
     
+    /**
+     * Gets the method name of the signature used.
+     */
     public abstract String getMethod();
     
     public int hashCode()
@@ -223,16 +255,31 @@ public abstract class Signature
         return buffer.substring(0, buffer.length()-ENCODED_AMP.length());
     }
     
+    /**
+     * Returns the signature string based from the given consumer secret, token secret and 
+     * base string.
+     */
     public abstract String sign(String consumerSecret, String tokenSecret, String base);
     
+    /**
+     * Verifies whether the params and method generates the same exact signature.
+     */
     public abstract boolean verify(String consumerSecret, String tokenSecret, String method, 
             UrlEncodedParameterMap params);
     
+    /**
+     * Generates a signature and puts it on the params based from the given params, 
+     * consumer secret and token.
+     * The given listener will be able to listen on the encoding of each parameter.
+     */
     public abstract void generate(UrlEncodedParameterMap params, String consumerSecret, Token token,
             String httpMethod, Listener listener, StringBuilder oauthBuffer, 
             StringBuilder requestBuffer);
     
     
+    /**
+     * "PLAINTEXT" signature.
+     */
     public static final Signature PLAINTEXT = new Signature()
     {
         
@@ -275,6 +322,9 @@ public abstract class Signature
         
     };
     
+    /**
+     * "HMAC-SHA1" signature.
+     */
     public static final Signature HMACSHA1 = new Signature()
     {
 
@@ -309,9 +359,19 @@ public abstract class Signature
         
     };
     
+    /**
+     * Listens on the encoding of every single oauth and request parameter.
+     */
     public interface Listener
     {
+        /**
+         * Handles the encoded oauth {@code key} and {@code value}.
+         */
         void handleOAuthParameter(String key, String value, StringBuilder oauthBuffer);
+        
+        /**
+         * Handles the encoded request {@code key} and {@code value}.
+         */
         void handleRequestParameter(String key, String value, StringBuilder requestBuffer);
     }
     

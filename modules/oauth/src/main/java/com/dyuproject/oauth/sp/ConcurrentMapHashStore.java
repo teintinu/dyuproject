@@ -44,9 +44,13 @@ public final class ConcurrentMapHashStore extends HashStore
         return _consumers.get(consumerKey);
     }
     
-    public ConcurrentMapHashStore addConsumer(String key, String secret)
+    /**
+     * Adds a consumer entry (consumerKey and consumerSecret); 
+     * If there is an existing consumerKey, it will not be added.
+     */
+    public ConcurrentMapHashStore addConsumer(String consumerKey, String consumerSecret)
     {
-        _consumers.putIfAbsent(key, secret);
+        _consumers.putIfAbsent(consumerKey, consumerSecret);
         return this;
     }
 

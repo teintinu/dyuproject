@@ -28,7 +28,7 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 import com.dyuproject.util.http.HttpConnector.Response;
 
 /**
- * Transport - the means of sending the oauth request parameters
+ * The scheme/transport which determines how the oauth parameters are sent over http. 
  * 
  * @author David Yu
  * @created Jun 1, 2009
@@ -40,11 +40,17 @@ public abstract class Transport implements Signature.Listener
     private static final Map<String,Transport> __defaults = new HashMap<String,Transport>(5);
     private static final int __inputBuffer = Integer.getInteger("tranport.input_buffer", 128);
     
+    /**
+     * Registers a custom transport.
+     */
     public static void register(Transport transport)
     {
         __defaults.put(transport.getName(), transport);
     }
     
+    /**
+     * Gets a transport based from the given name.
+     */
     public static Transport get(String name)
     {
         return __defaults.get(name);
@@ -74,11 +80,18 @@ public abstract class Transport implements Signature.Listener
         }
     }
     
+    /**
+     * Appends the key and the value; Encodes the value before it is appended. 
+     */
     public static void appendToUrl(String key, String value, StringBuilder urlBuffer)
     {
         urlBuffer.append('&').append(key).append('=').append(Signature.encode(value));
     }
     
+    /**
+     * Builds the auth url as {@link StringBuilder} to redirect the user to, based from 
+     * the given token.
+     */
     public static StringBuilder buildAuthUrl(String authUrl, Token token)
     {
         char separator = authUrl.indexOf('?')==-1 ? '?' : '&';
@@ -90,6 +103,10 @@ public abstract class Transport implements Signature.Listener
             .append(Signature.encode(token.getKey()));
     }
     
+    /**
+     * Builds the auth url as {@link StringBuilder} to redirect the user to, based from 
+     * the given token and callback url.
+     */
     public static StringBuilder buildAuthUrl(String authUrl, Token token, String callbackUrl)
     {
         char separator = authUrl.indexOf('?')==-1 ? '?' : '&';
@@ -105,11 +122,17 @@ public abstract class Transport implements Signature.Listener
             .append(callbackUrl==null ? Constants.OOB : Signature.encode(callbackUrl));
     }
     
+    /**
+     * Gets the auth url based from the given token.
+     */
     public static String getAuthUrl(String authUrl, Token token)
     {
         return buildAuthUrl(authUrl, token).toString();
     }
     
+    /**
+     * Gets the auth url based from the given token and callback url.
+     */
     public static String getAuthUrl(String authUrl, Token token, String callbackUrl)
     {
         return buildAuthUrl(authUrl, token, callbackUrl).toString();
@@ -160,11 +183,21 @@ public abstract class Transport implements Signature.Listener
             token.set(token.getState()+1, key, secret);
     }
     
+    /**
+     * Sends the params to the service provided and returns the http response {@link Response}.
+     */
     public abstract Response send(UrlEncodedParameterMap params, Endpoint ep, Token token,
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature, 
             HttpConnector connector) throws IOException;
     
+    /**
+     * Gets the name of this transport.
+     */
     public abstract String getName();
+    
+    /**
+     * Gets the method name of this transport.
+     */
     public abstract String getMethod();
     
     public final void handleRequestParameter(String key, String value, StringBuilder buffer)
@@ -172,6 +205,9 @@ public abstract class Transport implements Signature.Listener
         buffer.append('&').append(key).append('=').append(value);
     }
     
+    /**
+     * Put the default oauth parameters on the {@link UrlEncodedParameterMap} {@code params}.
+     */
     public final void putDefaults(UrlEncodedParameterMap params, Endpoint ep, Token token, 
             TokenExchange exchange, NonceAndTimestamp nts, Signature signature,  
             StringBuilder oauthBuffer, StringBuilder requestBuffer)
