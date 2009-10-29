@@ -21,6 +21,8 @@ import java.io.Reader;
 
 
 /**
+ * A resolver that resolves a resource by from the filesystem.
+ * 
  * @author David Yu
  * @created Feb 23, 2009
  */
@@ -28,10 +30,16 @@ import java.io.Reader;
 public class FileResolver extends AbstractResolver
 {
     
+    /**
+     * The type of this resolver. ("file")
+     */
     public static final String TYPE = generateTypeFromClass(FileResolver.class);
     
     public static final FileResolver DEFAULT = new FileResolver();
     
+    /**
+     * Gets the default instance.
+     */
     public static FileResolver getDefault()
     {
         return DEFAULT;
@@ -64,6 +72,9 @@ public class FileResolver extends AbstractResolver
         return createResource(new File(path));
     }
     
+    /**
+     * Creates a resource from a given {@code file}.
+     */
     public Resource createResource(File file) throws IOException
     {
         Reader reader = newReader(new FileInputStream(file));

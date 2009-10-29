@@ -27,6 +27,8 @@ import com.dyuproject.ioc.config.References;
 
 
 /**
+ * The context where you can find/get objects configured via json
+ * 
  * @author David Yu
  * @created Feb 20, 2009
  */
@@ -34,13 +36,24 @@ import com.dyuproject.ioc.config.References;
 public final class ApplicationContext
 {
     
+    /**
+     * The default resource location ("application.json")
+     */
     public static final String DEFAULT_RESOURCE_LOCATION = "application.json";
     
+    /**
+     * Loads the ApplicationContext from the default resource {@link #DEFAULT_RESOURCE_LOCATION}}.
+     */
     public static ApplicationContext load()
     {
         return load(DEFAULT_RESOURCE_LOCATION);
     }
     
+    /**
+     * Loads the {@link ApplicationContext} from the given resource which could be 
+     * a file, remote url (prefixed with "http://") or from the 
+     * classpath (prefixed with "classpath:").
+     */
     public static ApplicationContext load(String resource)
     {
         try
@@ -54,6 +67,9 @@ public final class ApplicationContext
         }
     }
     
+    /**
+     * Loads the {@link ApplicationContext} from the specified {@link File}.
+     */
     public static ApplicationContext load(File resource)
     {
         try
@@ -66,6 +82,9 @@ public final class ApplicationContext
         }        
     }
     
+    /**
+     * Loads the {@link ApplicationContext} from the specified {@link URL}.
+     */
     public static ApplicationContext load(URL resource)
     {
         try
@@ -78,6 +97,9 @@ public final class ApplicationContext
         }        
     }
     
+    /**
+     * Loads the {@link ApplicationContext} from the specified {@link InputStream}.
+     */
     public static ApplicationContext load(InputStream resource)
     {
         try
@@ -91,11 +113,17 @@ public final class ApplicationContext
         }        
     }
     
+    /**
+     * Loads the {@link ApplicationContext} from the specified {@link Reader}.
+     */
     public static ApplicationContext load(Reader resource)
     {
         return load(new Resource(resource), Parser.DEFAULT);
     }
     
+    /**
+     * Loads the {@link ApplicationContext} from the specified {@link Resource} and {@link Parser}.
+     */
     public static ApplicationContext load(Resource resource, Parser parser)
     {
         ApplicationContext ac = new ApplicationContext();
@@ -103,6 +131,10 @@ public final class ApplicationContext
         return ac;
     }
     
+    /**
+     * Loads the {@link ApplicationContext} from multiple resources.
+     * The contents are merged into a single ApplicationContext.
+     */
     public static ApplicationContext load(String[] resources)
     {
         try
@@ -179,16 +211,26 @@ public final class ApplicationContext
         addImport(imported);
     }
     
+    /**
+     * Finds an object from a given key - the imports are included in the lookup.
+     */
     public Object findPojo(String key)
     {
         return key==null ? null : findPojo(key, this);
     }
     
+    /**
+     * Finds an object from a given key.
+     */
     public Object getPojo(String key)
     {
         return key==null || _pojos==null ? null : getPojo(key, this);
     }
     
+    /**
+     * Sets an object identified by the key.
+     * Returns false if the {@code key} is null.
+     */
     public boolean setPojo(String key, Object value)
     {
         if(key==null)
@@ -201,16 +243,26 @@ public final class ApplicationContext
         return true;
     }
     
+    /**
+     * Finds an object bound to {@link References} in this context - the imports 
+     * are included in the lookup.
+     */
     public Object findRef(String key)
     {
         return key==null ? null : findRef(key, this);
     }
     
+    /**
+     * Finds an object bound to {@link References} in this context.
+     */
     public Object getRef(String key)
     {
         return key==null || _refs==null ? null : References.getRef(key, _refs);
     }
     
+    /**
+     * Sets an object bound to {@link References} in this context.
+     */
     public boolean setRef(String key, Object value)
     {
         if(key==null)
@@ -223,6 +275,9 @@ public final class ApplicationContext
         return true;
     }
     
+    /**
+     * Adds {@link References} to this context.
+     */
     public void addRefs(References refs)
     {
         if(refs==null)
@@ -239,6 +294,9 @@ public final class ApplicationContext
             References.wrapRefs(refs, _refs);
     }
     
+    /**
+     * Adds another {@link ApplicationContext} as an import to this context.
+     */
     public void addImport(ApplicationContext imported)
     {
         if(imported==null)
@@ -247,6 +305,9 @@ public final class ApplicationContext
         addImport(imported, this);
     }
     
+    /**
+     * Sets a map of objects on this context identified by their corresponding keys.
+     */
     public void setPojos(Map<String,Object> pojos)
     {
         if(pojos==null || _pojos==pojos)
@@ -276,6 +337,9 @@ public final class ApplicationContext
         }
     }
     
+    /**
+     * Destroys this object and clears all references to other objects.
+     */
     public void destroy()
     {
         if(_imported!=null)

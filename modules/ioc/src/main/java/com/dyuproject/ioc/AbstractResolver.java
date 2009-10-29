@@ -25,6 +25,8 @@ import com.dyuproject.ioc.Resource.Resolver;
 
 
 /**
+ * Base class for resolvers
+ * 
  * @author David Yu
  * @created Feb 23, 2009
  */
@@ -32,10 +34,20 @@ import com.dyuproject.ioc.Resource.Resolver;
 public abstract class AbstractResolver implements Resolver
 {
     
-    public static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
+    /**
+     * Default encoding (UTF-8)
+     */
+    public static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");    
+    /**
+     * Default buffer size (4096 or the system property "resolver.default_buffer_size")
+     */
     public static final int DEFAULT_BUFFER_SIZE = Integer.getInteger("resolver.default_buffer_size", 
             4096).intValue();
     
+
+    /**
+     * Generates a type based from simple name of a class.
+     */
     public static String generateTypeFromClass(Class<?> clazz)
     {
         String sn = clazz.getSimpleName();
@@ -55,12 +67,20 @@ public abstract class AbstractResolver implements Resolver
         _encoding = encoding;
         _bufferSize = bufferSize;
     }
-    
+
+    /**
+     * Gets the buffer size when reading from a stream.
+     */
     public final int getBufferSize()
     {
         return _bufferSize;
     }
     
+    
+    
+    /**
+     * Gets the encoding as {@link Charset}.
+     */
     public final Charset getEncoding()
     {
         return _encoding;

@@ -23,6 +23,8 @@ import org.mortbay.util.ajax.JSON.Output;
 import com.dyuproject.ioc.Context;
 
 /**
+ * A collection of multiple {@link Reference} objects.
+ * 
  * @author David Yu
  * @created Feb 20, 2009
  */
@@ -31,11 +33,17 @@ public class References implements Convertible
 {
     
     
+    /**
+     * Looks up the {@link References} starting from the last.
+     */
     public static References getLast(References refs)
     {
         return refs._refs==null ? refs : getLast(refs._refs);
     }
     
+    /**
+     * Wraps the {@code refs} into the {@code wrapper}.
+     */
     public static void wrapRefs(References refs, References wrapper)
     {
         if(wrapper._refs==null)
@@ -44,6 +52,9 @@ public class References implements Convertible
             wrapRefs(refs, wrapper._refs);          
     }
     
+    /**
+     * Gets a referenced object from the provided {@code refs}.
+     */
     public static Object getRef(String key, References refs)
     {
         if(refs._map==null)
@@ -68,11 +79,17 @@ public class References implements Convertible
         _map = map;
     }
     
+    /**
+     * Add {@code refs} to this {@link References} object.
+     */
     public final void addRefs(References refs)
     {
         wrapRefs(refs, this);
     }
     
+    /**
+     * Puts a referenced object with the given {@code key}.
+     */
     public final Object put(String key, Object value)
     {
         if(_map==null)
@@ -81,11 +98,17 @@ public class References implements Convertible
         return _map.put(key, value);
     }
     
+    /**
+     * Gets a referenced object with the given {@code key}.
+     */
     public final Object get(String key)
     {
         return key==null ? null : getRef(key, this);
     }
     
+    /**
+     * Puts a collection of referenced objects.
+     */
     public final void putAll(Map<String,Object> map)
     {
         if(_map==null)
@@ -113,6 +136,9 @@ public class References implements Convertible
             out.add(entry.getKey(), entry.getValue());
     }
     
+    /**
+     * Destroy this object and all its references to other objects.
+     */
     public final void destroy()
     {
         if(_refs!=null)

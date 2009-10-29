@@ -22,6 +22,8 @@ import com.dyuproject.ioc.Resource.Resolver;
 
 
 /**
+ * A composite resolver which wraps an map of resolvers.
+ * 
  * @author David Yu
  * @created Feb 23, 2009
  */
@@ -29,6 +31,9 @@ import com.dyuproject.ioc.Resource.Resolver;
 public class ResolverCollection implements Resolver
 {
     
+    /**
+     * The type of this resolver. ("collection")
+     */
     public static final String TYPE = "collection";
     
     protected final String _type;
@@ -60,11 +65,17 @@ public class ResolverCollection implements Resolver
         return _type;
     }
     
+    /**
+     * Gets a resolver based from the given {@code type}.
+     */
     public final Resolver getResolver(String type)
     {
         return _resolvers.get(type);
     }
     
+    /**
+     * Puts a resolver and using its {@code type} as the key.
+     */
     public final Resolver putResolver(Resolver resolver)
     {
         return _resolvers.put(resolver.getType(), resolver);

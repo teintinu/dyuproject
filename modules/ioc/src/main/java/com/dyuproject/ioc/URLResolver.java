@@ -19,6 +19,8 @@ import java.net.URL;
 
 
 /**
+ *  A resolver that resolves a resource by opening the stream to the {@link URL}.
+ * 
  * @author David Yu
  * @created Feb 23, 2009
  */
@@ -26,10 +28,19 @@ import java.net.URL;
 public final class URLResolver extends AbstractResolver
 {
     
+    /**
+     * The type of this resolver. ("url")
+     */
     public static final String TYPE = generateTypeFromClass(URLResolver.class);
     
+    /**
+     * The default instance.
+     */
     public static final URLResolver DEFAULT = new URLResolver();
     
+    /**
+     * Gets the default instance.
+     */
     public static URLResolver getDefault()
     {
         return DEFAULT;
@@ -55,6 +66,9 @@ public final class URLResolver extends AbstractResolver
         return new Resource(path, getType(), newReader(new URL(path).openStream()));
     }
     
+    /**
+     * Creates a resource from a given {@code url}.
+     */
     public Resource createResource(URL url) throws IOException
     {
         return new Resource(url.toString(), getType(), newReader(url.openStream()));

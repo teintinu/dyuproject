@@ -20,6 +20,9 @@ import java.util.Map;
 import com.dyuproject.ioc.Resource.Resolver;
 
 /**
+ * The default resolver which delegates the resolution to {@link FileResolver}, 
+ * {@link URLResolver} and {@link ClasspathResolver}.
+ * 
  * @author David Yu
  * @created Feb 23, 2009
  */
@@ -27,15 +30,28 @@ import com.dyuproject.ioc.Resource.Resolver;
 public class DefaultResolver extends ResolverCollection
 {
     
+    /**
+     * The type of this resolver. ("default")
+     */
     public static final String TYPE = AbstractResolver.generateTypeFromClass(DefaultResolver.class);
     
+    /**
+     * The default instance
+     */
     public static DefaultResolver DEFAULT = new DefaultResolver();
     
+    /**
+     * Gets the default instance.
+     */
     public static DefaultResolver getDefault()
     {
         return DEFAULT;
     }
     
+    /**
+     * Puts the {@link FileResolver}, {@link URLResolver} and {@link ClasspathResolver} 
+     * on the given map.
+     */
     public static void putDefaultResolvers(Map<String,Resolver> resolvers)
     {
         resolvers.put(FileResolver.DEFAULT.getType(), FileResolver.DEFAULT);

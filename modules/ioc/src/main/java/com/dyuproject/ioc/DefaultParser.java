@@ -23,6 +23,8 @@ import com.dyuproject.ioc.Resource.Resolver;
 import com.dyuproject.json.ConvertorCache;
 
 /**
+ * The default parser which allows the occurrence of $ in json text.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */

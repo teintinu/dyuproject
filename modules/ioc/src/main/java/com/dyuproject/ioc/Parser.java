@@ -19,9 +19,9 @@ import com.dyuproject.json.ConvertorCache;
 import com.dyuproject.json.StandardJSON;
 
 
-
-
 /**
+ * Base class for a parser.
+ * 
  * @author David Yu
  * @created Feb 21, 2009
  */
@@ -29,8 +29,14 @@ import com.dyuproject.json.StandardJSON;
 public abstract class Parser extends StandardJSON
 {
     
+    /**
+     * The default instance. ({@link DefaultParser})
+     */
     public static final Parser DEFAULT = new DefaultParser();
     
+    /**
+     * Gets the default instance.
+     */
     public static Parser getDefault()
     {
         return DEFAULT;
@@ -44,11 +50,17 @@ public abstract class Parser extends StandardJSON
         _resolver = resolver;
     }
 
+    /**
+     * Gets the resolver.
+     */
     public Resolver getResolver()
     {
         return _resolver;
     }
     
+    /**
+     * Parses the given resource and loads it into the {@link ApplicationContext}
+     */
     public abstract void parse(Resource resource, ApplicationContext appContext);
     //protected abstract Object handleUnknown(Source source, char c);
     
