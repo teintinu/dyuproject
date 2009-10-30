@@ -47,10 +47,11 @@
         <configuration>
           <archive>
             <manifestEntries>
-            <mode>development</mode>
-            <url>http://code.google.com/p/dyuproject/</url>
-            <implementation-version>${pom.version}</implementation-version>
-            <package>com.dyuproject</package>
+              <mode>development</mode>
+              <url>http://code.google.com/p/dyuproject/</url>
+              <implementation-version>${pom.version}</implementation-version>
+              <package>com.dyuproject</package>
+              <Built-By>dyuproject</Built-By>
             </manifestEntries>
           </archive>
         </configuration>
