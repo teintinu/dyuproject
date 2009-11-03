@@ -31,6 +31,9 @@ import java.util.jar.JarInputStream;
 public final class ArchiveUtil
 {
     
+    /**
+     * The suffixes of the files to support.
+     */
     public static final String[] SUPPORTED_FILES = new String[]{
         ".zip",
         ".jar",
@@ -50,11 +53,18 @@ public final class ArchiveUtil
             __tempDir = tempDir;
     }
     
+    /**
+     * Gets the temp dir (the sys property "java.io.tmpdir" if not 
+     * overridden via {@link #setTempDir(File)}). 
+     */
     public static File getTempDir()
     {
         return __tempDir;
     }
     
+    /**
+     * Returns true if the given {@code resource} is either a zip, jar or war file.
+     */
     public static boolean isSupported(String resource)
     {
         int idx = resource.lastIndexOf('.');
@@ -84,6 +94,10 @@ public final class ArchiveUtil
         return extract(archive, targetDir, true);
     }
     
+    /**
+     * Extracts the file {@code archive} to the target dir {@code targetDir} and deletes the 
+     * files extracted upon jvm exit if the flag {@code deleteOnExit} is true.
+     */
     public static boolean extract(URL archive, File targetDir, boolean deleteOnExit) throws IOException
     {
         String archiveStr = archive.toString();

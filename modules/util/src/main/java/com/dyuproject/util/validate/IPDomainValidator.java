@@ -15,6 +15,8 @@
 package com.dyuproject.util.validate;
 
 /**
+ * A string input validator for IPs and domains.
+ * 
  * @author David Yu
  * @created Jan 10, 2009
  */
@@ -29,6 +31,9 @@ public final class IPDomainValidator
     public static final int MIXED = 4;
     public static final int IP = 5;
     
+    /**
+     * Returns 0 if the char array {@code part} is invalid.
+     */
     public static int tokenValidate(char[] part, int start, int len)
     {         
         int digitCount = 0, lastHyphen = -1;
@@ -69,6 +74,9 @@ public final class IPDomainValidator
         return lastHyphen==-1 ? ALPHANUMERIC : MIXED;
     }
     
+    /**
+     * Returns the index of the char {@code c} from the char array {@code ch}.
+     */
     public static int indexOf(char[] ch, char c, int start)
     {
         for(int i=start; i<ch.length; i++)
@@ -79,6 +87,10 @@ public final class IPDomainValidator
         return -1;
     }
     
+    /**
+     * Returns the index (starting from the last) of the char {@code c} from the 
+     * array of characters {@code ch}.
+     */
     public static int lastIndexOf(char[] ch, char c, int start)
     {
         for(int i=start; i-->0;)
@@ -89,6 +101,9 @@ public final class IPDomainValidator
         return -1;
     }
     
+    /**
+     * Returns 0 if the string {@code domain} is invalid.
+     */
     public static int validate(String domain, int start, int end)
     {
         char[] ch = new char[end-start];
@@ -96,16 +111,25 @@ public final class IPDomainValidator
         return validate(ch);
     }
     
+    /**
+     * Returns 0 if the string {@code domain} is invalid.
+     */
     public static int validate(String domain)
     {
         return validate(domain.toCharArray());
     }
     
+    /**
+     * Returns 0 if the char array {@code domain} is invalid.
+     */
     public static int validate(char[] domain)
     {
         return validate(domain, 0, domain.length);
     }
     
+    /**
+     * Returns 0 if the char array {@code domain} is invalid.
+     */
     public static int validate(char[] domain, int start, int end)
     {        
         boolean mixed = false, hyphenated = false, alphanumeric = false;
@@ -183,21 +207,33 @@ public final class IPDomainValidator
         return alphanumeric ? ALPHANUMERIC : PLAIN;
     }
     
+    /**
+     * Checks whether the string {@code domain} is valid.
+     */
     public static boolean isValid(String domain)
     {
         return validate(domain)!=INVALID;
     }
     
+    /**
+     * Checks whether the char array {@code domain} is valid.
+     */
     public static boolean isValid(char[] domain)
     {
         return validate(domain)!=INVALID;
     }
     
+    /**
+     * Checks whether the string {@code domain} is valid.
+     */
     public static boolean isValid(String domain, int start, int end)
     {
         return validate(domain, start, end)!=INVALID;
     }
     
+    /**
+     * Checks whether the char array {@code domain} is valid.
+     */
     public static boolean isValid(char[] domain, int start, int end)
     {
         return validate(domain, start, end)!=INVALID;

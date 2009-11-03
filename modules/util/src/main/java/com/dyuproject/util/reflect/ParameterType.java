@@ -220,11 +220,18 @@ public abstract class ParameterType
         map.put(DOUBLE_P.getTypeClass(), DOUBLE_P);
     }
     
+    /**
+     * Gets the simple types (basically primitive types).
+     */
     public static ParameterType getSimpleType(Class<?> clazz)
     {
         return __simpleTypes.get(clazz);
     }
     
+    /**
+     * Gets the setters of a pojo as a map of {@link String} as key and 
+     * {@link SimpleField} as value.
+     */
     public static Map<String,SimpleField> getSimpleFieldSetters(Class<?> pojoClass) 
     {
         HashMap<String,SimpleField> baseMap = new HashMap<String,SimpleField>();
@@ -254,6 +261,10 @@ public abstract class ParameterType
         }
     }
     
+    /**
+     * Gets the getters of a pojo as a map of {@link String} as key and 
+     * {@link SimpleField} as value.
+     */
     public static Map<String,SimpleField> getSimpleFieldGetters(Class<?> pojoClass) 
     {
         HashMap<String,SimpleField> baseMap = new HashMap<String,SimpleField>();
@@ -296,7 +307,13 @@ public abstract class ParameterType
         }
     }
     
+    /**
+     * Gets the actual value from a string {@code value}.
+     */
     public abstract Object getActualValue(String value);
+    /**
+     * Gets the class of this given type.
+     */
     public abstract Class<?> getTypeClass();
     
     public int hashCode()
@@ -304,11 +321,19 @@ public abstract class ParameterType
         return getTypeClass().hashCode();
     }
     
+    /**
+     * Checks whether this type is a java primitive.
+     */
     public boolean isPrimitive()
     {
         return false;
     }
     
+    /**
+     * A single property of a pojo with contains the method where one can use reflection to 
+     * extract value, the name and the {@link ParameterType} w/c can be used to extract value 
+     * from a string.
+     */
     public static class SimpleField
     {
         private final String _name;
@@ -322,16 +347,25 @@ public abstract class ParameterType
             _type = type;
         }
         
+        /**
+         * Gets the name.
+         */
         public String getName()
         {
             return _name;
         }
         
+        /**
+         * Gets the {@link Method} used to extract value via reflection.
+         */
         public Method getMethod()
         {
             return _method;
         }
         
+        /**
+         * Gets the {@link ParameterType}.
+         */
         public ParameterType getType()
         {
             return _type;

@@ -36,43 +36,68 @@ import java.util.List;
 public final class ResourceUtil
 {
     
-    public static int __copyBufferSize = 4096;
+    static int __copyBufferSize = 4096;
     
+    /**
+     * Sets the buffer size to use when copying data from streams.
+     */
     public static void setCopyBufferSize(int size)
     {
         __copyBufferSize = size;
     }
     
+    /**
+     * Gets the buffer size to use when copying data from streams.
+     */
     public static int getCopyBufferSize()
     {
         return __copyBufferSize;
     }    
 
+    /**
+     * Reads the contents of the file into a byte array.
+     */
     public static byte[] readBytes(File file) throws IOException 
     {
         return readBytes(file.toURI());
     }
     
+    /**
+     * Reads the contents of the given file into a byte array.
+     */
     public static byte[] readBytes(String file) throws IOException 
     {
         return readBytes(URI.create(file));
     }
     
+    /**
+     * Reads the contents of the given file into a byte array.
+     */
     public static byte[] readBytes(URI file) throws IOException 
     {
         return readBytes(file.toURL());
     }
     
+    /**
+     * Reads the contents of the given file into a byte array.
+     */
     public static byte[] readBytes(URL file) throws IOException 
     {       
         return readBytes(file.openStream());
     }
     
+    /**
+     * Reads the contents of the given input stream into a byte array.
+     */
     public static byte[] readBytes(InputStream in) throws IOException 
     {
         return getByteArrayOutputStream(in).toByteArray();
     }
     
+    /**
+     * Gets the ByteArrayOutputStream that was filled when reading from the 
+     * given input stream {@code in}.
+     */
     public static ByteArrayOutputStream getByteArrayOutputStream(InputStream in) throws IOException 
     {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -84,21 +109,33 @@ public final class ResourceUtil
         return out;
     }
     
+    /**
+     * Copies the contents of the  input url to the output url.
+     */
     public static void copy(URL in, URL out) throws IOException
     {
         copy(in.openStream(), out.openConnection().getOutputStream());
     }
     
+    /**
+     * Copies the contents of the  input file to the output file.
+     */
     public static void copy(File in, File out) throws IOException
     {
         copy(new FileInputStream(in), new FileOutputStream(out));
     }
     
+    /**
+     * Copies the contents of the input url to the output file.
+     */
     public static void copy(URL in, File out) throws IOException
     {
         copy(in.openStream(), new FileOutputStream(out));
     }
     
+    /**
+     * Copies the contents of the input stream to the output stream.
+     */
     public static void copy(InputStream in, OutputStream out) throws IOException 
     {
         byte[] buffer = new byte[__copyBufferSize];
@@ -108,6 +145,10 @@ public final class ResourceUtil
         try{out.close();}catch(Exception e){}     
     }
     
+    /**
+     * Copies the contents of the input stream to the output stream with the specified 
+     * buffer size to use for copying.
+     */
     public static void copy(InputStream in, OutputStream out, int bufferSize) throws IOException 
     {
         byte[] buffer = new byte[bufferSize];
@@ -132,6 +173,9 @@ public final class ResourceUtil
         }
     }
     
+    /**
+     * Copies the given {@code file} to the given dir.
+     */
     public static void copyFileToDir(File file, File dirTo) throws IOException
     {
         if(file.exists())
@@ -147,6 +191,9 @@ public final class ResourceUtil
         }            
     }
     
+    /**
+     * Returns a list of file filtered by their file types/extensions; (E.g ".zip")
+     */
     public static List<File> getFilesByExtension(File dir, String[] extensions)
     {
         if(!dir.isDirectory() || extensions==null)

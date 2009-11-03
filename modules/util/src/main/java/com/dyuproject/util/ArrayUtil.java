@@ -24,6 +24,10 @@ import java.lang.reflect.Array;
 public final class ArrayUtil
 {
     
+    /**
+     * Copies the elements of the {@code oldArray} to a new array with extra space to 
+     * append the given element {@code toAppend}.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] append(T[] oldArray, T toAppend)
     {
@@ -34,6 +38,10 @@ public final class ArrayUtil
         return array;
     }    
     
+    /**
+     * Copies the elements of the {@code oldArray} to a new array with extra space to 
+     * append the given element {@code toAppend1} and the array {@code toAppend2}.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] append(T[] oldArray, T toAppend1, T[] toAppend2)
     {
@@ -46,6 +54,10 @@ public final class ArrayUtil
         return array;
     }
     
+    /**
+     * Copies the elements of the {@code oldArray} to a new array with extra space to 
+     * append the given array {@code toAppend}.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] append(T[] oldArray, T[] toAppend)
     {
@@ -57,6 +69,10 @@ public final class ArrayUtil
         return array;
     }
     
+    /**
+     * Copies the elements of the {@code oldArray} to a new array with extra space to 
+     * append the given array {@code toAppend1} and the element {@code toAppend2}.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] append(T[] oldArray, T[] toAppend1, T toAppend2)
     {
@@ -69,6 +85,10 @@ public final class ArrayUtil
         return array;
     }
     
+    /**
+     * Copies the elements of the {@code oldArray} to a new array with extra space to 
+     * append the given array {@code toAppend1} and the array {@code toAppend2}.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] append(T[] oldArray, T[] toAppend1, T[] toAppend2)
     {
@@ -81,6 +101,12 @@ public final class ArrayUtil
         return array;
     }
     
+    /**
+     * Returns a copy of the old array {@code oldArray} but with the element at the 
+     * give index {@code idx} removed.
+     * 
+     * @throws {@link IllegalArgumentException} if the array index is out of bounds.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T[] remove(T[] oldArray, int idx)
     {

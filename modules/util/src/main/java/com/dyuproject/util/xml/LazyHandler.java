@@ -18,6 +18,7 @@ package com.dyuproject.util.xml;
  * A handler that can terminate the parsing anytime.
  * Useful when you already got what you wanted from the xml.
  * This saves processing time and memory.
+ * Note that the implemention should be the one tracking the stack and the state.
  * 
  * @author David Yu
  * @created Sep 18, 2008
@@ -26,14 +27,30 @@ package com.dyuproject.util.xml;
 public interface LazyHandler
 {
     
+    /**
+     * Callback that gets called only once upon traversing the root xml element.
+     */
     public boolean rootElement(String name, String namespace);
     
+    /**
+     * Callback after traversing the start of xml elements (E.g &lt;foo&gt;).
+     */
     public boolean startElement(String name, String namespace);
     
+    /**
+     * Callback after traversing the end of xml elements (E.g &lt;/foo&gt; or 
+     * /&gt;).
+     */
     public boolean endElement();
     
+    /**
+     * Callback after traversing the attributes of an element.
+     */
     public void attribute(String name, String value);
     
+    /**
+     * Callback after traversing the text content of an element.
+     */
     public void characters(char[] data, int start, int length); 
 
 }
