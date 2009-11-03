@@ -36,12 +36,25 @@ import org.mortbay.util.UrlEncoded;
 public final class SimpleHttpConnector implements HttpConnector
 {
     
+    /**
+     * THe default buffer size (4096 or the system property "shc.buffer_size")
+     */
     public static int DEFAULT_BUFFER_SIZE = Integer.getInteger("shc.buffer_size", 4096).intValue();
+    /**
+     * The default connect timeout (10000 or the system property "shc.connect_timeout")
+     */
     public static int DEFAULT_CONNECT_TIMEOUT = Integer.getInteger("shc.connect_timeout", 10000).intValue();
-    public static boolean DEFAULT_FOLLOW_REDIRECT = !"false".equals(System.getProperty("shc.follow_redirects"));
+    /**
+     * The defualt follow redirect flag (false or the system property "shc.follow_redirects")
+     */
+    public static boolean DEFAULT_FOLLOW_REDIRECT = !"false".equals(
+            System.getProperty("shc.follow_redirects"));
     
     private static final SimpleHttpConnector DEFAULT = new SimpleHttpConnector();
     
+    /**
+     * Gets the default instance.
+     */
     public static SimpleHttpConnector getDefault()
     {
         return DEFAULT;
@@ -63,16 +76,25 @@ public final class SimpleHttpConnector implements HttpConnector
         _followRedirects = followRedirects;
     }
     
+    /**
+     * Gets the buffer size.
+     */
     public int getBufferSize()
     {
         return _bufferSize;
     }
     
+    /**
+     * Gets the connection timeout.
+     */
     public int getConnectTimeout()
     {
         return _connectTimeout;
     }
 
+    /**
+     * Checks whether this instance follows redirects or not.
+     */
     public boolean isFollowRedirects()
     {
         return _followRedirects;

@@ -36,6 +36,10 @@ public final class ReflectUtil
     private static final Class<?>[] __emptyArg = new Class<?>[]{};
     private static final Object[] __getterArg = new Object[]{};
 
+    /**
+     * Gets the getters of a pojo as a map of {@link String} as key and 
+     * {@link Method} as value.
+     */
     public static Map<String,Method> getGetterMethods(Class<?> pojoClass) 
     {
         HashMap<String,Method> methods = new HashMap<String,Method>();
@@ -64,8 +68,10 @@ public final class ReflectUtil
         }
     }
 
-
-
+    /**
+     * Gets the setters of a pojo as a map of {@link String} as key and 
+     * {@link Method} as value.
+     */
     public static Map<String,Method> getSetterMethods(Class<?> pojoClass) 
     {
         HashMap<String,Method> methods = new HashMap<String,Method>();
@@ -90,6 +96,9 @@ public final class ReflectUtil
         }
     }
     
+    /**
+     * Converts a method name into a camel-case field name, starting from {@code start}.
+     */
     public static String toProperty(int start, String methodName)
     {
         char[] prop = new char[methodName.length()-start];
@@ -99,11 +108,17 @@ public final class ReflectUtil
         return new String(prop);
     }
     
+    /**
+     * Converts a method name into a camel-case field name, starting from {@code start}.
+     */
     public static String toField(int start, String methodName)
     {
         return toProperty(start, methodName);
     }
     
+    /**
+     * Tries to invoke Foo.getInstance() if the method (public+static) getInstance() is there.
+     */
     public static Object getInstance(Class<?> clazz)
     {
         Method m = null;
@@ -136,6 +151,10 @@ public final class ReflectUtil
         return null;
     }
     
+    /**
+     * Tries to invoke Foo.getInstance() if the method (public+static) getInstance() is there; 
+     * If not, it creates a new instance via reflection.
+     */
     public static Object newInstance(Class<?> clazz) 
     throws InstantiationException, IllegalAccessException
     {

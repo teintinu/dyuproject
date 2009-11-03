@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Simple XML to POJO bean
+ * Simple node that persists the attributes in a {@link Map}, text content 
+ * in a {@link StringBuilder} and child nodes in a {@link List}.
  * 
  * @author David Yu
  * @created Sep 18, 2008
@@ -31,6 +32,9 @@ public class SimpleNode implements Node
     
     private static int __defaultBufferSize = 16;
     
+    /**
+     * Sets the default buffer size for the text content.
+     */
     public static void setDefaultBufferSize(int size)
     {
         __defaultBufferSize = 16;
@@ -38,8 +42,8 @@ public class SimpleNode implements Node
     
     private Node _parent;
     private String _name, _namespace;
-    private List<Node> _nodes;
-    private Map<String,String> _attributes;
+    private ArrayList<Node> _nodes;
+    private HashMap<String,String> _attributes;
     private StringBuilder _text;
     
     public SimpleNode(String name)

@@ -55,12 +55,21 @@ public final class XMLParser
         __defaultBufferSize = size;
     }
     
+    /**
+     * Lazily parses the given {@code reader} using the default buffer size 
+     * {@link #__defaultBufferSize}.  The parsing can be terminated by 
+     * the {@link LazyHandler} {@code handler} at any point.
+     */
     public static void parse(InputStreamReader reader, LazyHandler handler, 
             boolean includeInnerText) throws IOException
     {
         parse(reader, handler, includeInnerText, __defaultBufferSize);        
     }
     
+    /**
+     * Lazily parses the given {@code reader}.  The parsing can be terminated by 
+     * the {@link LazyHandler} {@code handler} at any point.
+     */
     public static void parse(InputStreamReader reader, LazyHandler handler, 
             boolean includeInnerText, int bufferSize) throws IOException
     {

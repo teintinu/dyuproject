@@ -69,7 +69,10 @@ public final class UrlEncodedParameterMap extends HashMap<String,String>
         char separator = getUrl().lastIndexOf('?')==-1 ? '?' : '&';
         for(Map.Entry<String,String> entry : entrySet())
         {
-            buffer.append(separator).append(entry.getKey()).append('=').append(UrlEncoded.encodeString(entry.getValue()));            
+            buffer.append(separator)
+                .append(entry.getKey())
+                .append('=')
+                .append(UrlEncoded.encodeString(entry.getValue()));            
             separator = '&';
         }       
         return buffer.toString();
@@ -81,7 +84,10 @@ public final class UrlEncodedParameterMap extends HashMap<String,String>
         char separator = getUrl().lastIndexOf('?')==-1 ? '?' : '&';
         for(Map.Entry<String,String> entry : entrySet())
         {
-            buffer.append(separator).append(entry.getKey()).append('=').append(encodeRFC3986(entry.getValue()));            
+            buffer.append(separator)
+                .append(entry.getKey())
+                .append('=')
+                .append(encodeRFC3986(entry.getValue()));            
             separator = '&';
         }       
         return buffer.toString();
@@ -123,49 +129,78 @@ public final class UrlEncodedParameterMap extends HashMap<String,String>
         }
     }
     
+    /**
+     * Gets the url encoded value from the given {@code key}.
+     */
     public String getEncoded(String key)
     {
         String value = get(key);
         return value==null ? null : encode(value);
     }
     
+    /**
+     * Gets the url encoded value from the given {@code key}.
+     */
     public String encodedGet(String key)
     {
         return getEncoded(key);
     }
     
+    /**
+     * Encodes (url encoding) the {@code value} with the default charset UTF-8.
+     */
     public static String encode(String value)
     {
         return encode(value, StringUtil.__UTF8);
     }
     
+    /**
+     * Encodes (url encoding) the {@code value} with the specified {@code charset}.
+     */
     public static String encode(String value, String charset)
     {
         return UrlEncoded.encodeString(value, charset);
     }
     
+    /**
+     * Decodes (url encoding) the {@code value} with the default charset UTF-8.
+     */
     public static String decode(String value)
     {
         return UrlEncoded.decodeString(value, 0, value.length(), StringUtil.__UTF8);
     }
     
+    /**
+     * Decodes (url encoding) the {@code value} with the specified {@code charset}.
+     */
     public static String decode(String value, String charset)
     {
         return UrlEncoded.decodeString(value, 0, value.length(), charset);
     }
     
+    /**
+     * Decodes (url encoding) the {@code value} with the specified {@code charset}, 
+     * starting at {@code start} with the length {@code len}.
+     */
     public static String decode(String value, int start, int len, String charset)
     {
         return UrlEncoded.decodeString(value, start, len, charset);
     }
     
+    /**
+     * Encodes the value using RFC 3986 url encoding - which basically 
+     * skips {'-', '.', '_', '~'}.
+     */
     public static String encodeRFC3986(String value)
     {
         return encodeRFC3986(value, StringUtil.__UTF8);
     }
     
     /* From UrlEncoded snippet customized to skip {'-', '.', '_', '~'} */
-    /** Perform URL encoding.
+    /**
+     * Encodes the value with the given {@code charset} using RFC 3986 
+     * url encoding - which basically skips {'-', '.', '_', '~'}.
+     * 
      * @param value string to encode 
      * @return encoded string.
      */

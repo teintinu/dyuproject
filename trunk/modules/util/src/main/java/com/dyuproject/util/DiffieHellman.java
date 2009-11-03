@@ -42,22 +42,30 @@ public final class DiffieHellman
     }
     
     /**
+     * Generates a random private Key (element 0) and a random public key (element 1) 
+     * from the given {@code modulus}.
      * 
      * @param modulus
      * @return BigInteger array.  Element 0 is privateKey.  Element 1 is publicKey.
      */
-    
     public BigInteger[] generateRandomKeys(BigInteger modulus)
     {
         BigInteger privateKey = BigInteger.valueOf(System.currentTimeMillis() + __loadTime);
         return new BigInteger[]{privateKey, generatePublicKey(privateKey, modulus)};
     }
     
+    /**
+     * Generates a public key from the given {@code privateKey} and {@code modulus}.
+     */
     public BigInteger generatePublicKey(BigInteger privateKey, BigInteger modulus)
     {
         return _base.modPow(privateKey, modulus);
     }
     
+    /**
+     * Gets/computes the shared secret key from the given {@code privateKey}, 
+     * {@code modulus} and {@code responseKey} - which is a public key.
+     */
     public static BigInteger getSharedSecretKey(BigInteger privateKey, BigInteger modulus, 
             BigInteger responseKey)
     {

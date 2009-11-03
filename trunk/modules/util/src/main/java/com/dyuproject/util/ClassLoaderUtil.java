@@ -27,11 +27,21 @@ import java.net.URL;
 public final class ClassLoaderUtil
 {
     
+    /**
+     * Loads a class from the classloader; 
+     * If not found, the classloader of the {@code context} class specified will be used.
+     */
     public static Class<?> loadClass(String className, Class<?> context)
     {
         return loadClass(className, context, false);
     }
     
+    /**
+     * Loads a class from the classloader; 
+     * If not found, the classloader of the {@code context} class specified will be used.
+     * If the flag {@code checkParent} is true, the classloader's parent is included in 
+     * the lookup.
+     */
     public static Class<?> loadClass(String className, Class<?> context, boolean checkParent)
     {
         Class<?> clazz = null;
@@ -61,6 +71,10 @@ public final class ClassLoaderUtil
         return clazz;
     }
     
+    /**
+     * Instantiates an object using its default constructor if the {@code className} is 
+     * found in the classpath and loaded.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T newInstance(String className, Class<?> context) throws Exception
     {
@@ -71,6 +85,10 @@ public final class ClassLoaderUtil
         return clazz.newInstance();
     }
     
+    /**
+     * Instantiates an object using its default constructor if the {@code className} is 
+     * found in the classpath and loaded.
+     */
     @SuppressWarnings("unchecked")
     public static <T> T newInstance(String className, Class<?> context, boolean checkParent) 
     throws Exception
@@ -82,11 +100,21 @@ public final class ClassLoaderUtil
         return clazz.newInstance();
     }
     
+    /**
+     * Loads a {@link URL} resource from the classloader;
+     * If not found, the classloader of the {@code context} class specified will be used.
+     */
     public static URL getResource(String resource, Class<?> context)
     {
         return getResource(resource, context, false);
     }
     
+    /**
+     * Loads a {@link URL} resource from the classloader;
+     * If not found, the classloader of the {@code context} class specified will be used.
+     * If the flag {@code checkParent} is true, the classloader's parent is included in 
+     * the lookup.
+     */
     public static URL getResource(String resource, Class<?> context, boolean checkParent)
     {
         URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
