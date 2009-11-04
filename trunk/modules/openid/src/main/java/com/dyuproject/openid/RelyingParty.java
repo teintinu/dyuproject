@@ -106,12 +106,24 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public final class RelyingParty
 {
     
+    /**
+     * The default resource path ("openid.properties" from classpath).
+     */
     public static final String DEFAULT_RESOURCE_PATH = "openid.properties";
+    /**
+     * "openid_identifier"
+     */
     public static final String DEFAULT_IDENTIFIER_PARAMETER = "openid_identifier";
     static final boolean DEFAULT_AUTOMATIC_REDIRECT = true;
     
     private static RelyingParty __instance = null;
     
+    /**
+     * Gets the default instance configured from the properties file found in the 
+     * {@link #DEFAULT_RESOURCE_PATH default resource path}.
+     * If its not found, a new instance will be created (using the default constructor of 
+     * the RelyingParty) and set as the default instance.
+     */
     public static RelyingParty getInstance()
     {
         RelyingParty instance = __instance;
@@ -145,6 +157,10 @@ public final class RelyingParty
         return instance;
     }
     
+    /**
+     * Creates a new instance from the specified {@code resourceLoc} in the classpath, which 
+     * will be parsed/loaded to a {@link Properties}.
+     */
     public static RelyingParty newInstance(String resourceLoc)
     {        
         URL resource = getResource(resourceLoc);
@@ -160,11 +176,19 @@ public final class RelyingParty
         }        
     }
     
+    /**
+     * Creates a new instance from the specified URL {@code resource}, which will be  
+     * parsed/loaded to a {@link Properties}.
+     */
     public static RelyingParty newInstance(URL resource) throws IOException
     {
         return newInstance(resource.openStream());
     }
     
+    /**
+     * Creates a new instance from the specified InputStream {@code in}, which will be 
+     * parsed/loaded to a {@link Properties}.
+     */
     public static RelyingParty newInstance(InputStream in) throws IOException
     {
         Properties props = new Properties();
@@ -172,6 +196,9 @@ public final class RelyingParty
         return newInstance(props);
     }
     
+    /**
+     * Creates a new instance configured from the given {@code properties}.
+     */
     public static RelyingParty newInstance(Properties properties)
     {  
         // discovery
@@ -259,6 +286,9 @@ public final class RelyingParty
         }
     }
     
+    /**
+     * Copies all the request parameters into a Map<String,String> object.
+     */
     @SuppressWarnings("unchecked")
     public static Map<String,String> getAuthParameters(HttpServletRequest request)
     {
@@ -273,7 +303,7 @@ public final class RelyingParty
     }
     
     /**
-     * True if we have a positive response from the OpenID provider.
+     * Returns true if we have a positive response from the OpenID provider.
      * If the user {@link OpenIdUser#isAssociated() is associated}
      * and we have an auth response, then we can 
      * {@link #verifyAuth(OpenIdUser, HttpServletRequest, HttpServletResponse) verify} the user.
@@ -283,11 +313,18 @@ public final class RelyingParty
         return Constants.Mode.ID_RES.equals(request.getParameter(Constants.OPENID_MODE));
     }
     
+    /**
+     * Returns true if the user has cancelled the authentication on his openid provider.
+     */
     public static boolean isAuthCancel(HttpServletRequest request)
     {
         return Constants.Mode.CANCEL.equals(request.getParameter(Constants.OPENID_MODE));
     }
     
+    /**
+     * Gets the UrlEncodedParameterMap filled with the openid parameters that is used to 
+     * redirect the user to his openid provider.
+     */
     public static UrlEncodedParameterMap getAuthUrlMap(OpenIdUser user, String trustRoot, 
             String realm, String returnTo)
     {
@@ -314,6 +351,10 @@ public final class RelyingParty
         return map;
     }
     
+    /**
+     * Gets the StringBuilder filled with the openid parameters that is used to 
+     * redirect the user to his openid provider.
+     */
     public static StringBuilder getAuthUrlBuffer(OpenIdUser user, String trustRoot, String realm, 
             String returnTo)
     {
@@ -348,6 +389,10 @@ public final class RelyingParty
         return buffer;
     }
     
+    /**
+     * Gets the string url with the openid parameters that is used to 
+     * redirect the user to his openid provider.
+     */
     public static String getAuthUrlString(OpenIdUser user, String trustRoot, String realm, 
             String returnTo)
     {
@@ -408,31 +453,50 @@ public final class RelyingParty
         _identifierParameter = identifierParameter;        
     }
     
+    /**
+     * Gets the {@link OpenIdUser} {@link OpenIdUserManager manager}.
+     */
     public OpenIdUserManager getOpenIdUserManager()
     {
         return _manager;
     }
     
+    /**
+     * Gets the {@link OpenIdContext}.
+     */
     public OpenIdContext getOpenIdContext()
     {
         return _context;
     }
     
+    /**
+     * Gets the identifier parameter - default is "openid_identifier".
+     */
     public String getIdentifierParameter()
     {
         return _identifierParameter;
     }
     
+    /**
+     * Checks whether the relying party should automatically redirect the user if he 
+     * navigates back to the relying party's site.
+     */
     public boolean isAutomaticRedirect()
     {
         return _automaticRedirect;
     }
     
+    /**
+     * Gets the auth redirection scheme.
+     */
     public AuthRedirection getAuthRedirection()
     {
         return _authRedirection;
     }     
 
+    /**
+     * Gets the user cache.
+     */
     public UserCache getUserCache()
     {
         return _userCache;
@@ -450,7 +514,7 @@ public final class RelyingParty
      * or if the authentification is timed out.<br>
      * If returned user is <code>null</code>
      * and {@link #isAuthResponse(HttpServletRequest)} is <code>true</code>
-     * then we have an authentification timeout.
+     * then we have an authentication timeout.
      * 
      * @param request HttpServletRequest
      * @return user OpenIdUser
@@ -525,6 +589,10 @@ public final class RelyingParty
         return user;
     }
     
+    /**
+     * Returns true if the user has succeeded authentication on his openid provider; 
+     * The {@link OpenIdUser} is persisted if successful.
+     */
     public boolean verifyAuth(OpenIdUser user, HttpServletRequest request, 
             HttpServletResponse response) throws Exception
     {
@@ -537,6 +605,10 @@ public final class RelyingParty
         return false;
     }
     
+    /**
+     * Returns true if the user is successfully associated with his openid provider; 
+     * The {@link OpenIdUser} is persisted if successful.
+     */
     public boolean associate(OpenIdUser user, HttpServletRequest request, 
             HttpServletResponse response) throws Exception
     {
@@ -548,7 +620,11 @@ public final class RelyingParty
         return false;
     }
 
-    
+    /**
+     * Returns true if the user is successfully associated and redirected to his  
+     * openid provider for authentication; 
+     * The {@link OpenIdUser} is persisted if successful.
+     */
     public boolean associateAndAuthenticate(OpenIdUser user, HttpServletRequest request, 
             HttpServletResponse response, String trustRoot, String realm, 
             String returnTo) throws Exception
@@ -571,42 +647,79 @@ public final class RelyingParty
         return true;
     }    
     
+    /**
+     * Invalidates/terminates the openid session of the user associated with the given 
+     * {@code request};  To logout an authenticated user, you invoke this method.
+     */
     public boolean invalidate(HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
         return _manager.invalidate(request, response);
     }
     
+    /**
+     * Adds a custom listener.
+     */
     public RelyingParty addListener(Listener listener)
     {
         _listener.addListener(listener);
         return this;
     }
     
+    /**
+     * Adds a custom resolver.
+     */
     public RelyingParty addResolver(Resolver resolver)
     {
         _resolver.addResolver(resolver);
         return this;
     }    
     
+    /**
+     * Enables users to get notified on certain points of the openid authentication lifecycle.
+     */
     public interface Listener
     {
         // the authentication process (in order)
+        
+        /**
+         * Callback that gets called upon successful discovery.
+         */
         public void onDiscovery(OpenIdUser user, HttpServletRequest request);
         
+        /**
+         * Callback that gets called before the user is redirected to this provider for 
+         * authentication.
+         */
         public void onPreAuthenticate(OpenIdUser user, HttpServletRequest request, 
                 UrlEncodedParameterMap params);        
         
+        /**
+         * Callback that gets called when the user has been redirected back to the 
+         * relying party's site and his authentication has been successfully verified.
+         */
         public void onAuthenticate(OpenIdUser user, HttpServletRequest request);
         
+        /**
+         * Callback that gets called everytime an authenticated user accesses protected pages 
+         * from the relying party's site.
+         * This could be used as a counter for page views.
+         */
         public void onAccess(OpenIdUser user, HttpServletRequest request);
     }
     
+    /**
+     * A collection of listeners that wraps an array to delegate the methods from 
+     * the relying party {@link Listener listener}.
+     */
     public static final class ListenerCollection implements Listener
     {
 
         private Listener[] _listeners = new Listener[]{};
         
+        /**
+         * Adds a listener.
+         */
         public ListenerCollection addListener(Listener listener)
         {
             if(listener==null || indexOf(listener)!=-1)
@@ -624,6 +737,9 @@ public final class RelyingParty
             return this;
         }
         
+        /**
+         * Gets the index of the listener on the wrapped array.
+         */
         public int indexOf(Listener listener)
         {
             if(listener!=null)

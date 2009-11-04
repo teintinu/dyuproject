@@ -24,7 +24,8 @@ import com.dyuproject.util.xml.LazyHandler;
 import com.dyuproject.util.xml.XMLParser;
 
 /**
- * Yadis Discovery
+ * YadisDiscovery - parses xrds documents either specified by the header {@link #X_XRDS_LOCATION} 
+ * or the identifier itself if the content type is {@link #XRDS_CONTENT_TYPE}. 
  * 
  * @author David Yu
  * @created Sep 25, 2008
@@ -122,6 +123,9 @@ public final class YadisDiscovery implements Discovery
                 handler._openIdServer, null);
     }    
     
+    /**
+     * Lazily parses the xrds document.
+     */
     static final class XmlHandler implements LazyHandler
     {
         

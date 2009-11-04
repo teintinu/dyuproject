@@ -46,11 +46,17 @@ public abstract class AbstractExtension implements Extension
         return _namespace;
     }
 
+    /**
+     * Not needed by an extension.
+     */
     public void onDiscovery(OpenIdUser user, HttpServletRequest request)
     {        
         
     }
     
+    /**
+     * Not needed by an extension.
+     */
     public void onAccess(OpenIdUser user, HttpServletRequest request)
     {       
         

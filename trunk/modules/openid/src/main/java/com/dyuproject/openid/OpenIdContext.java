@@ -39,16 +39,25 @@ public final class OpenIdContext
         _httpConnector = httpConnector;
     }
     
+    /**
+     * Gets the association.
+     */
     public Association getAssociation()
     {
         return _association;
     }
     
+    /**
+     * Gets the discovery.
+     */
     public Discovery getDiscovery()
     {
         return _discovery;
     }
     
+    /**
+     * Gets the http connector.
+     */
     public HttpConnector getHttpConnector()
     {
         return _httpConnector;

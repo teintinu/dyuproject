@@ -30,7 +30,13 @@ public final class Identifier implements Serializable
     
     private static final long serialVersionUID = 2009100698L;
     
+    /**
+     * "http"
+     */
     public static final String CHECKED_PREFIX = "http";
+    /**
+     * "http://"
+     */
     public static final String ASSIGNED_PREFIX = "http://";    
     
     private String _id;
@@ -42,6 +48,10 @@ public final class Identifier implements Serializable
         _id = id;
     }
     
+    /**
+     * Resolves this identifier by providing a non-null url - which is the user's 
+     * openid server.
+     */
     public void resolve(String url)
     {
         if(_url!=null || url==null)
@@ -50,6 +60,11 @@ public final class Identifier implements Serializable
         _url = url;
     }
     
+    /**
+     * Resolves this identifier by providing a non-null url - which is the user's 
+     * openid server.  The flag {@code xrds} is to indicate that this url points to an 
+     * xrds document.
+     */
     public void resolve(String url, boolean xrds)
     {
         if(_url!=null || url==null)
@@ -59,6 +74,10 @@ public final class Identifier implements Serializable
         _xrds = xrds;
     }
     
+    /**
+     * Resolves this identifier by providing a non-null url - which is the user's 
+     * openid server, and also changing the id of this identifier.
+     */
     public void resolve(String url, String newId)
     {
         if(_url!=null || url==null)
@@ -70,6 +89,11 @@ public final class Identifier implements Serializable
             _id = newId;
     }
     
+    /**
+     * Resolves this identifier by providing a non-null url - which is the user's 
+     * openid server.  The flag {@code xrds} is to indicate that this url points to an 
+     * xrds document.  If {@code newId} is not null, it will replace the id of this identifier.
+     */
     public void resolve(String url, boolean xrds, String newId)
     {
         if(_url!=null || url==null)
@@ -82,26 +106,43 @@ public final class Identifier implements Serializable
             _id = newId;
     }
     
+    /**
+     * Gets the url.
+     */
     public String getUrl()
     {
         return _url;
     }
     
+    /**
+     * Gets the id.
+     */
     public String getId()
     {
         return _id;
     }
     
+    /**
+     * Checks whether the url is an xrds document.
+     */
     public boolean isUrlContentTypeXrds()
     {
         return _xrds;
     }
     
+    /**
+     * Checks whether this identifier is resolved - meaning the url (openid server endpoint) 
+     * is provided.
+     */
     public boolean isResolved()
     {
         return _url!=null;
     }
     
+    /**
+     * Returns an Identifier with the id same as the url if the given {@code id} is 
+     * a valid url;  If not, the given {@code resolver} will resolve the url.
+     */
     public static Identifier getIdentifier(String id, Resolver resolver, OpenIdContext context)
     {
         Identifier identifier = new Identifier(id);
@@ -188,15 +229,25 @@ public final class Identifier implements Serializable
         return true;
     }
     
+    /**
+     * Resolves the non-url identifier by assigning the openid server endpoint url or the 
+     * location of the xrds document.
+     */
     public interface Resolver
     {        
         public void resolve(Identifier identifier, OpenIdContext context);
     }
     
+    /**
+     * Allows for chaining the resolution until it is successfully resolved.
+     */
     public static class ResolverCollection implements Resolver
     {
         private Resolver[] _resolvers = new Resolver[]{};
         
+        /**
+         * Adds a resolver to the chain.
+         */
         public ResolverCollection addResolver(Resolver resolver)
         {
             if(resolver==null || indexOf(resolver)!=-1)
@@ -214,6 +265,9 @@ public final class Identifier implements Serializable
             return this;
         }
         
+        /**
+         * Gets the index of the given resolver.
+         */
         public int indexOf(Resolver resolver)
         {
             if(resolver!=null)
@@ -228,6 +282,9 @@ public final class Identifier implements Serializable
             return -1;
         }
         
+        /**
+         * Gets the wrapped array of resolvers.
+         */
         public Resolver[] getResolvers()
         {
             return _resolvers;

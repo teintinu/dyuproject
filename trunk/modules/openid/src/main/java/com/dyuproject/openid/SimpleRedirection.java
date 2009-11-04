@@ -22,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
+ * SimpleRedirection - simply executes: 
+ * response.sendRedirect(url);
+ * 
+ * 
  * @author David Yu
  * @created Mar 17, 2009
  */

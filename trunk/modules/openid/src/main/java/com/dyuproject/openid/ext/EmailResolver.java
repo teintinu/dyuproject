@@ -25,7 +25,7 @@ import com.dyuproject.util.ClassLoaderUtil;
 import com.dyuproject.util.validate.IPDomainValidator;
 
 /**
- * Resolves the url from a given email address
+ * Resolves the url from a given email address.
  * 
  * @author David Yu
  * @created Jan 11, 2009
@@ -34,6 +34,9 @@ import com.dyuproject.util.validate.IPDomainValidator;
 public final class EmailResolver implements Identifier.Resolver
 {
     
+    /**
+     * The default resource location. ("email_resolver.properties")
+     */
     public static final String DEFAULT_RESOURCE_LOCATION = "email_resolver.properties";
     
     private final Properties _urls = new Properties();
@@ -74,10 +77,23 @@ public final class EmailResolver implements Identifier.Resolver
         _urls.putAll(urls);
     }    
     
+    /**
+     * Add the domain of an email (e.g gmail.com) mapped with the given openid server {@code url}.
+     */
     public void add(String emailDomain, String url)
     {
         // must only add on init phase
         _urls.put(emailDomain, url);
+    }
+    
+    /**
+     * Add the domain of an email (e.g gmail.com) mapped with the given openid server {@code url}.
+     */
+    public EmailResolver addDomain(String emailDomain, String url)
+    {
+        // must only add on init phase
+        _urls.put(emailDomain, url);
+        return this;
     }
 
     public void resolve(Identifier identifier, OpenIdContext context)

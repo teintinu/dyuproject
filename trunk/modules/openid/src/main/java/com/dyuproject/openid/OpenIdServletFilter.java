@@ -30,8 +30,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.util.ClassLoaderUtil;
 
 /**
- * An openid servlet filter that can work with hardly any configuration.
- * The only thing required is the init-parameter "forwardUri".
+ * A servlet filter that forwards users to the login page if they are not authenticated and 
+ * redirects the user to their openid provider once they've submitted their openid identifier.
+ * The required web.xml configuration is the init-parameter "forwardUri".
  * 
  * @author David Yu
  * @created Jan 8, 2009
@@ -44,6 +45,10 @@ public class OpenIdServletFilter implements Filter
     public static final String DEFAULT_ERROR_MSG = System.getProperty("openid.servlet_filter.default_error_msg", "Your openid could not be resolved.");
     public static final String ID_NOT_FOUND_MSG = System.getProperty("openid.servlet_filter.id_not_found_msg", "Your openid does not exist.");
     
+    /**
+     * The default forward uri handler that basically executes:  
+     * request.getRequestDispatcher(forwardUri).forward(request, response);
+     */
     public static final ForwardUriHandler DEFAULT_FORWARD_URI_HANDLER = new ForwardUriHandler()
     {
         public void handle(String forwardUri, HttpServletRequest request, 
@@ -60,6 +65,12 @@ public class OpenIdServletFilter implements Filter
     
     protected ForwardUriHandler _forwardHandler;
     
+    /**
+     * This method is called by the servlet container to configure this filter; 
+     * The init parameter "forwardUri" is required.
+     * The relying party used will be the default {@link RelyingParty#getInstance() instance} 
+     * if it is not found in the servlet context attributes.
+     */
     public void init(FilterConfig config) throws ServletException
     {
         _forwardUri = config.getInitParameter("forwardUri");
@@ -91,16 +102,25 @@ public class OpenIdServletFilter implements Filter
             _forwardHandler = DEFAULT_FORWARD_URI_HANDLER;
     }
     
+    /**
+     * Gets the configured forward uri.
+     */
     public String getForwardUri()
     {
         return _forwardUri;
     }
     
+    /**
+     * Gets the configured relying party.
+     */
     public RelyingParty getRelyingParty()
     {
         return _relyingParty;
     }
 
+    /**
+     * Delegates to the filter chain if the user associated with this request is authenticated.
+     */
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) 
     throws IOException, ServletException
     {
@@ -113,12 +133,18 @@ public class OpenIdServletFilter implements Filter
         
     }
     
+    /**
+     * Returns true if the user associated with this request is authenticated.
+     */
     public boolean handle(HttpServletRequest request, HttpServletResponse response)
     throws IOException, ServletException
     {
         return handle(request, response, _relyingParty, _forwardHandler, _forwardUri);
     }
     
+    /**
+     * Returns true if the user associated with this request is authenticated.
+     */
     public static boolean handle(HttpServletRequest request, HttpServletResponse response,
             String forwardUri) throws IOException, ServletException
     {
@@ -126,6 +152,9 @@ public class OpenIdServletFilter implements Filter
                 DEFAULT_FORWARD_URI_HANDLER, forwardUri);
     }
     
+    /**
+     * Returns true if the user associated with this request is authenticated.
+     */
     public static boolean handle(HttpServletRequest request, HttpServletResponse response,
             RelyingParty relyingParty, ForwardUriHandler forwardUriHandler, String forwardUri)
             throws IOException, ServletException
@@ -207,10 +236,16 @@ public class OpenIdServletFilter implements Filter
         return false;
     }
     
+    /**
+     * Pluggable handler to dispatch the request to a view/template.
+     */
     public interface ForwardUriHandler
     {
-        public void handle(String forwardUri, HttpServletRequest request, HttpServletResponse response) 
-        throws IOException, ServletException;        
+        /**
+         * Dispatches the request to a view/template.
+         */
+        public void handle(String forwardUri, HttpServletRequest request, 
+                HttpServletResponse response) throws IOException, ServletException;        
     }
 
 }

@@ -22,8 +22,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Same as HtmlBasedDiscvoery but uses regex to search for the openid.server 
- * and openid.delegate
+ * Same as HtmlBasedDiscvoery but uses regex to search for the openid2.provider, 
+ * openid.server, openid2.local_id and openid.delegate.
  * 
  * @author David Yu
  * @created May 26, 2009
@@ -40,11 +40,17 @@ public final class RegexHtmlBasedDiscovery implements Discovery
     
     private static int __bufferSize = Integer.getInteger("rhbd.buffer_size", 2048).intValue();
     
+    /**
+     * Sets the buffer size used by the {@link BufferedReader} for parsing.
+     */
     public static void setBufferSize(int bufferSize)
     {
         __bufferSize = bufferSize;
     }
     
+    /**
+     * Gets the buffer size used by the {@link BufferedReader} for parsing.
+     */
     public static int getBufferSize()
     {
         return __bufferSize;

@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Manages associated/authenticated users
+ * Manages associated/authenticated users; 
+ * This can get/read, save/update and invalidate/delete an OpenIdUser.
  * 
  * @author David Yu
  * @created Sep 20, 2008
@@ -30,14 +31,26 @@ import javax.servlet.http.HttpServletResponse;
 public interface OpenIdUserManager
 {
     
+    /**
+     * Initialize this object via user-configured properties.
+     */
     public void init(Properties properties);
     
+    /**
+     * Gets/reads the user associated with the given {@code request}.
+     */
     public OpenIdUser getUser(HttpServletRequest request)
     throws IOException;
     
-    public boolean saveUser(OpenIdUser user, HttpServletRequest request, HttpServletResponse response)
-    throws IOException;
+    /**
+     * Saves/persists the user associated with the given {@code request}.
+     */
+    public boolean saveUser(OpenIdUser user, HttpServletRequest request, 
+            HttpServletResponse response) throws IOException;
     
+    /**
+     * Invalidates/removes/deletes the user associated with the given {@code request}.
+     */
     public boolean invalidate(HttpServletRequest request, HttpServletResponse response) 
     throws IOException;
     

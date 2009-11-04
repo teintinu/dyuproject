@@ -25,8 +25,8 @@ import com.dyuproject.util.ClassLoaderUtil;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
- * AxSchema Extension for http://www.axschema.org/types/
- * See also http://openid.net/specs/openid-attribute-exchange-1_0-05.html
+ * AxSchema Extension for http://www.axschema.org/types/ - see also 
+ * http://openid.net/specs/openid-attribute-exchange-1_0-05.html
  * 
  * @author David Yu
  * @created May 27, 2009
@@ -35,17 +35,35 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public final class AxSchemaExtension extends AbstractExtension
 {
     
+    /**
+     * "http://openid.net/srv/ax/1.0"
+     */
     public static final String NAMESPACE = "http://openid.net/srv/ax/1.0";
+    /**
+     * "fetch_request"
+     */
     public static final String MODE_REQUEST = "fetch_request";
+    /**
+     * "fetch_response"
+     */
     public static final String MODE_RESPONSE = "fetch_response";
+    /**
+     * The attribute name set on the {@link OpenIdUser}. ("axschema")
+     */
     public static final String ATTR_NAME = "axschema";
     
+    /**
+     * Gets the axchema value set on the {@link OpenIdUser user}.
+     */
     @SuppressWarnings("unchecked")
     public static Map<String,String> get(OpenIdUser user)
     {
         return (Map<String,String>)user.getAttribute(ATTR_NAME);
     }
     
+    /**
+     * Removes the axchema value set on the {@link OpenIdUser user}.
+     */
     @SuppressWarnings("unchecked")
     public static Map<String,String> remove(OpenIdUser user)
     {
@@ -83,11 +101,17 @@ public final class AxSchemaExtension extends AbstractExtension
         _reqKeyRequired = "openid." + alias + ".required";
     }
     
+    /**
+     * Adds an exchange (field) to be included in the extension parameters.
+     */
     public AxSchemaExtension addExchange(String alias)
     {
         return addExchange(alias, __axschemaConfig.getProperty(alias));
     }
     
+    /**
+     * Adds an exchange (field) to be included in the extension parameters.
+     */
     public AxSchemaExtension addExchange(String alias, String namespace)
     {
         if(alias==null)
@@ -131,6 +155,23 @@ public final class AxSchemaExtension extends AbstractExtension
         }
     }
     
+    /**
+     * Base class for an axschema exchange which requires a namespace for each field.
+     * <blockquote>
+     * <pre>
+     * A field request parameter is denoted as:
+     * openid.foo.type.bar = some_namespace
+     * 
+     * A field response parameter is denoted as: 
+     * openid.foo.bar.value = value
+     * 
+     * Where: 
+     * foo = extension alias
+     * bar = exchange alias
+     * 
+     * </pre>
+     * </blockquote>
+     */
     public static abstract class AbstractExchange implements Exchange
     {
         
@@ -160,11 +201,30 @@ public final class AxSchemaExtension extends AbstractExtension
                 attributes.put(getAlias(), value);
         }
         
+        /**
+         * Gets the name space mapped with the {@link #getAlias() alias}.
+         */
         public abstract String getNamespace();
         
         
     }
     
+    /**
+     * SimpleExchange - exchanges a key with a value from the user's openid provider.
+     * <blockquote>
+     * <pre>
+     * A field request parameter is denoted as:
+     * openid.foo.type.bar = some_namespace
+     * 
+     * A field response parameter is denoted as: 
+     * openid.foo.bar.value = value
+     * 
+     * Where: 
+     * foo = extension alias
+     * bar = exchange alias
+     * </pre>
+     * </blockquote>
+     */
     public static final class SimpleExchange extends AbstractExchange
     {
         

@@ -15,7 +15,8 @@
 package com.dyuproject.openid;
 
 /**
- * Discovery
+ * Discovery - the mechanism to obtain information about a user's openid provider and 
+ * its available services.
  * 
  * @author David Yu
  * @created Sep 10, 2008
@@ -24,6 +25,9 @@ package com.dyuproject.openid;
 public interface Discovery
 {
     
+    /**
+     * Discovers the user's openid server endpoint and local id (optional).
+     */
     public OpenIdUser discover(Identifier identifier, OpenIdContext context) 
     throws Exception;
     
@@ -35,7 +39,16 @@ public interface Discovery
      */
     public interface UserCache
     {
+        /**
+         * Gets the user assoicated with the given {@code key} from the cache; 
+         * The flag {@code clone} is whether to create a different instance containting 
+         * the same properties (useful when the OpenIdUser is not deserialized but instead 
+         * held in memory).
+         */
         public OpenIdUser get(String key, boolean clone);
+        /**
+         * Puts the {@code user} associated with the {@code key} in the cache.
+         */
         public void put(String key, OpenIdUser user);
     }
 

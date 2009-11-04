@@ -28,7 +28,9 @@ import com.dyuproject.util.DigestUtil;
 import com.dyuproject.util.http.HttpConnector.Response;
 
 /**
- * Association using DiffieHellman session
+ * Association using DiffieHellman session - which allows two parties that have no prior 
+ * knowledge of each other to jointly establish a shared secret key over an 
+ * insecure communications channel.
  * 
  * @author David Yu
  * @created Sep 8, 2008
@@ -51,6 +53,9 @@ public final class DiffieHellmanAssociation implements Association
         _type = type;
     }
     
+    /**
+     * Gets the session type of this association.
+     */
     public SessionType getSessionAssociationType()
     {
         return _type;
@@ -163,6 +168,10 @@ public final class DiffieHellmanAssociation implements Association
         return user.isAuthenticated();
     }
     
+    /**
+     * Digest the given {@code sharedSecretKey} into a byte array and performx xor of 
+     * each single byte against the given {@code encMacKey}.
+     */
     public static byte[] xor(BigInteger sharedSecretKey, byte[] encMacKey, String digestType) 
     throws Exception
     {
@@ -170,6 +179,10 @@ public final class DiffieHellmanAssociation implements Association
                 encMacKey);
     }
     
+    /**
+     * Performs xor of each single byte of the 2 byte arrays.
+     * @throws IllegalStateException if the 2 byte arrays are not the same size.
+     */
     public static byte[] xor(byte[] sharedSecret, byte[] encMacKey) throws Exception
     {        
         if(sharedSecret.length!=encMacKey.length)
@@ -181,6 +194,10 @@ public final class DiffieHellmanAssociation implements Association
         return sharedSecret;
     }
     
+    /**
+     * Parses the key/value pair of each line separated by the 
+     * given char {@code keyValueSeparator}.
+     */
     public static void parseInputByLineSeparator(BufferedReader br, char keyValueSeparator, 
             Map<String,Object> parseMap) throws IOException
     {        

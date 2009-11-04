@@ -80,6 +80,9 @@ public final class Constants
     public static final String SREG_TIMEZONE = "openid.sreg.timezone";
     
     
+    /**
+     * The possible values for openid mode.
+     */
     public static class Mode
     {        
         public static final String ASSOCIATE = "associate";
@@ -88,6 +91,9 @@ public final class Constants
         public static final String CANCEL = "cancel";
     }
     
+    /**
+     * The types of fields for the assocation request and response.
+     */
     public static class Assoc
     {        
         public static final String ASSOC_TYPE = "assoc_type";
@@ -101,6 +107,9 @@ public final class Constants
         public static final String EXPIRES_IN = "expires_in";        
     }
     
+    /**
+     * Sreg constants
+     */
     public static class Sreg
     {
         public static final String VERSION = "http://openid.net/extensions/sreg/1.1";
@@ -108,6 +117,9 @@ public final class Constants
 
     }
     
+    /**
+     * The default diffie hellman modulus being used by the openid association.
+     */
     public static final BigInteger DIFFIE_HELLMAN_MODULUS = new BigInteger(
             "1551728981814736974712322577637155399157248019669" +
             "154044797077953140576293785419175806512274236981" +

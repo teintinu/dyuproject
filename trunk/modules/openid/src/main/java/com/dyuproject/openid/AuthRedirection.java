@@ -22,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
+ * AuthRedireciton - its sole purpose is to redirect the user to the 
+ * authentication url of his openid provider.
+ * 
  * @author David Yu
  * @created Mar 17, 2009
  */
@@ -29,6 +32,9 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public interface AuthRedirection
 {
     
+    /**
+     * Redirects the user to the authentication url of his openid provider.
+     */
     public void redirect(UrlEncodedParameterMap params, HttpServletRequest request, 
             HttpServletResponse response) throws IOException;
 
