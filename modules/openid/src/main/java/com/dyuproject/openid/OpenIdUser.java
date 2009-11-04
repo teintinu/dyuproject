@@ -35,17 +35,26 @@ public final class OpenIdUser implements Serializable, JSON.Convertible
     
     public static final String ATTR_NAME = "openid_user";
     
+    /**
+     * Populate/clone the provided {@code user}.
+     */
     public static OpenIdUser populate(OpenIdUser user)
     {
         return new OpenIdUser(user.getIdentifier(), user.getClaimedId(), user.getOpenIdServer(), 
                 user.getOpenIdDelegate());
     }
     
+    /**
+     * Creates a new OpenIdUser pre-populated with discovery data (to skip discovery).
+     */
     public static OpenIdUser populate(String identifier, String claimedId, String openIdServer)
     {
         return new OpenIdUser(identifier, claimedId, openIdServer, null);
     }
     
+    /**
+     * Creates a new OpenIdUser pre-populated with discovery data (to skip discovery).
+     */
     public static OpenIdUser populate(String identifier, String claimedId, String openIdServer, 
             String openIdDelegate)
     {
@@ -76,31 +85,50 @@ public final class OpenIdUser implements Serializable, JSON.Convertible
         _openIdDelegate = openIdDelegate;
     }
     
+    /**
+     * Checks whether this user is already associated with his openid provider.
+     */
     public boolean isAssociated()
     {
         return _identity!=null || (_assocHandle!=null && _associationData!=null);
     }
     
+    /**
+     * Checks whether this user is already authenticated.
+     */
     public boolean isAuthenticated()
     {
         return _identity!=null;
     }
     
+    /**
+     * Gets the raw identifier (openid_identifier) supplied on the login form.
+     */
     public String getIdentifier()
     {
         return _identifier;
     }
     
+    /**
+     * Gets the claimed id of the user.  If this is a generic id (E.g the user does not 
+     * own this id), this will either be the user's local id or identity.
+     */
     public String getClaimedId()
     {
         return _claimedId;
     }
     
+    /**
+     * Gets the user's openid server.
+     */
     public String getOpenIdServer()
     {
         return _openIdServer;
     }
     
+    /**
+     * Gets the user's local id
+     */
     public String getOpenIdDelegate()
     {
         return _openIdDelegate;
@@ -122,6 +150,9 @@ public final class OpenIdUser implements Serializable, JSON.Convertible
         }
     }
     
+    /**
+     * Gets the user's openid identity.
+     */
     public String getIdentity()
     {
         return _identity;
@@ -132,6 +163,9 @@ public final class OpenIdUser implements Serializable, JSON.Convertible
         _assocHandle = assocHandle;
     }
     
+    /**
+     * Gets the handle/key for the openid associated.
+     */
     public String getAssocHandle()
     {
         return _assocHandle;
@@ -147,6 +181,9 @@ public final class OpenIdUser implements Serializable, JSON.Convertible
         return _associationData;
     }
     
+    /**
+     * Sets a custom attribute that will be peristent across different http requests.
+     */
     public void setAttribute(String key, Object value)
     {
         if(_attributes==null)
@@ -155,32 +192,57 @@ public final class OpenIdUser implements Serializable, JSON.Convertible
         _attributes.put(key, value);
     }
     
+    /**
+     * Gets the custom attributes that was peristed across different http requests.
+     */
     public Map<String,Object> getAttributes()
     {
         return _attributes;
     }
     
-    // shorthand (good for use with views/templates)
+    /**
+     * Shorthand for {@link #getAttributes()}, which is convenient for views/templates.
+     */
     public Map<String,Object> getA()
     {
         return _attributes;
     }
     
+    /**
+     * Gets the custom, persistent attribute mapped to the given {@code key}.
+     */
     public Object getAttribute(String name)
     {
         return _attributes==null ? null : _attributes.get(name);
     }
     
+    /**
+     * Removes the custom, persistent attribute mapped to the given {@code key}.
+     */
     public Object removeAttribute(String name)
     {
         return _attributes==null ? null : _attributes.remove(name);
     }
     
+    /**
+     * Gets the extensions added to this user's openid provider.
+     */
     public Map<String,String> getExtensions()
     {
         return _extensions;
     }
     
+    /**
+     * Adds an extension mapping for this user's openid provider if this extension truly is 
+     * available on the user's openid provider. 
+     * <blockquote>
+     * <pre>
+     * NOTE: 
+     *   This is invoked only on discovery and association.
+     *   The mappings are not persistent across different http requests (transient).
+     * </pre>
+     * </blockquote>
+     */
     public void addExtension(String namespace, String alias)
     {
         if(_extensions==null)
@@ -189,6 +251,9 @@ public final class OpenIdUser implements Serializable, JSON.Convertible
         _extensions.put(namespace, alias);
     }
     
+    /**
+     * Gets the alias of the extension mapped with the given {@code namespace}.
+     */
     public String getExtension(String namespace)
     {
         return _extensions==null ? null : _extensions.get(namespace);

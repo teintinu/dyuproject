@@ -33,7 +33,7 @@ import com.dyuproject.util.Delim;
 import com.dyuproject.util.DigestUtil;
 
 /**
- * OpenIdUser is persisted in the cookie value.
+ * The OpenIdUser is serialized and persisted in an http cookie.
  * 
  * @author David Yu
  * @created Jan 5, 2009

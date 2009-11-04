@@ -25,7 +25,7 @@ import com.dyuproject.openid.OpenIdUser;
 import com.dyuproject.openid.OpenIdUserManager;
 
 /**
- * OpenIdUser is persisted in the HttpSession.
+ * The OpenIdUser is persisted in the HttpSession.
  * 
  * @author David Yu
  * @created Jan 5, 2009

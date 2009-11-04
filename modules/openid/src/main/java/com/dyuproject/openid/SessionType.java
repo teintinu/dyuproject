@@ -23,7 +23,7 @@ import javax.crypto.spec.SecretKeySpec;
 import com.dyuproject.util.DigestUtil;
 
 /**
- * The type of session for an association.
+ * The session type of a {@link DiffieHellmanAssociation}.
  * 
  * @author David Yu
  * @created Sep 11, 2008
@@ -32,12 +32,22 @@ import com.dyuproject.util.DigestUtil;
 public final class SessionType
 {
     
+    /**
+     * "DH-SHA1"
+     */
     public static final SessionType HMAC_SHA1 = new SessionType(
             Association.SESSION_DH_SHA1, Association.ASSOC_HMAC_SHA1, DigestUtil.SHA1, "HMACSHA1");
     
+    /**
+     * "DH-SHA256"
+     */
     public static final SessionType HMAC_SHA256 = new SessionType(
-            Association.SESSION_DH_SHA256, Association.ASSOC_HMAC_SHA256, DigestUtil.SHA256, "HMACSHA256");
+            Association.SESSION_DH_SHA256, Association.ASSOC_HMAC_SHA256, DigestUtil.SHA256, 
+            "HMACSHA256");
     
+    /**
+     * Gets the default session type {@link #HMAC_SHA1}.
+     */
     public static SessionType getDefault()
     {
         return HMAC_SHA1;
@@ -57,26 +67,41 @@ public final class SessionType
         _algorithm = algorithm;
     }
     
+    /**
+     * Gets the session type as string. (E.g "DH-SHA1")
+     */
     public String getSessionType()
     {
         return _sessionType;
     }
     
+    /**
+     * Gets the association type. (E.g "HMAC-SHA1")
+     */
     public String getAssociationType()
     {
         return _associationType;
     }
     
+    /**
+     * Gets the digest type. (E.g "SHA-1")
+     */
     public String getDigestType()
     {
         return _digestType;
     }
     
+    /**
+     * Gets the algorithm. (E.g "HMACSHA1")
+     */
     public String getAlgorithm()
     {
         return _algorithm;
     }
     
+    /**
+     * Returns the byte array signed by this session type.
+     */
     public byte[] getSignature(byte[] secretKey, byte[] toSign) throws NoSuchAlgorithmException, 
         InvalidKeyException
     {

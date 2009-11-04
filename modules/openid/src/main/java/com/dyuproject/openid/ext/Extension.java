@@ -23,7 +23,8 @@ import com.dyuproject.openid.RelyingParty;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
- * Extension for openid
+ * Extension for openid which provides the ability to exchange information with 
+ * the user's openid provider.
  * 
  * @author David Yu
  * @created May 27, 2009
@@ -32,18 +33,38 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public interface Extension extends RelyingParty.Listener
 {
     
+    /**
+     * Gets the alias of this extension.
+     */
     public String getAlias();
+    /**
+     * Gets the namespace (normally a url) for this extension.
+     */
     public String getNamespace();
     
     
+    /**
+     * Puts outgoing params and parses them accordingly if a response is available from the 
+     * user's openid provider.
+     */
     public static interface Exchange
     {
         
+        /**
+         * Gets the alias of this exchange.
+         */
         public String getAlias();
         
+        /**
+         * Puts a single field parameter on the {@code params} to be included in the request.
+         */
         public void put(OpenIdUser user, HttpServletRequest request,
                 UrlEncodedParameterMap params, String extensionAlias);
         
+        /**
+         * Parses a single field parameter as a response from the user's openid provider and puts 
+         * it in the {@code attributes} map.
+         */
         public void parseAndPut(OpenIdUser user, HttpServletRequest request, 
                 Map<String,String> attributes, String extensionAlias);
         

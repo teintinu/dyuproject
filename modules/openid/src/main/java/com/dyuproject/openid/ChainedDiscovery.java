@@ -17,7 +17,8 @@ package com.dyuproject.openid;
 import java.util.List;
 
 /**
- * Chained Discovery
+ * ChainedDiscovery - chains and delegates the discovery to its wrapped discoveries until an 
+ * {@link OpenIdUser} is successfully discovered.
  * 
  * @author David Yu
  * @created May 26, 2009

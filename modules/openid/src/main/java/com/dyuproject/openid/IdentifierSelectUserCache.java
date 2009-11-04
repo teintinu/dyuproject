@@ -34,8 +34,15 @@ import com.dyuproject.util.Delim;
 public final class IdentifierSelectUserCache implements Discovery.UserCache
 {
     
+    /**
+     * The default resource location (classpath).
+     */
     public static final String DEFAULT_RESOURCE_LOCATION = "identifier_select.properties";
     
+    /**
+     * Load the configured mappings from the properties file located at the  
+     * given {@code resourceLoc}.
+     */
     public static void load(String resourceLoc, Map<String,String> mappings)
     {
         URL resource = ClassLoaderUtil.getResource(resourceLoc, IdentifierSelectUserCache.class);

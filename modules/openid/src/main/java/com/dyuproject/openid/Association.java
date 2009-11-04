@@ -17,7 +17,8 @@ package com.dyuproject.openid;
 import java.util.Map;
 
 /**
- * Association
+ * Association - associates and verifies whether the openid provider's response tied to 
+ * the {@link OpenIdUser} is authentic.
  * 
  * @author David Yu
  * @created Sep 10, 2008
@@ -38,9 +39,17 @@ public interface Association
     public static final String SESSION_DH_SHA256 = "DH-SHA256";
     
     
+    /**
+     * Associates the user with his openid provider and stores the association data for 
+     * future verification.
+     */
     public boolean associate(OpenIdUser user, OpenIdContext context) 
     throws Exception;
     
+    /**
+     * Verifies the authentication response by validating against the previous 
+     * association data stored from {@link #associate(OpenIdUser, OpenIdContext)}
+     */
     public boolean verifyAuth(OpenIdUser user, Map<String,String> authRedirect, 
             OpenIdContext context) throws Exception;
 

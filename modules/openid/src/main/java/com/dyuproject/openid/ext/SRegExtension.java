@@ -35,17 +35,35 @@ import com.dyuproject.util.http.UrlEncodedParameterMap;
 public final class SRegExtension extends AbstractExtension
 {
     
+    /**
+     * "openid.ns.sreg"
+     */
     public static final String NS_KEY = "openid.ns.sreg";
+    /**
+     * "openid.sreg.optional"
+     */
     public static final String OPTIONAL_KEY = "openid.sreg.optional";
+    /**
+     * "http://openid.net/extensions/sreg/1.1"
+     */
     public static final String NAMESPACE = "http://openid.net/extensions/sreg/1.1";
+    /**
+     * The attribute name set on the {@link OpenIdUser}. ("sreg")
+     */
     public static final String ATTR_NAME = "sreg";
     
+    /**
+     * Gets the sreg value set on the {@link OpenIdUser user}.
+     */
     @SuppressWarnings("unchecked")
     public static Map<String,String> get(OpenIdUser user)
     {
         return (Map<String,String>)user.getAttribute(ATTR_NAME);
     }
     
+    /**
+     * Removes the sreg value set on the {@link OpenIdUser user}.
+     */
     @SuppressWarnings("unchecked")
     public static Map<String,String> remove(OpenIdUser user)
     {
@@ -77,6 +95,9 @@ public final class SRegExtension extends AbstractExtension
         super("sreg", NAMESPACE);
     }
     
+    /**
+     * Adds an exchange (field) to be included in the extension parameters.
+     */
     public SRegExtension addExchange(String alias)
     {
         if(alias==null)
@@ -120,6 +141,9 @@ public final class SRegExtension extends AbstractExtension
         }
     }
     
+    /**
+     * SimpleExchange - parses the value denoted by "openid.sreg.$alias = value".
+     */
     public static final class SimpleExchange implements Exchange
     {
         

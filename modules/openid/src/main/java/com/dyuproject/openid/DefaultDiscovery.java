@@ -17,7 +17,8 @@ package com.dyuproject.openid;
 
 
 /**
- * Discovery initially through yadis.  If that fails, delegates to HtmlBasedDiscovery
+ * Initially delegates discovery to {@link YadisDiscovery} and then 
+ * to {@link HtmlBasedDiscovery} if the former is not successful.
  * 
  * @author David Yu
  * @created Sep 23, 2008

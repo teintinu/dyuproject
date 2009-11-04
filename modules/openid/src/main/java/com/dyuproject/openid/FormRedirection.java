@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.util.http.UrlEncodedParameterMap;
 
 /**
+ * Forwards the user to an html page that contains a form where the user will be 
+ * automatically redirected upon page load.
+ * 
  * @author David Yu
  * @created Mar 17, 2009
  */
