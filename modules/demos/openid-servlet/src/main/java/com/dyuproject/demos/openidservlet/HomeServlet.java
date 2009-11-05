@@ -160,7 +160,7 @@ public class HomeServlet extends HttpServlet
                 {
                     // authenticated                    
                     // redirect to home to remove the query params instead of doing:
-                    // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
+                    // request.getRequestDispatcher("/home.jsp").forward(request, response);
                     response.sendRedirect(request.getContextPath() + "/home/");
                 }
                 else

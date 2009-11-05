@@ -194,8 +194,7 @@ public class OpenIdServletFilter implements Filter
                 if(relyingParty.verifyAuth(user, request, response))
                 {
                     // authenticated                    
-                    // redirect to home to remove the query params instead of doing:
-                    // request.setAttribute("user", user); request.getRequestDispatcher("/home.jsp").forward(request, response);
+                    // redirect to home to remove the query params
                     response.sendRedirect(request.getRequestURI());
                 }
                 else
