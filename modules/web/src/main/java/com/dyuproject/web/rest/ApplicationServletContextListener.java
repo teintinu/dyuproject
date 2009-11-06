@@ -25,6 +25,8 @@ import org.slf4j.LoggerFactory;
 import com.dyuproject.ioc.ApplicationContext;
 
 /**
+ * Loads a json config file and uses that for Inversion of Control.
+ * 
  * @author David Yu
  * @created Feb 25, 2009
  */

@@ -32,6 +32,8 @@ import com.dyuproject.web.rest.RequestContext;
 import com.dyuproject.web.rest.ValidationException;
 
 /**
+ * Consumes json content and converts it to pojos.
+ * 
  * @author David Yu
  * @created Jan 18, 2009
  */

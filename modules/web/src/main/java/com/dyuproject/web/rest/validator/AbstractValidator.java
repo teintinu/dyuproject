@@ -17,6 +17,8 @@ package com.dyuproject.web.rest.validator;
 import com.dyuproject.web.rest.ValidatingConsumer.FieldValidator;
 
 /**
+ * Base class for validators that have generic error messages.
+ * 
  * @author David Yu
  * @created Jan 20, 2009
  */

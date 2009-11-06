@@ -17,6 +17,8 @@ package com.dyuproject.web;
 import javax.servlet.http.HttpServletRequest;
 
 /**
+ * Validates parameters by a doing a simple null check.
+ * 
  * @author David Yu
  * @created Jun 8, 2008
  */

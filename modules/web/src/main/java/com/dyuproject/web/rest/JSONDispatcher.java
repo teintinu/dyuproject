@@ -23,6 +23,9 @@ import javax.servlet.http.HttpServletResponse;
 import com.dyuproject.json.StandardJSON;
 
 /**
+ * Generates a JSON response from the object on the request attribute identified by 
+ * {@link #JSON_DATA}.
+ * 
  * @author David Yu
  * @created Feb 13, 2009
  */

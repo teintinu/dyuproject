@@ -15,6 +15,8 @@
 package com.dyuproject.web.rest;
 
 /**
+ * Base lifecycle that handles the initialized and destroyed state.
+ * 
  * @author David Yu
  * @created Jan 18, 2009
  */

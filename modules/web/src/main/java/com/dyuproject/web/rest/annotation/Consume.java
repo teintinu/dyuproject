@@ -21,6 +21,8 @@ import java.lang.annotation.Target;
 
 
 /**
+ * An annotation for methods to be able to map request based on Content-Type.
+ * 
  * @author David Yu
  * @created Jan 14, 2009
  */

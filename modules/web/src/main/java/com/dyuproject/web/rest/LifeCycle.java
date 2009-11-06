@@ -15,6 +15,8 @@
 package com.dyuproject.web.rest;
 
 /**
+ * Web component that is notified of the initialization and destruction of the {@link WebContext}.
+ * 
  * @author David Yu
  * @created Jan 18, 2009
  */

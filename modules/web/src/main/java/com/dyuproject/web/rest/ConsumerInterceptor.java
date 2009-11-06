@@ -21,6 +21,9 @@ import java.util.Map;
 import javax.servlet.ServletException;
 
 /**
+ * An interceptor that checks sets the mapped {@link Consumer} in the 
+ * {@link RequestContext} for use with the REST handlers.  
+ * 
  * @author David Yu
  * @created Jan 18, 2009
  */
