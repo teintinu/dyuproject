@@ -1,9 +1,10 @@
 dyuproject-1.1-SNAPSHOT
-+ openid: fixed openid delegate bug on all openid2.0 discoveries
++ openid: fixed openid delegate bug on openid2.0 discoveries (the discovered local_id was not used).
 + openid: added specific handling for html-based discoveries on openid.server (1.x) and openid2.provider (2.0)
           If both are provided, preference/priority will be given to the latest version.
 + openid: #14 - suggested javadoc for RelyingParty methods
 
++ misc: more javadoc for util, json, ioc, openid and oauth.
 + misc: updated pom.xml remove build encoding and javadoc warnings UTF-8 source encoding
 
 dyuproject-1.1.6 2009-10-08
