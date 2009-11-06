@@ -1,5 +1,6 @@
 dyuproject-1.1-SNAPSHOT
-+ openid: fixed openid delegate bug on openid2.0 discoveries (the discovered local_id was not used).
++ openid: fixed openid delegate bug (discovered local_id was not used) on yadis discovery
++ openid: improved the RegexHtmlBasedDiscovery where lazy parsing is properly/correctly implemented - similar to HtmlBasedDiscovery.
 + openid: added specific handling for html-based discoveries on openid.server (1.x) and openid2.provider (2.0)
           If both are provided, preference/priority will be given to the latest version.
 + openid: #14 - suggested javadoc for RelyingParty methods
