@@ -90,7 +90,7 @@
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.5</version>
         <configuration>
-          <excludePackageNames>org.apache.*:org.codehaus.*:javax.*:com.sun.*:com.dyuproject.web.rest.annotation.*</excludePackageNames>
+          <excludePackageNames>org.apache.*:org.codehaus.*:javax.*:com.sun.*:com.dyuproject.web.rest.annotation.*:com.dyuproject.demos.*</excludePackageNames>
           <aggregate>true</aggregate>
           <tags>
             <tag>
