@@ -19,6 +19,9 @@ import java.util.Map;
 
 
 /**
+ * Consumes request content based on their Content-Type - and at the same time 
+ * validates the content.
+ * 
  * @author David Yu
  * @created Jan 14, 2009
  */

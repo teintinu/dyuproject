@@ -18,6 +18,8 @@ import com.dyuproject.util.validate.IPDomainValidator;
 
 
 /**
+ * Validates input that resembles an email.
+ * 
  * @author David Yu
  * @created Jan 20, 2009
  */

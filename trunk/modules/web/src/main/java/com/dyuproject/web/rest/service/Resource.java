@@ -22,7 +22,7 @@ import com.dyuproject.web.rest.LifeCycle;
 import com.dyuproject.web.rest.RequestContext;
 
 /**
- * The REST resource.
+ * The REST resource which basically handles the request.
  * 
  * @author David Yu
  * @created Dec 6, 2008

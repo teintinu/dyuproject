@@ -15,6 +15,8 @@
 package com.dyuproject.web.rest;
 
 /**
+ * An exception that is thrown when validation of request content fails.
+ * 
  * @author David Yu
  * @created Feb 25, 2009
  */

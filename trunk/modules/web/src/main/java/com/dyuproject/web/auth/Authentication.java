@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Web authorization
+ * Web authorization - authenticates users via the "Authorization" and 
+ * "WWW-Authenticate" header.
  * 
  * @author David Yu
  * @created Jun 28, 2008
