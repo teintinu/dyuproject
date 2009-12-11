@@ -125,7 +125,7 @@ public class AuthorizeTokenServlet extends AbstractServiceProviderServlet
             response.sendRedirect(callbackOrVerifier);
         else
         {
-            request.setAttribute("verifier", callbackOrVerifier);
+            request.setAttribute("oauth_verifier", callbackOrVerifier);
             request.getRequestDispatcher("/verifier.jsp").forward(request, response);
         }
         
