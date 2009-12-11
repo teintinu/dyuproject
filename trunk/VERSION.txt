@@ -3,7 +3,8 @@ dyuproject-1.1-SNAPSHOT
 + openid: improved the RegexHtmlBasedDiscovery where lazy parsing is properly/correctly implemented - similar to HtmlBasedDiscovery.
 + openid: added specific handling for html-based discoveries on openid.server (1.x) and openid2.provider (2.0)
           If both are provided, preference/priority will be given to the latest version.
-+ openid: #14 - suggested javadoc for RelyingParty methods
++ openid: #14 - suggested javadoc for RelyingParty methods (applied)
++ openid: #17 - verifier not given (bug fixed)
 
 + misc: more javadoc for util, json, ioc, openid and oauth.
 + misc: updated pom.xml remove build encoding and javadoc warnings UTF-8 source encoding
