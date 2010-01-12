@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ openid: added an openid.identifier_as_server option where the identifier could be used as the openid server url when discovery fails.
 + openid: fixed openid delegate bug (discovered local_id was not used) on yadis discovery
 + openid: improved the RegexHtmlBasedDiscovery where lazy parsing is properly/correctly implemented - similar to HtmlBasedDiscovery.
 + openid: added specific handling for html-based discoveries on openid.server (1.x) and openid2.provider (2.0)
@@ -6,8 +7,11 @@ dyuproject-1.1-SNAPSHOT
 + openid: #14 - suggested javadoc for RelyingParty methods (applied)
 + openid: #17 - verifier not given (bug fixed)
 
++ util: fixed xml parser bug for inline elements (<foo/>)
+
 + misc: more javadoc for util, json, ioc, openid and oauth.
 + misc: updated pom.xml remove build encoding and javadoc warnings UTF-8 source encoding
++ misc: updated velocity to 1.6.3 and stringtemplate to 3.2.1
 
 dyuproject-1.1.6 2009-10-08
 + oauth: slight api change in TokenManager (the first arg of the method "invalidate" is changed from Token to String).
