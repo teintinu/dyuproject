@@ -244,9 +244,13 @@ public final class RelyingParty
         String identifierParameter = properties.getProperty("openid.identifier.parameter", 
                 DEFAULT_IDENTIFIER_PARAMETER);
         
+        String identifierAsServerParam = properties.getProperty("openid.identifier_as_server");
+        boolean identifierAsServer = "true".equals(identifierAsServerParam);
+        
         RelyingParty relyingParty = new RelyingParty(
                 new OpenIdContext(discovery, association, httpConnector), 
-                manager, userCache, automaticRedirect, authRedirection, identifierParameter);
+                manager, userCache, automaticRedirect, identifierAsServer, 
+                authRedirection, identifierParameter);
         
         // relying party listeners
         String listenersParam = properties.getProperty("openid.relyingparty.listeners");
@@ -403,6 +407,7 @@ public final class RelyingParty
     private final OpenIdUserManager _manager;
     private final UserCache _userCache;    
     private final boolean _automaticRedirect;
+    private final boolean _identifierAsServer;
     private final AuthRedirection _authRedirection;
     private final String _identifierParameter;
     private final ListenerCollection _listener = new ListenerCollection();
@@ -438,17 +443,19 @@ public final class RelyingParty
     public RelyingParty(OpenIdContext context, OpenIdUserManager manager, UserCache userCache, 
             boolean automaticRedirect)
     {
-        this(context, manager, userCache, automaticRedirect, new SimpleRedirection(), 
+        this(context, manager, userCache, automaticRedirect, false, new SimpleRedirection(), 
                 DEFAULT_IDENTIFIER_PARAMETER);
     }
     
     public RelyingParty(OpenIdContext context, OpenIdUserManager manager, UserCache userCache, 
-            boolean automaticRedirect, AuthRedirection authRedirection, String identifierParameter)
+            boolean automaticRedirect, boolean identifierAsServer, 
+            AuthRedirection authRedirection, String identifierParameter)
     {
         _context = context;
         _manager = manager;        
         _userCache = userCache;
         _automaticRedirect = automaticRedirect;
+        _identifierAsServer = identifierAsServer;
         _authRedirection = authRedirection;
         _identifierParameter = identifierParameter;        
     }
@@ -578,8 +585,20 @@ public final class RelyingParty
         OpenIdUser user = _userCache.get(identifier.getUrl(), true);
         if(user==null)
         {
-            if((user=_context.getDiscovery().discover(identifier, _context))==null)
+            try
+            {
+                user = _context.getDiscovery().discover(identifier, _context);
+            }
+            catch(IOException e)
+            {
+                if(!_identifierAsServer)
+                    throw e;
+            }
+            if(user==null && !_identifierAsServer)
                 return null;
+            
+            user = new OpenIdUser(identifier.getId(), YadisDiscovery.IDENTIFIER_SELECT, 
+                    identifier.getUrl(), null);
             
             _userCache.put(identifier.getUrl(), user);
         }
