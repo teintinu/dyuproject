@@ -227,10 +227,10 @@ public class SimpleNode implements Node
         if(_nodes!=null)
         {
             buffer.append('>');
+            if(_text!=null)
+                buffer.append('\n').append(_text);
             for(Node n : _nodes)
                 buffer.append(n.toString());
-            if(_text!=null)
-                buffer.append(_text);
         }
         else if(_text!=null)
         {

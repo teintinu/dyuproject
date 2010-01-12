@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xrds:XRDS xmlns:xrds="xri://$xrds" xmlns="xri://$xrd*($v*2.0)">
+  <ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+  <ds:SignedInfo>
+  <ds:CanonicalizationMethod Algorithm="http://docs.oasis-open.org/xri/xrd/2009/01#canonicalize-raw-octets" />
+  <ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1" />
+  </ds:SignedInfo>
+  <ds:KeyInfo>
+  <ds:X509Data>
+  <ds:X509Certificate>
+  MIICgjCCAeugAwIBAgIEAJSDjTANBgkqhkiG9w0BAQUFADBGMQswCQYDVQQGEwJVUzETMBEGA1UEChMKR29vZ2xlIEluYzEiMCAGA1UEAxMZR29vZ2xlIEludGVybmV0IEF1dGhvcml0eTAeFw0xMDAxMTIwMDAwMDBaFw0xMDAxMTQwMDAwMDBaMFYxCzAJBgNVBAYTAlVTMRMwEQYDVQQIEwpDYWxpZm9ybmlhMRMwEQYDVQQKEwpHb29nbGUgSW5jMR0wGwYDVQQDExRob3N0ZWQtaWQuZ29vZ2xlLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA0/aNoE7tFhhUDp57hnQG5ri72n7lUWW8JE64Gc9tFi7V/LYhYp3h/kmblYY+oM77FTAJjktPUcsZyT1ECit95fVDGxiXd4YIXZz8IBxbKGCNaeYbGPXULmb3b9nPxnY671b0ng98ESdLW6vQFt6kUuL0vgN1hkXQOLSVDwAglyMCAwEAAaNtMGswCQYDVR0TBAIwADARBglghkgBhvhCAQEEBAMCBBAwCwYDVR0PBAQDAgXgMB0GA1UdDgQWBBTZS7fy9VPK7cGOm5tIG1hMN0lTizAfBgNVHSMEGDAWgBS/wDDr9UMRPme6npH7/Gra42sSJDANBgkqhkiG9w0BAQUFAAOBgQBFZbW8xNB9AH8cbqvq4V/4sPDiUvnT8X1NyWZaOWQsEkHSlF0f23fIf4+SfDpZ4NTOclWCZbfzBbFyHjwFpOe31V50iPUw4uoBEYo92KtGtMDSCOjJ/mnwpKyMd8z2/ZANJZ+vEHvRvRGdM4AodOj5QQ9kkG3N5YN0441jqMNQ1w==
+  </ds:X509Certificate>
+  <ds:X509Certificate>
+  MIICsDCCAhmgAwIBAgIDBpiwMA0GCSqGSIb3DQEBBQUAME4xCzAJBgNVBAYTAlVTMRAwDgYDVQQKEwdFcXVpZmF4MS0wKwYDVQQLEyRFcXVpZmF4IFNlY3VyZSBDZXJ0aWZpY2F0ZSBBdXRob3JpdHkwHhcNMDYxMjA1MjIzODAwWhcNMTAwNjIwMjEzODAwWjBGMQswCQYDVQQGEwJVUzETMBEGA1UEChMKR29vZ2xlIEluYzEiMCAGA1UEAxMZR29vZ2xlIEludGVybmV0IEF1dGhvcml0eTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAye23pIucV+eEPkB9hPSP0XFjU5nneXQUr0SZMyCSjXvlKAy6rWxJfoNfNFlOCnowzdDXxFdF7dWq1nMmzq0yE7jXDx07393cCDaob1FEm8rWIFJztyaHNWrbqeXUWaUr/GcZOfqTGBhs3t0lig4zFEfC7wFQeeT9adGnwKziV28CAwEAAaOBozCBoDAOBgNVHQ8BAf8EBAMCAQYwHQYDVR0OBBYEFL/AMOv1QxE+Z7qekfv8atrjaxIkMB8GA1UdIwQYMBaAFEjmaPkr0rKV10fYIyAQTzOYkJ/UMBIGA1UdEwEB/wQIMAYBAf8CAQAwOgYDVR0fBDMwMTAvoC2gK4YpaHR0cDovL2NybC5nZW90cnVzdC5jb20vY3Jscy9zZWN1cmVjYS5jcmwwDQYJKoZIhvcNAQEFBQADgYEAUcUIjO89Fo091eydZmfeAkqotSvtVEIPm4f+B22gv5sIF8S8xkL7z24DU7EmPa/RmFvnAZYTRpHHBnYNu+Z07d919W8amW1mmPJZuAvWYlZnaEcJO1WF+dfu6Fen7msMDUIiQrgavibGhANglutmksHhhauHBR11iMrbQLldyLU=
+  </ds:X509Certificate>
+  </ds:X509Data>
+  </ds:KeyInfo>
+  </ds:Signature>
+  <XRD>
+  <CanonicalID>dyuproject.com</CanonicalID>
+  <Service priority="0">
+  <Type>http://specs.openid.net/auth/2.0/server</Type>
+  <Type>http://openid.net/srv/ax/1.0</Type>
+  <Type>http://specs.openid.net/extensions/ui/1.0/mode/popup</Type>
+  <Type>http://specs.openid.net/extensions/ui/1.0/icon</Type>
+  <Type>http://specs.openid.net/extensions/pape/1.0</Type>
+  <URI>https://www.google.com/a/dyuproject.com/o8/ud?be=o8</URI>
+  </Service>
+  <Service priority="0" xmlns:openid="http://openid.net/xmlns/2.5">
+  <Type>http://www.iana.org/assignments/relation/describedby</Type>
+  <MediaType>application/xrds+xml</MediaType>
+  <openid:URITemplate>https://www.google.com/accounts/o8/user-xrds?uri={%uri}</openid:URITemplate>
+  <openid:NextAuthority>hosted-id.google.com</openid:NextAuthority>
+  </Service>
+  </XRD>
+</xrds:XRDS>

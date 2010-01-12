@@ -28,6 +28,13 @@ import junit.framework.TestCase;
 public class XMLParserTest extends TestCase
 {
     
+    static final String prefix = "com/dyuproject/util/xml/";
+    
+    static URL getResource(String resource)
+    {
+        return Thread.currentThread().getContextClassLoader().getResource(prefix + resource);
+    }
+    
     public void testNamespace() throws Exception
     {
         String url = "http://open.login.yahooapis.com/openid20/www.yahoo.com/xrds";
@@ -56,11 +63,31 @@ public class XMLParserTest extends TestCase
         }   
     }
     
+    public void testSimple() throws Exception
+    {
+        SimpleHandler handler = new SimpleHandler();
+        InputStreamReader reader = new InputStreamReader(getResource("simple.xml").openStream());
+        try
+        {
+            XMLParser.parse(reader, handler, true);
+            Node root = handler.getNode();
+            assertEquals("root", root.getName());
+            Node foo = root.getNode("foo");
+            assertNotNull(foo);
+            assertEquals(foo.getText().toString(), "baz");
+            Node bar = foo.getNode("bar");
+            assertNotNull(bar);
+        }
+        finally
+        {
+            reader.close();
+        }  
+    }
+    
     public void testTrimAndCDATA() throws Exception
     {
         SimpleHandler handler = new SimpleHandler();
-        InputStreamReader reader = new InputStreamReader(
-                Thread.currentThread().getContextClassLoader().getResource("xrds").openStream());
+        InputStreamReader reader = new InputStreamReader(getResource("xrds").openStream());
         try
         {
             XMLParser.parse(reader, handler, true);
@@ -71,7 +98,7 @@ public class XMLParserTest extends TestCase
             assertTrue(0!=service.getNodes("type").size());
             assertEquals("xrds", service.getLastNode().getNamespace());
             Node foo = xrds.getNode("FOO");
-            assert(foo!=null);
+            assertNotNull(foo);
             assertEquals(foo.getText().toString(), "I am a cdata text. yep\nyep");
             System.err.println(foo.getText().toString());
         }
@@ -79,6 +106,37 @@ public class XMLParserTest extends TestCase
         {
             reader.close();
         }        
+    }
+    
+    public void testSiteXrds() throws Exception
+    {
+        SimpleHandler handler = new SimpleHandler();
+        InputStreamReader reader = new InputStreamReader(getResource("site-xrds").openStream());
+        try
+        {
+            XMLParser.parse(reader, handler, true);
+            Node xrds = handler.getNode();
+            assertNotNull(xrds);
+            assertEquals("xrds", xrds.getNamespace());
+            assertEquals("XRDS", xrds.getName());
+            Node signature = xrds.getNode("Signature");
+            assertNotNull(signature);
+            assertEquals("ds", signature.getNamespace());
+            Node xrd = xrds.getNode("XRD");
+            assertNotNull(xrd);
+            Node canonicalID = xrd.getNode("CanonicalID");
+            assertNotNull(canonicalID);
+            assertEquals("dyuproject.com", canonicalID.getText().toString());
+            Node service = xrd.getNode("Service");
+            assertNotNull(service);
+            Node uri = service.getNode("URI");
+            assertNotNull(uri);
+            assertEquals("https://www.google.com/a/dyuproject.com/o8/ud?be=o8", uri.getText().toString());
+        }
+        finally
+        {
+            reader.close();
+        }
     }
 
 }

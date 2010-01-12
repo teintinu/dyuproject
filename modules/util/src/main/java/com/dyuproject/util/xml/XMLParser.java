@@ -159,7 +159,7 @@ public final class XMLParser
                                     else
                                     {
                                         namespace = new String(cbuf, mark+1, nsMark-mark-1).trim();
-                                        name = new String(cbuf, nsMark+1, offset-mark-1).trim();
+                                        name = new String(cbuf, nsMark+1, offset-nsMark-1).trim();
                                     }
                                     if(searchRoot)
                                     {
@@ -212,8 +212,30 @@ public final class XMLParser
                                 mark = offset-1;
                                 continue;
                             case STATE_EL_STARTING:
+                                if(mark+1!=offset)
+                                {
+                                    String name = null;
+                                    String namespace = null;                                    
+                                    if(nsMark==-1)
+                                        name = new String(cbuf, mark+1, offset-mark-1).trim();
+                                    else
+                                    {
+                                        namespace = new String(cbuf, mark+1, nsMark-mark-1).trim();
+                                        name = new String(cbuf, nsMark+1, offset-nsMark-1).trim();
+                                    }
+                                    if(searchRoot)
+                                    {
+                                        if(!handler.rootElement(name, namespace))
+                                            return;
+                                        searchRoot = false;
+                                    }
+                                    else if(!handler.startElement(name, namespace))
+                                        return;                                                                    
+                                }
                                 state = STATE_EL_ENDING;
                                 elwsMark = -1;
+                                nsMark = -1;
+                                mark = -1;
                                 continue;
                                 
                         }
