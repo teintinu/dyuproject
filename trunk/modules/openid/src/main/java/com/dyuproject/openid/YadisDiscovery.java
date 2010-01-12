@@ -130,7 +130,7 @@ public final class YadisDiscovery implements Discovery
     {
         
         private int _stack = 0;
-        private boolean _service = false;
+        private boolean _service = false, xrd = false;
         private String _lastName;
         private String _openIdServer;
         private String _openIdDelegate;
@@ -148,7 +148,11 @@ public final class YadisDiscovery implements Discovery
         }
 
         public boolean startElement(String name, String namespace)
-        {            
+        {
+            if(_stack==1)
+                xrd = XRD.equals(name);
+            System.err.println(namespace + " " + name);
+
             _stack++;
             _lastName = name;
             return true;
@@ -162,7 +166,7 @@ public final class YadisDiscovery implements Discovery
                     return false;
                 _service = false;
             }
-            return 1<_stack;
+            return !xrd || 1<_stack;
         }
 
         public void attribute(String name, String value)
@@ -172,7 +176,7 @@ public final class YadisDiscovery implements Discovery
 
         public void characters(char[] data, int start, int length)
         {
-            if(_stack==4)
+            if(xrd && _stack==4)
             {                
                 if(_service)
                 {
