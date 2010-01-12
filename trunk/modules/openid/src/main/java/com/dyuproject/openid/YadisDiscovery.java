@@ -151,7 +151,6 @@ public final class YadisDiscovery implements Discovery
         {
             if(_stack==1)
                 xrd = XRD.equals(name);
-            System.err.println(namespace + " " + name);
 
             _stack++;
             _lastName = name;
