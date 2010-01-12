@@ -594,12 +594,15 @@ public final class RelyingParty
                 if(!_identifierAsServer)
                     throw e;
             }
-            if(user==null && !_identifierAsServer)
-                return null;
-            
-            user = new OpenIdUser(identifier.getId(), YadisDiscovery.IDENTIFIER_SELECT, 
-                    identifier.getUrl(), null);
-            
+            if(user==null)
+            {
+                if(!_identifierAsServer)
+                    return null;
+                
+                user = new OpenIdUser(identifier.getId(), YadisDiscovery.IDENTIFIER_SELECT, 
+                        identifier.getUrl(), null);
+            }
+
             _userCache.put(identifier.getUrl(), user);
         }
         
