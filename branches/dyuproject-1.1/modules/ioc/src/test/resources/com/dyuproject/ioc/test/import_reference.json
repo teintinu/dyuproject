@@ -1,0 +1,24 @@
+{
+  "import":
+  {
+    "class": "com.dyuproject.ioc.config.Import",
+    "reference.json": "file"
+  },
+  "references":
+  {
+    "class": "com.dyuproject.ioc.config.References",
+    "person3": $person2
+  },
+  "referenced_person":
+  {
+    "class": "com.dyuproject.ioc.config.Reference",
+    "ref": $person3,
+    "props":
+    {
+      "age": 23,
+      "username": "john_doe3",
+      "password": "some_password3",
+      "email": "john_doe3@email.com"
+    }  
+  }
+}

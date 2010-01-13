@@ -1,0 +1,30 @@
+{
+  "employee":
+  {
+    "class": "com.dyuproject.json.test.Employee",
+    "firstName": "John",
+    "lastName": "Doe",
+    "email": "john_doe1@email.com",
+    "age": 21,
+    "username": "john_doe1",
+    "password": "some_password1",
+    "tasks":
+    [
+      {
+        "class": "com.dyuproject.json.test.Task",
+        "name": "Some task 1",
+        "status": "10"
+      },
+      {
+        "class": "com.dyuproject.json.test.Task",
+        "name": "Some task 1",
+        "status": "15"
+      },
+      {
+        "class": "com.dyuproject.json.test.Task",
+        "name": "Some task 1",
+        "status": "20"
+      }
+    ]
+  }
+}

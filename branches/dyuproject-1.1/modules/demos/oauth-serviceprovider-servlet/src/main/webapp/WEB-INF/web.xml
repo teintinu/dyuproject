@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app 
+   xmlns="http://java.sun.com/xml/ns/javaee" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+   version="2.5" metadata-complete="true">
+   
+  <listener>
+    <listener-class>com.dyuproject.demos.oauthserviceprovider.ContextListener</listener-class>
+  </listener>
+  
+  <servlet>
+    <servlet-name>contacts-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthserviceprovider.ContactsServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>contacts-servlet</servlet-name>
+    <url-pattern>/services/contacts/</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>home-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthserviceprovider.HomeServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>home-servlet</servlet-name>
+    <url-pattern>/home/</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>logout-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthserviceprovider.LogoutServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>logout-servlet</servlet-name>
+    <url-pattern>/logout/</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>request-token-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthserviceprovider.GetRequestTokenServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>request-token-servlet</servlet-name>
+    <url-pattern>/oauth/GetRequestToken/</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>access-token-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthserviceprovider.GetAccessTokenServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>access-token-servlet</servlet-name>
+    <url-pattern>/oauth/GetAccessToken/</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>authorize-token-servlet</servlet-name>
+    <servlet-class>com.dyuproject.demos.oauthserviceprovider.AuthorizeTokenServlet</servlet-class>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>authorize-token-servlet</servlet-name>
+    <url-pattern>/oauth/AuthorizeToken/</url-pattern>
+  </servlet-mapping>
+
+</web-app>

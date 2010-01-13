@@ -1,0 +1,24 @@
+{
+  "overload_task":
+  {
+    "class": "com.dyuproject.json.test.OverloadTask",
+    "name": "Some task",
+    "status": 5
+  },
+  "overload_task1":
+  {
+    "class": "com.dyuproject.json.test.OverloadTask",
+    "name": "Some task",
+    "status":
+    {
+      "class": "com.dyuproject.json.test.Status",
+      "id": "7.5"
+    }
+  },
+  "task":
+  {
+    "class": "com.dyuproject.json.test.OverloadTask",
+    "name": "Some other task",
+    "status": "10"
+  }
+}
