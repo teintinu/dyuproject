@@ -3,7 +3,7 @@
   <parent>
     <artifactId>project</artifactId>
     <groupId>com.dyuproject.demos</groupId>
-    <version>1.1.7</version>
+    <version>1.1-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
