@@ -1,0 +1,24 @@
+{
+  "references":
+  {
+    "class": "com.dyuproject.ioc.config.References",
+    "person2":
+    {
+      "class": "com.dyuproject.ioc.test.Person",
+      "firstName": "John",
+      "lastName": "Doe",
+      "email": "john_doe2@email.com"
+    }
+  },
+  "referenced_person":
+  {
+    "class": "com.dyuproject.ioc.config.Reference",
+    "ref": $person2,
+    "props":
+    {
+      "age": 22,
+      "username": "john_doe2",
+      "password": "some_password2"
+    }  
+  }
+}

@@ -1,0 +1,195 @@
+dyuproject-1.1.7 2010-05-07
++ openid: added an openid.identifier_as_server option where the identifier could be used as the openid server url when discovery fails.
++ openid: fixed openid delegate bug (discovered local_id was not used) on yadis discovery
++ openid: improved the RegexHtmlBasedDiscovery where lazy parsing is properly/correctly implemented - similar to HtmlBasedDiscovery.
++ openid: added specific handling for html-based discoveries on openid.server (1.x) and openid2.provider (2.0)
+          If both are provided, preference/priority will be given to the latest version.
++ openid: #14 - suggested javadoc for RelyingParty methods (applied)
++ openid: #17 - verifier not given (bug fixed)
+
++ util: fixed xml parser bug for inline elements (<foo/>)
+
++ misc: more javadoc for util, json, ioc, openid and oauth.
++ misc: updated pom.xml remove build encoding and javadoc warnings UTF-8 source encoding
++ misc: updated velocity to 1.6.3 and stringtemplate to 3.2.1
+
+dyuproject-1.1.6 2009-10-08
++ oauth: slight api change in TokenManager (the first arg of the method "invalidate" is changed from Token to String).
+         This avoids creating a new Token for invalidation.  The Consumer api accepts String or Token for invalidation.
++ oauth: fixed a validation bug when the callback url contains a port
+
++ openid: fixed a security issue/bug that can get exploited by phishing attacks.
++ openid: fixed YadisDiscovery bug where the service type is http://specs.openid.net/auth/2.0/signon
++ openid: fixed Identifier bug when a url contains a port (E.g http://example.com:8080/foo/)
++ openid: fixed a bug that prevents the user from authenticating when the automatic_redirect flag is false
++ openid: fixed duplicate extensions being registered especially on default RelyingParty instance
++ openid: fixed duplicate set(OpenIdUser) on request attribute in OpenIdServletFilter
++ openid: improved the AxschemaExtension by caching the axschema keys
++ openid: removed the deprecated extensions replaced by AxschemaExtension and SRegExtension
+
++ web: make non-public service methods accessible from AnnotatedResourceMethod
++ web: allow override of the default "/WEB-INF/application.json" location via context init-param "appcontext.resource_location"
+
++ util: methods from ArrayUtil and ReflectUtil now return generic types (was plain java.lang.Object)
++ util: cleaned up unused classes
+
++ all: improved overall performance of the immutable objects by marking them final.  If extending the components, favor Composition over Inheritance.
++ all: generated serial version UIDs for all Serializable objects - was @SuppressWarnings("serial") tsk tsk.
+
+dyuproject-1.1.5 2009-08-21
++ oauth: make oauth useable with hybrid protocol (OAuth + OpenID)
+
++ openid: add configurable openid.automatic_redirect when a user navigates away from his provider and back to the rp's site
++ openid: introduce caching for users on discovery to speed up the openid process.
++ openid: allow bypass of discovery for an expected provider via OpenidUser.populate method and storing the user on the request attribute
++ openid: set default error msg on OpenIdServletFilter if discovery using the openid_identifier returns null.
++ openid: use POST (was GET) on association request.
++ openid: make openid servlet filter more reusable via the static method "handle"
+
++ web: allow system properties to specify the configured name of default dispatcher and jsp dispatcher.
+
++ misc: update jetty-util to 6.1.19
+
+dyuproject-1.1.4 2009-06-17
++ oauth: implementation for the latest oauth spec 1.0a - http://oauth.googlecode.com/svn/spec/core/1.0a/drafts/3/oauth-core-1_0a.html
+         The 1.0 spec was found to have a security issue - http://blog.oauth.net/2009/04/22/acknowledgement-of-the-oauth-security-issue/
+
++ openid: customizable axschema extension (specifying only the parameters needed)
++ openid: fixed openid association bug when the openid.server contains query parameters
++ openid: fixed simple http connector bug on POST/PUT and GET with url having existing query params
++ openid: new discovery alternatives: RegexHtmlBasedDiscovery and ChainedDiscovery
++ openid: improved html-based discovery
++ openid: moved AuthRedirection to RelyingParty
++ openid: moved common http components to dyuproject-util
++ openid: trim down value/length of the JSON-serialized OpenIdUser
+
++ util: allow multiple values for HttpConnector request parameters
++ util: CDATA support for XMLParser
++ util: remove unused classes
+
++ web: quote the algorithm param of the WWW-Authenticate header response from DigestAuthentication
++ web: simplify cookie session and use encryption instead of md5 hash signature
++ web: rename session config of secret_key to: session.cookie.security.secret_key
+
+dyuproject-1.1.3 2009-03-18
++ Fixed YadisDiscovery bug (signon and server handling) - the actual fix for the GoogleAccount issue (removed the previous
+  GoogleAccount workaround)
++ Optimized HtmlBasedDiscovery parsing set as default (faster) ... turned off via using HtmlBasedDiscovery.setOptmized(false);
++ refactored/improved handling when user cancels authentication
++ identifier field added on OpenIdUser to track the original identifier provided by user
++ added FormRedirection option for use when data to be sent is larger than usual.
++ CookieBasedUserManager's cookiePath defaults to "/" if not set
+
+dyuproject-1.1.2 2009-03-11
++ GoogleAccount attribute exchange enabled by default on RelyingParty.getInstance()
++ update to support Google's recent service changes on authentication request (thanks Shawn Pearce)
++ faster HtmlBasedDiscovery parsing
++ fixed parsing of html documents with uncommented <script> body that contains unescaped &gt; and &lt;
++ new ioc module
++ new json module
++ Pojo Consumers (validation, binding, etc)
++ port logging to SLF4J (commons-logging had classloader issues)
++ Issue 9: Explicit timeout for connecting OpenID provider
++ added support for GoogleAccount attribute exchange (axschema - email only)
++ restored RelyingParty.associate(user, request, response)
++ REST Service annotated methods can now have an optional argument(RequestContext)
++ refactor REST handlers to have RequestContext as argument
++ fixed the issue where the annotated methods that are inherited are not invoked.
++ add StringTemplate as alternative view
++ support common uri for all view dispatchers
+
+dyuproject-1.1.1 2009-01-14
++ RelyingParty event listeners for the authentication lifecycle
++ more configurable components from the openid.properties
++ major refactors on the api (to simplify api usage)
++ minor openid.properties key/value changes
++ added identifier resolvers (e.g to map a google account to its xrds url)
++ fixed bug in http-based discovery
++ more openid identifier normalization
++ fixed XMLParser bug on whitespace handling
++ more sreg support (constants and OpenIdSreg bean to parse from auth request)
++ added OpenIdServletFilter that runs out-of-the-box with just a single filter init-param "forwardUri" config
++ added handling when the user's authentication takes too long.
++ fix lack of OpenIdUser caching when parsed via OpenIdUserManager
++ OpenIdUserManager now has 2 impls: cookie-based and httpsession-based
++ remove checked exceptions from Interceptor post handle chain
++ improved interceptor execution
+
+dyuproject-1.1.0 2008-12-08
++ Implementation for Java REST Annotations (jra.codehaus.org)
++ Decoupled mapping of REST resources and interceptors
++ Filter has been renamed to Interceptor
++ refactored the package: com.dyuproject.web.mvc.* to com.dyuproject.web.rest.mvc.*
++ fix XMLParserTest
++ fix npe on CookieSessionManager when request.getCookies() returns null
+
+dyuproject-1.0.6 2008-10-02
++ openid implementation (consumer/relying party)
++ lazy xml parsing utils
++ refactored CookieSession to support JSON.Convertible types
++ DigestUtil for SHA-1, SHA-256, MD5, etc
++ DiffieHellman
++ javadoc and junit test-cases
++ added method "putRaw" on FormatConverter.Bean
++ fixed ContextController bug when on root context and without subContexts
++ added dyuproject-jpa(modules/ext/jpa)
+
+dyuproject-1.0.5 2008-08-22
++ updated maven artifact ids: prefixed with "dyuproject-" (namespaced to not conflict with other artifacts especially on webapp/WEB-INF/lib
++ changed the nonce separator of SmartDigestAuthentication
++ refactored SpringServletContextListener as a workaround for a bug in FileSystemApplicationContext on unix 
++ renamed ContextPathController to ContextController 
+
+dyuproject-1.0.4 2008-07-07
++ added SmartDigestAuthentication (expiration, remoteAddress sniffing, hashed with secretKey)
++ CookieSession value now MD5 hashed + Base64 encoded
++ added Basic and Digest Authentication
++ fixed SpringServletContextListener bug (did not implement ServletContextListener)
++ added method destroy on filters
++ added com.dyuproject.util.digest.MD5
+
+dyuproject-1.0.3 2008-06-16
++ default view structure: /WEB-INF/views/jsp/ , /WEB-INF/views/velocity/
++ Maven artifacts renamed (the "dyuproject-" prefix removed)
++ Added support for velocity templates
++ Added support for spring ioc
++ WebContext.setMimes rename to WebContext.setMime
++ Added clientside widgets demo on todo-list
++ Added Validators - util for request input validation.
++ Fixed JSONConverter bug where a null string would be written as key:"null" instead of key:null.
++ helloworld demo
++ removed persistence module
+
+dyuproject-1.0.2 2008-06-06
++ Fixed CookieSession bug that always updates the cookie even if not modified.
++ StaticResourceController now mapped as wildcard.
++ Added ContextPathController - handles a contextPath and dispatches to its controllers or its default controller.
++ CookieSession maxAge can now be set(overridden) at runtime.  Enables the "remember me" option.
+
+dyuproject-1.0.1 2008-06-04
++ CookieSession remoteAddress hash now optional - defaults to false
++ moved com.dyuproject.web.mvc.CookieSessionManager to com.dyuproject.web.CookieSessionManager 
++ moved com.dyuproject.web.mvc.CookieSession to com.dyuproject.web.CookieSession
++ added JSPViewController
++ RestfulMVCServlet renamed to RESTfulMVCServlet
++ added method destroy on controllers
++ added CookieSessionManager
++ support wildcard '*' on Controllers
++ added CRUDController
++ renamed MethodMappedController to VerbMappedController
++ added StaticResourceController
++ demos
++ servlet-api-2.5 to 3.0
+
+dyuproject-1.0.0 2008-05-20
++ session authentication controller helper class
++ CookieSession protect from session hijacking
++ CookieSession - MD5 Hash + secretKey
++ Filters
++ ViewDispatcher
++ RESTful MVC
++ POJO to JSON String tool
++ POJO to XML String tool
++ persistence tool for JDBC
++ persistence tool for Hibernate
++ application bundling for a single jar
