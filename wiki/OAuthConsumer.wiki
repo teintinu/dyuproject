@@ -5,7 +5,8 @@
 
 {{{
 
-    /** The returned value is the value of the authorization header
+    /** 
+     * The returned value is the value of the authorization header
      * normally you would use this for POST/PUT requests with no request parameters
      * if you have request parameters, use the other method and fill the parameter map with it.
      * E.g
