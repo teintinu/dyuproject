@@ -282,7 +282,7 @@ public final class CookieBasedUserManager implements OpenIdUserManager
     private boolean write(String value, int maxAge, HttpServletResponse response) 
     throws IOException
     {
-        Cookie cookie = new Cookie(_cookieName, value);
+        Cookie cookie = new Cookie(_cookieName, "\"" + value + "\"");
         cookie.setMaxAge(maxAge);
         cookie.setPath(_cookiePath);
         if(_cookieDomain!=null)
