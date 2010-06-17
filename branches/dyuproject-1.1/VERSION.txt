@@ -1,4 +1,5 @@
 dyuproject-1.1-SNAPSHOT
++ openid: automatically quote cookie values when written from CookieBasedUserManager
 
 dyuproject-1.1.7 2010-05-07
 + openid: added an openid.identifier_as_server option where the identifier could be used as the openid server url when discovery fails.
