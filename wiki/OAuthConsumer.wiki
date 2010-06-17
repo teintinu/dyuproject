@@ -5,14 +5,15 @@
 
 {{{
 
-    // the returned value is the value of the authorization header
-    // normally you would use this for POST/PUT requests with no request parameters
-    // if you have request parameters, use the other method and fill the parameter map with it.
-    // E.g
-    // UrlEncodedParameterMap params = new UrlEncodedParameterMap(serviceUrl)
-    //     .add("param_key", "param_value")
-    //     .add("another_key", "another_value");
-    // String sig = sign(params, httpMethod, context, ep, authorizedToken);
+    /** The returned value is the value of the authorization header
+     * normally you would use this for POST/PUT requests with no request parameters
+     * if you have request parameters, use the other method and fill the parameter map with it.
+     * E.g
+     * UrlEncodedParameterMap params = new UrlEncodedParameterMap(serviceUrl)
+     *     .add("param_key", "param_value")
+     *     .add("another_key", "another_value");
+     * String sig = sign(params, httpMethod, context, ep, authorizedToken);
+     */
     public static String sign(String serviceUrl, String httpMethod, ConsumerContext context, 
             Endpoint ep, Token authorizedToken) throws IOException
     {
