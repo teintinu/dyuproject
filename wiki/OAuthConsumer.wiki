@@ -1,4 +1,3 @@
-#labels oauth,consumer
 = OAuthConsumer=
 
 ===Signing requests manually with an already-authorized token===
@@ -6,9 +5,9 @@
 {{{
 
     /** 
-     * The returned value is the value of the authorization header
-     * normally you would use this for POST/PUT requests with no request parameters
-     * if you have request parameters, use the other method and fill the parameter map with it.
+     * The returned value is the value of the authorization header.
+     * Normally you would use this for POST/PUT requests with no request parameters.
+     * If you have request parameters, use the other method and fill the parameter map with it.
      * E.g
      * UrlEncodedParameterMap params = new UrlEncodedParameterMap(serviceUrl)
      *     .add("param_key", "param_value")
