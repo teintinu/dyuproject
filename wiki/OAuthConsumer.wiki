@@ -1,6 +1,37 @@
 #labels oauth,consumer
 = OAuthConsumer=
 
+===Signing requests manually with an already-authorized token===
+
+{{{
+
+    // the returned value is the value of the authorization header
+    // normally you would use this for POST/PUT requests with no request parameters
+    // if you have request parameters, use the other method and fill the parameter map with it.
+    // E.g
+    // UrlEncodedParameterMap params = new UrlEncodedParameterMap(serviceUrl)
+    //     .add("param_key", "param_value")
+    //     .add("another_key", "another_value");
+    // String sig = sign(params, httpMethod, context, ep, authorizedToken);
+    public static String sign(String serviceUrl, String httpMethod, ConsumerContext context, 
+            Endpoint ep, Token authorizedToken) throws IOException
+    {
+        return sign(new UrlEncodedParameterMap(serviceUrl), httpMethod, context, ep, authorizedToken);
+    }
+    
+    public static String sign(UrlEncodedParameterMap params, String httpMethod, ConsumerContext context, 
+            Endpoint ep, Token authorizedToken) throws IOException
+    {
+        context.getNonceAndTimestamp().put(params, authorizedToken.getCk());
+        params.put(Constants.OAUTH_CONSUMER_KEY, ep.getConsumerKey());
+        params.put(Constants.OAUTH_TOKEN, authorizedToken.getKey());
+        params.put(Constants.OAUTH_SIGNATURE_METHOD, ep.getSignature().getMethod());
+        return ep.getSignature().sign(ep.getConsumerSecret(), authorizedToken.getSecret(), 
+                Signature.getBase(params, httpMethod));
+    }
+
+}}}
+
 ===Desktop/Embedded environment===
 
 {{{consumer_google.properties}}}
