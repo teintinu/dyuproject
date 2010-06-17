@@ -201,7 +201,8 @@ public final class CookieBasedUserManager implements OpenIdUserManager
     OpenIdUser getUserVerifiedBySignature(Cookie cookie) 
     throws IOException
     {
-        String[] values = Delim.AMPER.split(cookie.getValue());
+        String value = cookie.getValue();
+        String[] values = Delim.AMPER.split(value.substring(1, value.length()-1));
         if(values.length!=2)
         {
             // invalid cookie.
@@ -225,10 +226,11 @@ public final class CookieBasedUserManager implements OpenIdUserManager
     OpenIdUser getUserByDecryption(Cookie cookie) 
     throws IOException
     {
-        String value = null;
+        String value = cookie.getValue();
         try
         {
-            value = _crypto.decryptDecode(cookie.getValue());
+        
+            value = _crypto.decryptDecode(value.substring(1, value.length()-1));
         }
         catch(Exception e)
         {
@@ -253,7 +255,7 @@ public final class CookieBasedUserManager implements OpenIdUserManager
     {
         String u = B64Code.encode(_json.toJSON(user));
         String sig = DigestUtil.digestMD5(u + _secretKey);
-        StringBuilder buffer = new StringBuilder().append(sig).append('&').append(u);
+        StringBuilder buffer = new StringBuilder().append('"').append(sig).append('&').append(u).append('"');
         return write(buffer.toString(), user.isAuthenticated() ? _maxAge : _loginTimeout, response);
     }
     
@@ -270,19 +272,19 @@ public final class CookieBasedUserManager implements OpenIdUserManager
             e.printStackTrace();
             return false;
         }
-        return write(value, user.isAuthenticated() ? _maxAge : _loginTimeout, response);
+        return write("\"" + value + "\"", user.isAuthenticated() ? _maxAge : _loginTimeout, response);
     }    
     
     public boolean invalidate(HttpServletRequest request, HttpServletResponse response) 
     throws IOException
     {
-        return write("0", 0, response);
+        return write("\"0\"", 0, response);
     }
     
     private boolean write(String value, int maxAge, HttpServletResponse response) 
     throws IOException
     {
-        Cookie cookie = new Cookie(_cookieName, "\"" + value + "\"");
+        Cookie cookie = new Cookie(_cookieName, value);
         cookie.setMaxAge(maxAge);
         cookie.setPath(_cookiePath);
         if(_cookieDomain!=null)
