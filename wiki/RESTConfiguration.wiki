@@ -1,4 +1,4 @@
-#labels REST,configuration,services,resources,interceptors,web.xml,ioc
+#labels 
 *REST Configuration*
 
 For a sample REST service, see [HelloWorldService]

@@ -1,4 +1,4 @@
-#labels openid,relyingparty,quickstart,guide
+#labels 
 ={{{Openid RelyingParty QuickStart Guide}}}=
 
 Let us learn by example ... this will help you create/deploy asap.

@@ -1,4 +1,4 @@
-#labels oauth,service,provider
+#labels Featured
 = OAuthServiceProvider =
 
 *For reference, you can refer to this example -  [http://dyuproject.googlecode.com/svn/trunk/modules/demos/oauth-serviceprovider-servlet]*

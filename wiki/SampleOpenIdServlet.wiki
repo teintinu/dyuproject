@@ -1,4 +1,4 @@
-#labels sample,openid,servlet,example,sreg,axschema
+#labels 
 A sample openid servlet using dyuproject-openid
 
 It is recommended that you use the [OpenIdServletFilter] instead and just add

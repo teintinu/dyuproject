@@ -1,4 +1,4 @@
-#labels openid,optimization,caching
+#labels Featured
 = OpenID Optimization =
 
 For custom implementation of caching (e.g using memcache), implement {{{UserCache}}}.

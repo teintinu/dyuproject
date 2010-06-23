@@ -1,4 +1,4 @@
-#labels openid,servlet,filter,out-of-the-box
+#labels 
 A servlet filter that fits your needs out-of-the-box.
 
 {{{

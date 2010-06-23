@@ -1,4 +1,4 @@
-#labels hybrid,openid,oauth
+#labels 
 = Hybrid openid + oauth =
 
 The ultimate goal of the hybrid protocol is to enhance the user experience and to speed up your application's authentication process by combining both protocols.

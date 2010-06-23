@@ -1,4 +1,4 @@
-#labels json,ioc,application,context,serialization,deserialization
+#labels 
 = Pojo serialization/deserialization =
 
 Here's a sample pojo:
