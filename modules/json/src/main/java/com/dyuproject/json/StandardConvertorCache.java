@@ -75,7 +75,9 @@ public class StandardConvertorCache implements ConvertorCache
         if(convertor==null && create)
         {
             convertor = newConvertor(clazz, addClass);
-            _convertors.putIfAbsent(clazz.getName(), convertor);
+            Convertor existing = _convertors.putIfAbsent(clazz.getName(), convertor);
+            if(existing != null)
+                convertor = existing;
         }        
         return convertor;
     }
@@ -102,7 +104,9 @@ public class StandardConvertorCache implements ConvertorCache
         {
             Class<?> clazz = StandardJSON.loadClass(className);
             convertor = clazz==null ? UNRESOLVED_CONVERTOR : newConvertor(clazz);
-            _convertors.putIfAbsent(className, convertor);
+            Convertor existing = _convertors.putIfAbsent(className, convertor);
+            if(existing != null)
+                convertor = existing;
         }
         return convertor;
     } 
