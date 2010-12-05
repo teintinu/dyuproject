@@ -537,7 +537,7 @@ public final class XMLParser
                 offset = 0;
             else
             {
-                if(state==STATE_EL_TEXT)
+                if(state==STATE_EL_TEXT || state==STATE_CDATA_STARTED)
                 {
                     if(includeInnerText)
                         handler.characters(cbuf, mark+1, offset-mark-2);                    
@@ -546,9 +546,11 @@ public final class XMLParser
                 }
                 else
                 {
-                    offset = cbuf.length-mark;
-                    System.arraycopy(cbuf, mark, cbuf, 0, offset);
-                    mark = 0;   
+                    // move to the front
+                    int copyLen = offset - mark;
+                    System.arraycopy(cbuf, mark, cbuf, 0, copyLen);
+                    offset = len;
+                    mark = 0;
                 }             
             }
         }        
