@@ -1,4 +1,3 @@
-#labels 
 = Hybrid openid + oauth =
 
 The ultimate goal of the hybrid protocol is to enhance the user experience and to speed up your application's authentication process by combining both protocols.
@@ -6,6 +5,8 @@ The ultimate goal of the hybrid protocol is to enhance the user experience and t
 See [http://step2.googlecode.com/svn/spec/openid_oauth_extension/latest/openid_oauth_extension.html]
 
 ====A mechanism to combine an OpenID authentication request with the approval of an OAuth request token====
+
+To test it locally, see the instructions found [http://code.google.com/p/dyuproject/issues/detail?id=15#c10 here]
 
 The source code is directly from the example on [http://dyuproject.appspot.com]
 
